@@ -1,0 +1,17 @@
+{
+    "name": "dokkan-scraper",
+    "version": "1.0.0",
+    "description": "DokkanInfo enemy data scraper using Playwright",
+    "main": "scrape-dokkaninfo.js",
+    "scripts": {
+        "scrape": "node scrape-dokkaninfo.js",
+        "download": "node download-pages.js",
+        "parse": "node parse-cached.js",
+        "inject": "node update-preset.js",
+        "install-browsers": "npx playwright install chromium"
+    },
+    "dependencies": {
+        "playwright": "^1.40.0",
+        "cheerio": "^1.0.0-rc.12"
+    }
+}

@@ -1,0 +1,27 @@
+[
+  {
+    "eventType": "レッドゾーン",
+    "seriesName": "人工生命体編",
+    "stageName": "VSセルマックス",
+    "bossName": "セルマックス",
+    "critAtkUp": 30,
+    "critDefDown": 70
+  },
+  {
+    "eventType": "レッドゾーン",
+    "seriesName": "純粋サイヤ人編",
+    "stageName": "VS キャベ",
+    "bossName": "超サイヤ人2キャベ",
+    "critAtkUp": 100,
+    "critDefDown": 50
+  },
+  {
+    "eventType": "バトルスペクタクル",
+    "seriesName": "次世代のサイヤ人編",
+    "stageName": "VS孫悟飯&孫悟天&トランクス2",
+    "bossName": "悟飯",
+    "bossNameMatchMode": "includes",
+    "critAtkUp": 50,
+    "critDefDown": 70
+  }
+]

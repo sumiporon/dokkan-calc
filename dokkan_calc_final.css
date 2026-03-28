@@ -1,0 +1,1178 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-color: #f0f2f5;
+    --card-bg: #ffffff;
+    --text-color: #1c1e21;
+    --primary-color: #d94848;
+    --secondary-color: #6c757d;
+    --action-color: #0d6efd;
+    /* New Action Blue */
+    --success-color: #198754;
+    /* New Success Green */
+    --danger-color: #dc3545;
+    /* New Danger Red */
+    --border-color: #dddfe2;
+    --header-bg: #e9ebee;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 1rem;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+h1 {
+    color: var(--primary-color);
+    margin: 0;
+    line-height: 1.3;
+}
+
+#theme-toggle-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: transform 0.2s ease;
+}
+
+#theme-toggle-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    --bg-color: #18191a;
+    --card-bg: #242526;
+    --text-color: #e4e6eb;
+    --primary-color: #e06c6c;
+    --secondary-color: #b0b3b8;
+    --action-color: #409cff;
+    --success-color: #28a745;
+    --danger-color: #e54d5c;
+    --border-color: #3a3b3c;
+    --header-bg: #3a3b3c;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .summary-item {
+    background-color: #4a4a4a;
+}
+
+body.dark-mode .btn-edit-title {
+    background-color: var(--secondary-color);
+    color: var(--bg-color);
+}
+
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.card-header {
+    background-color: var(--header-bg);
+    padding: 0.75rem 1rem;
+    font-weight: bold;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.input-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.form-control::placeholder {
+    color: #a9a9a9;
+    opacity: 1;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    flex-shrink: 1;
+    min-width: fit-content;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Solid Buttons */
+.btn-action {
+    background-color: var(--action-color);
+    border-color: var(--action-color);
+    color: white;
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: white;
+}
+
+/* Outline Button */
+.btn-outline {
+    background-color: transparent;
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+}
+
+.btn-outline:hover {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+#durability-lines-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.line-badge {
+    display: flex;
+    align-items: center;
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 0.3rem 0.7rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+}
+
+.line-badge button {
+    margin-left: 0.5rem;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.2em;
+    line-height: 1;
+    padding: 0;
+}
+
+.scenario-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.input-group-text {
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--secondary-color);
+    text-align: center;
+    white-space: nowrap;
+    background-color: var(--header-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.scenario-title-text {
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 0.2rem 0;
+}
+
+.scenario-title-input {
+    display: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: 1px solid var(--primary-color);
+    border-radius: 4px;
+    padding: 0.1rem 0.3rem;
+    flex-grow: 1;
+}
+
+.scenario-card-header.is-editing .scenario-title-text {
+    display: none;
+}
+
+.scenario-card-header.is-editing .scenario-title-input {
+    display: inline-block;
+}
+
+.btn-edit-title {
+    padding: 0.1rem 0.5rem;
+    font-size: 0.8rem;
+    background-color: var(--secondary-color);
+    border: none;
+    color: white;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+}
+
+.summary-info {
+    display: grid;
+    /* Flexible grid that wraps content */
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 5px;
+    align-items: center;
+    flex-grow: 1;
+    margin-left: 1rem;
+    font-size: 0.8rem;
+    font-weight: normal;
+}
+
+.summary-item.header,
+.summary-item.value {
+    display: none;
+    /* Hide the old separate items */
+}
+
+.summary-item-pair {
+    background-color: #e0e0e0;
+    color: var(--text-color);
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.summary-item-pair .label {
+    font-weight: normal;
+    color: var(--secondary-color);
+}
+
+.summary-item-pair .value {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-left: 0.5em;
+}
+
+.summary-item {
+    background-color: #e0e0e0;
+    color: var(--text-color);
+    padding: 0.2rem 0.3rem;
+    border-radius: 4px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.summary-item.header {
+    font-weight: bold;
+    background-color: transparent;
+}
+
+.summary-item.value {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.summary-item.placeholder {
+    background-color: transparent;
+}
+
+.summary-item strong {
+    color: var(--primary-color);
+}
+
+.scenario-card-body {
+    display: none;
+    padding: 1rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+}
+
+.scenario-card-body.show {
+    display: block;
+    max-height: 2000px;
+    transition: max-height 0.5s ease-in, padding 0.5s ease-in;
+}
+
+.toggle-arrow {
+    transition: transform 0.3s ease;
+    font-weight: bold;
+}
+
+.toggle-arrow.collapsed {
+    transform: rotate(-90deg);
+}
+
+.scenario-content {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.form-section {
+    flex: 2;
+}
+
+.result-section {
+    flex: 1;
+}
+
+.scenario-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    justify-content: flex-end;
+}
+
+.scenario-actions .btn {
+    padding: 0.2rem 0.8rem;
+    font-size: 0.8rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    color: var(--secondary-color);
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.result-table th,
+.result-table td {
+    border: 1px solid var(--border-color);
+    padding: 0.6rem;
+    text-align: left;
+}
+
+.result-table th {
+    background-color: var(--header-bg);
+    width: 50%;
+}
+
+.final-def-display {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+/* --- Mobile Optimizations --- */
+@media (max-width: 768px) {
+    body {
+        padding: 0.5rem;
+    }
+
+    .container {
+        padding: 0 0.2rem;
+    }
+
+    .card {
+        margin-bottom: 0.5rem;
+    }
+
+    .card-header,
+    .card-body {
+        padding: 0.5rem;
+    }
+
+    .scenario-card-header {
+        flex-wrap: wrap;
+    }
+
+    .summary-info {
+        margin-left: 0.5rem;
+        font-size: 0.75rem;
+        gap: 0.2rem 0.4rem;
+    }
+
+    .summary-item {
+        padding: 0.1rem 0.4rem;
+    }
+
+    .scenario-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .form-group label {
+        font-size: 0.8rem;
+        margin-bottom: 0.1rem;
+    }
+
+    .form-control {
+        padding: 0.4rem;
+        font-size: 0.9rem;
+    }
+
+    .form-check {
+        margin-top: 0.5rem;
+    }
+
+    .final-def-display {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .result-table {
+        font-size: 0.9rem;
+    }
+
+    .result-table th,
+    .result-table td {
+        padding: 0.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 閉じた状態の情報表示エリア */
+.scenario-card-header .summary-icons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: auto;
+    /* 右寄せ */
+    font-size: 12px;
+    /* 小さめのフォント */
+    flex-wrap: wrap;
+    /* 折り返す */
+}
+
+/* アイコン＋数値のスタイル */
+.scenario-card-header .summary-icons .icon-item {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 5px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Optimized Preview Overlay --- */
+.hidden {
+    display: none !important;
+}
+
+/* 4.1. オーバーレイ全体 */
+#preview-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* Fallback for non-JS */
+    height: var(--overlay-safe-height, 100vh);
+    /* Will be set by JS to the real viewport height */
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    display: flex;
+    padding: 0;
+}
+
+/* プレビューのメインコンテンツラッパー */
+#preview-overlay .preview-content-wrapper {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    /* For positioning action buttons */
+}
+
+/* Floating Action Buttons */
+.overlay-action-btn {
+    position: absolute;
+    top: 10px;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    opacity: 0.7;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overlay-action-btn:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#overlay-close-btn {
+    left: 10px;
+}
+
+#overlay-download-btn {
+    right: 10px;
+    font-size: 1.6rem;
+    /* Adjust icon size */
+}
+
+/* 4.3. カードコンテナ */
+#preview-overlay #overlay-cards-container {
+    padding: 0.5rem;
+    display: grid;
+    gap: 4px;
+    /* Reduced gap */
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* 4.4. カード */
+#preview-overlay .card {
+    background-color: #ffffff;
+    border: 1px solid #dddfe2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 0 4px 6px 4px;
+    /* Reduced bottom padding */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+body.dark-mode #preview-overlay .card {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+/* 4.5. カードヘッダー */
+#preview-overlay .card-header {
+    margin-bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: transparent;
+    padding: 0;
+    border-bottom: none;
+    font-weight: normal;
+}
+
+#preview-overlay .card-header .scenario-title-text {
+    font-weight: bold;
+    font-size: 0.5rem;
+    /* Reduced base font size */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 4.6. 情報表示エリア */
+#preview-overlay .summary-info {
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    align-items: stretch;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+#preview-overlay .summary-info-row2 {
+    display: flex;
+    justify-content: space-between;
+    gap: 1px;
+    /* Reduced gap */
+}
+
+#preview-overlay .summary-info-row2 .summary-item-pair {
+    flex-grow: 1;
+}
+
+/* 4.7. 情報項目ペア */
+#preview-overlay .summary-item-pair {
+    background-color: #e0e0e0;
+    border-radius: 2px;
+    padding: 1px 2px;
+    /* Reduced padding */
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.6rem;
+    /* Reduced base font size */
+    white-space: nowrap;
+}
+
+body.dark-mode #preview-overlay .summary-item-pair {
+    background-color: var(--header-bg);
+}
+
+#preview-overlay .summary-item-pair .label {
+    font-weight: normal;
+    color: #6c757d;
+}
+
+body.dark-mode #preview-overlay .summary-item-pair .label {
+    color: var(--secondary-color);
+}
+
+#preview-overlay .summary-item-pair .value {
+    font-weight: bold;
+    color: #d94848;
+    margin-left: 0.3em;
+}
+
+body.dark-mode #preview-overlay .summary-item-pair .value {
+    color: var(--primary-color);
+}
+
+
+/* --- Fixed Layout Rules --- */
+#preview-overlay .card-count-20,
+#preview-overlay .card-count-19 {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+}
+
+/* Specific reduction for the DR/Guard row in the most compact layouts */
+#preview-overlay .card-count-20 .summary-info-row2 .summary-item-pair,
+#preview-overlay .card-count-19 .summary-info-row2 .summary-item-pair {
+    font-size: 0.55rem;
+}
+
+#preview-overlay .card-count-18,
+#preview-overlay .card-count-17 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+}
+
+#preview-overlay .card-count-18 .scenario-title-text,
+#preview-overlay .card-count-17 .scenario-title-text {
+    font-size: 0.6rem;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-18 .summary-item-pair,
+#preview-overlay .card-count-17 .summary-item-pair {
+    font-size: 0.65rem;
+    /* Reduced */
+    padding: 2px 2px;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-18 .summary-info-row2,
+#preview-overlay .card-count-17 .summary-info-row2 {
+    background-color: #e0e0e0;
+    border-radius: 2px;
+    padding: 2px 2px;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-18 .summary-info-row2 .summary-item-pair,
+#preview-overlay .card-count-17 .summary-info-row2 .summary-item-pair {
+    background-color: transparent;
+    padding: 0;
+}
+
+#preview-overlay .card-count-16 {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+#preview-overlay .card-count-16 .scenario-title-text {
+    font-size: 0.65rem;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-16 .summary-item-pair {
+    font-size: 0.75rem;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-15,
+#preview-overlay .card-count-14,
+#preview-overlay .card-count-13 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+}
+
+#preview-overlay .card-count-15 .scenario-title-text,
+#preview-overlay .card-count-14 .scenario-title-text,
+#preview-overlay .card-count-13 .scenario-title-text {
+    font-size: 0.65rem;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-15 .summary-item-pair,
+#preview-overlay .card-count-14 .summary-item-pair,
+#preview-overlay .card-count-13 .summary-item-pair {
+    font-size: 0.75rem;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-12,
+#preview-overlay .card-count-11 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+#preview-overlay .card-count-12 .scenario-title-text,
+#preview-overlay .card-count-11 .scenario-title-text {
+    font-size: 0.65rem;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-12 .summary-item-pair,
+#preview-overlay .card-count-11 .summary-item-pair {
+    font-size: 0.75rem;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-10 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+}
+
+#preview-overlay .card-count-10 .scenario-title-text {
+    font-size: 0.75rem;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-10 .summary-item-pair {
+    font-size: 0.85rem;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-9 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+#preview-overlay .card-count-9 .scenario-title-text {
+    font-size: 0.75rem;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-9 .summary-item-pair {
+    font-size: 0.85rem;
+    /* Reduced */
+}
+
+#preview-overlay .card-count-8,
+#preview-overlay .card-count-7 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+#preview-overlay .card-count-8 .scenario-title-text,
+#preview-overlay .card-count-7 .scenario-title-text {
+    font-size: 0.75rem;
+}
+
+#preview-overlay .card-count-8 .summary-item-pair,
+#preview-overlay .card-count-7 .summary-item-pair {
+    font-size: 0.85rem;
+}
+
+#preview-overlay .card-count-6,
+#preview-overlay .card-count-5 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+#preview-overlay .card-count-6 .scenario-title-text,
+#preview-overlay .card-count-5 .scenario-title-text {
+    font-size: 0.8rem;
+}
+
+#preview-overlay .card-count-6 .summary-item-pair,
+#preview-overlay .card-count-5 .summary-item-pair {
+    font-size: 0.9rem;
+}
+
+#preview-overlay .card-count-4 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+#preview-overlay .card-count-4 .scenario-title-text {
+    font-size: 0.95rem;
+}
+
+#preview-overlay .card-count-4 .summary-item-pair {
+    font-size: 0.95rem;
+}
+
+#preview-overlay .card-count-3 {
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+#preview-overlay .card-count-3 .scenario-title-text {
+    font-size: 0.95rem;
+}
+
+#preview-overlay .card-count-3 .summary-item-pair {
+    font-size: 0.95rem;
+}
+
+#preview-overlay .card-count-2 {
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+#preview-overlay .card-count-2 .scenario-title-text {
+    font-size: 1.0rem;
+}
+
+#preview-overlay .card-count-2 .summary-item-pair {
+    font-size: 1.0rem;
+}
+
+#preview-overlay .card-count-1 {
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: repeat(1, 1fr);
+}
+
+#preview-overlay .card-count-1 .scenario-title-text {
+    font-size: 1.0rem;
+}
+
+#preview-overlay .card-count-1 .summary-item-pair {
+    font-size: 1.0rem;
+}
+
+/* --- SHARED RULES FOR 1-6 CARDS (Two-line titles) --- */
+#preview-overlay .card-count-6 .card-header,
+#preview-overlay .card-count-5 .card-header,
+#preview-overlay .card-count-4 .card-header,
+#preview-overlay .card-count-3 .card-header,
+#preview-overlay .card-count-2 .card-header,
+#preview-overlay .card-count-1 .card-header {
+    height: 2.5em;
+    align-items: flex-start;
+}
+
+#preview-overlay .card-count-6 .scenario-title-text,
+#preview-overlay .card-count-5 .scenario-title-text,
+#preview-overlay .card-count-4 .scenario-title-text,
+#preview-overlay .card-count-3 .scenario-title-text,
+#preview-overlay .card-count-2 .scenario-title-text,
+#preview-overlay .card-count-1 .scenario-title-text {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-all;
+    line-height: 1.25;
+    max-height: 2.5em;
+}
+
+/* --- Card Selection Styles --- */
+#preview-overlay.selection-mode .card {
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+#preview-overlay.selection-mode .card.selected {
+    border-color: var(--primary-color);
+}
+
+/* Positioning for the new selection buttons */
+#selection-close-btn {
+    top: 10px;
+    left: 10px;
+}
+
+#selection-deselect-all-btn {
+    top: 10px;
+    right: 10px;
+}
+
+#selection-select-all-btn {
+    top: 10px;
+    right: 64px;
+}
+
+#selection-generate-btn {
+    top: auto;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    font-size: 2.5rem;
+}
+
+/* --- Modal Styles --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 3000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.modal-header h4 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--secondary-color);
+}
+
+.modal-body {
+    overflow-y: auto;
+}
+
+.modal-enemy-item {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.modal-enemy-item:hover {
+    background-color: var(--header-bg);
+}
+
+/* Styles for multi-attack input */
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.attack-pattern-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.attack-pattern-row .attack-name {
+    flex: 1 1 120px;
+}
+
+.attack-pattern-row .input-group {
+    flex: 1 1 150px;
+}
+
+.attack-pattern-row .remove-attack-btn {
+    flex-shrink: 0;
+    padding: 0.2rem 0.5rem;
+    line-height: 1;
+}
+
+/* Grouped enemy modal */
+.modal-enemy-group h5 {
+    margin: 1rem 0 0.5rem 0;
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.25rem;
+}
+
+.modal-enemy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.5rem;
+}
+
+.modal-enemy-item {
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.modal-enemy-item:hover {
+    border-color: var(--primary-color);
+}
+
+/* Result display for multiple attacks */
+.multi-attack-result-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.attack-condition-group {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.condition-title {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.2rem;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.manual-damage-result {
+    padding: 1rem;
+    text-align: center;
+}
+
+.multi-attack-result-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background-color: var(--header-bg);
+}
+
+.multi-attack-result-item .attack-name {
+    font-weight: bold;
+    color: var(--secondary-color);
+    font-size: 0.9em;
+    text-align: left;
+}
+
+.attack-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.attack-stat {
+    color: var(--secondary-color);
+}
+
+.damage-value {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: var(--primary-color);
+}
+
+.arrow {
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+/* Fix for header button wrapping */
+.scenario-card-header {
+    flex-wrap: wrap;
+}
+
+.header-action-buttons {
+    flex-basis: 100%;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+}
