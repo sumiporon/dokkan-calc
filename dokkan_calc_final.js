@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const STORAGE_KEY = 'dokkan_calc_data_v19';
 
+    // --- PRESET START ---
     const DEFAULT_ENEMIES_PRESET = [
   {
     "eventType": "レッドゾーン",
@@ -78550,6 +78551,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ]
   }
 ];
+// --- PRESET END ---
 
         const previewOverlay = document.getElementById('preview-overlay');
     const overlayCardsContainer = document.getElementById('overlay-cards-container');
@@ -78590,6 +78592,239 @@ document.addEventListener('DOMContentLoaded', () => {
       applyTheme(newTheme);
       saveState();
     };
+
+
+
+    // --- Critical Setup Logic ---
+    const checkAndShowCritBanner = () => {
+        const overrides = JSON.parse(localStorage.getItem('dokkan_crit_overrides') || '{}');
+        let unsetBosses = [];
+
+        savedEnemies.forEach((et, etIndex) => {
+            et.series.forEach((ser, serIndex) => {
+                ser.stages.forEach((stg, stgIndex) => {
+                    stg.bosses.forEach((boss, bossIndex) => {
+                        const bossId = `${et.eventType}_${ser.seriesName}_${stg.stageName}_${boss.name}`;
+
+                        // Apply overrides on load
+                        if (overrides[bossId]) {
+                            boss.critAtkUp = overrides[bossId].critAtkUp;
+                            boss.critDefDown = overrides[bossId].critDefDown;
+                        }
+
+                        // Check if needs setup (hasSaCrit or isCriticalDefault but values are 0)
+                        const hasCritContext = boss.hasSaCrit || boss.isCriticalDefault || boss.critFixedRate > 0 || boss.critTurnMax > 0 || boss.critHpRate > 0;
+                        const needsSetup = hasCritContext && (!boss.critAtkUp && !boss.critDefDown);
+
+                        if (needsSetup) {
+                            unsetBosses.push({ etIndex, serIndex, stgIndex, bossIndex, boss, bossId, etName: et.eventType, serName: ser.seriesName, stgName: stg.stageName });
+                        }
+                    });
+                });
+            });
+        });
+
+        const banner = document.getElementById('crit-setup-banner');
+        const countSpan = document.getElementById('crit-unset-count');
+
+        if (unsetBosses.length > 0) {
+            if (countSpan) countSpan.textContent = unsetBosses.length;
+            if (banner) banner.style.display = 'block';
+
+            // Store unset bosses for modal
+            window._dokkanUnsetBosses = unsetBosses;
+        } else {
+            if (banner) banner.style.display = 'none';
+        }
+    };
+
+    const populateCritSetupModal = () => {
+        const listDiv = document.getElementById('crit-setup-list');
+        listDiv.innerHTML = '';
+        const unsetBosses = window._dokkanUnsetBosses || [];
+
+        if (unsetBosses.length === 0) {
+            listDiv.innerHTML = '<p>設定が必要なボスはいません。</p>';
+            return;
+        }
+
+        unsetBosses.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'crit-setup-item form-grid';
+            div.style.marginBottom = '1rem';
+            div.style.paddingBottom = '1rem';
+            div.style.borderBottom = '1px solid var(--border-color)';
+            div.dataset.bossId = item.bossId;
+            div.dataset.etIndex = item.etIndex;
+            div.dataset.serIndex = item.serIndex;
+            div.dataset.stgIndex = item.stgIndex;
+            div.dataset.bossIndex = item.bossIndex;
+
+            div.innerHTML = `
+                <div style="grid-column: 1 / -1; font-weight: bold; margin-bottom: 0.5rem; color: var(--primary-color);">
+                    ${item.etName} / ${item.serName} / ${item.stgName} - ${item.boss.name}
+                </div>
+                <div class="form-group">
+                    <label>会心時ATK上昇率 (%)</label>
+                    <input type="number" class="form-control crit-atk-input" value="${item.boss.critAtkUp || ''}">
+                </div>
+                <div class="form-group">
+                    <label>会心時相手DEF低下率 (%)</label>
+                    <input type="number" class="form-control crit-def-input" value="${item.boss.critDefDown || ''}">
+                </div>
+            `;
+            listDiv.appendChild(div);
+        });
+    };
+
+    const saveCritSetupLocal = () => {
+        const overrides = JSON.parse(localStorage.getItem('dokkan_crit_overrides') || '{}');
+        const items = document.querySelectorAll('.crit-setup-item');
+        let hasChanges = false;
+
+        items.forEach(item => {
+            const atkVal = parseFloat(item.querySelector('.crit-atk-input').value);
+            const defVal = parseFloat(item.querySelector('.crit-def-input').value);
+
+            if (!isNaN(atkVal) || !isNaN(defVal)) {
+                const finalAtk = isNaN(atkVal) ? 0 : atkVal;
+                const finalDef = isNaN(defVal) ? 0 : defVal;
+                const bossId = item.dataset.bossId;
+
+                overrides[bossId] = {
+                    critAtkUp: finalAtk,
+                    critDefDown: finalDef
+                };
+
+                // Also update live savedEnemies array
+                const b = savedEnemies[item.dataset.etIndex].series[item.dataset.serIndex].stages[item.dataset.stgIndex].bosses[item.dataset.bossIndex];
+                b.critAtkUp = finalAtk;
+                b.critDefDown = finalDef;
+
+                hasChanges = true;
+            }
+        });
+
+        if (hasChanges) {
+            localStorage.setItem('dokkan_crit_overrides', JSON.stringify(overrides));
+            saveState(false);
+            checkAndShowCritBanner();
+            alert('ローカルに保存しました。');
+            document.getElementById('crit-setup-modal').classList.add('hidden');
+        } else {
+            alert('保存する値がありません。');
+        }
+
+        return overrides;
+    };
+
+    const critSetupBannerBtn = document.getElementById('crit-setup-banner');
+    if (critSetupBannerBtn) {
+        critSetupBannerBtn.addEventListener('click', () => {
+            populateCritSetupModal();
+            document.getElementById('crit-setup-modal').classList.remove('hidden');
+        });
+    }
+
+    const critModalCloseBtn = document.getElementById('crit-modal-close-btn');
+    if (critModalCloseBtn) {
+        critModalCloseBtn.addEventListener('click', () => {
+            document.getElementById('crit-setup-modal').classList.add('hidden');
+        });
+    }
+
+    const saveCritSetupBtn = document.getElementById('save-crit-setup-btn');
+    if (saveCritSetupBtn) {
+        saveCritSetupBtn.addEventListener('click', () => {
+            saveCritSetupLocal();
+        });
+    }
+
+
+
+
+    // --- GitHub Sync Logic ---
+    const syncCritOverridesToGithub = async () => {
+        const patInput = document.getElementById('github-pat-input');
+        const syncStatus = document.getElementById('crit-sync-status');
+        const overrides = saveCritSetupLocal();
+        const pat = patInput.value.trim();
+
+        if (!pat) {
+            alert('GitHub PATを入力してください。');
+            return;
+        }
+
+        // Save PAT locally for convenience
+        localStorage.setItem('dokkan_github_pat', pat);
+
+        syncStatus.textContent = '同期中...';
+        syncStatus.style.color = 'var(--secondary-color)';
+
+        try {
+            const repoUrl = 'https://api.github.com/repos/sumiporon/dokkan-calc/contents/scraper/crit_overrides.json';
+
+            // 1. Get current file sha
+            let sha = '';
+            const getRes = await fetch(repoUrl, {
+                headers: {
+                    'Authorization': `token ${pat}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (getRes.ok) {
+                const getData = await getRes.json();
+                sha = getData.sha;
+            } else if (getRes.status !== 404) {
+                throw new Error('現在のファイルの取得に失敗しました: ' + getRes.statusText);
+            }
+
+            // 2. Put new file content
+            const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(overrides, null, 2))));
+
+            const putRes = await fetch(repoUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${pat}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Update critical setup overrides via UI',
+                    content: contentBase64,
+                    sha: sha || undefined
+                })
+            });
+
+            if (!putRes.ok) {
+                const errorData = await putRes.json();
+                throw new Error(errorData.message || '更新に失敗しました');
+            }
+
+            syncStatus.textContent = '✅ GitHubへの同期が完了しました';
+            syncStatus.style.color = 'green';
+            setTimeout(() => { syncStatus.textContent = ''; }, 5000);
+
+        } catch (err) {
+            console.error('GitHub Sync Error:', err);
+            syncStatus.textContent = '❌ 同期エラー: ' + err.message;
+            syncStatus.style.color = 'red';
+        }
+    };
+
+    const syncCritGithubBtn = document.getElementById('sync-crit-github-btn');
+    if (syncCritGithubBtn) {
+        syncCritGithubBtn.addEventListener('click', syncCritOverridesToGithub);
+    }
+
+    // Load saved PAT
+    const savedPat = localStorage.getItem('dokkan_github_pat');
+    const patInput = document.getElementById('github-pat-input');
+    if (savedPat && patInput) {
+        patInput.value = savedPat;
+    }
+
 
     // --- State Management ---
     const saveState = (saveCurrentScenarios = true) => {
@@ -78657,6 +78892,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateEnemiesList();
       updateAllScenarioResults();
       initSortable();
+      checkAndShowCritBanner();
     };
 
     // --- Enemy Data Fetching Functions ---

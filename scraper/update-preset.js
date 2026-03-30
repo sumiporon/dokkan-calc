@@ -12,9 +12,9 @@ const jsonData = fs.readFileSync(jsonFile, 'utf-8');
 
 // The replacement logic:
 console.log('Replacing preset array...');
-const regex = /const DEFAULT_ENEMIES_PRESET = \[[\s\S]*?\];\s*\n\s*const previewOverlay/;
+const regex = /\/\/ --- PRESET START ---\n\s*const DEFAULT_ENEMIES_PRESET = \[[\s\S]*?\];\n\/\/ --- PRESET END ---/;
 if (jsContent.match(regex)) {
-    jsContent = jsContent.replace(regex, `const DEFAULT_ENEMIES_PRESET = ${jsonData};\n\n        const previewOverlay`);
+    jsContent = jsContent.replace(regex, `// --- PRESET START ---\n    const DEFAULT_ENEMIES_PRESET = ${jsonData};\n// --- PRESET END ---`);
 
     console.log('Writing updated JS file...');
     fs.writeFileSync(jsFile, jsContent, 'utf-8');

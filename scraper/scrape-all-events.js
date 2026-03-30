@@ -227,7 +227,7 @@ async function getBossData(page, stageUrl) {
                         if (match) {
                             const id = parseInt(match[1], 10);
                             const typeId = id % 10;
-                            const classId = Math.floor(id / 10);
+                            const classId = Math.floor(id / 10) % 10;
                             const typeMap = ['agl', 'teq', 'int', 'str', 'phy'];
                             if (classId === 1) cls = 'super';
                             else if (classId === 2) cls = 'extreme';
@@ -253,7 +253,7 @@ async function getBossData(page, stageUrl) {
                     if (match) {
                         const id = parseInt(match[1], 10);
                         const typeId = id % 10;
-                        const classId = Math.floor(id / 10);
+                        const classId = Math.floor(id / 10) % 10;
                         const typeMap = ['agl', 'teq', 'int', 'str', 'phy'];
                         if (classId === 1) cls = 'super';
                         else if (classId === 2) cls = 'extreme';
