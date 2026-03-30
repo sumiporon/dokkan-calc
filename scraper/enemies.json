@@ -1,0 +1,153 @@
+{
+  "lastUpdated": "2026-02-21T14:39:31.438Z",
+  "enemies": [
+    {
+      "url": "https://jpnja.dokkaninfo.com/events/challenge/1733/17330035",
+      "stage": "究極のレッドゾーン DAIMA編",
+      "name": "タマガミ・ナンバー・ワン",
+      "class": "super",
+      "type": "str",
+      "atk": 900000,
+      "saDamage": 2700000,
+      "aoeDamage": 1080000,
+      "turnAtkUp": 50,
+      "turnAtkMax": 250,
+      "hitAtkUp": null,
+      "hitAtkMax": null,
+      "attacks": [
+        {
+          "name": "通常",
+          "value": 900000
+        },
+        {
+          "name": "通常 (必殺後)",
+          "value": 1170000
+        },
+        {
+          "name": "必殺",
+          "value": 2970000
+        },
+        {
+          "name": "全体攻撃",
+          "value": 1080000
+        },
+        {
+          "name": "通常 (1ターン目)",
+          "value": 1350000
+        },
+        {
+          "name": "通常 (1ターン目・必殺後)",
+          "value": 1755000
+        },
+        {
+          "name": "必殺 (1ターン目)",
+          "value": 4455000
+        },
+        {
+          "name": "全体攻撃 (1ターン目)",
+          "value": 1620000
+        },
+        {
+          "name": "通常 (2ターン目)",
+          "value": 1800000
+        },
+        {
+          "name": "通常 (2ターン目・必殺後)",
+          "value": 2340000
+        },
+        {
+          "name": "必殺 (2ターン目)",
+          "value": 5940000
+        },
+        {
+          "name": "全体攻撃 (2ターン目)",
+          "value": 2160000
+        },
+        {
+          "name": "通常 (3ターン目)",
+          "value": 2250000
+        },
+        {
+          "name": "通常 (3ターン目・必殺後)",
+          "value": 2925000
+        },
+        {
+          "name": "必殺 (3ターン目)",
+          "value": 7425000
+        },
+        {
+          "name": "全体攻撃 (3ターン目)",
+          "value": 2700000
+        },
+        {
+          "name": "通常 (4ターン目)",
+          "value": 2700000
+        },
+        {
+          "name": "通常 (4ターン目・必殺後)",
+          "value": 3510000
+        },
+        {
+          "name": "必殺 (4ターン目)",
+          "value": 8910000
+        },
+        {
+          "name": "全体攻撃 (4ターン目)",
+          "value": 3240000
+        },
+        {
+          "name": "通常 (5ターン目)",
+          "value": 3150000
+        },
+        {
+          "name": "通常 (5ターン目・必殺後)",
+          "value": 4095000
+        },
+        {
+          "name": "必殺 (5ターン目)",
+          "value": 10395000
+        },
+        {
+          "name": "全体攻撃 (5ターン目)",
+          "value": 3780000
+        }
+      ],
+      "saBuffModifier": 0.3,
+      "success": true
+    },
+    {
+      "url": "https://jpnja.dokkaninfo.com/events/challenge/1736/17360045",
+      "stage": "究極のレッドゾーン 人工生命体編",
+      "name": "バイオブロリー",
+      "class": "extreme",
+      "type": "phy",
+      "atk": 2250000,
+      "saDamage": 7875000,
+      "aoeDamage": null,
+      "turnAtkUp": null,
+      "turnAtkMax": null,
+      "hitAtkUp": 20,
+      "hitAtkMax": 200,
+      "attacks": [
+        {
+          "name": "通常",
+          "value": 2250000
+        },
+        {
+          "name": "必殺",
+          "value": 7875000
+        },
+        {
+          "name": "通常 (最大被弾時)",
+          "value": 6750000
+        },
+        {
+          "name": "必殺 (最大被弾時)",
+          "value": 23625000
+        }
+      ],
+      "saBuffModifier": 0,
+      "success": true
+    }
+  ]
+}

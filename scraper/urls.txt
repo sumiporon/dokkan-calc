@@ -1,0 +1,7 @@
+# DokkanInfo URLs to scrape
+# 1行に1つのURLを記載
+# #で始まる行はコメント
+
+# 例:
+https://jpnja.dokkaninfo.com/events/challenge/1733/17330035
+https://jpnja.dokkaninfo.com/events/challenge/1736/17360045 

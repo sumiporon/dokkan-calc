@@ -1,0 +1,1016 @@
+[
+  {
+    "eventType": "SPECIAL BATTLE 第2弾",
+    "series": [
+      {
+        "seriesName": "-",
+        "stages": [
+          {
+            "stageName": "ステージ1",
+            "bosses": [
+              {
+                "name": "超サイヤ人4ベジータ+超サイヤ人4孫悟空",
+                "class": "super",
+                "type": "int",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 92000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 138000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 322000
+                  }
+                ],
+                "baseAtk": 92000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "turnAtkUpStartTurn": 1,
+                "turnAtkUp": 50,
+                "turnAtkMax": 200
+              },
+              {
+                "name": "超サイヤ人4孫悟空+超サイヤ人4ベジータ",
+                "class": "super",
+                "type": "teq",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 80000
+                  },
+                  {
+                    "name": "必殺[会心]",
+                    "value": 280000,
+                    "isCrit": true
+                  }
+                ],
+                "baseAtk": 80000,
+                "saMulti": 3.5,
+                "hasSaCrit": true,
+                "appearEntries": [
+                  {
+                    "turn": 4,
+                    "cumulativeAtkUp": 100
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ1",
+            "bosses": [
+              {
+                "name": "超サイヤ人4ベジータ+超サイヤ人4孫悟空",
+                "class": "super",
+                "type": "int",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 470000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 705000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 1645000
+                  }
+                ],
+                "baseAtk": 470000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "turnAtkUpStartTurn": 1,
+                "turnAtkUp": 50,
+                "turnAtkMax": 200
+              },
+              {
+                "name": "超サイヤ人4孫悟空+超サイヤ人4ベジータ",
+                "class": "super",
+                "type": "teq",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 400000
+                  },
+                  {
+                    "name": "必殺[会心]",
+                    "value": 1400000,
+                    "isCrit": true
+                  }
+                ],
+                "baseAtk": 400000,
+                "saMulti": 3.5,
+                "hasSaCrit": true,
+                "appearEntries": [
+                  {
+                    "turn": 4,
+                    "cumulativeAtkUp": 100
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ1",
+            "bosses": [
+              {
+                "name": "超サイヤ人4ベジータ+超サイヤ人4孫悟空",
+                "class": "super",
+                "type": "int",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 920000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 1380000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 3220000
+                  }
+                ],
+                "baseAtk": 920000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "turnAtkUpStartTurn": 1,
+                "turnAtkUp": 50,
+                "turnAtkMax": 200
+              },
+              {
+                "name": "超サイヤ人4孫悟空+超サイヤ人4ベジータ",
+                "class": "super",
+                "type": "teq",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 800000
+                  },
+                  {
+                    "name": "必殺[会心]",
+                    "value": 2800000,
+                    "isCrit": true
+                  }
+                ],
+                "baseAtk": 800000,
+                "saMulti": 3.5,
+                "hasSaCrit": true,
+                "appearEntries": [
+                  {
+                    "turn": 4,
+                    "cumulativeAtkUp": 100
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ2",
+            "bosses": [
+              {
+                "name": "孫悟空(身勝手の極意“兆”)↵+超サイヤ人ゴッドSSベジータ(進化)",
+                "class": "super",
+                "type": "phy",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 210000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 630000
+                  }
+                ],
+                "baseAtk": 210000,
+                "saMulti": 3,
+                "hasSaCrit": false
+              },
+              {
+                "name": "超サイヤ人ゴッドSSベジータ(進化)↵+孫悟空(身勝手の極意“兆”)",
+                "class": "super",
+                "type": "int",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 125000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 187500
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 500000
+                  }
+                ],
+                "baseAtk": 125000,
+                "saMulti": 3.5,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "hitAtkUp": 15,
+                "hitAtkMax": 300
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ2",
+            "bosses": [
+              {
+                "name": "孫悟空(身勝手の極意“兆”)↵+超サイヤ人ゴッドSSベジータ(進化)",
+                "class": "super",
+                "type": "phy",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 1050000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 3150000
+                  }
+                ],
+                "baseAtk": 1050000,
+                "saMulti": 3,
+                "hasSaCrit": false
+              },
+              {
+                "name": "超サイヤ人ゴッドSSベジータ(進化)↵+孫悟空(身勝手の極意“兆”)",
+                "class": "super",
+                "type": "int",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 625000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 937500
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 2500000
+                  }
+                ],
+                "baseAtk": 625000,
+                "saMulti": 3.5,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "hitAtkUp": 15,
+                "hitAtkMax": 300
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ2",
+            "bosses": [
+              {
+                "name": "孫悟空(身勝手の極意“兆”)↵+超サイヤ人ゴッドSSベジータ(進化)",
+                "class": "super",
+                "type": "phy",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 2100000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 6300000
+                  }
+                ],
+                "baseAtk": 2100000,
+                "saMulti": 3,
+                "hasSaCrit": false
+              },
+              {
+                "name": "超サイヤ人ゴッドSSベジータ(進化)↵+孫悟空(身勝手の極意“兆”)",
+                "class": "super",
+                "type": "int",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 1250000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 1875000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 5000000
+                  }
+                ],
+                "baseAtk": 1250000,
+                "saMulti": 3.5,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "hitAtkUp": 15,
+                "hitAtkMax": 300
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "eventType": "SPECIAL BATTLE 第1弾",
+    "series": [
+      {
+        "seriesName": "-",
+        "stages": [
+          {
+            "stageName": "ステージ1",
+            "bosses": [
+              {
+                "name": "超サイヤ人3ベジータ(DAIMA)",
+                "class": "super",
+                "type": "teq",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 111000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 166500
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 388500
+                  }
+                ],
+                "baseAtk": 111000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "turnAtkUpStartTurn": 1,
+                "turnAtkUp": 50,
+                "turnAtkMax": 200
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ1",
+            "bosses": [
+              {
+                "name": "超サイヤ人3ベジータ(DAIMA)",
+                "class": "super",
+                "type": "teq",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 555000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 832500
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 1942500
+                  }
+                ],
+                "baseAtk": 555000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "turnAtkUpStartTurn": 1,
+                "turnAtkUp": 50,
+                "turnAtkMax": 200
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ1",
+            "bosses": [
+              {
+                "name": "超サイヤ人3ベジータ(DAIMA)",
+                "class": "super",
+                "type": "teq",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 1110000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 1665000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 3885000
+                  }
+                ],
+                "baseAtk": 1110000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "turnAtkUpStartTurn": 1,
+                "turnAtkUp": 50,
+                "turnAtkMax": 200
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ2",
+            "bosses": [
+              {
+                "name": "超サイヤ人4孫悟空(DAIMA)",
+                "class": "super",
+                "type": "str",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 100000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 150000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 400000
+                  }
+                ],
+                "baseAtk": 100000,
+                "saMulti": 3.5,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "appearEntries": [
+                  {
+                    "turn": 4,
+                    "cumulativeAtkUp": 100
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ2",
+            "bosses": [
+              {
+                "name": "超サイヤ人4孫悟空(DAIMA)",
+                "class": "super",
+                "type": "str",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 750000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 1125000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 3000000
+                  }
+                ],
+                "baseAtk": 750000,
+                "saMulti": 3.5,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "appearEntries": [
+                  {
+                    "turn": 4,
+                    "cumulativeAtkUp": 100
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ2",
+            "bosses": [
+              {
+                "name": "超サイヤ人4孫悟空(DAIMA)",
+                "class": "super",
+                "type": "str",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 1500000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 2250000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 6000000
+                  }
+                ],
+                "baseAtk": 1500000,
+                "saMulti": 3.5,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "appearEntries": [
+                  {
+                    "turn": 4,
+                    "cumulativeAtkUp": 100
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "eventType": "SPECIAL BATTLE 2025",
+    "series": [
+      {
+        "seriesName": "-",
+        "stages": [
+          {
+            "stageName": "ステージ1",
+            "bosses": [
+              {
+                "name": "ゴクウブラック(超サイヤ人ロゼ)+ザマス",
+                "class": "extreme",
+                "type": "int",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 250000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 375000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 875000
+                  }
+                ],
+                "baseAtk": 250000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "hitAtkUp": 30,
+                "hitAtkMax": 300
+              },
+              {
+                "name": "ザマス+ゴクウブラック(超サイヤ人ロゼ)",
+                "class": "extreme",
+                "type": "teq",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 320000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 960000
+                  }
+                ],
+                "baseAtk": 320000,
+                "saMulti": 3,
+                "hasSaCrit": false
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ1",
+            "bosses": [
+              {
+                "name": "ゴクウブラック(超サイヤ人ロゼ)+ザマス",
+                "class": "extreme",
+                "type": "int",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 500000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 750000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 1750000
+                  }
+                ],
+                "baseAtk": 500000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "hitAtkUp": 30,
+                "hitAtkMax": 300
+              },
+              {
+                "name": "ザマス+ゴクウブラック(超サイヤ人ロゼ)",
+                "class": "extreme",
+                "type": "teq",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 640000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 1920000
+                  }
+                ],
+                "baseAtk": 640000,
+                "saMulti": 3,
+                "hasSaCrit": false
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ1",
+            "bosses": [
+              {
+                "name": "ゴクウブラック(超サイヤ人ロゼ)+ザマス",
+                "class": "extreme",
+                "type": "int",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 1250000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 1875000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 4375000
+                  }
+                ],
+                "baseAtk": 1250000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "hitAtkUp": 30,
+                "hitAtkMax": 300
+              },
+              {
+                "name": "ザマス+ゴクウブラック(超サイヤ人ロゼ)",
+                "class": "extreme",
+                "type": "teq",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 1600000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 4800000
+                  }
+                ],
+                "baseAtk": 1600000,
+                "saMulti": 3,
+                "hasSaCrit": false
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ2",
+            "bosses": [
+              {
+                "name": "超サイヤ人ゴッドSS孫悟空+超サイヤ人ゴッドSSベジータ",
+                "class": "super",
+                "type": "str",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 160000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 208000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 608000
+                  }
+                ],
+                "baseAtk": 160000,
+                "saMulti": 3.5,
+                "saBuffMod": 0.3,
+                "hasSaCrit": false,
+                "appearEntries": [
+                  {
+                    "turn": 3,
+                    "cumulativeAtkUp": 120
+                  }
+                ]
+              },
+              {
+                "name": "超サイヤ人ゴッドSSベジータ+超サイヤ人ゴッドSS孫悟空",
+                "class": "super",
+                "type": "teq",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 320000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 960000
+                  }
+                ],
+                "baseAtk": 320000,
+                "saMulti": 3,
+                "hasSaCrit": false
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ2",
+            "bosses": [
+              {
+                "name": "超サイヤ人ゴッドSS孫悟空+超サイヤ人ゴッドSSベジータ",
+                "class": "super",
+                "type": "str",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 320000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 416000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 1216000
+                  }
+                ],
+                "baseAtk": 320000,
+                "saMulti": 3.5,
+                "saBuffMod": 0.3,
+                "hasSaCrit": false,
+                "appearEntries": [
+                  {
+                    "turn": 3,
+                    "cumulativeAtkUp": 140
+                  }
+                ]
+              },
+              {
+                "name": "超サイヤ人ゴッドSSベジータ+超サイヤ人ゴッドSS孫悟空",
+                "class": "super",
+                "type": "teq",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 640000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 1920000
+                  }
+                ],
+                "baseAtk": 640000,
+                "saMulti": 3,
+                "hasSaCrit": false
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ2",
+            "bosses": [
+              {
+                "name": "超サイヤ人ゴッドSS孫悟空+超サイヤ人ゴッドSSベジータ",
+                "class": "super",
+                "type": "str",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 800000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 1040000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 3040000
+                  }
+                ],
+                "baseAtk": 800000,
+                "saMulti": 3.5,
+                "saBuffMod": 0.3,
+                "hasSaCrit": false,
+                "appearEntries": [
+                  {
+                    "turn": 3,
+                    "cumulativeAtkUp": 160
+                  }
+                ]
+              },
+              {
+                "name": "超サイヤ人ゴッドSSベジータ+超サイヤ人ゴッドSS孫悟空",
+                "class": "super",
+                "type": "teq",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 1600000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 4800000
+                  }
+                ],
+                "baseAtk": 1600000,
+                "saMulti": 3,
+                "hasSaCrit": false
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ3",
+            "bosses": [
+              {
+                "name": "超一星龍",
+                "class": "extreme",
+                "type": "phy",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 140000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 210000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 490000
+                  }
+                ],
+                "baseAtk": 140000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ3",
+            "bosses": [
+              {
+                "name": "超一星龍",
+                "class": "extreme",
+                "type": "phy",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 220000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 330000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 770000
+                  }
+                ],
+                "baseAtk": 220000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ3",
+            "bosses": [
+              {
+                "name": "超一星龍",
+                "class": "extreme",
+                "type": "phy",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 800000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 1200000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 2800000
+                  }
+                ],
+                "baseAtk": 800000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ4",
+            "bosses": [
+              {
+                "name": "超サイヤ人4ゴジータ",
+                "class": "super",
+                "type": "agl",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 160000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 240000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 560000
+                  }
+                ],
+                "baseAtk": 160000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "turnAtkUpStartTurn": 1,
+                "turnAtkUp": 40,
+                "turnAtkMax": 160
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ4",
+            "bosses": [
+              {
+                "name": "超サイヤ人4ゴジータ",
+                "class": "super",
+                "type": "agl",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 250000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 375000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 875000
+                  }
+                ],
+                "baseAtk": 250000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "turnAtkUpStartTurn": 1,
+                "turnAtkUp": 40,
+                "turnAtkMax": 160
+              }
+            ]
+          },
+          {
+            "stageName": "ステージ4",
+            "bosses": [
+              {
+                "name": "超サイヤ人4ゴジータ",
+                "class": "super",
+                "type": "agl",
+                "attacks": [
+                  {
+                    "name": "通常",
+                    "value": 900000
+                  },
+                  {
+                    "name": "通常(必殺後)",
+                    "value": 1350000
+                  },
+                  {
+                    "name": "必殺",
+                    "value": 3150000
+                  }
+                ],
+                "baseAtk": 900000,
+                "saMulti": 3,
+                "saBuffMod": 0.5,
+                "hasSaCrit": false,
+                "turnAtkUpStartTurn": 1,
+                "turnAtkUp": 40,
+                "turnAtkMax": 160
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

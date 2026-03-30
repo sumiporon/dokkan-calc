@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "Dokkan属性パーサー",
+    "version": "1.0",
+    "description": "DokkanInfoから敵の属性情報を取得して計算ツールに連携",
+    "permissions": [
+        "clipboardWrite"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.dokkaninfo.com/*",
+                "*://dokkaninfo.com/*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "run_at": "document_idle"
+        }
+    ]
+}
