@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./scraper
-        run: npm install
+        run: npm ci
 
       - name: Install Playwright browsers
         working-directory: ./scraper
