@@ -16,6 +16,10 @@
             <button id="theme-toggle-btn" title="テーマを切り替え">🌙</button>
         </header>
 
+        <div id="crit-setup-banner" class="alert alert-warning" style="display:none; cursor:pointer; margin-bottom: 1rem;">
+            会心倍率未設定のボスが<span id="crit-unset-count" style="font-weight:bold;"></span>体います。クリックして設定
+        </div>
+
         <div class="card">
             <div class="card-header">計算モード選択</div>
             <div class="card-body" id="mode-selector-body" style="display: flex; gap: 1rem; flex-wrap: wrap;">
@@ -211,6 +215,29 @@
 
             <div id="overlay-cards-container" class="cards-grid">
                 <!-- Cards will be generated here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Crit Setup Modal -->
+    <div id="crit-setup-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-height: 90vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <h4>会心倍率の一括設定</h4>
+                <button id="crit-modal-close-btn" class="modal-close-btn">&times;</button>
+            </div>
+            <div id="crit-setup-list" class="modal-body" style="overflow-y: auto; padding: 1rem;">
+                <!-- Bosses missing crit setup will be populated by JS -->
+            </div>
+            <div style="padding: 1rem; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 0.5rem; background: var(--bg-color);">
+                <div class="input-group">
+                    <input type="password" id="github-pat-input" class="form-control" placeholder="GitHub PAT (同期用、任意)">
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button id="save-crit-setup-btn" class="btn btn-success" style="flex: 1;">ローカルに保存</button>
+                    <button id="sync-crit-github-btn" class="btn btn-primary" style="flex: 1;">保存して同期</button>
+                </div>
+                <div id="crit-sync-status" style="font-size: 0.85rem; text-align: center;"></div>
             </div>
         </div>
     </div>
