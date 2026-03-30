@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ドッカンバトル 耐久計算ツール</title>
+    <link rel="stylesheet" href="dokkan_calc_final.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>ドッカンバトル<br>耐久計算ツール (v63)</h1>
+            <button id="theme-toggle-btn" title="テーマを切り替え">🌙</button>
+        </header>
+
+        <div class="card">
+            <div class="card-header">計算モード選択</div>
+            <div class="card-body" id="mode-selector-body" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <div class="radio-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="radio" id="mode-durability" name="calc_mode" value="durability" class="calc-mode-input"
+                        checked>
+                    <label for="mode-durability">耐久ライン計算 (敵ATKを算出)</label>
+                </div>
+                <div class="radio-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="radio" id="mode-damage" name="calc_mode" value="damage" class="calc-mode-input">
+                    <label for="mode-damage">被ダメージ計算 (受けるダメージを算出)</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="management-sections">
+            <div class="card">
+                <div class="card-header">耐久ライン設定 (目標被ダメージ)</div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="number" id="new-line-input" class="form-control" placeholder="例: 70">
+                        <span class="input-group-text">万</span>
+                        <button id="add-line-btn" class="btn btn-primary">ラインを追加</button>
+                    </div>
+                    <div id="durability-lines-list"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">キャラクター管理</div>
+                <div class="card-body">
+                    <div class="input-group" style="margin-bottom: 1rem;">
+                        <select id="characters-list" class="form-control" aria-label="保存済みキャラクター"></select>
+                        <button id="load-character-btn" class="btn btn-action">読み込み</button>
+                        <button id="new-character-btn" class="btn btn-outline">新規作成</button>
+                        <button id="summary-view-btn" class="btn btn-outline">スクリーンショット</button>
+                        <button id="delete-character-btn" class="btn btn-danger">削除</button>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="new-character-name" class="form-control" placeholder="新しいキャラクター名を入力">
+                        <button id="save-character-btn" class="btn btn-success">現在の状況を保存</button>
+                    </div>
+                    <div class="input-group" style="justify-content: flex-end;">
+                        <button id="expand-all-btn" class="btn btn-outline">すべて開く</button>
+                        <button id="collapse-all-btn" class="btn btn-outline">すべて閉じる</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="enemy-management-card">
+                <div class="card-header" id="enemy-management-header" style="cursor: pointer;">
+                    <span class="toggle-arrow collapsed">▼</span>
+                    <span>敵キャラクター管理</span>
+                </div>
+                <div class="card-body" id="enemy-management-body" style="display: none;">
+                    <div class="cascade-select-group"
+                        style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <select id="enemy-event-type-list" class="form-control" aria-label="イベント種別"
+                            style="flex: 1 1 45%;"></select>
+                        <select id="enemy-series-list" class="form-control" aria-label="シリーズ"
+                            style="flex: 1 1 45%;"></select>
+                        <select id="enemy-stage-list" class="form-control" aria-label="ステージ"
+                            style="flex: 1 1 45%;"></select>
+                        <select id="enemy-boss-list" class="form-control" aria-label="ボス名"
+                            style="flex: 1 1 45%;"></select>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 1rem; justify-content: flex-end;">
+                        <button id="edit-enemy-btn" class="btn btn-action">編集</button>
+                        <button id="delete-enemy-btn" class="btn btn-danger">削除</button>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+
+                    <h5 style="margin-bottom: 0.5rem; color: var(--secondary-color);">外部サイトから取り込み</h5>
+                    <div class="input-group" style="margin-bottom: 0.5rem;">
+                        <input type="text" id="enemy-data-url" class="form-control"
+                            placeholder="DokkanInfo または Game-DB のURL">
+                        <button id="fetch-enemy-data-btn" class="btn btn-action">データ取得</button>
+                        <span id="fetch-status-msg"
+                            style="margin-left: 0.5rem; font-size: 0.9rem; align-self: center;"></span>
+                    </div>
+                    <div class="input-group" style="margin-bottom: 1rem;">
+                        <button id="import-clipboard-btn" class="btn btn-outline" style="flex: 1;">📋
+                            拡張機能からインポート</button>
+                        <span id="import-status-msg"
+                            style="margin-left: 0.5rem; font-size: 0.9rem; align-self: center;"></span>
+                    </div>
+                    <details id="fetch-debug-details" style="margin-bottom: 1rem; display: none;">
+                        <summary
+                            style="cursor: pointer; color: var(--secondary-color); font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>解析ログを表示 (開発用)</span>
+                            <button id="copy-log-btn" class="btn btn-outline"
+                                style="padding: 0.1rem 0.5rem; font-size: 0.7rem; margin-left: auto;">ログをコピー</button>
+                        </summary>
+                        <pre id="fetch-debug-log"
+                            style="background: #f0f0f0; padding: 0.5rem; font-size: 0.8rem; overflow-x: auto; max-height: 200px; color: #333; margin-top: 0.5rem;"></pre>
+                    </details>
+
+                    <hr style="border: none; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+                    <h5 style="margin-bottom: 0.5rem; color: var(--secondary-color);">新規の敵を登録</h5>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>イベント種別</label>
+                            <input type="text" id="new-enemy-event-type" class="form-control" placeholder="例: レッドゾーン">
+                        </div>
+                        <div class="form-group">
+                            <label>シリーズ名</label>
+                            <input type="text" id="new-enemy-series-name" class="form-control"
+                                placeholder="例: DAIMA編（独立イベントは空欄）">
+                        </div>
+                        <div class="form-group">
+                            <label>ステージ名</label>
+                            <input type="text" id="new-enemy-stage-name" class="form-control" placeholder="例: ステージ3">
+                        </div>
+                        <div class="form-group">
+                            <label>ボスの名前</label>
+                            <input type="text" id="new-enemy-name" class="form-control" placeholder="例: タマガミ・ナンバー・ワン">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>攻撃パターン</label>
+                            <div id="new-enemy-attacks-container">
+                                <!-- Attack inputs will be added here by JS -->
+                            </div>
+                            <button type="button" id="add-attack-pattern-btn" class="btn btn-outline"
+                                style="margin-top: 0.5rem;">+ 攻撃パターンを追加</button>
+                        </div>
+                        <div class="form-group">
+                            <label>敵のクラス</label>
+                            <select id="new-enemy-class" class="form-control">
+                                <option value="super" selected>超</option>
+                                <option value="extreme">極</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>敵の属性</label>
+                            <select id="new-enemy-type" class="form-control">
+                                <option value="teq">技</option>
+                                <option value="agl">速</option>
+                                <option value="str">力</option>
+                                <option value="phy">体</option>
+                                <option value="int">知</option>
+                            </select>
+                        </div>
+                        <div class="form-check" style="grid-column: 1 / -1;">
+                            <input type="checkbox" id="new-enemy-crit-default-enabled">
+                            <label for="new-enemy-crit-default-enabled"
+                                style="font-weight: bold;">デフォルトで会心を有効にする</label>
+                        </div>
+                        <div id="new-enemy-crit-inputs-container"
+                            style="display: none; grid-column: 1 / -1; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem;">
+                            <div class="form-group">
+                                <label>会心時ATK上昇率 (%)</label>
+                                <input type="number" id="new-enemy-crit-atk" class="form-control" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label>会心時相手DEF低下率 (%)</label>
+                                <input type="number" id="new-enemy-crit-def" class="form-control" placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="button-group" style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button id="clear-enemy-form-btn" class="btn btn-outline" style="flex-grow: 1;">クリア</button>
+                        <button id="save-enemy-btn" class="btn btn-success" style="flex-grow: 2;">新しい敵を保存</button>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+                    <button id="update-preset-enemies-btn" class="btn btn-outline"
+                        style="width: 100%; font-size: 0.8rem; color: #0d6efd; border-color: #0d6efd; margin-bottom: 0.5rem;">🆕
+                        敵データを最新に更新（自作キャラは保持）</button>
+                    <button id="reset-all-data-btn" class="btn btn-outline"
+                        style="width: 100%; font-size: 0.8rem; color: #999;">🔄 全データをリセット</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="scenario-area">
+            <button id="add-scenario-btn" class="btn btn-success"
+                style="width: 100%; padding: 0.8rem; font-size: 1.2rem;">+ 新しい状況を追加</button>
+            <div id="scenario-cards-container" style="margin-top: 1rem;"></div>
+        </div>
+    </div>
+
+    <!-- Preview Overlay -->
+    <div id="preview-overlay" class="hidden">
+        <div class="preview-content-wrapper">
+            <!-- Action Buttons for Preview Mode -->
+            <button id="overlay-download-btn" class="overlay-action-btn" title="ダウンロード">&#x2913;</button>
+            <button id="overlay-close-btn" class="overlay-action-btn" title="閉じる">&times;</button>
+
+            <!-- Action Buttons for Selection Mode -->
+            <button id="selection-close-btn" class="overlay-action-btn hidden" title="閉じる">&times;</button>
+            <button id="selection-select-all-btn" class="overlay-action-btn hidden" title="すべて選択">☑</button>
+            <button id="selection-deselect-all-btn" class="overlay-action-btn hidden" title="すべて解除">☐</button>
+            <button id="selection-generate-btn" class="overlay-action-btn hidden" title="プレビュー生成">▶</button>
+
+            <div id="overlay-cards-container" class="cards-grid">
+                <!-- Cards will be generated here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Enemy Selection Modal -->
+    <div id="enemy-selection-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>敵を選択</h4>
+                <button id="modal-close-btn" class="modal-close-btn">&times;</button>
+            </div>
+            <div id="modal-enemy-list" class="modal-body">
+                <!-- Enemy list will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="dokkan_calc_final.js"></script>
+</body>
+
+</html>
