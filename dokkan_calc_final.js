@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newEnemyCritInputsContainer = document.getElementById('new-enemy-crit-inputs-container');
     const saveEnemyBtn = document.getElementById('save-enemy-btn');
 
-    const STORAGE_KEY = 'dokkan_calc_data_v20';
+    const STORAGE_KEY = 'dokkan_calc_data_v21';
 
     // --- PRESET START ---
     const DEFAULT_ENEMIES_PRESET = [
