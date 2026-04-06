@@ -229,8 +229,8 @@ async function getBossData(page, stageUrl) {
                             const typeId = id % 10;
                             const classId = Math.floor(id / 10) % 10;
                             const typeMap = ['agl', 'teq', 'int', 'str', 'phy'];
-                            if (classId === 1) cls = 'super';
-                            else if (classId === 2) cls = 'extreme';
+                            if (classId === 0) cls = 'super';
+                            else if (classId === 1) cls = 'extreme';
                             if (typeMap[typeId]) type = typeMap[typeId];
                         }
                     }
@@ -255,8 +255,8 @@ async function getBossData(page, stageUrl) {
                         const typeId = id % 10;
                         const classId = Math.floor(id / 10) % 10;
                         const typeMap = ['agl', 'teq', 'int', 'str', 'phy'];
-                        if (classId === 1) cls = 'super';
-                        else if (classId === 2) cls = 'extreme';
+                        if (classId === 0) cls = 'super';
+                        else if (classId === 1) cls = 'extreme';
                         if (typeMap[typeId]) type = typeMap[typeId];
                     }
                 }
@@ -373,6 +373,9 @@ async function main() {
     try {
         // Phase 1: イベント一覧
         const eventUrls = await getEventList(page);
+        if (eventUrls.length === 0) {
+            throw new Error("Cloudflare blocked the request or 0 events found. Aborting to protect existing data.");
+        }
 
         // Phase 2 & 3: 各イベントのステージとボス取得
         const allData = []; // 最終的な4階層データ
@@ -476,6 +479,7 @@ function applyCustomCritOverrides(output) {
     }
 
     output.forEach(et => {
+        if (!et.series) return;
         et.series.forEach(se => {
             se.stages.forEach(st => {
                 st.bosses.forEach(b => {
@@ -551,6 +555,7 @@ function buildOutput(eventMap) {
 
     // Deduplicate stages to keep only highest difficulty (last occurrence of each stage name)
     output.forEach(et => {
+        if (!et.series) return;
         et.series.forEach(se => {
             const nameToLastStage = {};
             se.stages.forEach(st => {
