@@ -436,11 +436,8 @@ async function main() {
 
         // 最終出力
         const output = buildOutput(eventMap);
-        fs.writeFileSync('all_enemies.json', JSON.stringify(output, null, 2), 'utf-8');
-        console.log(`\n================================================`);
-        console.log(`完了! ${output.length} イベント種別を all_enemies.json に保存しました。`);
 
-        // 統計
+        // 統計と異常チェック
         let totalSeries = 0, totalStages = 0, totalBosses = 0;
         for (const et of output) {
             totalSeries += et.series.length;
@@ -451,10 +448,19 @@ async function main() {
                 }
             }
         }
+
+        if (totalBosses < 50) {
+            throw new Error(`Scraping yielded unusually low data (Bosses: ${totalBosses}). Cloudflare block or network error is suspected. Aborting to protect production data.`);
+        }
+
+        fs.writeFileSync('all_enemies.json', JSON.stringify(output, null, 2), 'utf-8');
+        console.log(`\n================================================`);
+        console.log(`完了! ${output.length} イベント種別を all_enemies.json に保存しました。`);
         console.log(`統計: ${output.length}種別, ${totalSeries}シリーズ, ${totalStages}ステージ, ${totalBosses}ボス`);
 
     } catch (err) {
         console.error('Fatal error:', err);
+        process.exitCode = 1;
     } finally {
         await browser.close();
     }
