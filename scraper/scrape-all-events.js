@@ -462,6 +462,33 @@ async function main() {
  */
 
 function applyCustomCritOverrides(output) {
+    const fs = require('fs');
+    const path = require('path');
+    let overrides = {};
+    try {
+        const overridesPath = path.join(__dirname, 'crit_overrides.json');
+        if (fs.existsSync(overridesPath)) {
+            overrides = JSON.parse(fs.readFileSync(overridesPath, 'utf-8'));
+            console.log('Loaded crit_overrides.json');
+        }
+    } catch(e) {
+        console.error('Failed to load crit_overrides.json', e);
+    }
+
+    output.forEach(et => {
+        et.series.forEach(se => {
+            se.stages.forEach(st => {
+                st.bosses.forEach(b => {
+                    const bossId = `${et.eventType}_${se.seriesName}_${st.stageName}_${b.name}`;
+                    if (overrides[bossId]) {
+                        b.critAtkUp = overrides[bossId].critAtkUp;
+                        b.critDefDown = overrides[bossId].critDefDown;
+                    }
+                });
+            });
+        });
+    });
+
     output.forEach(et => {
         if (et.eventType === 'レッドゾーン') {
             et.series.forEach(se => {
