@@ -79862,10 +79862,13 @@ document.addEventListener('DOMContentLoaded', () => {
         enemyEventTypeList.selectedIndex = 0;
       }
 
+      if (savedEnemies.length <= 2 && savedEnemies[0].series && savedEnemies[0].series.length === 0) {
+        throw new Error("取得できたイベントがレッドゾーン等の一部のみ（中身が空）になっています。データ更新の不具合、または過去のエラーデータが残っています。");
+      }
       updateSeriesList();
       } catch (err) {
         console.error("Critical error in updateEnemiesList:", err);
-        alert("敵データの読み込み中にエラーが発生しました。過去の不正なデータが残っている可能性があります。\n\n詳細: " + err.message + "\n\n【解決方法】\n「敵キャラクター管理」の下部にある「全データをリセット」ボタンを押してください。");
+        alert("敵データの読み込み中にエラーが発生しました。過去の不正なデータが残っている可能性があります。\n\n詳細: " + err.message + "\n\n【解決方法】\n「敵キャラクター管理」の下部にある「全データをリセット」ボタンを押して初期化してください。");
       }
     };
 
@@ -81388,6 +81391,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
             state.savedEnemies = JSON.parse(JSON.stringify(DEFAULT_ENEMIES_PRESET));
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            alert("敵データを最新のプリセット (" + DEFAULT_ENEMIES_PRESET.length + " イベント) に更新しました！画面を再読み込みします。");
             location.reload();
           }
         });
