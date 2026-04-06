@@ -25,3 +25,4 @@ scraper/download*
 scraper/parse*
 scraper/all_enemies_backup.json
 scraper/all_enemies_progress.json
+scraper/node_modules/
