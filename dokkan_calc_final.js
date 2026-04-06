@@ -79828,6 +79828,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 4-Tier Cascade Logic ---
     const updateEnemiesList = () => {
+      try {
       if (!enemyEventTypeList || !enemySeriesList || !enemyStageList || !enemyBossList) {
         console.error("Cascade select elements not found, skipping update.");
         return;
@@ -79862,6 +79863,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       updateSeriesList();
+      } catch (err) {
+        console.error("Critical error in updateEnemiesList:", err);
+        alert("敵データの読み込み中にエラーが発生しました。過去の不正なデータが残っている可能性があります。\n\n詳細: " + err.message + "\n\n【解決方法】\n「敵キャラクター管理」の下部にある「全データをリセット」ボタンを押してください。");
+      }
     };
 
     const updateSeriesList = (selectedSerStr = null, selectedStgStr = null, selectedBossStr = null) => {
