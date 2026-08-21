@@ -159819,48 +159819,89 @@ document.addEventListener('DOMContentLoaded', () => {
           throw new Error('拡張機能のデータではありません');
         }
 
-        if (!data.enemy) {
-          throw new Error('敵データが含まれていません');
-        }
+        if (data.multiple) {
+          // 複数(イベント一括)インポートモード
+          let addedCount = 0;
+          let skippedCount = 0;
 
-        const enemy = data.enemy;
+          data.eventList.forEach(importedEventType => {
+            let eventTypeObj = savedEnemies.find(e => e.eventType === importedEventType.eventType);
+            if (!eventTypeObj) {
+              eventTypeObj = { eventType: importedEventType.eventType, series: [] };
+              savedEnemies.push(eventTypeObj);
+            }
 
-        // Fill in form fields
-        if (newEnemyNameInput && enemy.name) {
-          newEnemyNameInput.value = enemy.name;
-        }
+            importedEventType.series.forEach(importedSeries => {
+              let seriesObj = eventTypeObj.series.find(s => s.seriesName === importedSeries.seriesName);
+              if (!seriesObj) {
+                seriesObj = { seriesName: importedSeries.seriesName, stages: [] };
+                eventTypeObj.series.push(seriesObj);
+              }
 
-        if (newEnemyClassSelect && enemy.class) {
-          newEnemyClassSelect.value = enemy.class;
-        }
+              importedSeries.stages.forEach(importedStage => {
+                let stageObj = seriesObj.stages.find(s => s.stageName === importedStage.stageName);
+                if (!stageObj) {
+                  stageObj = { stageName: importedStage.stageName, bosses: [] };
+                  seriesObj.stages.push(stageObj);
+                }
 
-        if (newEnemyTypeSelect && enemy.type) {
-          newEnemyTypeSelect.value = enemy.type;
-        }
-
-        // Clear existing attack patterns and add new ones
-        if (enemy.attacks && enemy.attacks.length > 0) {
-          clearAttackPatternInputs();
-          enemy.attacks.forEach(atk => {
-            addAttackPatternRow(atk);
+                importedStage.bosses.forEach(importedBoss => {
+                  const existingBoss = stageObj.bosses.find(b => b.name === importedBoss.name);
+                  if (existingBoss) {
+                    skippedCount++;
+                  } else {
+                    stageObj.bosses.push(importedBoss);
+                    addedCount++;
+                  }
+                });
+              });
+            });
           });
-        }
 
-        if (importStatusMsg) {
-          importStatusMsg.textContent = '✅ インポート成功!';
-          importStatusMsg.style.color = 'green';
-          setTimeout(() => { importStatusMsg.textContent = ''; }, 3000);
-        }
+          // データを再描画して保存
+          updateEnemiesList();
+          saveState(false);
 
-        console.log('[Dokkan Calc] Imported from extension:', enemy);
+          if (importStatusMsg) {
+            importStatusMsg.innerHTML = '✅ インポート成功!<br><small>新規追加: ' + addedCount + '件 / スキップ: ' + skippedCount + '件</small>';
+            importStatusMsg.style.color = 'green';
+            setTimeout(() => { importStatusMsg.innerHTML = ''; }, 6000);
+          }
+          console.log('[Dokkan Calc] Imported multiple enemies. Added: ' + addedCount + ', Skipped: ' + skippedCount);
+
+        } else {
+          // 従来(単体)インポートモード
+          if (!data.enemy) {
+            throw new Error('敵データが含まれていません');
+          }
+          const enemy = data.enemy;
+
+          if (newEnemyNameInput && enemy.name) newEnemyNameInput.value = enemy.name;
+          if (newEnemyClassSelect && enemy.class) newEnemyClassSelect.value = enemy.class;
+          if (newEnemyTypeSelect && enemy.type) newEnemyTypeSelect.value = enemy.type;
+
+          if (enemy.attacks && enemy.attacks.length > 0) {
+            clearAttackPatternInputs();
+            enemy.attacks.forEach(atk => {
+              addAttackPatternRow(atk);
+            });
+          }
+
+          if (importStatusMsg) {
+            importStatusMsg.textContent = '✅ インポート成功!';
+            importStatusMsg.style.color = 'green';
+            setTimeout(() => { importStatusMsg.textContent = ''; }, 3000);
+          }
+          console.log('[Dokkan Calc] Imported single enemy from extension:', enemy);
+        }
 
       } catch (err) {
         console.error('[Dokkan Calc] Import failed:', err);
         if (importStatusMsg) {
           if (err.name === 'NotAllowedError') {
-            importStatusMsg.textContent = '❌ クリップボードへのアクセスが拒否されました';
+            importStatusMsg.textContent = '❌ クリップボードの権限がありません';
           } else if (err instanceof SyntaxError) {
-            importStatusMsg.textContent = '❌ クリップボードにJSONデータがありません';
+            importStatusMsg.textContent = '❌ 有効なデータがありません';
           } else {
             importStatusMsg.textContent = '❌ ' + err.message;
           }

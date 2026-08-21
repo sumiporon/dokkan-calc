@@ -1,12 +1,10 @@
 /**
  * Dokkan Attribute Parser - Content Script
- * DokkanInfoのボスページから敵の属性情報を取得
  */
 
 (function () {
     'use strict';
 
-    // スタイルを注入
     function injectStyles() {
         const style = document.createElement('style');
         style.textContent = `
@@ -23,6 +21,7 @@
                 border-radius: 12px;
                 padding: 16px;
                 min-width: 280px;
+                max-width: 400px;
                 box-shadow: 0 8px 32px rgba(233, 69, 96, 0.3);
                 color: #fff;
             }
@@ -40,21 +39,20 @@
                 padding: 12px;
                 margin-bottom: 12px;
                 font-size: 13px;
+                max-height: 200px;
+                overflow-y: auto;
             }
             .dokkan-parser-row {
                 display: flex;
                 justify-content: space-between;
                 margin-bottom: 6px;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                padding-bottom: 4px;
             }
-            .dokkan-parser-row:last-child { margin-bottom: 0; }
+            .dokkan-parser-row:last-child { margin-bottom: 0; border-bottom: none; }
             .dokkan-parser-label { color: #aaa; }
-            .dokkan-parser-value { font-weight: bold; color: #fff; }
-            .dokkan-parser-value.type-agl { color: #5eb5ff; }
-            .dokkan-parser-value.type-teq { color: #7cff7c; }
-            .dokkan-parser-value.type-int { color: #ff7cff; }
-            .dokkan-parser-value.type-str { color: #ff7c7c; }
-            .dokkan-parser-value.type-phy { color: #ffb347; }
-            #dokkan-copy-btn {
+            .dokkan-parser-value { font-weight: bold; color: #fff; text-align: right; }
+            .dokkan-copy-btn {
                 width: 100%;
                 padding: 12px;
                 background: linear-gradient(135deg, #e94560 0%, #c23a51 100%);
@@ -65,257 +63,361 @@
                 font-weight: bold;
                 cursor: pointer;
                 transition: all 0.3s ease;
+                margin-bottom: 8px;
             }
-            #dokkan-copy-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 16px rgba(233, 69, 96, 0.4);
-            }
-            #dokkan-copy-btn.copied {
-                background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
-            }
-            .dokkan-parser-status {
-                text-align: center;
-                font-size: 12px;
-                color: #aaa;
-                margin-top: 8px;
-            }
-            .dokkan-parser-not-found {
-                color: #ffb347;
-                text-align: center;
-                padding: 20px;
-            }
+            .dokkan-copy-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(233, 69, 96, 0.4); }
+            .dokkan-copy-btn.copied { background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); }
+            .dokkan-parser-status { text-align: center; font-size: 12px; color: #aaa; }
+            #dokkan-progress { margin: 8px 0; font-size: 12px; color: #7cff7c; text-align: center; }
         `;
         document.head.appendChild(style);
     }
 
-    // 属性マッピング
-    // cha_type_icon_XX: 10-14=Super, 20-24=Extreme
-    // 末尾: 0=AGL, 1=TEQ, 2=INT, 3=STR, 4=PHY
-    const TYPE_MAP = ['agl', 'teq', 'int', 'str', 'phy'];
-    const TYPE_NAMES_JP = {
-        'agl': '速',
-        'teq': '技',
-        'int': '知',
-        'str': '力',
-        'phy': '体'
-    };
-    const CLASS_NAMES_JP = {
-        'super': '超',
-        'extreme': '極'
-    };
+    const CLASS_NAMES_JP = { 'super': '超', 'extreme': '極' };
+    const TYPE_NAMES_JP = { 'agl': '速', 'teq': '技', 'int': '知', 'str': '力', 'phy': '体' };
 
-    // 敵データを格納
-    let enemyData = null;
+    function parseDocumentForBosses(doc, defaultStageName) {
+        const result = { stageName: defaultStageName || '', bosses: [] };
+        const titleEl = doc.querySelector('title');
+        const title = titleEl ? titleEl.textContent : '';
+        result.stageName = title.split('|')[0].trim() || result.stageName;
 
-    /**
-     * cha_type_icon_XX から属性を解析
-     */
-    function parseTypeFromIconId(id) {
-        const typeId = id % 10;
-        const classId = Math.floor(id / 10);
+        const parseStats = (text, cls, type, enemyName) => {
+            const atkMatch = text.match(/ATK[:\s]*([0-9,]+)/i);
+            const atk = atkMatch ? parseInt(atkMatch[1].replace(/,/g, ''), 10) : 0;
 
-        let enemyClass = null;
-        if (classId === 1) enemyClass = 'super';
-        else if (classId === 2) enemyClass = 'extreme';
+            const saMatch = text.match(/ダメージ[:\s]*([0-9,]+)/);
+            const saDamage = saMatch ? parseInt(saMatch[1].replace(/,/g, ''), 10) : 0;
 
-        const enemyType = TYPE_MAP[typeId];
+            const aoeMatch = text.match(/エリアダメージ[^\n]*?:\s*([0-9,]{4,})/);
+            const aoeDamage = aoeMatch ? parseInt(aoeMatch[1].replace(/,/g, ''), 10) : 0;
 
-        if (enemyClass && enemyType) {
-            return { class: enemyClass, type: enemyType };
-        }
-        return null;
-    }
+            let saBuffModifier = 0.0;
+            if (text.match(/ATKが大幅に上昇/) || text.match(/ATKとDEFが大幅上昇/) || text.match(/1ターンATK.*大幅.*上昇/)) {
+                saBuffModifier = 0.5;
+            } else if (text.match(/ATKが上昇/) || text.match(/1ターンATK.*(?<!大幅)上昇/)) {
+                saBuffModifier = 0.3;
+            }
 
-    /**
-     * ページから敵データを抽出
-     */
-    function extractEnemyData() {
-        const data = {
-            name: null,
-            class: null,
-            type: null,
-            normalAtk: null,
-            saAtk: null
+            const hpMatch = text.match(/HP(\d+)%以下でATK(\d+)%UP/);
+            const hpAtkThreshold = hpMatch ? parseInt(hpMatch[1], 10) : 0;
+            const hpAtkUp = hpMatch ? parseInt(hpMatch[2], 10) : 0;
+
+            result.bosses.push({
+                name: enemyName || result.stageName,
+                class: cls,
+                type,
+                atk,
+                saDamage,
+                aoeDamage,
+                saBuffModifier,
+                turnAtkUp: 0, turnAtkMax: 0,
+                hitAtkUp: 0, hitAtkMax: 0,
+                hpAtkThreshold, hpAtkUp,
+                appearEntries: []
+            });
         };
 
-        // 1. 名前を取得
-        const nameEl = document.querySelector('.title_h2') ||
-            document.querySelector('h2') ||
-            document.querySelector('h1');
-        if (nameEl) {
-            data.name = nameEl.textContent.trim();
+        const imgs = Array.from(doc.querySelectorAll('img[src*="cha_type_icon"]'));
+        const enemyContainers = new Set();
+
+        for (const img of imgs) {
+            let parent = img.parentElement;
+            let foundRow = null;
+            while (parent && parent.tagName !== 'BODY' && parent.tagName !== 'HTML') {
+                if (parent.tagName === 'TR' || (parent.classList && parent.classList.contains('row'))) {
+                    foundRow = parent; break;
+                }
+                parent = parent.parentElement;
+            }
+            if (foundRow) enemyContainers.add(foundRow);
         }
 
-        // 2. cha_type_icon を検索（DOM内の全img要素）
-        const imgs = document.querySelectorAll('img');
-        for (const img of imgs) {
-            const src = img.src || '';
-            const match = src.match(/cha_type_icon_(\d+)/);
-            if (match) {
-                const id = parseInt(match[1], 10);
-                const typeInfo = parseTypeFromIconId(id);
-                if (typeInfo) {
-                    data.class = typeInfo.class;
-                    data.type = typeInfo.type;
-                    console.log(`[Dokkan Parser] 属性検出: cha_type_icon_${id} → ${typeInfo.class} ${typeInfo.type}`);
-                    break;
+        if (enemyContainers.size > 0) {
+            for (const row of enemyContainers) {
+                const rowText = row.innerText || row.textContent;
+                let cls = 'extreme', type = 'teq';
+                const img = row.querySelector('img[src*="cha_type_icon"]');
+                if (img) {
+                    const match = (img.src || '').match(/cha_type_icon_(\d+)/);
+                    if (match) {
+                        const id = parseInt(match[1], 10);
+                        const typeId = id % 10;
+                        const classId = Math.floor(id / 10) % 10;
+                        const typeMap = ['agl', 'teq', 'int', 'str', 'phy'];
+                        if (classId === 0) cls = 'super';
+                        else if (classId === 1) cls = 'extreme';
+                        if (typeMap[typeId]) type = typeMap[typeId];
+                    }
                 }
+                let enemyName = '';
+                const nameEl = row.querySelector('.font-size-1_2 b') || row.querySelector('b');
+                if (nameEl) enemyName = nameEl.innerText || nameEl.textContent;
+                parseStats(rowText, cls, type, enemyName.trim());
             }
         }
 
-        // 3. ATK値を取得（Attack Stat: XXX のパターン）
-        const bodyText = document.body.innerText;
-        const atkMatch = bodyText.match(/Attack Stat[:\s]+([\d,]+)/i);
-        if (atkMatch) {
-            data.normalAtk = parseInt(atkMatch[1].replace(/,/g, ''), 10);
-        }
+        const finalBosses = result.bosses.map(enemy => {
+            const attacks = [];
+            if (enemy.atk > 0) {
+                const baseAtk = enemy.atk;
+                const saDamage = enemy.saDamage || baseAtk * 3;
+                const baseSaMulti = saDamage / baseAtk;
+                const saBuffMod = enemy.saBuffModifier || 0;
+                
+                attacks.push({ name: '通常', value: baseAtk });
+                if (saBuffMod > 0) attacks.push({ name: '通常(必殺後)', value: Math.floor(baseAtk * (1.0 + saBuffMod)) });
+                attacks.push({ name: '必殺', value: Math.floor(baseAtk * (baseSaMulti + saBuffMod)) });
+                if (enemy.aoeDamage) attacks.push({ name: '全体攻撃', value: enemy.aoeDamage });
+            }
+            return {
+                name: enemy.name, class: enemy.class, type: enemy.type,
+                attacks, critAtkUp: 0, critDefDown: 0, isCriticalDefault: false
+            };
+        }).filter(b => b.attacks.length > 0);
 
-        // 4. SA ATK を推定（3倍）
-        if (data.normalAtk) {
-            data.saAtk = data.normalAtk * 3;
-        }
-
-        return data;
+        return { stageName: result.stageName, bosses: finalBosses };
     }
 
-    /**
-     * UIパネルを作成
-     */
-    function createUI() {
-        // 既存のパネルがあれば削除
+    function createUI(mode, data) {
         const existing = document.getElementById('dokkan-parser-container');
         if (existing) existing.remove();
 
         const container = document.createElement('div');
         container.id = 'dokkan-parser-container';
 
-        enemyData = extractEnemyData();
-
-        if (enemyData.type) {
-            // データが見つかった場合
-            const classJP = CLASS_NAMES_JP[enemyData.class] || '?';
-            const typeJP = TYPE_NAMES_JP[enemyData.type] || '?';
+        if (mode === 'stage') {
+            const boss = data.bosses && data.bosses[0];
+            const name = boss ? boss.name : '不明';
+            const typeStr = boss ? `${CLASS_NAMES_JP[boss.class] || ''}${TYPE_NAMES_JP[boss.type] || ''}` : '?';
 
             container.innerHTML = `
-        <div id="dokkan-parser-panel">
-          <h3>敵データ検出</h3>
-          <div class="dokkan-parser-info">
-            <div class="dokkan-parser-row">
-              <span class="dokkan-parser-label">名前:</span>
-              <span class="dokkan-parser-value">${enemyData.name || '不明'}</span>
-            </div>
-            <div class="dokkan-parser-row">
-              <span class="dokkan-parser-label">属性:</span>
-              <span class="dokkan-parser-value type-${enemyData.type}">${classJP}${typeJP}</span>
-            </div>
-            ${enemyData.normalAtk ? `
-            <div class="dokkan-parser-row">
-              <span class="dokkan-parser-label">ATK:</span>
-              <span class="dokkan-parser-value">${enemyData.normalAtk.toLocaleString()}</span>
-            </div>
-            ` : ''}
-          </div>
-          <button id="dokkan-copy-btn">📋 計算ツール用にコピー</button>
-          <div class="dokkan-parser-status">クリックでクリップボードにコピー</div>
-        </div>
-      `;
-        } else {
-            // データが見つからなかった場合
+                <div id="dokkan-parser-panel">
+                    <h3>ボスデータ検出 (単体)</h3>
+                    <div class="dokkan-parser-info">
+                        <div class="dokkan-parser-row">
+                            <span class="dokkan-parser-label">名前:</span>
+                            <span class="dokkan-parser-value">${name}</span>
+                        </div>
+                        <div class="dokkan-parser-row">
+                            <span class="dokkan-parser-label">属性:</span>
+                            <span class="dokkan-parser-value">${typeStr}</span>
+                        </div>
+                        <div class="dokkan-parser-row">
+                            <span class="dokkan-parser-label">検出ボス数:</span>
+                            <span class="dokkan-parser-value">${data.bosses ? data.bosses.length : 0}体</span>
+                        </div>
+                    </div>
+                    <button class="dokkan-copy-btn" id="btn-copy-stage">📋 計算ツール用にコピー</button>
+                    <div class="dokkan-parser-status">クリックでクリップボードにコピー</div>
+                </div>
+            `;
+            document.body.appendChild(container);
+            document.getElementById('btn-copy-stage').addEventListener('click', () => copyToClipboard(data, 'stage', document.getElementById('btn-copy-stage')));
+
+        } else if (mode === 'event_list') {
+            const h2 = document.querySelector('.title_h2') || document.querySelector('h2') || document.querySelector('h1');
+            let eventTitle = h2 ? h2.textContent.trim() : 'イベント';
+            let eventType = '独立イベント';
+            let seriesName = '-';
+
+            if(eventTitle.includes('究極のレッドゾーン')) { eventType='レッドゾーン'; seriesName = eventTitle.replace('究極のレッドゾーン', '').trim(); }
+            else if(eventTitle.includes('至上のバトルスペクタクル')) { eventType='バトルスペクタクル'; seriesName = eventTitle.replace('至上のバトルスペクタクル', '').trim(); }
+
             container.innerHTML = `
-        <div id="dokkan-parser-panel">
-          <h3>敵データ検出</h3>
-          <div class="dokkan-parser-not-found">
-            ⚠️ 属性情報が見つかりませんでした<br>
-            <small>ボスページを開いてください</small>
-          </div>
-        </div>
-      `;
-        }
+                <div id="dokkan-parser-panel">
+                    <h3>イベント一括データ検出</h3>
+                    <div class="dokkan-parser-info">
+                        <div class="dokkan-parser-row">
+                            <span class="dokkan-parser-label">イベント:</span>
+                            <span class="dokkan-parser-value" style="font-size: 11px;">${eventTitle}</span>
+                        </div>
+                        <div class="dokkan-parser-row">
+                            <span class="dokkan-parser-label">対象ステージ数:</span>
+                            <span class="dokkan-parser-value">${data.stageLinks.length}</span>
+                        </div>
+                    </div>
+                    <div id="dokkan-progress"></div>
+                    <button class="dokkan-copy-btn" id="btn-fetch-all">🔄 全ステージを一括取得＆コピー</button>
+                    <div class="dokkan-parser-status">時間がかかる場合があります</div>
+                </div>
+            `;
+            document.body.appendChild(container);
 
-        document.body.appendChild(container);
+            document.getElementById('btn-fetch-all').addEventListener('click', async () => {
+                const btn = document.getElementById('btn-fetch-all');
+                btn.disabled = true;
+                const progress = document.getElementById('dokkan-progress');
+                const allStagesData = [];
 
-        // コピーボタンのイベント
-        const copyBtn = document.getElementById('dokkan-copy-btn');
-        if (copyBtn) {
-            copyBtn.addEventListener('click', handleCopy);
+                for (let i = 0; i < data.stageLinks.length; i++) {
+                    const link = data.stageLinks[i];
+                    progress.textContent = `[${i+1}/${data.stageLinks.length}] 取得中...`;
+                    try {
+                        const res = await fetch(link);
+                        const html = await res.text();
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        
+                        const stageData = parseDocumentForBosses(doc, "Stage " + (i+1));
+                        if(stageData.bosses.length > 0) allStagesData.push(stageData);
+                    } catch (e) {
+                        console.error('Fetch error for ' + link, e);
+                    }
+                    await new Promise(r => setTimeout(r, 600));
+                }
+
+                progress.textContent = '取得完了！';
+                const exportObj = {
+                    source: 'dokkan-extension', version: '2.0', multiple: true,
+                    eventList: [{ eventType: eventType, series: [{ seriesName: seriesName, stages: allStagesData }] }]
+                };
+                copyToClipboard(exportObj, 'event_list', btn);
+            });
+
+        } else if (mode === 'category_list') {
+            const catTitle = data.title.split('|')[0].trim();
+            container.innerHTML = `
+                <div id="dokkan-parser-panel">
+                    <h3>挑戦カテゴリ全域一括取得</h3>
+                    <div class="dokkan-parser-info">
+                        <div class="dokkan-parser-row">
+                            <span class="dokkan-parser-label">カテゴリ:</span>
+                            <span class="dokkan-parser-value" style="font-size: 11px;">${catTitle}</span>
+                        </div>
+                        <div class="dokkan-parser-row">
+                            <span class="dokkan-parser-label">対象イベント数:</span>
+                            <span class="dokkan-parser-value">${data.eventLinks.length}</span>
+                        </div>
+                    </div>
+                    <div id="dokkan-progress" style="color: #ffb347; margin-bottom: 5px; text-align:center; font-size: 12px; font-weight: bold;">⚠️ 完了まで数分かかります</div>
+                    <button class="dokkan-copy-btn" id="btn-fetch-category">🔄 全イベントを一括取得</button>
+                    <div class="dokkan-parser-status">（途中で別ページに移動しないでください）</div>
+                </div>
+            `;
+            document.body.appendChild(container);
+
+            document.getElementById('btn-fetch-category').addEventListener('click', async () => {
+                const btn = document.getElementById('btn-fetch-category');
+                btn.disabled = true;
+                const progress = document.getElementById('dokkan-progress');
+                progress.style.color = '#7cff7c';
+                
+                const allEventDatas = [];
+                for (let eIdx = 0; eIdx < data.eventLinks.length; eIdx++) {
+                    const eventLink = data.eventLinks[eIdx];
+                    progress.textContent = `[イベント ${eIdx+1}/${data.eventLinks.length}] を解析中...`;
+                    
+                    try {
+                        const res = await fetch(eventLink);
+                        const html = await res.text();
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        
+                        const links = doc.querySelectorAll('a[href*="events/"]');
+                        const stageLinks = new Set();
+                        for(let a of links) {
+                            if(a.href.match(/\/events\/[a-z]+\/\d+\/\d+(?:[?#]|$)/i)) {
+                                stageLinks.add(a.href);
+                            }
+                        }
+                        
+                        const stageLinksArr = Array.from(stageLinks);
+                        let subEventType = '独立イベント';
+                        const h2 = doc.querySelector('.title_h2') || doc.querySelector('h2') || doc.querySelector('h1');
+                        let eventTitle = h2 ? h2.textContent.trim() : 'イベント';
+                        let seriesName = eventTitle;
+
+                        if(eventTitle.includes('究極のレッドゾーン')) { subEventType='レッドゾーン'; seriesName = eventTitle.replace('究極のレッドゾーン', '').trim(); }
+                        else if(eventTitle.includes('至上のバトルスペクタクル')) { subEventType='バトルスペクタクル'; seriesName = eventTitle.replace('至上のバトルスペクタクル', '').trim(); }
+                        else if(eventTitle.includes('メモリアルバトル')) { subEventType='メモリアルバトル'; seriesName = eventTitle.replace('メモリアルバトル', '').trim(); }
+                        else if(eventTitle.includes('極限バトルロード')) { subEventType='極限バトルロード'; seriesName = eventTitle.replace('極限バトルロード', '').trim(); }
+                        else if(eventTitle.includes('スーパーバトルロード')) { subEventType='スーパーバトルロード'; seriesName = eventTitle.replace('スーパーバトルロード', '').trim(); }
+                        else if(eventTitle.includes('ドッカン大乱戦')) { subEventType='大乱戦'; seriesName = eventTitle.trim(); }
+
+                        const allStagesData = [];
+                        for(let sIdx = 0; sIdx < stageLinksArr.length; sIdx++) {
+                            progress.textContent = `[イベ ${eIdx+1}/${data.eventLinks.length}] ステージ (${sIdx+1}/${stageLinksArr.length}) を取得中...`;
+                            const sres = await fetch(stageLinksArr[sIdx]);
+                            const shtml = await sres.text();
+                            const sdoc = parser.parseFromString(shtml, 'text/html');
+                            const stageData = parseDocumentForBosses(sdoc, "Stage " + (sIdx+1));
+                            if(stageData.bosses.length > 0) allStagesData.push(stageData);
+                            await new Promise(r => setTimeout(r, 600));
+                        }
+
+                        if(allStagesData.length > 0) {
+                            allEventDatas.push({ eventType: subEventType, series: [{ seriesName: seriesName, stages: allStagesData }] });
+                        }
+                    } catch (e) { console.error('Fetch err', e); }
+                }
+                
+                progress.textContent = '完了!! クリップボードにコピー中...';
+                const exportObj = { source: 'dokkan-extension', version: '2.0', multiple: true, eventList: allEventDatas };
+                copyToClipboard(exportObj, 'category_list', btn);
+            });
         }
     }
 
-    /**
-     * クリップボードにコピー
-     */
-    async function handleCopy() {
-        if (!enemyData || !enemyData.type) return;
-
-        const exportData = {
-            source: 'dokkan-extension',
-            version: '1.0',
-            enemy: {
-                name: enemyData.name || 'Unknown',
-                class: enemyData.class,
-                type: enemyData.type,
-                attacks: []
-            }
-        };
-
-        // ATKがある場合は攻撃パターンを追加
-        if (enemyData.normalAtk) {
-            exportData.enemy.attacks.push({ name: '通常', value: enemyData.normalAtk });
-        }
-        if (enemyData.saAtk) {
-            exportData.enemy.attacks.push({ name: '必殺', value: enemyData.saAtk });
+    async function copyToClipboard(exportData, type, btnElement) {
+        if(type === 'stage') {
+            const formatted = {
+                source: 'dokkan-extension', version: '2.0', multiple: true,
+                eventList: [{ eventType: '不明', series: [{ seriesName: '-', stages: [exportData] }] }]
+            };
+            exportData = formatted;
         }
 
         try {
             await navigator.clipboard.writeText(JSON.stringify(exportData, null, 2));
-
-            const btn = document.getElementById('dokkan-copy-btn');
-            if (btn) {
-                btn.textContent = '✅ コピーしました！';
-                btn.classList.add('copied');
-
+            if (btnElement) {
+                btnElement.textContent = '✅ コピー完了！';
+                btnElement.classList.add('copied');
                 setTimeout(() => {
-                    btn.textContent = '📋 計算ツール用にコピー';
-                    btn.classList.remove('copied');
-                }, 2000);
+                    btnElement.textContent = type === 'stage' ? '📋 計算ツール用にコピー' : (type === 'category_list' ? '🔄 全イベントを一括取得' : '🔄 全ステージを一括取得＆コピー');
+                    btnElement.classList.remove('copied');
+                    btnElement.disabled = false;
+                }, 3000);
             }
-
-            console.log('[Dokkan Parser] データをコピーしました:', exportData);
         } catch (err) {
-            console.error('[Dokkan Parser] コピー失敗:', err);
-            alert('コピーに失敗しました。ページを再読み込みしてください。');
+            alert('コピー失敗');
         }
     }
 
-    /**
-     * 初期化（ページ読み込み完了後に実行）
-     */
     function init() {
-        // スタイルを注入
         injectStyles();
+        let isStageDetail = false;
+        let isEventList = false;
+        let isCategoryList = false;
 
-        // ボスページかどうかをチェック（URLに /boss/ や /enemy/ が含まれる場合など）
-        const url = window.location.href.toLowerCase();
-        const isBossPage = url.includes('/boss/') ||
-            url.includes('/enemy/') ||
-            url.includes('/stage/') ||
-            url.includes('/event/');
+        const stageMatch = window.location.pathname.match(/\/events\/(?:challenge|super|growth|story)\/\d+\/\d+/i);
+        const eventMatch = window.location.pathname.match(/\/events\/(?:challenge|super|growth|story)\/\d+/i);
+        const catMatch = window.location.pathname.match(/\/events\/(?:challenge|super|growth|story)\/?$/i);
 
-        // すべてのページでUIを表示（属性が見つからない場合はメッセージを表示）
-        console.log('[Dokkan Parser] 初期化開始...');
+        if (stageMatch && !window.location.pathname.endsWith('/')) isStageDetail = true;
+        else if (eventMatch && !stageMatch) isEventList = true;
+        else if (catMatch) isCategoryList = true;
 
-        // DOMが完全に読み込まれるまで少し待つ
-        setTimeout(() => {
-            createUI();
-            console.log('[Dokkan Parser] UI作成完了');
-        }, 1500);
+        if (isStageDetail) {
+            setTimeout(() => { createUI('stage', parseDocumentForBosses(document, document.title)); }, 1000);
+        } else if (isEventList) {
+            const links = document.querySelectorAll('a');
+            const stageLinks = new Set();
+            for(let a of links) {
+                if(a.href.match(/\/events\/[a-z]+\/\d+\/\d+(?:[?#]|$)/i)) stageLinks.add(a.href);
+            }
+            createUI('event_list', { stageLinks: Array.from(stageLinks) });
+        } else if (isCategoryList) {
+            const ObjectLinks = document.querySelectorAll('a');
+            const eventLinks = new Set();
+            for (let a of ObjectLinks) {
+                if (a.href.match(/\/events\/[a-z]+\/\d+(?:[?#]|$)/i) && !a.href.match(/\/events\/[a-z]+\/\d+\/\d+/i)) {
+                    eventLinks.add(a.href);
+                }
+            }
+            createUI('category_list', { eventLinks: Array.from(eventLinks), title: document.title });
+        }
     }
 
-    // 実行
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init); } else { init(); }
 })();
