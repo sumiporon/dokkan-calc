@@ -1,0 +1,22 @@
+{
+  "durabilityLines": [{ "name": "完封", "value": 0 }],
+  "savedCharacters": [],
+  "savedEnemies": [
+    {
+      "groupName": "旧テストグループ",
+      "enemies": [
+        {
+          "name": "旧テスト敵",
+          "class": "super",
+          "type": "teq",
+          "attacks": [
+            { "name": "通常", "value": 100000 },
+            { "name": "必殺", "value": 250000 }
+          ]
+        }
+      ]
+    }
+  ],
+  "currentScenarios": [],
+  "theme": "light"
+}

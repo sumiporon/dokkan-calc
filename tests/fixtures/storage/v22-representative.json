@@ -1,0 +1,157 @@
+{
+  "durabilityLines": [
+    { "name": "完封", "value": 0 },
+    { "name": "70万", "value": 700000 }
+  ],
+  "savedCharacters": [
+    {
+      "name": "テストキャラクター",
+      "scenarios": [
+        {
+          "originalIndex": 0,
+          "scenario_title": "基準状況",
+          "char_def": "100000",
+          "passive": "100",
+          "multi_passive": "20",
+          "memory": "10",
+          "link": "15",
+          "super_attack": "30",
+          "leader": "200",
+          "field": "0",
+          "active": "50",
+          "support_item": "40",
+          "dr_input": "30",
+          "is_guard": true,
+          "loaded_enemy_event_type": "0",
+          "loaded_enemy_series": "0",
+          "loaded_enemy_stage": "0",
+          "loaded_enemy_boss": "0_0_0_0",
+          "own_class": "super",
+          "own_type": "teq",
+          "enemy_class": "extreme",
+          "enemy_type": "agl",
+          "attr_def_up": "10",
+          "enemy_atk": "200",
+          "is_critical": false,
+          "crit_atk_up": "",
+          "crit_def_down": "",
+          "loadedEnemy": {
+            "name": "テスト敵",
+            "class": "extreme",
+            "type": "agl",
+            "attacks": [
+              { "name": "通常", "value": 200000 },
+              { "name": "通常(必殺後)", "value": 260000 },
+              { "name": "必殺", "value": 560000 }
+            ],
+            "baseAtk": 200000,
+            "saMulti": 2.5,
+            "saBuffMod": 0.3,
+            "aoeDamage": 0,
+            "hasSaCrit": false,
+            "turnAtkUpStartTurn": 1,
+            "turnAtkUp": 10,
+            "turnAtkMax": 30,
+            "hitAtkUp": 5,
+            "hitAtkMax": 20,
+            "hpAtkThreshold": 50,
+            "hpAtkUp": 40,
+            "appearEntries": [
+              { "turn": 3, "cumulativeAtkUp": 25 }
+            ],
+            "critAtkUp": 0,
+            "critDefDown": 0,
+            "isCriticalDefault": false,
+            "critHpThreshold": 0,
+            "critHpRate": 0,
+            "critTurnUp": 0,
+            "critTurnMax": 0,
+            "critFixedRate": 0
+          }
+        }
+      ]
+    }
+  ],
+  "savedEnemies": [
+    {
+      "eventType": "テストイベント",
+      "series": [
+        {
+          "seriesName": "テストシリーズ",
+          "stages": [
+            {
+              "stageName": "テストステージ",
+              "bosses": [
+                {
+                  "name": "テスト敵",
+                  "class": "extreme",
+                  "type": "agl",
+                  "attacks": [
+                    { "name": "通常", "value": 200000 },
+                    { "name": "通常(必殺後)", "value": 260000 },
+                    { "name": "必殺", "value": 560000 }
+                  ],
+                  "baseAtk": 200000,
+                  "saMulti": 2.5,
+                  "saBuffMod": 0.3,
+                  "aoeDamage": 0,
+                  "hasSaCrit": false,
+                  "turnAtkUpStartTurn": 1,
+                  "turnAtkUp": 10,
+                  "turnAtkMax": 30,
+                  "hitAtkUp": 5,
+                  "hitAtkMax": 20,
+                  "hpAtkThreshold": 50,
+                  "hpAtkUp": 40,
+                  "appearEntries": [
+                    { "turn": 3, "cumulativeAtkUp": 25 }
+                  ],
+                  "critAtkUp": 0,
+                  "critDefDown": 0,
+                  "isCriticalDefault": false,
+                  "critHpThreshold": 0,
+                  "critHpRate": 0,
+                  "critTurnUp": 0,
+                  "critTurnMax": 0,
+                  "critFixedRate": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "currentScenarios": [
+    {
+      "originalIndex": 0,
+      "scenario_title": "未保存の作業中状況",
+      "char_def": "90000",
+      "passive": "80",
+      "multi_passive": "",
+      "memory": "",
+      "link": "",
+      "super_attack": "",
+      "leader": "170",
+      "field": "",
+      "active": "",
+      "support_item": "",
+      "dr_input": "20",
+      "is_guard": false,
+      "loaded_enemy_event_type": "0",
+      "loaded_enemy_series": "0",
+      "loaded_enemy_stage": "0",
+      "loaded_enemy_boss": "0_0_0_0",
+      "own_class": "super",
+      "own_type": "str",
+      "enemy_class": "extreme",
+      "enemy_type": "phy",
+      "attr_def_up": "0",
+      "enemy_atk": "",
+      "is_critical": false,
+      "crit_atk_up": "",
+      "crit_def_down": ""
+    }
+  ],
+  "theme": "dark"
+}

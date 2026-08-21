@@ -1,0 +1,27 @@
+{
+  "durabilityLines": [{ "name": "完封", "value": 0 }],
+  "savedCharacters": [],
+  "savedEnemies": [
+    {
+      "categoryName": "旧テストカテゴリ",
+      "events": [
+        {
+          "eventName": "旧テストイベント",
+          "bosses": [
+            {
+              "name": "旧テスト敵",
+              "class": "extreme",
+              "type": "int",
+              "attacks": [
+                { "name": "通常", "value": 120000 },
+                { "name": "必殺", "value": 300000 }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "currentScenarios": [],
+  "theme": "light"
+}
