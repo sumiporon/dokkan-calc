@@ -1,0 +1,20 @@
+{
+  "name": "dokkan-calc-test-foundation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Characterization, calculation-reference, enemy-data, and browser tests for the legacy Dokkan calculator.",
+  "scripts": {
+    "test": "npm run test:syntax && npm run test:unit && npm run test:data && npm run test:browser",
+    "test:syntax": "node --check dokkan_calc_final.js && node --check chrome_extension/content.js",
+    "test:unit": "node --test --test-reporter=spec tests/unit/calculations.test.mjs",
+    "test:data": "node --test --test-reporter=spec tests/data/enemy-data.test.mjs tests/data/storage-schema.test.mjs",
+    "test:browser": "node --test --test-concurrency=1 --test-reporter=spec tests/browser/app.test.mjs",
+    "audit:data": "node scripts/audit-enemy-data.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "playwright": "1.58.2"
+  }
+}

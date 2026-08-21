@@ -1,0 +1,257 @@
+{
+  "model": {
+    "damageVariance": 1.0,
+    "note": "Phase 2 baseline. legacyExpected records current behavior; specExpected records independently verified target behavior; candidateExpected is explicitly not yet confirmed."
+  },
+  "defenseCases": [
+    {
+      "id": "base-defense-only",
+      "input": { "char_def": 100000 },
+      "legacyExpected": 100000
+    },
+    {
+      "id": "all-legacy-defense-brackets",
+      "input": {
+        "char_def": 100000,
+        "leader": 200,
+        "field": 10,
+        "passive": 100,
+        "memory": 20,
+        "link": 25,
+        "multi_passive": 50,
+        "super_attack": 30,
+        "active": 40,
+        "support_item": 50
+      },
+      "legacyExpected": 4054050
+    },
+    {
+      "id": "active-skill-defense",
+      "input": { "char_def": 100000, "active": 50 },
+      "legacyExpected": 150000
+    },
+    {
+      "id": "support-item-defense",
+      "input": { "char_def": 100000, "support_item": 50 },
+      "legacyExpected": 150000
+    },
+    {
+      "id": "active-and-support-item-defense",
+      "input": { "char_def": 100000, "active": 50, "support_item": 50 },
+      "legacyExpected": 225000
+    }
+  ],
+  "knownDefenseDifferences": [
+    {
+      "id": "floor-after-each-defense-bracket",
+      "input": { "char_def": 101, "leader": 33, "passive": 33 },
+      "legacyExpected": 178.6589,
+      "legacyDisplayExpected": 179,
+      "specExpected": 178
+    },
+    {
+      "id": "memory-and-item-share-one-bracket",
+      "input": { "char_def": 100000, "memory": 20, "support_item": 20 },
+      "legacyExpected": 144000,
+      "candidateExpected": 140000,
+      "evidenceStatus": "needs-confirmation"
+    }
+  ],
+  "modifierCases": [
+    {
+      "id": "teq-guards-agl",
+      "input": { "own_class": "super", "own_type": "teq", "enemy_class": "super", "enemy_type": "agl" },
+      "expected": { "status": "advantage", "attrMod": 0.9, "guardMod": 0.5 }
+    },
+    {
+      "id": "agl-guards-str",
+      "input": { "own_class": "super", "own_type": "agl", "enemy_class": "super", "enemy_type": "str" },
+      "expected": { "status": "advantage", "attrMod": 0.9, "guardMod": 0.5 }
+    },
+    {
+      "id": "str-guards-phy",
+      "input": { "own_class": "super", "own_type": "str", "enemy_class": "super", "enemy_type": "phy" },
+      "expected": { "status": "advantage", "attrMod": 0.9, "guardMod": 0.5 }
+    },
+    {
+      "id": "phy-guards-int",
+      "input": { "own_class": "super", "own_type": "phy", "enemy_class": "super", "enemy_type": "int" },
+      "expected": { "status": "advantage", "attrMod": 0.9, "guardMod": 0.5 }
+    },
+    {
+      "id": "int-guards-teq",
+      "input": { "own_class": "super", "own_type": "int", "enemy_class": "super", "enemy_type": "teq" },
+      "expected": { "status": "advantage", "attrMod": 0.9, "guardMod": 0.5 }
+    },
+    {
+      "id": "agl-is-weak-to-teq",
+      "input": { "own_class": "super", "own_type": "agl", "enemy_class": "super", "enemy_type": "teq" },
+      "expected": { "status": "disadvantage", "attrMod": 1.25, "guardMod": 1.0 }
+    },
+    {
+      "id": "str-is-weak-to-agl",
+      "input": { "own_class": "super", "own_type": "str", "enemy_class": "super", "enemy_type": "agl" },
+      "expected": { "status": "disadvantage", "attrMod": 1.25, "guardMod": 1.0 }
+    },
+    {
+      "id": "phy-is-weak-to-str",
+      "input": { "own_class": "super", "own_type": "phy", "enemy_class": "super", "enemy_type": "str" },
+      "expected": { "status": "disadvantage", "attrMod": 1.25, "guardMod": 1.0 }
+    },
+    {
+      "id": "int-is-weak-to-phy",
+      "input": { "own_class": "super", "own_type": "int", "enemy_class": "super", "enemy_type": "phy" },
+      "expected": { "status": "disadvantage", "attrMod": 1.25, "guardMod": 1.0 }
+    },
+    {
+      "id": "teq-is-weak-to-int",
+      "input": { "own_class": "super", "own_type": "teq", "enemy_class": "super", "enemy_type": "int" },
+      "expected": { "status": "disadvantage", "attrMod": 1.25, "guardMod": 1.0 }
+    },
+    {
+      "id": "same-class-neutral",
+      "input": { "own_class": "super", "own_type": "teq", "enemy_class": "super", "enemy_type": "teq" },
+      "expected": { "status": "neutral", "attrMod": 1.0, "guardMod": 1.0 }
+    },
+    {
+      "id": "opposite-class-neutral",
+      "input": { "own_class": "super", "own_type": "teq", "enemy_class": "extreme", "enemy_type": "teq" },
+      "expected": { "status": "neutral", "attrMod": 1.15, "guardMod": 1.0 }
+    }
+  ],
+  "damageCases": [
+    {
+      "id": "normal-neutral",
+      "input": { "char_def": 100000, "own_class": "super", "own_type": "teq", "enemy_class": "super", "enemy_type": "teq" },
+      "enemyAttack": 1000000,
+      "expectedDamage": 900000
+    },
+    {
+      "id": "super-attack-neutral",
+      "input": { "char_def": 100000, "own_class": "super", "own_type": "teq", "enemy_class": "super", "enemy_type": "teq" },
+      "enemyAttack": 3000000,
+      "expectedDamage": 2900000
+    },
+    {
+      "id": "damage-reduction-40-percent",
+      "input": { "char_def": 100000, "dr_input": 40, "own_class": "super", "own_type": "teq", "enemy_class": "super", "enemy_type": "teq" },
+      "enemyAttack": 1000000,
+      "expectedDamage": 500000
+    },
+    {
+      "id": "guard-all-attacks",
+      "input": { "char_def": 100000, "is_guard": true, "own_class": "super", "own_type": "teq", "enemy_class": "super", "enemy_type": "teq" },
+      "enemyAttack": 1000000,
+      "expectedDamage": 350000
+    },
+    {
+      "id": "opposite-class-natural-advantage",
+      "input": { "char_def": 100000, "own_class": "super", "own_type": "teq", "enemy_class": "extreme", "enemy_type": "agl" },
+      "enemyAttack": 1000000,
+      "expectedDamage": 450000
+    },
+    {
+      "id": "opposite-class-disadvantage",
+      "input": { "char_def": 100000, "own_class": "super", "own_type": "teq", "enemy_class": "extreme", "enemy_type": "int" },
+      "enemyAttack": 1000000,
+      "expectedDamage": 1400000
+    },
+    {
+      "id": "type-defense-level-15-with-guard",
+      "input": { "char_def": 100000, "is_guard": true, "attr_def_up": 15, "own_class": "super", "own_type": "teq", "enemy_class": "extreme", "enemy_type": "agl" },
+      "enemyAttack": 1000000,
+      "expectedDamage": 275000
+    },
+    {
+      "id": "enemy-critical-atk-and-def-change",
+      "input": { "char_def": 1000000, "is_critical": true, "crit_atk_up": 50, "crit_def_down": 70, "own_type": "teq", "enemy_type": "teq" },
+      "enemyAttack": 1000000,
+      "expectedDamage": 1200000
+    },
+    {
+      "id": "enemy-critical-against-all-guard",
+      "input": { "char_def": 1000000, "is_guard": true, "is_critical": true, "crit_atk_up": 50, "crit_def_down": 70, "own_type": "teq", "enemy_type": "teq" },
+      "enemyAttack": 1000000,
+      "expectedDamage": 450000
+    }
+  ],
+  "durabilityCases": [
+    {
+      "id": "perfect-neutral",
+      "input": { "char_def": 100000 },
+      "targetDamage": 0,
+      "expectedEnemyAttack": 100000
+    },
+    {
+      "id": "specified-700k-neutral",
+      "input": { "char_def": 100000 },
+      "targetDamage": 700000,
+      "expectedEnemyAttack": 800000
+    },
+    {
+      "id": "specified-700k-all-guard",
+      "input": { "char_def": 100000, "is_guard": true },
+      "targetDamage": 700000,
+      "expectedEnemyAttack": 1875000
+    },
+    {
+      "id": "specified-700k-dr-40",
+      "input": { "char_def": 100000, "dr_input": 40 },
+      "targetDamage": 700000,
+      "expectedEnemyAttack": 1333333.3333333333
+    }
+  ],
+  "conditionCases": [
+    {
+      "id": "turn-progress-40-percent",
+      "baseAttack": 1000000,
+      "conditions": { "turnPct": 40 },
+      "expectedAttack": 1400000
+    },
+    {
+      "id": "hits-received-20-percent",
+      "baseAttack": 1000000,
+      "conditions": { "hitPct": 20 },
+      "expectedAttack": 1200000
+    },
+    {
+      "id": "hp-condition-30-percent",
+      "baseAttack": 1000000,
+      "conditions": { "hpPct": 30 },
+      "expectedAttack": 1300000
+    },
+    {
+      "id": "appearance-turn-40-percent",
+      "baseAttack": 1000000,
+      "conditions": { "appearPct": 40 },
+      "expectedAttack": 1400000
+    }
+  ],
+  "attackVariantCases": [
+    {
+      "id": "post-super-and-super-attack-buff",
+      "boostedAttack": 1000000,
+      "enemy": { "saMulti": 3.0, "saBuffMod": 0.5 },
+      "expected": { "normal": 1000000, "postSaNormal": 1500000, "superAttack": 3500000 }
+    }
+  ],
+  "knownConditionDifferences": [
+    {
+      "id": "broly-turn-and-hit-use-separate-brackets",
+      "baseAttack": 1200000,
+      "legacyConditions": { "turnPct": 150, "hitPct": 100 },
+      "specConditions": { "turnPct": 150, "hitPct": 100 },
+      "enemy": { "saMulti": 3.0, "saBuffMod": 0.5 },
+      "legacyExpected": { "normal": 4200000, "postSaNormal": 6300000, "superAttack": 14700000 },
+      "specExpected": { "normal": 6000000, "postSaNormal": 9000000, "superAttack": 21000000 }
+    },
+    {
+      "id": "broly-first-turn-cannot-be-no-buff",
+      "baseAttack": 1200000,
+      "legacyConditions": { "turnPct": 0 },
+      "specConditions": { "turnPct": 30 },
+      "legacyExpected": 1200000,
+      "specExpected": 1560000
+    }
+  ]
+}
