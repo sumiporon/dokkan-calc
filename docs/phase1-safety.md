@@ -19,6 +19,8 @@ The older OneDrive Git worktree remains untouched as a secondary historical copy
 - Git rollback tag: `legacy-baseline-2026-08-21`
 - Safety branch: `phase1-safety-20260821`
 
+The public `origin/main` branch remains unchanged at commit `3ca5383`. The safety branch and rollback tag are currently local recovery points: uploading the branch would also publish the preserved legacy/PAT-related code and therefore requires the owner's explicit approval after this report. A local scan found no tracked file matching common live GitHub-token, cloud-key, or private-key formats; this is a safety check, not a guarantee that every kind of secret is absent.
+
 The archive includes the application, scraper sources, existing enemy data, HTML cache, Chrome extension, and legacy patches. It excludes reproducible `node_modules` and the backup directory itself.
 
 ## Scheduled enemy update pause
