@@ -2,9 +2,13 @@ name: Daily Update - Scrape DokkanInfo
 
 on:
   workflow_dispatch:
-  schedule:
-    # 毎日 JST 06:00 (UTC 21:00 前日)
-    - cron: '0 21 * * *'
+  # SAFETY PAUSE (2026-08-21): the daily schedule is intentionally disabled.
+  # The current scraper can silently lose or misclassify enemy data, and
+  # DokkanInfo's current Terms of Use also require a source-policy review.
+  # Keep workflow_dispatch so a maintainer can run a reviewed test manually.
+  # schedule:
+  #   # 毎日 JST 06:00 (UTC 21:00 前日)
+  #   - cron: '0 21 * * *'
 
 jobs:
   scrape-and-update:
