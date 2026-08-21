@@ -19,6 +19,17 @@ This file defines the standing development policy for this repository. It applie
 - Do not rewrite the whole application without a specific reason and a migration/rollback plan.
 - DokkanInfo and the current acquisition method are not permanent assumptions. Prefer structured, stable, verifiable data sources when they are legitimately available.
 
+## Continuous re-evaluation
+
+- Treat the current development direction as the best working hypothesis, not an unchangeable premise. Respect it by default, but keep asking during implementation whether it is still the simplest, safest, most accurate, and most maintainable choice for this personal application.
+- Re-evaluate an earlier decision when new evidence from the code, data, tests, external services, terms, or actual user behavior shows a clear benefit. Never preserve a technology or structure solely because it was chosen previously.
+- Vite, TypeScript, GitHub Pages, JSON storage, DokkanInfo, and GitHub Actions are not absolute requirements. A clearly better option may replace them after an evidence-based comparison.
+- Do not change direction frequently or without a concrete reason. Record the evidence, benefits, costs, migration risk, and rollback path for a meaningful change.
+- Agents may make small, reversible technical improvements autonomously when they stay within the approved product scope.
+- Before implementing a major change to architecture, the persistent data format, the enemy-data source, or the publication/deployment method, explain the proposed change and its trade-offs to the owner in plain Japanese and obtain approval.
+- Plans are guides rather than scripts. Reassess assumptions while working instead of mechanically completing an obsolete plan.
+- Treat technical accessibility and permission as separate questions. Do not bypass bot protection, access controls, Terms of Use, or `robots.txt`. Keep DokkanInfo as the main reference for now, but do not resume automated acquisition until its permission/policy issue is resolved; replace it if a legitimate and clearly better structured source becomes available.
+
 ## Safety rules
 
 - Before a large or risky change, create and verify a recoverable commit, tag, branch, or archive.
