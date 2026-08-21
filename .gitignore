@@ -2,6 +2,22 @@
 /node_modules/
 /scraper/node_modules/
 
+# Local credentials and browser-profile data
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+/Cookies
+/Cookies-journal
+/Login Data
+/Login Data-journal
+/Local Storage/
+/Session Storage/
+/IndexedDB/
+
 # Local safety archives and research material
 /safety-backups/
 
