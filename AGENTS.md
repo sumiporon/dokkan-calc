@@ -28,7 +28,7 @@ This file defines the standing development policy for this repository. It applie
 - Agents may make small, reversible technical improvements autonomously when they stay within the approved product scope.
 - Before implementing a major change to architecture, the persistent data format, the enemy-data source, or the publication/deployment method, explain the proposed change and its trade-offs to the owner in plain Japanese and obtain approval.
 - Plans are guides rather than scripts. Reassess assumptions while working instead of mechanically completing an obsolete plan.
-- Treat technical accessibility and permission as separate questions. Do not bypass bot protection, access controls, Terms of Use, or `robots.txt`. Keep DokkanInfo as the main reference for now, but do not resume automated acquisition until its permission/policy issue is resolved; replace it if a legitimate and clearly better structured source becomes available.
+- Treat technical accessibility and permission as separate questions. Do not bypass bot protection, access controls, Terms of Use, or `robots.txt`. Keep the current production dataset as the baseline, but do not treat DokkanInfo, DokkanDB, DokkanStats, or another site as an approved primary source without the necessary permission. The current first inquiry candidate is DokkanStats because its terms explicitly allow prior written permission; re-evaluate this if permission, licensing, or a better legitimate source becomes available.
 
 ## Safety rules
 
@@ -48,9 +48,11 @@ This file defines the standing development policy for this repository. It applie
 - Keep commits small enough to explain and roll back. Do not mix a data refresh with unrelated application changes.
 - Update documentation when run commands, data formats, deployment, or safety procedures change.
 
-## Current Phase 1 state
+## Current modernization state
 
 - The canonical working folder is `C:\Users\kou20\Downloads\dokkan-calc-main`.
 - The legacy rollback tag is `legacy-baseline-2026-08-21`.
 - The daily enemy-data schedule is paused. Do not re-enable it until the scraper/data pipeline has validation gates and the data-source policy has been resolved.
-- Phase 2 modernization and any real data-source migration require the owner's review of the Phase 1 report first.
+- Phase 3 introduced a small shared calculation core and offline saved-HTML analysis, but did not replace the production enemy dataset, localStorage, deployment, or scraper.
+- Damage variance and minimum-damage presentation remain a product decision. Do not change that UI until the owner selects a presentation based on the Phase 3 report.
+- Phase 4 structural migration and any real data-source migration require the owner's review of the Phase 3 report first.

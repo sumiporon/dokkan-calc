@@ -9,6 +9,12 @@ try {
     
     fs.copyFileSync(srcDir + '/dokkan_calc_final.html', dstDir + '/dokkan_calc_final.html');
     console.log('dokkan_calc_final.html copied');
+
+    if (!fs.existsSync(dstDir + '/src')) {
+        fs.mkdirSync(dstDir + '/src', { recursive: true });
+    }
+    fs.copyFileSync(srcDir + '/src/calculation-core.js', dstDir + '/src/calculation-core.js');
+    console.log('src/calculation-core.js copied');
     
     if (!fs.existsSync(dstDir + '/scraper')) {
         fs.mkdirSync(dstDir + '/scraper');

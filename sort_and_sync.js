@@ -47,6 +47,11 @@ try {
     const dstDir = 'C:/Users/kou20/OneDrive - 甲南大学/ドキュメント/GitHub/dokkan-calc';
     fs.copyFileSync(srcDir + '/dokkan_calc_final.js', dstDir + '/dokkan_calc_final.js');
     console.log('dokkan_calc_final.js copied!');
+    if (!fs.existsSync(dstDir + '/src')) {
+        fs.mkdirSync(dstDir + '/src', { recursive: true });
+    }
+    fs.copyFileSync(srcDir + '/src/calculation-core.js', dstDir + '/src/calculation-core.js');
+    console.log('src/calculation-core.js copied!');
     fs.copyFileSync(srcDir + '/scraper/all_enemies.json', dstDir + '/scraper/all_enemies.json');
     console.log('all_enemies.json copied!');
     

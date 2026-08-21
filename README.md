@@ -39,20 +39,30 @@ npm test
 ```powershell
 npm run test:unit
 npm run test:data
+npm run test:cached-source
 npm run test:browser
 npm run audit:data
 ```
 
 ブラウザテストは独立した一時ブラウザを使います。普段使用しているブラウザの保存データやlocalStorageは読み書きしません。
 
+保存済みHTMLだけを再解析して集計レポートを更新する場合は、次を使います。外部サイトへの通信や現行敵データの上書きは行いません。
+
+```powershell
+npm run analyze:cached-source
+```
+
 ## 主なファイル
 
 - `dokkan_calc_final.html` / `.css` / `.js`：現在の公開アプリ本体
+- `src/calculation-core.js`：画面と自動テストが共用する純粋計算モジュール
 - `scraper/all_enemies.json`：現行の敵データ
 - `scraper/`：過去のデータ取得・解析コードとHTMLキャッシュ
 - `chrome_extension/`：DokkanInfo取得用の既存Chrome拡張
 - `tests/`：計算、敵データ、localStorage、画面操作のテスト
 - `scripts/audit-enemy-data.mjs`：敵データの監査レポート
+- `scripts/analyze-cached-enemy-source.mjs`：保存HTML専用の読取・比較レポート
+- `schemas/`：将来形式の設計案（現行アプリはまだ読み込まない）
 - `docs/`：安全記録、データ形式、計算上の既知差、移行時の注意
 
 ## 重要な安全上の注意
@@ -70,3 +80,7 @@ npm run audit:data
 - [計算基準と既知の差](docs/calculation-baseline.md)
 - [敵データ形式](docs/enemy-data-schema.md)
 - [localStorage形式](docs/local-storage-schema.md)
+- [第3段階の計算仕様調査](docs/phase3-calculation-specification.md)
+- [第3段階の敵データ取得元再評価](docs/phase3-data-source-evaluation.md)
+- [保存HTMLの再解析結果](docs/phase3-cached-source-analysis.md)
+- [将来構成と敵データ設計](docs/phase3-architecture-and-data-design.md)

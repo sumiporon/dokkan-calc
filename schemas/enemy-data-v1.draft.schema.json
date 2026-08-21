@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/dokkan-calc/enemy-data-v1.draft.schema.json",
+  "title": "Dokkan Calculator Enemy Dataset (Phase 3 draft)",
+  "description": "Design-only schema. The production application does not read this format yet.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "datasetId", "generatedAt", "sourceSnapshot", "events", "manualCorrections"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "datasetId": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "sourceSnapshot": { "$ref": "#/$defs/sourceSnapshot" },
+    "events": { "type": "array", "items": { "$ref": "#/$defs/event" } },
+    "manualCorrections": { "type": "array", "items": { "$ref": "#/$defs/manualCorrection" } }
+  },
+  "$defs": {
+    "nullableId": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "nullableNonNegativeInteger": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "nullableNonNegativeNumber": {
+      "type": ["number", "null"],
+      "minimum": 0
+    },
+    "nullablePercent": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 100
+    },
+    "confidence": {
+      "enum": ["high", "medium", "unconfirmed"]
+    },
+    "icon": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alt", "src"],
+      "properties": {
+        "alt": { "type": ["string", "null"] },
+        "src": { "type": ["string", "null"] }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceUrl", "sourceFile", "checkedAt", "confidence", "notes"],
+      "properties": {
+        "sourceUrl": { "type": ["string", "null"] },
+        "sourceFile": { "type": ["string", "null"] },
+        "checkedAt": { "type": "string", "format": "date-time" },
+        "confidence": { "$ref": "#/$defs/confidence" },
+        "notes": { "type": "string" }
+      }
+    },
+    "fieldState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fieldPath", "state", "notes"],
+      "properties": {
+        "fieldPath": { "type": "string", "minLength": 1 },
+        "state": { "enum": ["source-not-rendered", "not-applicable", "parse-failed", "unconfirmed"] },
+        "notes": { "type": "string" }
+      }
+    },
+    "sourceSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "region", "acquiredAt", "importMethod", "policyStatus", "parserVersion", "sourceRootUrl", "contentDigest", "notes"],
+      "properties": {
+        "provider": { "type": "string", "minLength": 1 },
+        "region": { "type": "string", "minLength": 1 },
+        "acquiredAt": { "type": "string", "format": "date-time" },
+        "importMethod": { "enum": ["saved-cache", "manual-reviewed", "permission-approved-automation"] },
+        "policyStatus": { "enum": ["offline-existing-copy", "manual-use-only", "written-permission-recorded"] },
+        "parserVersion": { "type": "string", "minLength": 1 },
+        "sourceRootUrl": { "type": ["string", "null"] },
+        "contentDigest": { "type": ["string", "null"] },
+        "notes": { "type": "string" }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eventId", "name", "category", "legacyEventType", "sourceUrl", "stages"],
+      "properties": {
+        "eventId": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "category": { "type": ["string", "null"] },
+        "legacyEventType": { "type": ["string", "null"] },
+        "sourceUrl": { "type": ["string", "null"] },
+        "stages": { "type": "array", "items": { "$ref": "#/$defs/stage" } }
+      }
+    },
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stageId", "name", "legacySeriesName", "sourceUrl", "encounters"],
+      "properties": {
+        "stageId": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "legacySeriesName": { "type": ["string", "null"] },
+        "sourceUrl": { "type": ["string", "null"] },
+        "encounters": { "type": "array", "items": { "$ref": "#/$defs/encounter" } }
+      }
+    },
+    "encounter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["encounterIndex", "phaseId", "layoutKind", "enemies", "aiActions", "areaAttacks"],
+      "properties": {
+        "encounterIndex": { "type": "integer", "minimum": 0 },
+        "phaseId": { "$ref": "#/$defs/nullableId" },
+        "layoutKind": { "enum": ["unknown", "sequential", "simultaneous", "mixed"] },
+        "enemies": { "type": "array", "items": { "$ref": "#/$defs/enemy" } },
+        "aiActions": { "type": "array", "items": { "$ref": "#/$defs/aiAction" } },
+        "areaAttacks": { "type": "array", "items": { "$ref": "#/$defs/areaAttack" } }
+      }
+    },
+    "enemy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["occurrenceId", "orderInEncounter", "identity", "name", "type", "alignment", "stats", "attacks", "passiveEffects", "critical", "skills", "evidence", "fieldStates", "raw"],
+      "properties": {
+        "occurrenceId": { "type": "string", "minLength": 1 },
+        "orderInEncounter": { "type": "integer", "minimum": 0 },
+        "identity": { "$ref": "#/$defs/enemyIdentity" },
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "enum": ["agl", "teq", "int", "str", "phy", "unknown"] },
+        "alignment": { "enum": ["super", "extreme", "neutral", "unknown"] },
+        "stats": { "$ref": "#/$defs/stats" },
+        "attacks": { "$ref": "#/$defs/attacks" },
+        "passiveEffects": { "type": "array", "items": { "$ref": "#/$defs/effect" } },
+        "critical": { "$ref": "#/$defs/critical" },
+        "skills": { "type": "array", "items": { "$ref": "#/$defs/skill" } },
+        "evidence": { "$ref": "#/$defs/evidence" },
+        "fieldStates": { "type": "array", "items": { "$ref": "#/$defs/fieldState" } },
+        "raw": { "type": "object" }
+      }
+    },
+    "enemyIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceEnemyId", "cardId", "thumbId", "isEzaCardLink"],
+      "properties": {
+        "sourceEnemyId": { "$ref": "#/$defs/nullableId" },
+        "cardId": { "$ref": "#/$defs/nullableId" },
+        "thumbId": { "$ref": "#/$defs/nullableId" },
+        "isEzaCardLink": { "type": ["boolean", "null"] }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hp", "baseAttack", "defense", "damageReductionPercent", "maxAttacksPerTurn"],
+      "properties": {
+        "hp": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "baseAttack": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "defense": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "damageReductionPercent": { "$ref": "#/$defs/nullablePercent" },
+        "maxAttacksPerTurn": { "$ref": "#/$defs/nullableNonNegativeInteger" }
+      }
+    },
+    "attacks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["superAttacks"],
+      "properties": {
+        "superAttacks": { "type": "array", "items": { "$ref": "#/$defs/superAttack" } }
+      }
+    },
+    "superAttack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["skillId", "name", "description", "displayedDamage", "derivedMultiplier", "probabilityPercent", "maxPerTurn", "cooldownTurns", "slot", "targetMode", "attackType", "effectIcons", "effects", "criticalOverride"],
+      "properties": {
+        "skillId": { "$ref": "#/$defs/nullableId" },
+        "name": { "type": ["string", "null"] },
+        "description": { "type": ["string", "null"] },
+        "displayedDamage": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "derivedMultiplier": { "$ref": "#/$defs/nullableNonNegativeNumber" },
+        "probabilityPercent": { "$ref": "#/$defs/nullablePercent" },
+        "maxPerTurn": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "cooldownTurns": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "slot": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "targetMode": { "enum": ["single", "all", "unknown"] },
+        "attackType": { "type": ["string", "null"] },
+        "effectIcons": { "type": "array", "items": { "$ref": "#/$defs/icon" } },
+        "effects": { "type": "array", "items": { "$ref": "#/$defs/effect" } },
+        "criticalOverride": {
+          "anyOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/critical" }
+          ]
+        }
+      }
+    },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effectId", "trigger", "appliesTo", "target", "operation", "value", "cap", "durationTurns", "bracket", "sourceSkillId", "rawText", "confidence"],
+      "properties": {
+        "effectId": { "type": "string", "minLength": 1 },
+        "trigger": { "$ref": "#/$defs/trigger" },
+        "appliesTo": { "enum": ["enemy-stats", "current-super", "subsequent-normal-attacks", "all-attacks", "other"] },
+        "target": { "enum": ["attack", "defense", "critical-rate", "critical-attack", "critical-defense-ignore", "other"] },
+        "operation": { "enum": ["add-percent", "multiply", "set", "other"] },
+        "value": { "type": ["number", "null"] },
+        "cap": { "type": ["number", "null"] },
+        "durationTurns": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "bracket": { "enum": ["start-of-turn", "mid-battle", "during-super", "post-super", "unknown"] },
+        "sourceSkillId": { "$ref": "#/$defs/nullableId" },
+        "rawText": { "type": ["string", "null"] },
+        "confidence": { "$ref": "#/$defs/confidence" }
+      }
+    },
+    "trigger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "start", "end", "hpMinPercent", "hpMaxPercent", "raw"],
+      "properties": {
+        "kind": { "enum": ["always", "elapsed-turn", "received-hit-count", "hp-range", "appearance-turn", "during-super", "after-super", "other"] },
+        "start": { "type": ["number", "null"] },
+        "end": { "type": ["number", "null"] },
+        "hpMinPercent": { "$ref": "#/$defs/nullablePercent" },
+        "hpMaxPercent": { "$ref": "#/$defs/nullablePercent" },
+        "raw": { "type": ["string", "null"] }
+      }
+    },
+    "critical": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "attackMultiplier", "defenseIgnorePercent", "rateRules"],
+      "properties": {
+        "enabled": { "type": ["boolean", "null"] },
+        "attackMultiplier": { "$ref": "#/$defs/nullableNonNegativeNumber" },
+        "defenseIgnorePercent": { "$ref": "#/$defs/nullablePercent" },
+        "rateRules": { "type": "array", "items": { "$ref": "#/$defs/effect" } }
+      }
+    },
+    "skill": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["skillId", "description", "probabilityPercent", "icons", "rawText"],
+      "properties": {
+        "skillId": { "$ref": "#/$defs/nullableId" },
+        "description": { "type": ["string", "null"] },
+        "probabilityPercent": { "$ref": "#/$defs/nullablePercent" },
+        "icons": { "type": "array", "items": { "$ref": "#/$defs/icon" } },
+        "rawText": { "type": ["string", "null"] }
+      }
+    },
+    "aiAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequenceIndex", "sourceOrder", "kind", "enemyOrder", "slot", "probabilityPercent", "hpMinPercent", "hpMaxPercent", "maxUses", "cooldownTurns", "rawText"],
+      "properties": {
+        "sequenceIndex": { "type": "integer", "minimum": 0 },
+        "sourceOrder": { "type": "integer", "minimum": 1 },
+        "kind": { "enum": ["normal", "super", "countdown", "heal", "other"] },
+        "enemyOrder": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "slot": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "probabilityPercent": { "$ref": "#/$defs/nullablePercent" },
+        "hpMinPercent": { "$ref": "#/$defs/nullablePercent" },
+        "hpMaxPercent": { "$ref": "#/$defs/nullablePercent" },
+        "maxUses": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "cooldownTurns": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "rawText": { "type": "string" }
+      }
+    },
+    "areaAttack": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceOccurrenceId", "attackKind", "maxPerTurn", "firstTargetDamage", "additionalTargetDamage", "firstTargetMultiplierDerived", "additionalTargetMultiplierDerived", "targetMode", "evidence", "rawText"],
+      "properties": {
+        "sourceOccurrenceId": { "$ref": "#/$defs/nullableId" },
+        "attackKind": { "enum": ["normal", "super", "other", "unknown"] },
+        "maxPerTurn": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "firstTargetDamage": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "additionalTargetDamage": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "firstTargetMultiplierDerived": { "$ref": "#/$defs/nullableNonNegativeNumber" },
+        "additionalTargetMultiplierDerived": { "$ref": "#/$defs/nullableNonNegativeNumber" },
+        "targetMode": { "enum": ["all", "selected-and-others", "unknown"] },
+        "evidence": { "$ref": "#/$defs/evidence" },
+        "rawText": { "type": ["string", "null"] }
+      }
+    },
+    "manualCorrection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["correctionId", "sourceDatasetId", "sourceContentDigest", "target", "expectedOriginalValue", "replacementValue", "reason", "evidenceUrls", "reviewedAt", "reviewedBy"],
+      "properties": {
+        "correctionId": { "type": "string", "minLength": 1 },
+        "sourceDatasetId": { "type": "string", "minLength": 1 },
+        "sourceContentDigest": { "type": "string", "minLength": 1 },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["occurrenceId", "fieldPath"],
+          "properties": {
+            "occurrenceId": { "type": "string", "minLength": 1 },
+            "fieldPath": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$" }
+          }
+        },
+        "expectedOriginalValue": {},
+        "replacementValue": {},
+        "reason": { "type": "string", "minLength": 1 },
+        "evidenceUrls": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "reviewedAt": { "type": "string", "format": "date-time" },
+        "reviewedBy": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

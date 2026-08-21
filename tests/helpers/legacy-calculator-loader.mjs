@@ -3,7 +3,7 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const DEFAULT_SOURCE_PATH = fileURLToPath(
-  new URL('../../dokkan_calc_final.js', import.meta.url)
+  new URL('../fixtures/legacy/phase2-calculation-snapshot.js', import.meta.url)
 );
 
 const START_MARKER = '    const calculateNewDurability = (scenarioData) => {';
@@ -14,8 +14,10 @@ export function loadLegacyCalculatorSource(sourcePath = DEFAULT_SOURCE_PATH) {
 }
 
 /**
- * Loads the exact production calculateNewDurability function without changing
- * the production file or executing the DOM-heavy application bootstrap.
+ * Loads the frozen Phase 2 production calculateNewDurability function without
+ * executing the DOM-heavy application bootstrap. The snapshot deliberately
+ * remains stable after production fixes so legacyExpected never becomes a
+ * moving correctness target.
  */
 export function loadLegacyCalculateNewDurability(sourcePath = DEFAULT_SOURCE_PATH) {
   const source = loadLegacyCalculatorSource(sourcePath);

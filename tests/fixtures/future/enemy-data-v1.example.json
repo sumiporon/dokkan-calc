@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "phase3-design-example",
+  "generatedAt": "2026-08-21T00:00:00.000Z",
+  "sourceSnapshot": {
+    "provider": "phase3-design-fixture",
+    "region": "test",
+    "acquiredAt": "2026-08-21T00:00:00.000Z",
+    "importMethod": "manual-reviewed",
+    "policyStatus": "manual-use-only",
+    "parserVersion": "phase3-draft-2",
+    "sourceRootUrl": null,
+    "contentDigest": null,
+    "notes": "形式検証専用の完全な架空例。実在サイトや敵の値を表さない。"
+  },
+  "events": [
+    {
+      "eventId": "event-example",
+      "name": "設計用イベント",
+      "category": "challenge-example",
+      "legacyEventType": "設計用分類",
+      "sourceUrl": null,
+      "stages": [
+        {
+          "stageId": "stage-example",
+          "name": "設計用ステージ",
+          "legacySeriesName": "設計用シリーズ",
+          "sourceUrl": null,
+          "encounters": [
+            {
+              "encounterIndex": 0,
+              "phaseId": null,
+              "layoutKind": "unknown",
+              "enemies": [
+                {
+                  "occurrenceId": "phase3-design-fixture:test:event-example:stage-example:0:0",
+                  "orderInEncounter": 0,
+                  "identity": {
+                    "sourceEnemyId": null,
+                    "cardId": "card-example",
+                    "thumbId": "thumb-example",
+                    "isEzaCardLink": false
+                  },
+                  "name": "設計用サンプル敵",
+                  "type": "agl",
+                  "alignment": "extreme",
+                  "stats": {
+                    "hp": 100000000,
+                    "baseAttack": 1200000,
+                    "defense": 1500000,
+                    "damageReductionPercent": 60,
+                    "maxAttacksPerTurn": 12
+                  },
+                  "attacks": {
+                    "superAttacks": [
+                      {
+                        "skillId": "skill-example",
+                        "name": "設計用必殺",
+                        "description": "必殺後にATKが上昇する架空例",
+                        "displayedDamage": 3600000,
+                        "derivedMultiplier": 3,
+                        "probabilityPercent": 50,
+                        "maxPerTurn": 2,
+                        "cooldownTurns": 0,
+                        "slot": null,
+                        "targetMode": "single",
+                        "attackType": "super-example",
+                        "effectIcons": [
+                          {
+                            "alt": "attack-up-example",
+                            "src": null
+                          }
+                        ],
+                        "effects": [
+                          {
+                            "effectId": "post-super-attack-up",
+                            "trigger": {
+                              "kind": "after-super",
+                              "start": null,
+                              "end": null,
+                              "hpMinPercent": null,
+                              "hpMaxPercent": null,
+                              "raw": "必殺後"
+                            },
+                            "appliesTo": "subsequent-normal-attacks",
+                            "target": "attack",
+                            "operation": "add-percent",
+                            "value": 50,
+                            "cap": null,
+                            "durationTurns": 1,
+                            "bracket": "post-super",
+                            "sourceSkillId": "skill-example",
+                            "rawText": "1ターンATK+50%",
+                            "confidence": "unconfirmed"
+                          }
+                        ],
+                        "criticalOverride": null
+                      }
+                    ]
+                  },
+                  "passiveEffects": [
+                    {
+                      "effectId": "turn-attack-up",
+                      "trigger": {
+                        "kind": "elapsed-turn",
+                        "start": 1,
+                        "end": null,
+                        "hpMinPercent": null,
+                        "hpMaxPercent": null,
+                        "raw": "1ターンごと"
+                      },
+                      "appliesTo": "enemy-stats",
+                      "target": "attack",
+                      "operation": "add-percent",
+                      "value": 30,
+                      "cap": 150,
+                      "durationTurns": null,
+                      "bracket": "start-of-turn",
+                      "sourceSkillId": "turn-skill-example",
+                      "rawText": "ターン経過ATK上昇",
+                      "confidence": "unconfirmed"
+                    },
+                    {
+                      "effectId": "received-hit-attack-up",
+                      "trigger": {
+                        "kind": "received-hit-count",
+                        "start": 1,
+                        "end": null,
+                        "hpMinPercent": null,
+                        "hpMaxPercent": null,
+                        "raw": "攻撃を受けるたび"
+                      },
+                      "appliesTo": "enemy-stats",
+                      "target": "attack",
+                      "operation": "add-percent",
+                      "value": 5,
+                      "cap": 100,
+                      "durationTurns": null,
+                      "bracket": "mid-battle",
+                      "sourceSkillId": "hit-skill-example",
+                      "rawText": "被弾ごとATK上昇",
+                      "confidence": "unconfirmed"
+                    }
+                  ],
+                  "critical": {
+                    "enabled": null,
+                    "attackMultiplier": null,
+                    "defenseIgnorePercent": null,
+                    "rateRules": []
+                  },
+                  "skills": [
+                    {
+                      "skillId": "passive-skill-example",
+                      "description": "架空の敵skill",
+                      "probabilityPercent": 100,
+                      "icons": [
+                        {
+                          "alt": "skill-example",
+                          "src": null
+                        }
+                      ],
+                      "rawText": "設計用skill"
+                    }
+                  ],
+                  "evidence": {
+                    "sourceUrl": null,
+                    "sourceFile": null,
+                    "checkedAt": "2026-08-21T00:00:00.000Z",
+                    "confidence": "unconfirmed",
+                    "notes": "設計テスト用の架空値。"
+                  },
+                  "fieldStates": [
+                    {
+                      "fieldPath": "identity.sourceEnemyId",
+                      "state": "source-not-rendered",
+                      "notes": "架空の取得元には専用enemy IDがない想定。"
+                    },
+                    {
+                      "fieldPath": "attacks.superAttacks.0.slot",
+                      "state": "source-not-rendered",
+                      "notes": "攻撃位置が表示されない想定。"
+                    },
+                    {
+                      "fieldPath": "attacks.superAttacks.0.criticalOverride",
+                      "state": "not-applicable",
+                      "notes": "この架空必殺には個別会心設定がない。"
+                    },
+                    {
+                      "fieldPath": "critical.enabled",
+                      "state": "unconfirmed",
+                      "notes": "会心の有無を補完しない。"
+                    },
+                    {
+                      "fieldPath": "critical.attackMultiplier",
+                      "state": "unconfirmed",
+                      "notes": "会心威力を補完しない。"
+                    },
+                    {
+                      "fieldPath": "critical.defenseIgnorePercent",
+                      "state": "unconfirmed",
+                      "notes": "会心DEF無視率を補完しない。"
+                    }
+                  ],
+                  "raw": {}
+                }
+              ],
+              "aiActions": [
+                {
+                  "sequenceIndex": 0,
+                  "sourceOrder": 1,
+                  "kind": "normal",
+                  "enemyOrder": 0,
+                  "slot": 0,
+                  "probabilityPercent": 100,
+                  "hpMinPercent": 0,
+                  "hpMaxPercent": 100,
+                  "maxUses": 1,
+                  "cooldownTurns": 0,
+                  "rawText": "設計用AI action"
+                }
+              ],
+              "areaAttacks": [
+                {
+                  "sourceOccurrenceId": "phase3-design-fixture:test:event-example:stage-example:0:0",
+                  "attackKind": "normal",
+                  "maxPerTurn": 1,
+                  "firstTargetDamage": 1200000,
+                  "additionalTargetDamage": 600000,
+                  "firstTargetMultiplierDerived": 1,
+                  "additionalTargetMultiplierDerived": 0.5,
+                  "targetMode": "selected-and-others",
+                  "evidence": {
+                    "sourceUrl": null,
+                    "sourceFile": null,
+                    "checkedAt": "2026-08-21T00:00:00.000Z",
+                    "confidence": "unconfirmed",
+                    "notes": "直接対象と他対象を分けて保持できることだけを示す架空例。"
+                  },
+                  "rawText": "設計用AOE"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "manualCorrections": []
+}

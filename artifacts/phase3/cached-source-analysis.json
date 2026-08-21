@@ -1,0 +1,1073 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-21T13:38:08.792Z",
+  "analysisMode": "offline-read-only",
+  "source": {
+    "cacheIndex": "scraper/html_cache/index.json",
+    "cacheDownloadedAt": "2026-02-23T08:11:11.385Z",
+    "productionComparisonData": "scraper/all_enemies.json",
+    "networkRequests": 0,
+    "productionFilesWritten": 0
+  },
+  "inventory": {
+    "indexedEvents": 88,
+    "distinctEventIds": 88,
+    "indexedStages": 801,
+    "parsedStages": 801,
+    "missingStageFiles": [],
+    "encounterGroups": 1352,
+    "cachedEnemyRows": 5032,
+    "cachedEnemyRowsWithPositiveAtk": 4673,
+    "orphanTypeIcons": 0,
+    "distinctCardIds": 2747,
+    "distinctThumbIds": 1493
+  },
+  "recoverability": {
+    "enemyFields": {
+      "eventId": {
+        "count": 5032,
+        "total": 5032,
+        "percent": 100
+      },
+      "stageId": {
+        "count": 5032,
+        "total": 5032,
+        "percent": 100
+      },
+      "encounterAndOrder": {
+        "count": 5032,
+        "total": 5032,
+        "percent": 100
+      },
+      "name": {
+        "count": 5032,
+        "total": 5032,
+        "percent": 100
+      },
+      "cardId": {
+        "count": 5032,
+        "total": 5032,
+        "percent": 100
+      },
+      "thumbId": {
+        "count": 5032,
+        "total": 5032,
+        "percent": 100
+      },
+      "class": {
+        "count": 5032,
+        "total": 5032,
+        "percent": 100
+      },
+      "type": {
+        "count": 5032,
+        "total": 5032,
+        "percent": 100
+      },
+      "hp": {
+        "count": 4673,
+        "total": 5032,
+        "percent": 92.87
+      },
+      "atk": {
+        "count": 4673,
+        "total": 5032,
+        "percent": 92.87
+      },
+      "def": {
+        "count": 4673,
+        "total": 5032,
+        "percent": 92.87
+      },
+      "damageReductionPercent": {
+        "count": 5032,
+        "total": 5032,
+        "percent": 100
+      },
+      "maxAttacksPerTurn": {
+        "count": 4673,
+        "total": 5032,
+        "percent": 92.87
+      },
+      "superAttackName": {
+        "count": 4837,
+        "total": 5032,
+        "percent": 96.12
+      },
+      "superAttackDescription": {
+        "count": 4837,
+        "total": 5032,
+        "percent": 96.12
+      },
+      "superAttackDamage": {
+        "count": 4578,
+        "total": 5032,
+        "percent": 90.98
+      },
+      "superAttackMultiplier": {
+        "count": 4578,
+        "total": 5032,
+        "percent": 90.98
+      },
+      "superAttackProbabilityPercent": {
+        "count": 4578,
+        "total": 5032,
+        "percent": 90.98
+      },
+      "superAttackMaxPerTurn": {
+        "count": 4578,
+        "total": 5032,
+        "percent": 90.98
+      },
+      "superAttackCooldownTurns": {
+        "count": 4578,
+        "total": 5032,
+        "percent": 90.98
+      },
+      "superAttackType": {
+        "count": 4837,
+        "total": 5032,
+        "percent": 96.12
+      },
+      "superAttackEffectIcons": {
+        "count": 1372,
+        "total": 5032,
+        "percent": 27.27
+      },
+      "oneOrMoreSkills": {
+        "count": 2873,
+        "total": 5032,
+        "percent": 57.09
+      }
+    },
+    "skills": {
+      "enemiesWithSkills": {
+        "count": 2873,
+        "total": 5032,
+        "percent": 57.09
+      },
+      "entries": 8378,
+      "entriesWithStableId": {
+        "count": 8378,
+        "total": 8378,
+        "percent": 100
+      },
+      "entriesWithDescription": {
+        "count": 8278,
+        "total": 8378,
+        "percent": 98.81
+      },
+      "entriesWithProbability": {
+        "count": 1154,
+        "total": 8378,
+        "percent": 13.77
+      },
+      "entriesWithIcon": {
+        "count": 6074,
+        "total": 8378,
+        "percent": 72.5
+      },
+      "uniqueSkillIds": 2549,
+      "uniqueDescriptions": 526
+    },
+    "combatRows": {
+      "rowsWithPositiveAtk": {
+        "count": 4673,
+        "total": 5032,
+        "percent": 92.87
+      },
+      "def": {
+        "count": 4673,
+        "total": 4673,
+        "percent": 100
+      },
+      "classSuperOrExtreme": {
+        "count": 4505,
+        "total": 4673,
+        "percent": 96.4
+      },
+      "superAttackDamage": {
+        "count": 4578,
+        "total": 4673,
+        "percent": 97.97
+      }
+    },
+    "distributions": {
+      "class": {
+        "extreme": 2342,
+        "neutral": 443,
+        "super": 2247
+      },
+      "type": {
+        "agl": 995,
+        "int": 1028,
+        "phy": 1003,
+        "str": 1025,
+        "teq": 981
+      },
+      "typeIconId": {
+        "0": 89,
+        "1": 89,
+        "2": 88,
+        "3": 89,
+        "4": 88,
+        "10": 427,
+        "11": 449,
+        "12": 437,
+        "13": 469,
+        "14": 465,
+        "20": 479,
+        "21": 443,
+        "22": 503,
+        "23": 467,
+        "24": 450
+      }
+    },
+    "identifiers": {
+      "cardLinks": {
+        "count": 5032,
+        "total": 5032,
+        "percent": 100
+      },
+      "distinctCardIds": 2747,
+      "distinctThumbIds": 1493,
+      "ezaCardLinks": 77,
+      "cardIdEqualsThumbId": 26,
+      "cardIdDiffersFromThumbId": 5006
+    },
+    "aiActions": {
+      "groupsWithRenderedActions": {
+        "count": 100,
+        "total": 1352,
+        "percent": 7.4
+      },
+      "entries": 1679,
+      "parsedEntries": {
+        "count": 1679,
+        "total": 1679,
+        "percent": 100
+      },
+      "types": {
+        "カウントダウン": 120,
+        "必殺技": 226,
+        "ノーマル": 1296,
+        "ヒール": 13,
+        "[3 = ?]": 24
+      },
+      "maximumRenderedPosition": 78
+    },
+    "areaDamage": {
+      "groupsWithRenderedAreaDamage": {
+        "count": 65,
+        "total": 1352,
+        "percent": 4.81
+      },
+      "maxPerTurn": {
+        "count": 65,
+        "total": 65,
+        "percent": 100
+      },
+      "firstTargetDamage": {
+        "count": 65,
+        "total": 65,
+        "percent": 100
+      },
+      "additionalTargetDamage": {
+        "count": 65,
+        "total": 65,
+        "percent": 100
+      }
+    },
+    "grouping": {
+      "groups": 1352,
+      "singleEnemyGroups": 232,
+      "multiEnemyGroups": 1120,
+      "maximumEnemiesInGroup": 150,
+      "note": "Encounter/order is recoverable; whether multiple rows are phases or simultaneous enemies is not encoded reliably in the HTML."
+    },
+    "conditions": {
+      "critical": {
+        "count": 68,
+        "total": 5032,
+        "percent": 1.35
+      },
+      "turn": {
+        "count": 1163,
+        "total": 5032,
+        "percent": 23.11
+      },
+      "receivedHit": {
+        "count": 179,
+        "total": 5032,
+        "percent": 3.56
+      },
+      "hp": {
+        "count": 215,
+        "total": 5032,
+        "percent": 4.27
+      },
+      "appearance": {
+        "count": 91,
+        "total": 5032,
+        "percent": 1.81
+      },
+      "attackUp": {
+        "count": 789,
+        "total": 5032,
+        "percent": 15.68
+      },
+      "defenseDown": {
+        "count": 1749,
+        "total": 5032,
+        "percent": 34.76
+      },
+      "stun": {
+        "count": 2129,
+        "total": 5032,
+        "percent": 42.31
+      },
+      "seal": {
+        "count": 1969,
+        "total": 5032,
+        "percent": 39.13
+      },
+      "attackDisable": {
+        "count": 2175,
+        "total": 5032,
+        "percent": 43.22
+      },
+      "areaOrAllTarget": {
+        "count": 0,
+        "total": 5032,
+        "percent": 0
+      },
+      "countdown": {
+        "count": 0,
+        "total": 5032,
+        "percent": 0
+      }
+    }
+  },
+  "matching": {
+    "legacyStages": 647,
+    "legacyBosses": 4245,
+    "uniqueStages": 620,
+    "ambiguousStages": 2,
+    "unmatchedStages": 25,
+    "uniqueBosses": 3828,
+    "ambiguousStageBosses": 52,
+    "unmatchedStageBosses": 365,
+    "candidateMultiplicity": {
+      "0": 25,
+      "1": 620,
+      "2": 2
+    },
+    "resolvedEventAndStageIds": 620,
+    "bossCardId": {
+      "stableComplete": 3880,
+      "stableButSomeMissing": 0,
+      "ambiguous": 0,
+      "missing": 0
+    },
+    "ambiguousSamples": [
+      {
+        "eventType": "超激戦BOSSラッシュ!!",
+        "seriesName": "-",
+        "stageName": "超激戦BOSSラッシュ2",
+        "candidates": [
+          {
+            "eventId": 701,
+            "stageId": 7010024,
+            "sourceFile": "stage_701_7010024.html"
+          },
+          {
+            "eventId": 701,
+            "stageId": 7010025,
+            "sourceFile": "stage_701_7010025.html"
+          }
+        ]
+      },
+      {
+        "eventType": "超激戦BOSSラッシュ!!",
+        "seriesName": "-",
+        "stageName": "超激戦BOSSラッシュ2",
+        "candidates": [
+          {
+            "eventId": 701,
+            "stageId": 7010024,
+            "sourceFile": "stage_701_7010024.html"
+          },
+          {
+            "eventId": 701,
+            "stageId": 7010025,
+            "sourceFile": "stage_701_7010025.html"
+          }
+        ]
+      }
+    ],
+    "unmatchedSamples": [
+      {
+        "eventType": "レッドゾーン",
+        "seriesName": "最凶の一族編",
+        "stageName": "VSメカフリーザ&コルド大王",
+        "bosses": 5,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "レッドゾーン",
+        "seriesName": "レッドリボン軍編",
+        "stageName": "VSレッドリボン軍",
+        "bosses": 8,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "レッドゾーン",
+        "seriesName": "劇場版2",
+        "stageName": "VSバイオブロリー",
+        "bosses": 5,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "超激戦BOSSラッシュ!!",
+        "seriesName": "-",
+        "stageName": "超激戦BOSSラッシュ1",
+        "bosses": 24,
+        "cachedHumanPathCandidates": 2
+      },
+      {
+        "eventType": "ドッカン究極スピードバトル",
+        "seriesName": "-",
+        "stageName": "予選ステージ",
+        "bosses": 2,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "スーパーバトルロード",
+        "seriesName": "-",
+        "stageName": "「人工生命体」のみ挑戦可",
+        "bosses": 9,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "スーパーバトルロード",
+        "seriesName": "-",
+        "stageName": "「頭脳戦」のみ挑戦可",
+        "bosses": 12,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "DOKKANと叩け！パンチマシン！",
+        "seriesName": "-",
+        "stageName": "ゼニーステージ",
+        "bosses": 5,
+        "cachedHumanPathCandidates": 2
+      },
+      {
+        "eventType": "DOKKANと叩け！パンチマシン！",
+        "seriesName": "-",
+        "stageName": "潜在能力玉ステージ",
+        "bosses": 5,
+        "cachedHumanPathCandidates": 2
+      },
+      {
+        "eventType": "DOKKANと叩け！パンチマシン！",
+        "seriesName": "-",
+        "stageName": "龍石ステージ",
+        "bosses": 5,
+        "cachedHumanPathCandidates": 2
+      },
+      {
+        "eventType": "DOKKANと叩け！パンチマシン！",
+        "seriesName": "-",
+        "stageName": "ゼニーステージ",
+        "bosses": 5,
+        "cachedHumanPathCandidates": 2
+      },
+      {
+        "eventType": "DOKKANと叩け！パンチマシン！",
+        "seriesName": "-",
+        "stageName": "潜在能力玉ステージ",
+        "bosses": 5,
+        "cachedHumanPathCandidates": 2
+      },
+      {
+        "eventType": "DOKKANと叩け！パンチマシン！",
+        "seriesName": "-",
+        "stageName": "龍石ステージ",
+        "bosses": 5,
+        "cachedHumanPathCandidates": 2
+      },
+      {
+        "eventType": "インフィニットドラゴンヒストリー",
+        "seriesName": "-",
+        "stageName": "DBGT 究極のドラゴンボール編",
+        "bosses": 8,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "極限スーパーバトルロード",
+        "seriesName": "-",
+        "stageName": "「人工生命体」のみ挑戦可",
+        "bosses": 9,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "極限スーパーバトルロード",
+        "seriesName": "-",
+        "stageName": "「頭脳戦」のみ挑戦可",
+        "bosses": 12,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "全滅させろ！クローン戦士の氾濫",
+        "seriesName": "-",
+        "stageName": "【vs速】クローンを全滅させよ",
+        "bosses": 25,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "全滅させろ！クローン戦士の氾濫",
+        "seriesName": "-",
+        "stageName": "【vs技】クローンを全滅させよ",
+        "bosses": 25,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "全滅させろ！クローン戦士の氾濫",
+        "seriesName": "-",
+        "stageName": "【vs知】クローンを全滅させよ",
+        "bosses": 25,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "全滅させろ！クローン戦士の氾濫",
+        "seriesName": "-",
+        "stageName": "【vs力】クローンを全滅させよ",
+        "bosses": 25,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "全滅させろ！クローン戦士の氾濫",
+        "seriesName": "-",
+        "stageName": "【vs体】クローンを全滅させよ",
+        "bosses": 25,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "ドキドキ♥ヒロインバトル",
+        "seriesName": "-",
+        "stageName": "VSマイ(未来)",
+        "bosses": 7,
+        "cachedHumanPathCandidates": 1
+      },
+      {
+        "eventType": "怒りの猛進！包囲網をぶち破れ",
+        "seriesName": "-",
+        "stageName": "蹴散らせフリーザ軍",
+        "bosses": 50,
+        "cachedHumanPathCandidates": 2
+      },
+      {
+        "eventType": "怒りの猛進！包囲網をぶち破れ",
+        "seriesName": "-",
+        "stageName": "蹴散らせフリーザ軍",
+        "bosses": 50,
+        "cachedHumanPathCandidates": 2
+      },
+      {
+        "eventType": "憲兵をやっつけろ！仮面の魔人参上！",
+        "seriesName": "-",
+        "stageName": "憲兵をやっつけろ！",
+        "bosses": 9,
+        "cachedHumanPathCandidates": 3
+      }
+    ],
+    "fallbackBossesWithinSameHumanPath": {
+      "unique": 69,
+      "ambiguous": 37,
+      "unmatched": 259
+    },
+    "exactStageMatch": {
+      "count": 622,
+      "total": 647,
+      "percent": 96.14
+    },
+    "uniqueStageIdentityMatch": {
+      "count": 620,
+      "total": 647,
+      "percent": 95.83
+    },
+    "exactBossSequenceMatch": {
+      "count": 3880,
+      "total": 4245,
+      "percent": 91.4
+    },
+    "uniqueBossIdentityMatch": {
+      "count": 3828,
+      "total": 4245,
+      "percent": 90.18
+    },
+    "alternateMatching": {
+      "withoutClass": {
+        "uniqueStages": 627,
+        "ambiguousStages": 8,
+        "unmatchedStages": 12,
+        "uniqueBosses": 3969,
+        "ambiguousBosses": 82,
+        "unmatchedBosses": 194,
+        "anyCandidateStages": {
+          "count": 635,
+          "total": 647,
+          "percent": 98.15
+        },
+        "uniqueCandidateStages": {
+          "count": 627,
+          "total": 647,
+          "percent": 96.91
+        },
+        "anyCandidateBosses": {
+          "count": 4051,
+          "total": 4245,
+          "percent": 95.43
+        },
+        "uniqueCandidateBosses": {
+          "count": 3969,
+          "total": 4245,
+          "percent": 93.5
+        }
+      },
+      "withoutClassAndSuperAttackDamage": {
+        "uniqueStages": 636,
+        "ambiguousStages": 10,
+        "unmatchedStages": 1,
+        "uniqueBosses": 4061,
+        "ambiguousBosses": 182,
+        "unmatchedBosses": 2,
+        "anyCandidateStages": {
+          "count": 646,
+          "total": 647,
+          "percent": 99.85
+        },
+        "uniqueCandidateStages": {
+          "count": 636,
+          "total": 647,
+          "percent": 98.3
+        },
+        "anyCandidateBosses": {
+          "count": 4243,
+          "total": 4245,
+          "percent": 99.95
+        },
+        "uniqueCandidateBosses": {
+          "count": 4061,
+          "total": 4245,
+          "percent": 95.67
+        }
+      },
+      "humanPathOnly": {
+        "uniqueStages": 552,
+        "ambiguousStages": 95,
+        "unmatchedStages": 0,
+        "uniqueBosses": 3801,
+        "ambiguousBosses": 444,
+        "unmatchedBosses": 0,
+        "anyCandidateStages": {
+          "count": 647,
+          "total": 647,
+          "percent": 100
+        },
+        "uniqueCandidateStages": {
+          "count": 552,
+          "total": 647,
+          "percent": 85.32
+        },
+        "anyCandidateBosses": {
+          "count": 4245,
+          "total": 4245,
+          "percent": 100
+        },
+        "uniqueCandidateBosses": {
+          "count": 3801,
+          "total": 4245,
+          "percent": 89.54
+        }
+      }
+    },
+    "uniqueAtkSequenceFieldComparison": {
+      "pairedBosses": 4061,
+      "classExact": 3923,
+      "neutralSourceVersusLegacyExtreme": 138,
+      "otherClassMismatch": 0,
+      "superAttackDamageExact": 4044,
+      "sourceHasNoSuperAttackDamageButLegacySynthesizedOne": 17,
+      "otherSuperAttackDamageMismatch": 0
+    },
+    "atkOnlyUnmatchedSamples": [
+      {
+        "eventType": "ドッカン究極スピードバトル",
+        "seriesName": "-",
+        "stageName": "予選ステージ",
+        "bosses": [
+          {
+            "name": "ベジット",
+            "class": "super",
+            "type": "int",
+            "baseAtk": 20
+          },
+          {
+            "name": "超ベジット",
+            "class": "super",
+            "type": "agl",
+            "baseAtk": 30
+          }
+        ]
+      }
+    ],
+    "neutralIconRowsPreviouslyDefaultedExtreme": 138,
+    "matchedCachedStageCandidates": 622,
+    "cachedStagesNotUsedByAnyExactMatch": 179
+  },
+  "duplicatesAndAmbiguity": {
+    "eventIdsAcrossStageFiles": {
+      "distinct": 88,
+      "duplicateValueCount": 70,
+      "duplicateOccurrencesBeyondFirst": 713,
+      "maximumOccurrences": 89
+    },
+    "stageIds": {
+      "distinct": 801,
+      "duplicateValueCount": 0,
+      "duplicateOccurrencesBeyondFirst": 0,
+      "maximumOccurrences": 1
+    },
+    "structuralEnemyIdentity": {
+      "distinct": 5032,
+      "duplicateValueCount": 0,
+      "duplicateOccurrencesBeyondFirst": 0,
+      "maximumOccurrences": 1
+    },
+    "cardIds": {
+      "distinct": 2747,
+      "duplicateValueCount": 1344,
+      "duplicateOccurrencesBeyondFirst": 2285,
+      "maximumOccurrences": 28
+    },
+    "sameEnemyFingerprintWithinStage": {
+      "distinct": 4417,
+      "duplicateValueCount": 113,
+      "duplicateOccurrencesBeyondFirst": 615,
+      "maximumOccurrences": 28
+    },
+    "stageBossSequenceSignaturesIgnoringPath": {
+      "distinct": 639,
+      "duplicateValueCount": 116,
+      "duplicateOccurrencesBeyondFirst": 162,
+      "maximumOccurrences": 44
+    },
+    "explanation": "Repeated card IDs and fingerprints are expected reuse, not automatically data corruption. Structural identity must include eventId, stageId, encounterIndex, and orderInEncounter."
+  },
+  "representativeSamples": {
+    "rowsWithoutBattleStats": [
+      {
+        "eventId": 704,
+        "stageId": 7040014,
+        "stageName": "予選ステージ",
+        "encounterIndex": 0,
+        "orderInEncounter": 0,
+        "name": "孫悟空",
+        "cardId": 9007831,
+        "class": "super",
+        "type": "str"
+      },
+      {
+        "eventId": 704,
+        "stageId": 7040014,
+        "stageName": "予選ステージ",
+        "encounterIndex": 0,
+        "orderInEncounter": 1,
+        "name": "ベジータ",
+        "cardId": 1002461,
+        "class": "super",
+        "type": "int"
+      },
+      {
+        "eventId": 704,
+        "stageId": 7040014,
+        "stageName": "予選ステージ",
+        "encounterIndex": 0,
+        "orderInEncounter": 2,
+        "name": "ベジット",
+        "cardId": 1005261,
+        "class": "super",
+        "type": "int"
+      },
+      {
+        "eventId": 704,
+        "stageId": 7040014,
+        "stageName": "予選ステージ",
+        "encounterIndex": 0,
+        "orderInEncounter": 3,
+        "name": "超ベジット",
+        "cardId": 1006791,
+        "class": "super",
+        "type": "agl"
+      },
+      {
+        "eventId": 704,
+        "stageId": 7040014,
+        "stageName": "予選ステージ",
+        "encounterIndex": 1,
+        "orderInEncounter": 0,
+        "name": "ゴクウブラック",
+        "cardId": 1008601,
+        "class": "extreme",
+        "type": "teq"
+      },
+      {
+        "eventId": 704,
+        "stageId": 7040014,
+        "stageName": "予選ステージ",
+        "encounterIndex": 1,
+        "orderInEncounter": 1,
+        "name": "ゴクウブラック",
+        "cardId": 1008841,
+        "class": "extreme",
+        "type": "phy"
+      },
+      {
+        "eventId": 704,
+        "stageId": 7040014,
+        "stageName": "予選ステージ",
+        "encounterIndex": 1,
+        "orderInEncounter": 2,
+        "name": "ゴクウブラック",
+        "cardId": 9008851,
+        "class": "extreme",
+        "type": "phy"
+      },
+      {
+        "eventId": 704,
+        "stageId": 7040014,
+        "stageName": "予選ステージ",
+        "encounterIndex": 2,
+        "orderInEncounter": 0,
+        "name": "超サイヤ人ブロリー",
+        "cardId": 2000631,
+        "class": "extreme",
+        "type": "phy"
+      },
+      {
+        "eventId": 704,
+        "stageId": 7040014,
+        "stageName": "予選ステージ",
+        "encounterIndex": 2,
+        "orderInEncounter": 1,
+        "name": "伝説の超サイヤ人ブロリー",
+        "cardId": 2000641,
+        "class": "extreme",
+        "type": "str"
+      },
+      {
+        "eventId": 704,
+        "stageId": 7040014,
+        "stageName": "予選ステージ",
+        "encounterIndex": 2,
+        "orderInEncounter": 2,
+        "name": "伝説の超サイヤ人ブロリー",
+        "cardId": 1007461,
+        "class": "extreme",
+        "type": "phy"
+      }
+    ],
+    "neutralClassRows": [
+      {
+        "eventId": 711,
+        "stageId": 7110011,
+        "name": "パンチマシン",
+        "cardId": 9012870,
+        "typeIconId": 0,
+        "atk": 1
+      },
+      {
+        "eventId": 711,
+        "stageId": 7110011,
+        "name": "パンチマシン",
+        "cardId": 9112870,
+        "typeIconId": 1,
+        "atk": 1
+      },
+      {
+        "eventId": 711,
+        "stageId": 7110011,
+        "name": "パンチマシン",
+        "cardId": 9212870,
+        "typeIconId": 2,
+        "atk": 1
+      },
+      {
+        "eventId": 711,
+        "stageId": 7110011,
+        "name": "パンチマシン",
+        "cardId": 9312870,
+        "typeIconId": 3,
+        "atk": 1
+      },
+      {
+        "eventId": 711,
+        "stageId": 7110011,
+        "name": "パンチマシン",
+        "cardId": 9412870,
+        "typeIconId": 4,
+        "atk": 1
+      },
+      {
+        "eventId": 711,
+        "stageId": 7110021,
+        "name": "パンチマシン",
+        "cardId": 9012870,
+        "typeIconId": 0,
+        "atk": 1
+      },
+      {
+        "eventId": 711,
+        "stageId": 7110021,
+        "name": "パンチマシン",
+        "cardId": 9112870,
+        "typeIconId": 1,
+        "atk": 1
+      },
+      {
+        "eventId": 711,
+        "stageId": 7110021,
+        "name": "パンチマシン",
+        "cardId": 9212870,
+        "typeIconId": 2,
+        "atk": 1
+      },
+      {
+        "eventId": 711,
+        "stageId": 7110021,
+        "name": "パンチマシン",
+        "cardId": 9312870,
+        "typeIconId": 3,
+        "atk": 1
+      },
+      {
+        "eventId": 711,
+        "stageId": 7110021,
+        "name": "パンチマシン",
+        "cardId": 9412870,
+        "typeIconId": 4,
+        "atk": 1
+      }
+    ],
+    "combatRowsWithoutRenderedSuperAttackDamage": [
+      {
+        "eventId": 701,
+        "stageId": 7010014,
+        "name": "ビルス(寝間着)",
+        "cardId": 9000211,
+        "superAttackName": null
+      },
+      {
+        "eventId": 710,
+        "stageId": 7100625,
+        "name": "ゲットー",
+        "cardId": 9010381,
+        "superAttackName": null
+      },
+      {
+        "eventId": 710,
+        "stageId": 7100635,
+        "name": "バイオ戦士",
+        "cardId": 9008301,
+        "superAttackName": null
+      },
+      {
+        "eventId": 710,
+        "stageId": 7100635,
+        "name": "バイオ戦士",
+        "cardId": 9008311,
+        "superAttackName": null
+      },
+      {
+        "eventId": 710,
+        "stageId": 7100635,
+        "name": "バイオ戦士",
+        "cardId": 9008321,
+        "superAttackName": null
+      },
+      {
+        "eventId": 713,
+        "stageId": 7130145,
+        "name": "ズーナマ",
+        "cardId": 1005891,
+        "superAttackName": null
+      },
+      {
+        "eventId": 713,
+        "stageId": 7130145,
+        "name": "ボンパラ",
+        "cardId": 1005881,
+        "superAttackName": null
+      },
+      {
+        "eventId": 720,
+        "stageId": 7200625,
+        "name": "ゲットー",
+        "cardId": 9010381,
+        "superAttackName": null
+      },
+      {
+        "eventId": 720,
+        "stageId": 7200635,
+        "name": "バイオ戦士",
+        "cardId": 9008301,
+        "superAttackName": null
+      },
+      {
+        "eventId": 720,
+        "stageId": 7200635,
+        "name": "バイオ戦士",
+        "cardId": 9008311,
+        "superAttackName": null
+      }
+    ],
+    "unparsedActionEntries": []
+  },
+  "limitations": [
+    "The cache is a point-in-time rendered snapshot, not an official stable API contract.",
+    "eventId and stageId come from saved URLs; cardId comes from /cards links. A dedicated internal enemy-instance ID is not rendered for every row.",
+    "encounterIndex/orderInEncounter are reproducible positions, but HTML alone does not consistently distinguish sequential phases from simultaneous enemies.",
+    "Rendered action slots exist only for some encounter groups, so exact attack-position AI cannot be reconstructed for every enemy.",
+    "Skill IDs and descriptions are recoverable where rendered, but internal parameters/triggers not shown in the page cannot be inferred safely.",
+    "A card link may refer to an EZA/display record and the thumbnail ID can differ; retain both raw IDs and source URLs.",
+    "No anti-bot measure was bypassed and no new request was made to DokkanInfo."
+  ],
+  "recommendedIdentity": {
+    "event": [
+      "source",
+      "region",
+      "eventId"
+    ],
+    "stage": [
+      "source",
+      "region",
+      "eventId",
+      "stageId"
+    ],
+    "enemyOccurrence": [
+      "source",
+      "region",
+      "eventId",
+      "stageId",
+      "encounterIndex",
+      "orderInEncounter"
+    ],
+    "enemyEntityReference": [
+      "cardId",
+      "thumbId"
+    ],
+    "warning": "Do not use cardId alone as an occurrence ID; it repeats across stages and can differ from thumbId."
+  }
+}

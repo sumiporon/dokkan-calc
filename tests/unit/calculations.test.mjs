@@ -128,7 +128,7 @@ for (const fixture of cases.attackVariantCases) {
   });
 }
 
-test('known enemy-condition difference: Broly Phase 1 and Phase 2 are not additive', () => {
+test('legacy snapshot difference: Broly Phase 1 and Phase 2 were additive', () => {
   const fixture = cases.knownConditionDifferences.find(
     ({ id }) => id === 'broly-turn-and-hit-use-separate-brackets'
   );
@@ -154,7 +154,7 @@ test('known enemy-condition difference: Broly Phase 1 and Phase 2 are not additi
   assert.notDeepEqual(legacyVariants, specificationVariants);
 });
 
-test('known enemy-condition difference: first-turn buff currently defaults to none', () => {
+test('legacy snapshot difference: first-turn buff defaulted to none', () => {
   const fixture = cases.knownConditionDifferences.find(
     ({ id }) => id === 'broly-first-turn-cannot-be-no-buff'
   );

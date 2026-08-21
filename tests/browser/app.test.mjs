@@ -65,7 +65,7 @@ const CDN_STUBS = {
   `,
 };
 
-async function runInFreshApp(runAssertions) {
+async function runInFreshApp(runAssertions, { appPath = APP_PATH } = {}) {
   const context = await browser.newContext({
     locale: 'ja-JP',
     viewport: { width: 1440, height: 1100 },
@@ -107,7 +107,7 @@ async function runInFreshApp(runAssertions) {
 
   let testError;
   try {
-    await page.goto(`${staticServer.origin}${APP_PATH}`, {
+    await page.goto(`${staticServer.origin}${appPath}`, {
       waitUntil: 'domcontentloaded',
       timeout: 60_000,
     });
@@ -258,7 +258,7 @@ test('状況カードの追加・複製とキャラクター保存・読込', { 
   });
 });
 
-test('合成敵でターン・被弾・HP・登場ターン・必殺後強化を反映する', { timeout: TEST_TIMEOUT }, async () => {
+test('暫定データマッピング: 合成敵のターン・被弾・HP・登場・必殺後を反映する', { timeout: TEST_TIMEOUT }, async () => {
   await runInFreshApp(async ({ page }) => {
     const card = page.locator('#scenario-cards-container .card').first();
     await expandScenario(card);
@@ -294,11 +294,11 @@ test('合成敵でターン・被弾・HP・登場ターン・必殺後強化を
     await dynamicContainer.waitFor();
     assert.deepEqual(
       await dynamicContainer.locator('.cond-turn option').allInnerTexts(),
-      ['なし', '2ターン (ATK+10%)', '3ターン (ATK+20%)'],
+      ['1ターンまで (ATK+0%)', '2ターン (ATK+10%)', '3ターン (ATK+20%)'],
     );
     assert.deepEqual(
       await dynamicContainer.locator('.cond-hit option').allInnerTexts(),
-      ['なし', '1回 (ATK+20%)', '2回 (ATK+40%)'],
+      ['0回 (ATK+0%)', '1回 (ATK+20%)', '2回 (ATK+40%)'],
     );
     assert.deepEqual(
       await dynamicContainer.locator('.cond-hp option').allInnerTexts(),
@@ -323,16 +323,19 @@ test('合成敵でターン・被弾・HP・登場ターン・必殺後強化を
     assert.equal(await dynamicContainer.locator('.cond-hit').inputValue(), '40');
     assert.equal(await dynamicContainer.locator('.cond-hp').inputValue(), '30');
     assert.equal(await dynamicContainer.locator('.cond-appear').inputValue(), '40');
-    assert.match(await dynamicContainer.innerText(), /合計ATK \+130% \(x2\.30\)/);
+    assert.match(
+      await dynamicContainer.innerText(),
+      /ATK補正: 開始時 \+90% × 被弾後 \+40% \(x2\.66\)/,
+    );
 
     const boostedRows = (await dynamicContainer.locator('.multi-attack-result-item').allInnerTexts()).map(normalizeText);
-    assert.match(boostedRows[0], /^通常 ATK: 230万 被ダメ:/);
-    assert.match(boostedRows[1], /^通常\(必殺後\) ATK: 299万 被ダメ:/);
-    assert.match(boostedRows[2], /^必殺 ATK: 759万 被ダメ:/);
+    assert.match(boostedRows[0], /^通常 ATK: 266万 被ダメ:/);
+    assert.match(boostedRows[1], /^通常\(必殺後\) ATK: 345万 被ダメ:/);
+    assert.match(boostedRows[2], /^必殺 ATK: 877万 被ダメ:/);
   });
 });
 
-test('legacy表示仕様: 浮動小数の床丸めによる23万→22万差を記録する', { timeout: TEST_TIMEOUT }, async () => {
+test('整数化修正: 100,000 × 2.3 を正確に23万と表示する', { timeout: TEST_TIMEOUT }, async () => {
   await runInFreshApp(async ({ page }) => {
     const card = page.locator('#scenario-cards-container .card').first();
     await expandScenario(card);
@@ -363,11 +366,130 @@ test('legacy表示仕様: 浮動小数の床丸めによる23万→22万差を�
     await dynamicContainer.locator('.cond-turn').selectOption('130');
     const normalRow = normalizeText(await dynamicContainer.locator('.multi-attack-result-item').first().innerText());
 
-    // The intended arithmetic is 100,000 * 2.3 = 230,000. In the current
-    // browser code, binary floating-point produces 229,999.999..., then the
-    // first Math.floor makes the internal attack 229,999. formatNumber applies
-    // a second floor in units of 10,000, so the visible value is 22万. This is
-    // a deliberately named legacy characterization, not a correctness claim.
-    assert.match(normalRow, /^通常 ATK: 22万 被ダメ:/);
+    assert.match(normalRow, /^通常 ATK: 23万 被ダメ:/);
   });
+});
+
+test('実敵ブロリーで第1ターンとターン×被弾の最大値を再現する', { timeout: TEST_TIMEOUT }, async () => {
+  await runInFreshApp(async ({ page }) => {
+    const card = page.locator('#scenario-cards-container .card').first();
+    await expandScenario(card);
+    await expandOpponentSettings(card);
+
+    await card.locator('[data-input="loaded_enemy_event_type"]').selectOption({ label: 'レッドゾーン' });
+    await card.locator('[data-input="loaded_enemy_series"]').selectOption({ label: '純粋サイヤ人編' });
+    await card.locator('[data-input="loaded_enemy_stage"]').selectOption({ label: 'VS ブロリー' });
+    await card.locator('[data-input="loaded_enemy_boss"]').selectOption({ label: '超サイヤ人ブロリー(フルパワー)' });
+    await card.locator('.load-enemy-to-card-cascade-btn').click();
+    await page.locator('#mode-damage').check();
+
+    const dynamicContainer = card.locator('.dynamic-damage-container');
+    await dynamicContainer.waitFor();
+    const turnOptions = await dynamicContainer.locator('.cond-turn option').allInnerTexts();
+    assert.deepEqual(turnOptions, [
+      '1ターン (ATK+30%)',
+      '2ターン (ATK+60%)',
+      '3ターン (ATK+90%)',
+      '4ターン (ATK+120%)',
+      '5ターン (ATK+150%)',
+    ]);
+
+    const initialRows = (await dynamicContainer.locator('.multi-attack-result-item').allInnerTexts()).map(normalizeText);
+    assert.match(initialRows[0], /^通常 ATK: 156万 被ダメ:/);
+    assert.match(initialRows[1], /^通常\(必殺後\) ATK: 234万 被ダメ:/);
+    assert.match(initialRows[2], /^必殺 ATK: 546万 被ダメ:/);
+
+    await dynamicContainer.locator('.cond-turn').selectOption('150');
+    await dynamicContainer.locator('.cond-hit').selectOption('100');
+    assert.match(
+      await dynamicContainer.innerText(),
+      /ATK補正: 開始時 \+150% × 被弾後 \+100% \(x5\.00\)/,
+    );
+
+    const maximumRows = (await dynamicContainer.locator('.multi-attack-result-item').allInnerTexts()).map(normalizeText);
+    assert.match(maximumRows[0], /^通常 ATK: 600万 被ダメ:/);
+    assert.match(maximumRows[1], /^通常\(必殺後\) ATK: 900万 被ダメ:/);
+    assert.match(maximumRows[2], /^必殺 ATK: 2100万 被ダメ:/);
+  });
+});
+
+test('必殺だけ会心の敵はモーダル読込でも通常攻撃を会心扱いしない', { timeout: TEST_TIMEOUT }, async () => {
+  await runInFreshApp(async ({ page }) => {
+    const card = page.locator('#scenario-cards-container .card').first();
+    await expandScenario(card);
+    await expandOpponentSettings(card);
+    // The old modal hook no longer has a visible button, but its listener is
+    // still retained for compatibility. Add only the trigger element so both
+    // loading paths remain covered until that legacy path is removed safely.
+    await card.evaluate((element) => {
+      const button = document.createElement('button');
+      button.className = 'load-enemy-to-card-btn';
+      button.type = 'button';
+      button.textContent = 'legacy modal test trigger';
+      element.appendChild(button);
+    });
+    await card.locator('.load-enemy-to-card-btn').click();
+
+    const enemy = page.locator(
+      '.modal-enemy-item[data-et-index="0"][data-ser-index="8"][data-stg-index="1"][data-boss-index="4"]',
+    );
+    assert.equal(await enemy.innerText(), 'フリーザ(フルパワー)');
+    await enemy.click();
+
+    assert.equal(await card.locator('[data-input="is_critical"]').isChecked(), false);
+    await page.locator('#mode-damage').check();
+    const rows = (await card.locator('.multi-attack-result-item').allInnerTexts()).map(normalizeText);
+    assert.match(rows[0], /^通常 ATK: 75万 被ダメ: (?!.*--)/);
+    assert.match(rows[1], /^通常\(必殺後\) ATK: 112万 被ダメ: (?!.*--)/);
+    assert.match(rows[2], /^必殺 ATK: 247万 被ダメ: (?!.*--)/);
+    assert.match(rows[3], /^必殺\[会心\] ATK: 247万 .*被ダメ: --$/);
+
+    await card.locator('[data-input="loaded_enemy_event_type"]').selectOption({ label: 'レッドゾーン' });
+    await card.locator('[data-input="loaded_enemy_series"]').selectOption({ label: '孫悟空の軌跡編' });
+    await card.locator('[data-input="loaded_enemy_stage"]').selectOption({ label: 'ナメック星編' });
+    await card.locator('[data-input="loaded_enemy_boss"]').selectOption({ label: 'フリーザ(フルパワー)' });
+    await card.locator('.load-enemy-to-card-cascade-btn').click();
+    assert.equal(await card.locator('[data-input="is_critical"]').isChecked(), false);
+    const cascadeRows = (await card.locator('.multi-attack-result-item').allInnerTexts()).map(normalizeText);
+    assert.deepEqual(cascadeRows, rows);
+  });
+});
+
+test('一覧・スクリーンショット用プレビューもメイン画面と同じ計算を使う', { timeout: TEST_TIMEOUT }, async () => {
+  await runInFreshApp(async ({ page }) => {
+    const card = page.locator('#scenario-cards-container .card').first();
+    await expandScenario(card);
+    await card.locator('[data-input="char_def"]').fill('100000');
+    await card.locator('[data-input="leader"]').fill('200');
+    await card.locator('[data-input="passive"]').fill('100');
+    await card.locator('[data-input="active"]').fill('50');
+    await card.locator('[data-input="support_item"]').fill('50');
+    assert.equal(await card.locator('.final-def-display').innerText(), '最終DEF: 1,350,000');
+
+    await page.locator('#summary-view-btn').click();
+    await page.locator('#preview-overlay:not(.hidden)').waitFor();
+    await page.locator('#selection-select-all-btn').click();
+    await page.locator('#selection-generate-btn').click();
+
+    const previewItems = (await page.locator('#overlay-cards-container .summary-item-pair').allInnerTexts())
+      .map(normalizeText);
+    assert.deepEqual(previewItems, [
+      'DEF: 135万',
+      '軽減: -',
+      '全ガ: -',
+      '完封: 135万',
+      '70万: 205万',
+    ]);
+  });
+});
+
+test('公開入口のindex.htmlも共有計算コアを読み込んで起動する', { timeout: TEST_TIMEOUT }, async () => {
+  await runInFreshApp(async ({ page }) => {
+    assert.match(normalizeText(await page.locator('h1').innerText()), /^ドッカンバトル 耐久計算ツール/);
+    assert.equal(await page.locator('#scenario-cards-container .card').count(), 1);
+    assert.equal(
+      await page.evaluate(() => typeof globalThis.DokkanCalcCore?.calculateDurability),
+      'function',
+    );
+  }, { appPath: '/index.html' });
 });

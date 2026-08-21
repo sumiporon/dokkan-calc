@@ -5,16 +5,21 @@
   "description": "Characterization, calculation-reference, enemy-data, and browser tests for the legacy Dokkan calculator.",
   "scripts": {
     "test": "npm run test:syntax && npm run test:unit && npm run test:data && npm run test:browser",
-    "test:syntax": "node --check dokkan_calc_final.js && node --check chrome_extension/content.js",
-    "test:unit": "node --test --test-reporter=spec tests/unit/calculations.test.mjs",
-    "test:data": "node --test --test-reporter=spec tests/data/enemy-data.test.mjs tests/data/storage-schema.test.mjs",
+    "test:syntax": "node --check src/calculation-core.js && node --check dokkan_calc_final.js && node --check chrome_extension/content.js",
+    "test:unit": "node --test --test-reporter=spec tests/unit/*.test.mjs",
+    "test:data": "node --test --test-reporter=spec tests/data/enemy-data.test.mjs tests/data/storage-schema.test.mjs tests/data/future-enemy-schema.test.mjs tests/data/cached-source.test.mjs",
+    "test:cached-source": "node --test --test-reporter=spec tests/data/cached-source.test.mjs",
     "test:browser": "node --test --test-concurrency=1 --test-reporter=spec tests/browser/app.test.mjs",
-    "audit:data": "node scripts/audit-enemy-data.mjs"
+    "audit:data": "node scripts/audit-enemy-data.mjs",
+    "analyze:cached-source": "node scripts/analyze-cached-enemy-source.mjs"
   },
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "cheerio": "1.0.0-rc.12",
     "playwright": "1.58.2"
   }
 }

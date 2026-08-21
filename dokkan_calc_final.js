@@ -1,5 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
+    const calculationCore = globalThis.DokkanCalcCore;
+    if (!calculationCore) {
+      throw new Error('計算コアを読み込めませんでした。');
+    }
+
     let durabilityLines = [];
     let savedCharacters = [];
     let savedEnemies = [];
@@ -158655,11 +158660,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeModalTargetCard = null;
 
     // --- Utility Functions ---
-    const formatNumber = (num) => {
-      if (isNaN(num) || !isFinite(num)) return '---';
-      if (num >= 10000) return `${Math.floor(num / 10000)}万`;
-      return Math.round(num).toLocaleString();
-    };
+    const formatNumber = calculationCore.formatNumber;
 
     const applyTheme = (theme) => {
       if (theme === 'dark') {
@@ -160607,98 +160608,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Calculation Functions ---
-    const calculateNewDurability = (scenarioData) => {
-      const {
-        char_def, leader, field, passive, memory, link, multi_passive, super_attack, active, support_item,
-        own_class = 'super', own_type = 'teq',
-        enemy_class = 'super', enemy_type = 'teq',
-        attr_def_up = 0, is_guard = false, dr_input = 0,
-        is_critical = false, crit_atk_up = 0, crit_def_down = 0
-      } = scenarioData;
-
-      // 1. Calculate final DEF
-      let final_def = (parseFloat(char_def) || 0) *
-        (1 + (parseFloat(leader) || 0) / 100) *
-        (1 + (parseFloat(field) || 0) / 100) *
-        (1 + (parseFloat(passive) || 0) / 100) *
-        (1 + (parseFloat(memory) || 0) / 100) *
-        (1 + (parseFloat(link) || 0) / 100) *
-        (1 + (parseFloat(multi_passive) || 0) / 100) *
-        (1 + (parseFloat(super_attack) || 0) / 100) *
-        (1 + (parseFloat(active) || 0) / 100) *
-        (1 + (parseFloat(support_item) || 0) / 100);
-
-      // 2. Determine Group 1 (Type) Advantage
-      const typeAdvantageMap = { teq: 'agl', agl: 'str', str: 'phy', phy: 'int', 'int': 'teq' };
-      let group1_advantage_status = 'neutral';
-      if (typeAdvantageMap[own_type] === enemy_type) {
-        group1_advantage_status = 'advantage';
-      } else if (typeAdvantageMap[enemy_type] === own_type) {
-        group1_advantage_status = 'disadvantage';
-      }
-
-      // 3. Determine base modifiers
-      let guard_mod = (group1_advantage_status === 'advantage') ? 0.5 : 1.0;
-      let attr_mod = 1.0;
-      const is_same_class = own_class === enemy_class;
-      if (is_same_class) {
-        if (group1_advantage_status === 'advantage') attr_mod = 0.9;
-        else if (group1_advantage_status === 'disadvantage') attr_mod = 1.25;
-      } else {
-        if (group1_advantage_status === 'advantage') attr_mod = 1.0;
-        else if (group1_advantage_status === 'disadvantage') attr_mod = 1.5;
-        else attr_mod = 1.15;
-      }
-
-      // 4. Handle All-Guard (is_guard) override
-      if (is_guard) {
-        attr_mod = 0.8;
-        guard_mod = 0.5;
-      }
-
-      // 5. Apply Attribute DEF Up skill
-      // This skill is only active when the character has type advantage.
-      if (group1_advantage_status === 'advantage' && attr_def_up > 0) {
-        attr_mod -= ((parseFloat(attr_def_up) || 0) * 0.01);
-      }
-
-      // 6. Handle Critical Hit logic
-      let atk_crit_mod = 1.0;
-      let def_crit_mod = 1.0;
-      if (is_critical) {
-        atk_crit_mod = 1 + ((parseFloat(crit_atk_up) || 0) / 100);
-        def_crit_mod = 1 - ((parseFloat(crit_def_down) || 0) / 100);
-
-        if (is_guard) {
-          // 全ガあり: 属性相性は0.8ベース、ガード補正(0.5)は常時発動
-          attr_mod = 0.8;
-          guard_mod = 0.5;
-          if (group1_advantage_status === 'advantage' && attr_def_up > 0) {
-            attr_mod -= ((parseFloat(attr_def_up) || 0) * 0.01);
-          }
-        } else {
-          // 全ガなし: 属性相性は1.0(中立)、ガード無効
-          attr_mod = 1.0;
-          guard_mod = 1.0;
-          if (group1_advantage_status === 'advantage' && attr_def_up > 0) {
-            attr_mod -= ((parseFloat(attr_def_up) || 0) * 0.01);
-          }
-        }
-      }
-
-      // 7. Final DR modifier
-      const dr_mod = 1 - ((parseFloat(dr_input) || 0) / 100);
-
-      return {
-        final_def: final_def,
-        final_def_crit_mod: final_def * def_crit_mod,
-        attr_mod: Math.max(0, attr_mod),
-        guard_mod,
-        dr_mod,
-        atk_crit_mod,
-        group1_advantage_status
-      };
-    };
+    const calculateNewDurability = (scenarioData) => calculationCore.calculateDurability(scenarioData);
 
     const updateScenarioResults = (card) => {
       const scenarioData = {};
@@ -160738,7 +160648,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (isCritUnconfigured) {
               atkDisplay = "--";
           } else {
-              const requiredEnemyAtk = ((dmg / guard_mod) + final_def_crit_mod) / (attr_mod * dr_mod * atk_crit_mod);
+              const requiredEnemyAtk = calculationCore.calculateDurabilityLine(dmg, calcResults);
               atkDisplay = formatNumber(requiredEnemyAtk);
           }
           const row = resultBody.insertRow();
@@ -160793,27 +160703,21 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- 条件セレクターを生成 ---
             let selectorsHTML = '<div class="condition-selectors" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">';
 
-            if (d.turnAtkUp > 0 && d.turnAtkMax > 0) {
-              const startTurn = d.turnAtkUpStartTurn || 1;
-              const steps = Math.floor(d.turnAtkMax / d.turnAtkUp);
+            const turnConditionOptions = calculationCore.buildTurnConditionOptions(d);
+            if (turnConditionOptions.length > 0) {
               selectorsHTML += '<div style="flex:1 1 45%;"><label style="font-size:0.8rem;display:block;">ターン経過</label><select class="form-control cond-turn" style="font-size:0.85rem;">';
-              selectorsHTML += '<option value="0">なし</option>';
-              for (let i = 1; i <= steps; i++) {
-                const currentTurn = startTurn + i - 1;
-                const pct = d.turnAtkUp * i;
-                selectorsHTML += '<option value="' + pct + '">' + currentTurn + 'ターン (ATK+' + pct + '%)</option>';
-              }
+              turnConditionOptions.forEach(option => {
+                selectorsHTML += '<option value="' + option.value + '">' + option.label + '</option>';
+              });
               selectorsHTML += '</select></div>';
             }
 
-            if (d.hitAtkUp > 0 && d.hitAtkMax > 0) {
-              const steps = Math.floor(d.hitAtkMax / d.hitAtkUp);
+            const hitConditionOptions = calculationCore.buildHitConditionOptions(d);
+            if (hitConditionOptions.length > 0) {
               selectorsHTML += '<div style="flex:1 1 45%;"><label style="font-size:0.8rem;display:block;">被弾回数</label><select class="form-control cond-hit" style="font-size:0.85rem;">';
-              selectorsHTML += '<option value="0">なし</option>';
-              for (let i = 1; i <= steps; i++) {
-                const pct = d.hitAtkUp * i;
-                selectorsHTML += '<option value="' + pct + '">' + i + '回 (ATK+' + pct + '%)</option>';
-              }
+              hitConditionOptions.forEach(option => {
+                selectorsHTML += '<option value="' + option.value + '">' + option.label + '</option>';
+              });
               selectorsHTML += '</select></div>';
             }
 
@@ -160852,101 +160756,67 @@ document.addEventListener('DOMContentLoaded', () => {
               const hpPct = parseFloat(dynContainer.querySelector('.cond-hp')?.value || 0);
               const appearPct = parseFloat(dynContainer.querySelector('.cond-appear')?.value || 0);
 
-              const totalAtkUpPct = turnPct + hitPct + hpPct + appearPct;
-              const atkMulti = 1 + (totalAtkUpPct / 100);
-
-              const boostedAtk = Math.floor(d.baseAtk * atkMulti);
-              const trueSaMulti = d.saMulti + d.saBuffMod;
-              const postSaNormalMulti = 1.0 + d.saBuffMod;
+              const conditions = { turnPct, hitPct, hpPct, appearPct };
+              const conditionState = calculationCore.calculateEnemyConditionState(d.baseAtk, conditions);
+              const attackVariants = calculationCore.calculateEnemyAttackVariants(conditionState.attack, d);
 
               const dynamicAttacks = [];
-              dynamicAttacks.push({ name: '通常', value: boostedAtk, isCrit: false });
-              if (d.saBuffMod > 0) dynamicAttacks.push({ name: '通常(必殺後)', value: Math.floor(boostedAtk * postSaNormalMulti), isCrit: false });
-
-              if (d.hasSaCrit) {
-                dynamicAttacks.push({ name: '必殺', value: Math.floor(boostedAtk * trueSaMulti), isCrit: false });
-                dynamicAttacks.push({ name: '必殺[会心]', value: Math.floor(boostedAtk * trueSaMulti), isCrit: true });
-              } else {
-                dynamicAttacks.push({ name: '必殺', value: Math.floor(boostedAtk * trueSaMulti), isCrit: false });
+              dynamicAttacks.push({ name: '通常', value: attackVariants.normal, isCrit: false });
+              if (attackVariants.postSaNormal !== null) {
+                dynamicAttacks.push({ name: '通常(必殺後)', value: attackVariants.postSaNormal, isCrit: false });
               }
 
-              if (d.aoeDamage > 0) dynamicAttacks.push({ name: '全体攻撃', value: Math.floor(d.aoeDamage * atkMulti), isCrit: false });
+              if (d.hasSaCrit) {
+                dynamicAttacks.push({ name: '必殺', value: attackVariants.superAttack, isCrit: false });
+                dynamicAttacks.push({ name: '必殺[会心]', value: attackVariants.superAttack, isCrit: true });
+              } else {
+                dynamicAttacks.push({ name: '必殺', value: attackVariants.superAttack, isCrit: false });
+              }
+
+              if (d.aoeDamage > 0) {
+                const aoeConditionState = calculationCore.calculateEnemyConditionState(d.aoeDamage, conditions);
+                dynamicAttacks.push({ name: '全体攻撃', value: aoeConditionState.attack, isCrit: false });
+              }
 
               const listDiv = dynContainer.querySelector('.dynamic-attacks-list');
-              let condLabel = totalAtkUpPct > 0 ? '<div style="font-size:0.8rem;color:var(--secondary-color);margin-bottom:0.3rem;">合計ATK +' + totalAtkUpPct + '% (x' + atkMulti.toFixed(2) + ')</div>' : '';
+              const conditionLabels = [];
+              if (conditionState.startOfTurnPercent > 0) {
+                conditionLabels.push('開始時 +' + conditionState.startOfTurnPercent + '%');
+              }
+              if (conditionState.receivedHitPercent > 0) {
+                conditionLabels.push('被弾後 +' + conditionState.receivedHitPercent + '%');
+              }
+              let condLabel = conditionLabels.length > 0
+                ? '<div style="font-size:0.8rem;color:var(--secondary-color);margin-bottom:0.3rem;">ATK補正: ' + conditionLabels.join(' × ') + ' (x' + conditionState.totalMultiplier.toFixed(2) + ')</div>'
+                : '';
               let html = condLabel;
 
               dynamicAttacks.forEach(atk => {
-                let atkCritMod_local = 1.0;
-                let defForCalc = final_def;
-                let attrMod_local = 1.0;
-                let guardMod_local = (group1_advantage_status === 'advantage') ? 0.5 : 1.0;
-
-                const o_class = scenarioData.own_class || 'super';
-                const e_class = scenarioData.enemy_class || 'extreme';
-                const is_same_class = o_class === e_class;
-                if (is_same_class) {
-                  if (group1_advantage_status === 'advantage') attrMod_local = 0.9;
-                  else if (group1_advantage_status === 'disadvantage') attrMod_local = 1.25;
-                } else {
-                  if (group1_advantage_status === 'advantage') attrMod_local = 1.0;
-                  else if (group1_advantage_status === 'disadvantage') attrMod_local = 1.5;
-                  else attrMod_local = 1.15;
-                }
-
-                if (is_guard) {
-                  attrMod_local = 0.8;
-                  guardMod_local = 0.5;
-                }
-
-                if (group1_advantage_status === 'advantage' && attr_def_up > 0) {
-                  attrMod_local -= ((parseFloat(attr_def_up) || 0) * 0.01);
-                }
-
                 const is_this_attack_crit = atk.isCrit || is_critical;
+                const critAtkUpVal = parseFloat(scenarioData.crit_atk_up) || 0;
+                const critDefDownVal = parseFloat(scenarioData.crit_def_down) || 0;
+                const isCritUnconfigured = is_this_attack_crit
+                  && critAtkUpVal === 0
+                  && critDefDownVal === 0;
 
-                if (is_this_attack_crit) {
-                  // プリセットの d.critAtkUp ではなく、UIから取得・編集可能な scenarioData の値を使用する
-                  const critAtkUpVal = parseFloat(scenarioData.crit_atk_up) || 0;
-                  const critDefDownVal = parseFloat(scenarioData.crit_def_down) || 0;
-                  const isCritUnconfigured = (critAtkUpVal === 0 && critDefDownVal === 0);
-
-                  if (isCritUnconfigured) {
-                    // 会心条件が未設定 → "--" 表示してスキップ
-                    const critLabel = atk.name.includes('会心') ? '' : ' <span style="background:#dc3545;color:white;padding:0.1rem 0.3rem;border-radius:3px;font-size:0.7rem;">会心</span>';
-                    html += '<div class="multi-attack-result-item" style="padding:0.3rem 0;border-bottom:1px solid var(--border-color);">' +
-                      '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-                      '<span class="attack-name" style="font-weight:bold;">' + atk.name + critLabel + '</span>' +
-                      '<span style="font-size:0.85rem;color:var(--secondary-color);">ATK: ' + formatNumber(atk.value) + '</span>' +
-                      '</div>' +
-                      '<div style="font-size:0.8rem;color:#ffc107;margin-top:0.2rem;">\u26a0\ufe0f 条件が設定されていません。</div>' +
-                      '<div style="text-align:right;font-size:1.1rem;font-weight:bold;color:var(--secondary-color);">被ダメ: --</div>' +
-                      '</div>';
-                    return;
-                  }
-
-                  // 会心条件が設定済み: ATK上昇率・DEF減少率を適用
-                  atkCritMod_local = 1 + (critAtkUpVal / 100);
-                  defForCalc = final_def * (1 - (critDefDownVal / 100));
-
-                  if (is_guard) {
-                    // 全ガあり: 属性相性は0.8ベース、ガード(0.5)常時発動
-                    attrMod_local = 0.8;
-                    guardMod_local = 0.5;
-                    if (group1_advantage_status === 'advantage' && attr_def_up > 0) {
-                      attrMod_local -= ((parseFloat(attr_def_up) || 0) * 0.01);
-                    }
-                  } else {
-                    // 全ガなし: 属性相性は1.0(中立)、ガード無効
-                    attrMod_local = 1.0;
-                    guardMod_local = 1.0;
-                    if (group1_advantage_status === 'advantage' && attr_def_up > 0) {
-                      attrMod_local -= ((parseFloat(attr_def_up) || 0) * 0.01);
-                    }
-                  }
+                if (isCritUnconfigured) {
+                  const critLabel = atk.name.includes('会心') ? '' : ' <span style="background:#dc3545;color:white;padding:0.1rem 0.3rem;border-radius:3px;font-size:0.7rem;">会心</span>';
+                  html += '<div class="multi-attack-result-item" style="padding:0.3rem 0;border-bottom:1px solid var(--border-color);">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+                    '<span class="attack-name" style="font-weight:bold;">' + atk.name + critLabel + '</span>' +
+                    '<span style="font-size:0.85rem;color:var(--secondary-color);">ATK: ' + formatNumber(atk.value) + '</span>' +
+                    '</div>' +
+                    '<div style="font-size:0.8rem;color:#ffc107;margin-top:0.2rem;">\u26a0\ufe0f 条件が設定されていません。</div>' +
+                    '<div style="text-align:right;font-size:1.1rem;font-weight:bold;color:var(--secondary-color);">被ダメ: --</div>' +
+                    '</div>';
+                  return;
                 }
 
-                const dmg = Math.max(0, ((atk.value * atkCritMod_local) * attrMod_local * dr_mod - defForCalc)) * guardMod_local;
+                const attackCalculation = calculationCore.calculateDurability({
+                  ...scenarioData,
+                  is_critical: is_this_attack_crit
+                });
+                const dmg = calculationCore.calculateDamage(atk.value, attackCalculation);
                 const critBadge = (is_this_attack_crit && !atk.name.includes('会心')) ? ' <span style="background:#dc3545;color:white;padding:0.1rem 0.3rem;border-radius:3px;font-size:0.7rem;">会心</span>' : '';
                 html += '<div class="multi-attack-result-item" style="padding:0.3rem 0;border-bottom:1px solid var(--border-color);">' +
                   '<div style="display:flex;justify-content:space-between;align-items:center;">' +
@@ -160976,11 +160846,6 @@ document.addEventListener('DOMContentLoaded', () => {
           enemyAtkGroup.style.display = 'block';
           const enemy_atk_input = (parseFloat(scenarioData.enemy_atk) || 0) * 10000;
 
-          let atkCritMod_local = 1.0;
-          let defForCalc = final_def;
-          let attrMod_local = attr_mod;
-          let guardMod_local = guard_mod;
-          
           if (is_critical) {
             const critAtkUpVal = parseFloat(crit_atk_up) || 0;
             const critDefDownVal = parseFloat(crit_def_down) || 0;
@@ -160996,27 +160861,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
               return;
-            } else {
-              atkCritMod_local = 1 + (critAtkUpVal / 100);
-              defForCalc = final_def * (1 - (critDefDownVal / 100));
-              
-              if (is_guard) {
-                 attrMod_local = 0.8;
-                 guardMod_local = 0.5;
-                 if (group1_advantage_status === 'advantage' && attr_def_up > 0) {
-                    attrMod_local -= ((parseFloat(attr_def_up) || 0) * 0.01);
-                 }
-              } else {
-                 attrMod_local = 1.0;
-                 guardMod_local = 1.0;
-                 if (group1_advantage_status === 'advantage' && attr_def_up > 0) {
-                    attrMod_local -= ((parseFloat(attr_def_up) || 0) * 0.01);
-                 }
-              }
             }
           }
 
-          const damage_taken = Math.max(0, ((enemy_atk_input * atkCritMod_local) * attrMod_local * dr_mod - defForCalc)) * guardMod_local;
+          const damage_taken = calculationCore.calculateDamage(enemy_atk_input, calcResults);
           const critBadge = is_critical ? ' <span style="background:#dc3545;color:white;padding:0.1rem 0.3rem;border-radius:3px;font-size:0.7rem;">会心</span>' : '';
 
           resultSection.innerHTML = `
@@ -161048,12 +160896,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Screenshot & Selection Functions ---
-    const calculateFinalDefFromData = (scenario) => {
-      const values = ['char_def', 'leader', 'field', 'passive', 'memory', 'link', 'multi_passive', 'super_attack'].map(key => parseFloat(scenario[key]) || 0);
-      const [char_def, leader, field, passive, memory, link, multi_passive, super_attack] = values;
-      return char_def * (1 + leader / 100) * (1 + field / 100) * (1 + passive / 100) * (1 + memory / 100) * (1 + link / 100) * (1 + multi_passive / 100) * (1 + super_attack / 100);
-    };
-
     const renderPreview = (scenarios, lines, container) => {
       container.innerHTML = '';
 
@@ -161070,10 +160912,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const infoArea = document.createElement('div');
         infoArea.className = 'summary-info';
 
-        // Use the original, simpler calculation logic for the screenshot
-        const defValue = calculateFinalDefFromData(scenario);
+        // The preview uses the same pure calculation as the editable card.
+        const previewCalculation = calculationCore.calculateDurability(scenario);
+        const defValue = previewCalculation.final_def;
         const dr_input = parseFloat(scenario.dr_input) || 0;
         const is_guard = scenario.is_guard === true || String(scenario.is_guard) === 'true';
+        const is_critical = scenario.is_critical === true || String(scenario.is_critical) === 'true';
+        const isCritUnconfigured = is_critical
+          && (parseFloat(scenario.crit_atk_up) || 0) === 0
+          && (parseFloat(scenario.crit_def_down) || 0) === 0;
 
         const addInfoItem = (container, label, value, noColon = false) => {
           const item = document.createElement('div');
@@ -161088,11 +160935,10 @@ document.addEventListener('DOMContentLoaded', () => {
         addInfoItem(infoArea, '全ガ', is_guard ? 'あり' : '-');
 
         lines.forEach(line => {
-          const dmg = line.value;
-          const dr_rate = 1 - (dr_input / 100);
-          // This is the original, simple formula without detailed attribute modifiers
-          let enemy_atk = is_guard ? ((dmg / 0.5) + defValue) / (0.8 * (dr_rate > 0 ? dr_rate : 1)) : (dr_input > 0) ? (dmg + defValue) / dr_rate : dmg + defValue;
-          addInfoItem(infoArea, line.name, formatNumber(enemy_atk));
+          const enemyAtkDisplay = isCritUnconfigured
+            ? '--'
+            : formatNumber(calculationCore.calculateDurabilityLine(line.value, previewCalculation));
+          addInfoItem(infoArea, line.name, enemyAtkDisplay);
         });
 
         card.appendChild(infoArea);
@@ -161363,32 +161209,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Set attributes and crit values
             activeModalTargetCard.querySelector('[data-input="enemy_class"]').value = enemyData.class;
             activeModalTargetCard.querySelector('[data-input="enemy_type"]').value = enemyData.type;
-            // 会心ATK上昇率と会心DEF低下率を設定
-            // critFixedRate, critHpRate, critTurnMax などから推定値を設定
-            let effectiveCritAtkUp = enemyData.critAtkUp || 0;
-            let effectiveCritDefDown = enemyData.critDefDown || 0;
-
-            // 条件付き会心の場合、最大値を初期値として使用
-            if (effectiveCritAtkUp === 0) {
-              // critFixedRate（固定会心ATK上昇率）があればそれを使う
-              if (enemyData.critFixedRate > 0) {
-                effectiveCritAtkUp = enemyData.critFixedRate;
-              }
-              // critTurnMax（ターン経過会心の最大値）があればそれを使う
-              else if (enemyData.critTurnMax > 0) {
-                effectiveCritAtkUp = enemyData.critTurnMax;
-              }
-              // critHpRate (HP条件会心) があればそれを使う
-              else if (enemyData.critHpRate > 0) {
-                effectiveCritAtkUp = enemyData.critHpRate;
-              }
-            }
-
-            activeModalTargetCard.querySelector('[data-input="crit_atk_up"]').value = effectiveCritAtkUp || '';
-            activeModalTargetCard.querySelector('[data-input="crit_def_down"]').value = effectiveCritDefDown || '';
+            // 会心の発動率と威力は別データ。威力・DEF無視率が不明な
+            // 敵へ、発動率をATK倍率として推定入力しない。
+            activeModalTargetCard.querySelector('[data-input="crit_atk_up"]').value = enemyData.critAtkUp || '';
+            activeModalTargetCard.querySelector('[data-input="crit_def_down"]').value = enemyData.critDefDown || '';
 
             const critCheckbox = activeModalTargetCard.querySelector('[data-input="is_critical"]');
-            critCheckbox.checked = enemyData.isCriticalDefault || false;
+            critCheckbox.checked = calculationCore.hasGlobalCriticalEffect(enemyData);
 
             // Manually trigger the visibility toggle
             const critContainer = activeModalTargetCard.querySelector('.crit-inputs-container');
@@ -161611,7 +161438,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           // 会心自動設定: hasSaCrit のみで全体会心をONにしないように修正
           const critCheckbox = card.querySelector('[data-input="is_critical"]');
-          const hasGlobalCrit = (boss.critHpRate > 0) || (boss.critTurnUp > 0) || (boss.critFixedRate > 0) || (boss.isCriticalDefault && !boss.hasSaCrit);
+          const hasGlobalCrit = calculationCore.hasGlobalCriticalEffect(boss);
           if (critCheckbox && hasGlobalCrit) {
             critCheckbox.checked = true;
             const critContainer = card.querySelector('.crit-inputs-container');
@@ -161646,7 +161473,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (classSelect) classSelect.value = boss.class || 'super';
           if (typeSelect) typeSelect.value = boss.type || 'teq';
           const critCheckbox = card.querySelector('[data-input="is_critical"]');
-          const hasGlobalCrit = (boss.critHpRate > 0) || (boss.critTurnUp > 0) || (boss.critFixedRate > 0) || (boss.isCriticalDefault && !boss.hasSaCrit);
+          const hasGlobalCrit = calculationCore.hasGlobalCriticalEffect(boss);
           if (critCheckbox && hasGlobalCrit) {
             critCheckbox.checked = true;
             const critContainer = card.querySelector('.crit-inputs-container');
