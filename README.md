@@ -42,12 +42,13 @@ npm run test:unit
 npm run test:data
 npm run test:phase4
 npm run test:phase6
+npm run test:phase7
 npm run test:cached-source
 npm run test:browser
 npm run audit:data
 ```
 
-`npm test`には、第4段階の候補データ変換と全件再現、第6段階のcanonical/runtime、manifest、安全・permission gate、schema、成果物digestの検査も含まれます。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
+`npm test`には、第4段階の候補データ変換と全件再現、第6段階のcanonical/runtime、第7段階のfull/chunk/file-compatible生成、1操作更新・rollback、保存データ移行、HTTP/`file://` prototype browser操作も含まれます。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
 
 ブラウザテストは独立した一時ブラウザを使います。普段使用しているブラウザの保存データやlocalStorageは読み書きしません。
 
@@ -75,6 +76,13 @@ npm run generate:phase6
 npm run benchmark:phase6
 ```
 
+第7段階の非本番配信prototypeを同じoffline runtimeから生成し、実測する場合は次を使います。公開Pagesや本番敵dataは変更しません。
+
+```powershell
+npm run generate:phase7
+npm run benchmark:phase7
+```
+
 ## 主なファイル
 
 - `dokkan_calc_final.html` / `.css` / `.js`：現在の公開アプリ本体
@@ -90,6 +98,10 @@ npm run benchmark:phase6
 - `src/data-foundation/`：第6段階のcanonical/runtime、manifest、安全・permission gate、adapter contract
 - `scripts/generate-phase6-data-foundation.mjs`：第6段階のoffline全件成果物の唯一の生成元
 - `artifacts/phase6/`：追跡可能なmanifest、検証、permission、性能、omission報告
+- `prototypes/phase7-runtime-delivery/`：第7段階の本番分離full/chunk、1操作更新、架空保存データ移行画面
+- `src/prototype/`：第7段階の更新・rollbackと保存データ移行のpure prototype
+- `scripts/generate-phase7-runtime-delivery.mjs`：full、event index/chunk、file-compatible dataの決定的generator
+- `artifacts/phase7/`：第7段階のcompact全件summaryと複数回performance実測
 - `schemas/`：将来形式の設計案（現行アプリはまだ読み込まない）
 - `docs/`：安全記録、データ形式、計算上の既知差、移行時の注意
 
@@ -121,6 +133,15 @@ npm run benchmark:phase6
 - DokkanStats専用adapterは作っていません。問い合わせはownerが送信し、書面回答をpermission ledgerへ反映するまで外部取得・派生公開を開始しません。
 - Viteは第6段階のデータ基盤に不要だったため導入していません。
 
+## 第7段階の配信・更新prototype
+
+- productionと分離したprototypeで、6.05MB full runtimeと約47KB index＋88 event chunkをHTTP JSON、generated JS、Windows `file://`で比較しました。
+- PCではfullも十分速い一方、mobile参考条件ではchunkが初期転送と初期memoryを明確に削減しました。将来の普段使い候補はPagesのevent chunk、内部release検証は単純なfullも利用する案です。
+- 1操作更新はmanifest、version、digest、構造、件数急減、app互換性を確認し、途中失敗・health check失敗時にknown-goodへ戻りました。0操作更新はまだ無効です。
+- 架空保存データはWindows `file://`からPages相当別originへ1回で移行でき、PATは除外されました。本番localStorageは変更していません。Android/iPhone実機確認はPhase 8仕様承認後の別test URLで必要です。
+- Pages primary＋現在のOneDrive known-good backupを推奨候補としていますが、owner承認前なので公開方式・普段の導線は変更していません。
+- plain HTML/JSとgeneratorで必要な比較が成立したため、Viteは引き続き導入していません。
+
 ## 重要な安全上の注意
 
 - DokkanInfoへの自動取得は停止中です。規約・許可の問題が解決するまで再開しません。
@@ -150,3 +171,7 @@ npm run benchmark:phase6
 - [第6段階のhybrid実機比較設計](docs/phase6-hybrid-hosting-comparison-design.md)
 - [DokkanStatsへの最終問い合わせ文（未送信）](docs/phase6-dokkanstats-inquiry-final.md)
 - [第6段階の完了報告](docs/phase6-completion-report.md)
+- [第7段階のruntime配信・更新・利用方式比較](docs/phase7-runtime-delivery-comparison.md)
+- [第7段階のPC・Android・iPhone実機確認計画](docs/phase7-real-device-checklist.md)
+- [DokkanStats問い合わせコピー用（未送信）](docs/phase7-dokkanstats-inquiry-copy.md)
+- [第7段階の完了報告](docs/phase7-completion-report.md)
