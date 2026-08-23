@@ -361,7 +361,7 @@ test('1操作更新は全検査後だけ永続known-good化し、reload後も新
     await run.page.evaluate(() => globalThis.Phase8RC.store.corruptActiveForTest());
     await run.page.reload({ waitUntil: 'domcontentloaded' });
     await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
-    assert.match(await run.page.locator('#data-version').textContent(), /phase8-synthetic-preview-v1/);
+    assert.match(await run.page.locator('#data-version').textContent(), /phase8-synthetic-pc-recheck-v2/);
 
     await run.page.locator('#data-settings').evaluate((element) => { element.open = true; });
     await run.page.locator('#update-button').click();
@@ -369,7 +369,7 @@ test('1操作更新は全検査後だけ永続known-good化し、reload後も新
     await run.page.evaluate(() => globalThis.Phase8RC.store.deleteKnownGoodForTest());
     await run.page.reload({ waitUntil: 'domcontentloaded' });
     await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
-    assert.match(await run.page.locator('#data-version').textContent(), /phase8-synthetic-preview-v1/);
+    assert.match(await run.page.locator('#data-version').textContent(), /phase8-synthetic-pc-recheck-v2/);
   } finally {
     await run.close();
   }
@@ -441,8 +441,8 @@ test('digest不一致・health失敗・適用途中失敗は1操作UIで旧known
           latest: history.at(-1)
         };
       });
-      assert.equal(state.active, 'phase8-synthetic-preview-v1');
-      assert.equal(state.knownGood, 'phase8-synthetic-preview-v1');
+      assert.equal(state.active, 'phase8-synthetic-pc-recheck-v2');
+      assert.equal(state.knownGood, 'phase8-synthetic-pc-recheck-v2');
       assert.equal(state.latest.code, item.code);
       assert.match(await run.page.locator('#update-status').innerText(), /更新しませんでした.*そのまま安全に使えます/);
     }
