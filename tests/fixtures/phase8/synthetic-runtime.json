@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "1.0.0",
+  "datasetId": "phase8-synthetic-preview-v1",
+  "canonicalDatasetId": "phase8-synthetic-preview-canonical-v1",
+  "generatedAt": "2026-08-24T00:00:00.000Z",
+  "region": "synthetic",
+  "events": [
+    {
+      "id": "preview:event:forest",
+      "name": { "state": "known", "value": "架空イベント・森" },
+      "category": { "state": "known", "value": "preview" },
+      "stages": [
+        {
+          "id": "preview:event:forest:stage:1",
+          "name": { "state": "known", "value": "架空ステージ1" },
+          "encounters": [
+            {
+              "id": "preview:event:forest:stage:1:encounter:1",
+              "order": 1,
+              "enemies": [
+                {
+                  "id": "preview:enemy:green",
+                  "orderInEncounter": 0,
+                  "role": { "state": "known", "value": "combat" },
+                  "name": { "state": "known", "value": "架空の緑敵" },
+                  "type": { "state": "known", "value": "teq" },
+                  "alignment": { "state": "known", "value": "extreme" },
+                  "baseAttack": { "state": "known", "value": 500000 },
+                  "superAttacks": [
+                    {
+                      "id": "preview:attack:green:1",
+                      "name": { "state": "known", "value": "架空必殺A" },
+                      "displayedDamage": { "state": "known", "value": 1250000 },
+                      "derivedMultiplier": { "state": "known", "value": 2.5 },
+                      "probabilityPercent": { "state": "unknown", "value": null },
+                      "maxPerTurn": { "state": "unknown", "value": null },
+                      "cooldownTurns": { "state": "unknown", "value": null },
+                      "slot": { "state": "unknown", "value": null },
+                      "usageRules": [],
+                      "targetMode": { "state": "known", "value": "single" },
+                      "effects": [],
+                      "criticalOverride": { "state": "unknown", "value": null }
+                    }
+                  ],
+                  "passiveEffects": [],
+                  "critical": {
+                    "enabled": { "state": "known", "value": false },
+                    "attackMultiplier": { "state": "unknown", "value": null },
+                    "defenseIgnorePercent": { "state": "unknown", "value": null },
+                    "rateRules": []
+                  }
+                }
+              ],
+              "areaAttacks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preview:event:sky",
+      "name": { "state": "known", "value": "架空イベント・空" },
+      "category": { "state": "known", "value": "preview" },
+      "stages": [
+        {
+          "id": "preview:event:sky:stage:1",
+          "name": { "state": "known", "value": "架空ステージ2" },
+          "encounters": [
+            {
+              "id": "preview:event:sky:stage:1:encounter:1",
+              "order": 1,
+              "enemies": [
+                {
+                  "id": "preview:enemy:blue",
+                  "orderInEncounter": 0,
+                  "role": { "state": "known", "value": "combat" },
+                  "name": { "state": "known", "value": "架空の青敵" },
+                  "type": { "state": "known", "value": "agl" },
+                  "alignment": { "state": "known", "value": "super" },
+                  "baseAttack": { "state": "known", "value": 800000 },
+                  "superAttacks": [
+                    {
+                      "id": "preview:attack:blue:1",
+                      "name": { "state": "known", "value": "架空必殺B" },
+                      "displayedDamage": { "state": "known", "value": 2000000 },
+                      "derivedMultiplier": { "state": "known", "value": 2.5 },
+                      "probabilityPercent": { "state": "unknown", "value": null },
+                      "maxPerTurn": { "state": "unknown", "value": null },
+                      "cooldownTurns": { "state": "unknown", "value": null },
+                      "slot": { "state": "unknown", "value": null },
+                      "usageRules": [],
+                      "targetMode": { "state": "known", "value": "single" },
+                      "effects": [],
+                      "criticalOverride": { "state": "unknown", "value": null }
+                    }
+                  ],
+                  "passiveEffects": [],
+                  "critical": {
+                    "enabled": { "state": "known", "value": false },
+                    "attackMultiplier": { "state": "unknown", "value": null },
+                    "defenseIgnorePercent": { "state": "unknown", "value": null },
+                    "rateRules": []
+                  }
+                }
+              ],
+              "areaAttacks": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "preview:event:void",
+      "name": { "state": "known", "value": "架空イベント・虚空" },
+      "category": { "state": "known", "value": "preview" },
+      "stages": [
+        {
+          "id": "preview:event:void:stage:1",
+          "name": { "state": "known", "value": "架空ステージ3" },
+          "encounters": [
+            {
+              "id": "preview:event:void:stage:1:encounter:1",
+              "order": 1,
+              "enemies": [
+                {
+                  "id": "preview:enemy:neutral",
+                  "orderInEncounter": 0,
+                  "role": { "state": "known", "value": "combat" },
+                  "name": { "state": "known", "value": "架空の中立敵" },
+                  "type": { "state": "known", "value": "int" },
+                  "alignment": { "state": "known", "value": "neutral" },
+                  "baseAttack": { "state": "known", "value": 1000000 },
+                  "superAttacks": [],
+                  "passiveEffects": [],
+                  "critical": {
+                    "enabled": { "state": "known", "value": false },
+                    "attackMultiplier": { "state": "unknown", "value": null },
+                    "defenseIgnorePercent": { "state": "unknown", "value": null },
+                    "rateRules": []
+                  }
+                }
+              ],
+              "areaAttacks": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

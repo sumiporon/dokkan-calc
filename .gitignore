@@ -38,6 +38,10 @@
 # manifests, measurements, and representative fixtures stay tracked.
 /generated/phase7/
 
+# Reproducible Phase 8 full-size release-candidate output. The separately
+# tracked public preview contains fictional fixtures only.
+/generated/phase8/
+
 # Scraper caches and intermediate data
 # Some of these paths are already tracked in the legacy history. Ignoring them
 # here does not delete or untrack those files; that decision is deferred.

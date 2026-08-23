@@ -57,7 +57,10 @@ function safetyDiff(candidate, previous) {
   if (!previous) return [];
   const findings = [];
   const candidateCounts = runtimeCounts(candidate);
-  const previousCounts = runtimeCounts(previous);
+  const previousCounts = Array.isArray(previous.events)
+    ? runtimeCounts(previous)
+    : previous.counts;
+  if (!previousCounts) return ['previous known-good counts are missing'];
   for (const key of ['events', 'stages', 'enemies']) {
     const before = previousCounts[key];
     const after = candidateCounts[key];
@@ -145,7 +148,9 @@ export async function performOneOperationUpdate({
   mode = 'full',
   store,
   appVersion = 'phase7-prototype-1',
-  healthCheck = async () => true
+  healthCheck = async () => true,
+  manifestValidator = validateDeliveryManifest,
+  runtimeValidator = validateRuntime
 }) {
   const startedAt = performance.now();
   let manifestText;
@@ -160,7 +165,7 @@ export async function performOneOperationUpdate({
   } catch {
     return { status: 'rejected', code: 'MANIFEST_JSON_INVALID', message: 'manifestが壊れています。', retainedVersion: store.active?.datasetVersion ?? null };
   }
-  const manifestErrors = validateDeliveryManifest(manifest);
+  const manifestErrors = await manifestValidator(manifest);
   if (manifestErrors.length > 0) return { status: 'rejected', code: 'MANIFEST_GATE_REJECTED', message: manifestErrors.join(' / '), retainedVersion: store.active?.datasetVersion ?? null };
   if (manifest.appCompatibility?.minimum !== appVersion || (manifest.appCompatibility.maximum != null && manifest.appCompatibility.maximum !== appVersion)) {
     return { status: 'rejected', code: 'INCOMPATIBLE_APP_VERSION', message: 'このapp versionとは互換性がありません。', retainedVersion: store.active?.datasetVersion ?? null };
@@ -200,13 +205,13 @@ export async function performOneOperationUpdate({
     return { status: 'rejected', code: updateError.code, message: updateError.message, retainedVersion: store.active?.datasetVersion ?? null };
   }
 
-  const runtimeErrors = validateRuntime(runtime);
+  const runtimeErrors = await runtimeValidator(runtime);
   if (runtime.datasetId !== manifest.datasetVersion) runtimeErrors.push('runtime dataset version mismatch');
   if (runtimeErrors.length > 0) return { status: 'rejected', code: 'RUNTIME_SCHEMA_INVALID', message: runtimeErrors.join(' / '), retainedVersion: store.active?.datasetVersion ?? null };
-  const safetyFindings = safetyDiff(runtime, store.active?.runtime ?? null);
+  const safetyFindings = safetyDiff(runtime, store.active?.runtime ?? store.active ?? null);
   if (safetyFindings.length > 0) return { status: 'rejected', code: 'SAFETY_GATE_REJECTED', message: safetyFindings.join(' / '), retainedVersion: store.active?.datasetVersion ?? null };
 
-  const release = { datasetVersion: manifest.datasetVersion, generatedAt: manifest.generatedAt, manifest, runtime, payload };
+  const release = { datasetVersion: manifest.datasetVersion, generatedAt: manifest.generatedAt, manifest, runtime, counts: runtimeCounts(runtime), payload };
   const before = store.snapshot();
   try {
     await store.commit(release);

@@ -1,0 +1,113 @@
+{
+  "measuredAt": "2026-08-23T20:07:04.437Z",
+  "environment": "Windows loopback; actual Android/iPhone and network latency remain hands-on checks",
+  "dataset": {
+    "datasetVersion": "runtime:canonical:jpnja:phase4-cache-c8c6a2468861",
+    "releasePath": "releases/06718de27bc36b29",
+    "events": 88,
+    "stages": 801,
+    "encounters": 1352,
+    "enemies": 5032,
+    "fullJsonBytes": 6048874,
+    "indexJsonBytes": 50373,
+    "totalChunkJsonBytes": 6098936,
+    "largestChunkBytes": 871769
+  },
+  "phase7Reference": {
+    "desktopChunkReadyMs": 165.4,
+    "mobileFourTimesCpuChunkReadyMs": 1098.8,
+    "note": "Different benchmark harness; directional comparison only."
+  },
+  "thresholds": {
+    "maximumColdReadyMs": 3000,
+    "maximumLargestEventMs": 1000,
+    "expectedEvents": 88
+  },
+  "violations": [],
+  "samples": [
+    {
+      "name": "chromium-desktop",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "touch": false,
+      "cold": {
+        "readyMs": 45.59999996423721,
+        "clientMetrics": {
+          "cacheHits": 0,
+          "networkLoads": 2,
+          "corruptCacheEntries": 0
+        },
+        "events": 88
+      },
+      "largestEventMs": 115,
+      "warm": {
+        "readyMs": 45,
+        "clientMetrics": {
+          "cacheHits": 2,
+          "networkLoads": 1,
+          "corruptCacheEntries": 0
+        }
+      },
+      "networkBytes": 925918,
+      "dataRequestCount": 4
+    },
+    {
+      "name": "chromium-mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "touch": true,
+      "cold": {
+        "readyMs": 41,
+        "clientMetrics": {
+          "cacheHits": 0,
+          "networkLoads": 2,
+          "corruptCacheEntries": 0
+        },
+        "events": 88
+      },
+      "largestEventMs": 84,
+      "warm": {
+        "readyMs": 43.39999997615814,
+        "clientMetrics": {
+          "cacheHits": 2,
+          "networkLoads": 1,
+          "corruptCacheEntries": 0
+        }
+      },
+      "networkBytes": 925918,
+      "dataRequestCount": 4
+    },
+    {
+      "name": "webkit-mobile",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "touch": true,
+      "cold": {
+        "readyMs": 279,
+        "clientMetrics": {
+          "cacheHits": 0,
+          "networkLoads": 2,
+          "corruptCacheEntries": 0
+        },
+        "events": 88
+      },
+      "largestEventMs": 192,
+      "warm": {
+        "readyMs": 328,
+        "clientMetrics": {
+          "cacheHits": 0,
+          "networkLoads": 3,
+          "corruptCacheEntries": 0
+        }
+      },
+      "networkBytes": 1848060,
+      "dataRequestCount": 6
+    }
+  ]
+}

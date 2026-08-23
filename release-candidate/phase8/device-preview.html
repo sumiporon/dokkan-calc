@@ -1,0 +1,1484 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:,">
+  <title>耐久計算ツール Phase 8確認版</title>
+  <style>:root {
+  color-scheme: light dark;
+  --bg: #f4f6fb;
+  --surface: #fff;
+  --text: #172033;
+  --muted: #5d6678;
+  --border: #d8deea;
+  --accent: #1769e0;
+  --accent-text: #fff;
+  --accent-soft: #e9f1ff;
+  --success-bg: #e8f7ed;
+  --success: #176b37;
+  --error-bg: #fff0f0;
+  --error: #a51d2d;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+:root[data-theme="dark"] {
+  --bg: #111522; --surface: #1b2130; --text: #f2f5fb; --muted: #b5bed1; --border: #394258;
+  --accent: #72a9ff; --accent-text: #071325; --accent-soft: #1c304f; --success-bg: #123923; --success: #9ee5b6; --error-bg: #4a1f27; --error: #ffbec5;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); }
+main { width: min(980px, calc(100% - 2rem)); margin: 1rem auto 3rem; }
+.app-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+h1 { margin: .4rem 0 1rem; font-size: clamp(1.65rem, 5vw, 2.35rem); line-height: 1.2; }
+h2 { margin: 0 0 .75rem; font-size: 1.15rem; }
+.rc-badge { display: inline-block; border-radius: 999px; padding: .25rem .65rem; background: #6f42c1; color: #fff; font-size: .8rem; font-weight: 800; }
+.icon-button { min-width: 3rem; border-radius: 999px; }
+.preview-notice { margin: 0 0 1rem; color: var(--muted); }
+.card { margin: 1rem 0; border: 1px solid var(--border); border-radius: .85rem; background: var(--surface); padding: 1rem; box-shadow: 0 3px 14px #0000000a; }
+.status { min-height: 2.8rem; padding: .7rem 1rem; border-radius: .65rem; background: var(--success-bg); color: var(--success); font-weight: 700; }
+.status.error, .inline-status.error { background: var(--error-bg); color: var(--error); }
+.selector-grid, .input-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+.input-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+label { display: grid; gap: .3rem; color: var(--muted); font-size: .9rem; font-weight: 700; }
+select, input, button, .button-link { min-height: 2.8rem; border: 1px solid var(--border); border-radius: .55rem; background: var(--surface); color: var(--text); padding: .55rem .7rem; font: inherit; }
+button, .button-link { cursor: pointer; font-weight: 800; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+.primary-button { width: 100%; margin-top: 1rem; border-color: var(--accent); background: var(--accent); color: var(--accent-text); }
+.button-link { display: inline-flex; align-items: center; text-decoration: none; }
+.enemy-summary { display: grid; gap: .25rem; margin-top: 1rem; padding: .8rem; border-radius: .6rem; background: var(--accent-soft); }
+.enemy-summary span { color: var(--muted); }
+.advanced-settings { margin-top: 1rem; }
+summary { cursor: pointer; min-height: 2.7rem; display: flex; align-items: center; font-weight: 800; }
+.advanced-settings .input-grid, .settings-content, .help-content { margin-top: .75rem; }
+.checkbox-label { display: flex; grid-auto-flow: column; justify-content: start; align-items: center; align-self: end; min-height: 2.8rem; }
+.checkbox-label input { min-height: auto; width: 1.3rem; height: 1.3rem; }
+.results { display: grid; grid-template-columns: repeat(3, 1fr); gap: .7rem; margin-top: 1rem; }
+.results div { display: grid; gap: .3rem; padding: .8rem; border: 1px solid var(--border); border-radius: .6rem; }
+.results span { color: var(--muted); font-size: .82rem; }
+.results strong { font-size: 1.15rem; }
+.settings-card, .help-card { padding-top: .35rem; }
+.settings-content { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.settings-content > div { padding: .8rem; border-top: 1px solid var(--border); }
+.inline-status { min-height: 1.5rem; padding: .35rem; border-radius: .4rem; }
+.help-content h2 { margin-top: 1.2rem; }
+@media (max-width: 700px) {
+  main { width: min(100% - 1rem, 980px); margin-top: .5rem; }
+  .selector-grid, .input-grid, .settings-content, .results { grid-template-columns: 1fr; }
+  .card { padding: .85rem; }
+}
+@media (pointer: coarse) { select, input, button, .button-link, summary { min-height: 3rem; } }
+</style>
+</head>
+<body>
+  <main>
+    <header class="app-header">
+      <div>
+        <span class="rc-badge">Phase 8 確認版</span>
+        <h1>ドッカンバトル<br>耐久計算ツール</h1>
+      </div>
+      <button id="theme-button" class="icon-button" type="button" aria-label="配色を切り替える">🌙</button>
+    </header>
+
+    <p class="preview-notice">本番とは別の単一HTML確認版です。架空データだけを内蔵し、現行OneDrive版は変更しません。</p>
+    <div id="app-status" class="status" role="status" aria-live="polite">敵データを準備しています…</div>
+
+    <section class="card" aria-labelledby="enemy-title">
+      <h2 id="enemy-title">敵を選択</h2>
+      <div class="selector-grid">
+        <label>イベント<select id="event-select" disabled><option value="">イベントを選択してください</option></select></label>
+        <label>ステージ<select id="stage-select" disabled><option value="">—</option></select></label>
+        <label>敵<select id="enemy-select" disabled><option value="">—</option></select></label>
+        <label>攻撃<select id="attack-select" disabled><option value="">—</option></select></label>
+      </div>
+      <div class="enemy-summary" aria-live="polite">
+        <strong id="enemy-name">初回はイベントを選んでください</strong>
+        <span id="enemy-details">選んだイベントだけを読み込みます。</span>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="calculation-title">
+      <h2 id="calculation-title">耐久・被ダメージ計算</h2>
+      <div class="input-grid">
+        <label>キャラクターDEF<input id="char-def" type="number" value="500000" min="0" inputmode="numeric"></label>
+        <label>リーダースキル (%)<input id="leader" type="number" value="0" inputmode="decimal"></label>
+        <label>足し算パッシブ (%)<input id="passive" type="number" value="0" inputmode="decimal"></label>
+        <label>掛け算パッシブ (%)<input id="multi-passive" type="number" value="0" inputmode="decimal"></label>
+        <label>ダメージ軽減率 (%)<input id="damage-reduction" type="number" value="0" inputmode="decimal"></label>
+        <label>自分のクラス<select id="own-class"><option value="super">超</option><option value="extreme">極</option></select></label>
+        <label>自分の属性<select id="own-type"><option value="teq">技</option><option value="agl">速</option><option value="str">力</option><option value="phy">体</option><option value="int">知</option></select></label>
+      </div>
+      <details class="advanced-settings">
+        <summary>追加のDEF設定</summary>
+        <div class="input-grid compact">
+          <label>メモリー (%)<input id="memory" type="number" value="0"></label>
+          <label>リンクスキル (%)<input id="link" type="number" value="0"></label>
+          <label>必殺技効果 (%)<input id="super-attack" type="number" value="0"></label>
+          <label>フィールド (%)<input id="field" type="number" value="0"></label>
+          <label>アクティブ (%)<input id="active" type="number" value="0"></label>
+          <label>サポートアイテム (%)<input id="support-item" type="number" value="0"></label>
+          <label>属性防御Lv<input id="attribute-defense" type="number" value="0" min="0"></label>
+          <label class="checkbox-label"><input id="guard" type="checkbox"> 全属性ガード</label>
+        </div>
+      </details>
+      <button id="calculate-button" class="primary-button" type="button" disabled>計算する</button>
+      <div class="results" aria-live="polite">
+        <div><span>最終DEF</span><strong id="final-defense">—</strong></div>
+        <div><span>被ダメージ（1.00〜1.03）</span><strong id="damage-result">—</strong></div>
+        <div><span>この攻撃を完封するDEF目安</span><strong id="perfect-defense">—</strong></div>
+      </div>
+    </section>
+
+    <details class="card settings-card" id="data-settings">
+      <summary>設定・データ</summary>
+      <div class="settings-content">
+        <div>
+          <h2>敵データ</h2>
+          <p id="data-version">確認中です。</p>
+          <button id="update-button" type="button">敵データを更新</button>
+          <p id="update-status" class="inline-status" role="status" aria-live="polite"></p>
+        </div>
+        <div>
+          <h2>保存データ</h2>
+          <p id="saved-data-summary">この確認版に移行された保存データはありません。</p>
+          <a class="button-link" id="migration-link" href="https://rawcdn.githack.com/sumiporon/dokkan-calc/phase8-complete-2026-08-24/release-candidate/phase8/migration-device-check.html">架空保存データの移行を確認する</a>
+        </div>
+      </div>
+    </details>
+
+    <details class="card help-card">
+      <summary>ヘルプ・問題が起きたとき</summary>
+      <div class="help-content">
+        <p>普段使いは将来のGitHub Pagesを予定しています。更新に失敗しても、直前の敵データはそのまま使えます。</p>
+        <h2>OneDrive backup</h2>
+        <p>通信できない時やPagesに問題がある時だけ、OneDriveに残したknown-good版のHTMLを開きます。現在使っているOneDrive版はまだ変更していません。</p>
+        <p>この確認版は0操作の自動更新を行いません。更新は「敵データを更新」を押した時だけです。</p>
+      </div>
+    </details>
+  </main>
+<script>const phase8EmbeddedFiles={"release-manifest.json":{"text":"{\"appCompatibility\":{\"maximum\":null,\"minimum\":\"phase8-rc-1\",\"productionAppReadsArtifact\":false},\"chunked\":{\"eventCount\":3,\"indexJson\":{\"bytes\":1810,\"contentType\":\"application/json\",\"digest\":\"sha256:da5c6c3ab227823acf93636ac32f9946cfaa3739593ff25502c669f9a54456ff\",\"path\":\"releases/aa188b3e91d76774/chunked/event-index.json\"},\"indexScript\":{\"bytes\":1853,\"contentType\":\"text/javascript\",\"digest\":\"sha256:a0fda1aa71fb5b71e1bcedb54b364e3e273189cdad22f03ab087aef3c3694637\",\"path\":\"releases/aa188b3e91d76774/chunked/event-index.data.js\"},\"jsonFiles\":4,\"largestChunkBytes\":1336,\"scriptFiles\":4,\"totalJsonBytes\":5308},\"counts\":{\"encounters\":3,\"enemies\":3,\"events\":3,\"stages\":3},\"dataClassification\":\"synthetic-public-fixture\",\"datasetVersion\":\"phase8-synthetic-preview-v1\",\"full\":{\"json\":{\"bytes\":3702,\"contentType\":\"application/json\",\"digest\":\"sha256:246a9f886493fc6b567b1a83ffdc7c53f1c34b037ed7d9b0e4d1b436b990c760\",\"path\":\"releases/aa188b3e91d76774/full/runtime.min.json\"},\"script\":{\"bytes\":3746,\"contentType\":\"text/javascript\",\"digest\":\"sha256:6d20e58a85190196a5f24960b58b935d76a886e712529231da3baaa29c86a136\",\"path\":\"releases/aa188b3e91d76774/full/runtime.data.js\"}},\"generatedAt\":\"2026-08-24T00:00:00.000Z\",\"knownGood\":{\"datasetVersion\":\"phase8-synthetic-preview-v1\",\"retainedReleaseCount\":2,\"runtimeDigest\":\"sha256:246a9f886493fc6b567b1a83ffdc7c53f1c34b037ed7d9b0e4d1b436b990c760\"},\"permission\":{\"liveSourceAccessAllowed\":false,\"productionActivateAllowed\":false,\"publicArtifactAllowed\":true,\"releaseCandidatePreviewAllowed\":true},\"productionActivated\":false,\"releaseCandidate\":true,\"runtimeSchemaVersion\":\"1.0.0\",\"schemaVersion\":\"1.0.0\",\"updatePolicy\":{\"browserPatRequired\":false,\"userInitiated\":true,\"zeroOperationEnabled\":false},\"validation\":{\"hardFailCount\":0,\"note\":\"Fictional Phase 8 public preview fixture; production activation is prohibited.\",\"reviewRequiredCount\":0,\"status\":\"passed\"}}","contentType":"application/json"},"releases/aa188b3e91d76774/full/runtime.min.json":{"text":"{\"canonicalDatasetId\":\"phase8-synthetic-preview-canonical-v1\",\"datasetId\":\"phase8-synthetic-preview-v1\",\"events\":[{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:forest\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・森\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"extreme\"},\"baseAttack\":{\"state\":\"known\",\"value\":500000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:green\",\"name\":{\"state\":\"known\",\"value\":\"架空の緑敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[{\"cooldownTurns\":{\"state\":\"unknown\",\"value\":null},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":2.5},\"displayedDamage\":{\"state\":\"known\",\"value\":1250000},\"effects\":[],\"id\":\"preview:attack:green:1\",\"maxPerTurn\":{\"state\":\"unknown\",\"value\":null},\"name\":{\"state\":\"known\",\"value\":\"架空必殺A\"},\"probabilityPercent\":{\"state\":\"unknown\",\"value\":null},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[]}],\"type\":{\"state\":\"known\",\"value\":\"teq\"}}],\"id\":\"preview:event:forest:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:forest:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ1\"}}]},{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:sky\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・空\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"super\"},\"baseAttack\":{\"state\":\"known\",\"value\":800000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:blue\",\"name\":{\"state\":\"known\",\"value\":\"架空の青敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[{\"cooldownTurns\":{\"state\":\"unknown\",\"value\":null},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":2.5},\"displayedDamage\":{\"state\":\"known\",\"value\":2000000},\"effects\":[],\"id\":\"preview:attack:blue:1\",\"maxPerTurn\":{\"state\":\"unknown\",\"value\":null},\"name\":{\"state\":\"known\",\"value\":\"架空必殺B\"},\"probabilityPercent\":{\"state\":\"unknown\",\"value\":null},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[]}],\"type\":{\"state\":\"known\",\"value\":\"agl\"}}],\"id\":\"preview:event:sky:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:sky:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ2\"}}]},{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:void\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・虚空\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"neutral\"},\"baseAttack\":{\"state\":\"known\",\"value\":1000000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:neutral\",\"name\":{\"state\":\"known\",\"value\":\"架空の中立敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[],\"type\":{\"state\":\"known\",\"value\":\"int\"}}],\"id\":\"preview:event:void:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:void:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ3\"}}]}],\"generatedAt\":\"2026-08-24T00:00:00.000Z\",\"region\":\"synthetic\",\"schemaVersion\":\"1.0.0\"}","contentType":"application/json"},"releases/aa188b3e91d76774/chunked/event-index.json":{"text":"{\"datasetVersion\":\"phase8-synthetic-preview-v1\",\"events\":[{\"category\":\"preview\",\"counts\":{\"encounters\":1,\"enemies\":1,\"stages\":1},\"id\":\"preview:event:forest\",\"json\":{\"bytes\":1336,\"contentType\":\"application/json\",\"digest\":\"sha256:fa42ddd94cde633d6d09985f8893127c951dcf5feda5d349e59dbdbf510cf2f1\",\"path\":\"releases/aa188b3e91d76774/chunked/event-393bb27c8b954774.json\"},\"name\":\"架空イベント・森\",\"script\":{\"bytes\":1510,\"contentType\":\"text/javascript\",\"digest\":\"sha256:ad5d7572163b99b05bff3ee4a1e7dc093af5407976163f1bb62981893b1bce38\",\"path\":\"releases/aa188b3e91d76774/chunked/event-393bb27c8b954774.data.js\"}},{\"category\":\"preview\",\"counts\":{\"encounters\":1,\"enemies\":1,\"stages\":1},\"id\":\"preview:event:sky\",\"json\":{\"bytes\":1323,\"contentType\":\"application/json\",\"digest\":\"sha256:01dd119b46b8a5db97f7d36251ce4de75ae894475690accb98797fd7f2cf473b\",\"path\":\"releases/aa188b3e91d76774/chunked/event-1ced4b5d697ab908.json\"},\"name\":\"架空イベント・空\",\"script\":{\"bytes\":1494,\"contentType\":\"text/javascript\",\"digest\":\"sha256:2d2449ac67856724ae154dce539f071b86c89c6ff02938640ce6bc9eb7ca0361\",\"path\":\"releases/aa188b3e91d76774/chunked/event-1ced4b5d697ab908.data.js\"}},{\"category\":\"preview\",\"counts\":{\"encounters\":1,\"enemies\":1,\"stages\":1},\"id\":\"preview:event:void\",\"json\":{\"bytes\":839,\"contentType\":\"application/json\",\"digest\":\"sha256:1da155225bc7679d96e245fa9d522c1f0cc50c4505ae72670e58d6e47f26dc66\",\"path\":\"releases/aa188b3e91d76774/chunked/event-e27be6e45f7113ba.json\"},\"name\":\"架空イベント・虚空\",\"script\":{\"bytes\":1011,\"contentType\":\"text/javascript\",\"digest\":\"sha256:e94eccb921911fcc1893bfa7fbc208d1ba658b74e42ef03d804524e4b2a1a36c\",\"path\":\"releases/aa188b3e91d76774/chunked/event-e27be6e45f7113ba.data.js\"}}],\"generatedAt\":\"2026-08-24T00:00:00.000Z\",\"region\":\"synthetic\",\"schemaVersion\":\"1.0.0\"}","contentType":"application/json"},"releases/aa188b3e91d76774/chunked/event-393bb27c8b954774.json":{"text":"{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:forest\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・森\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"extreme\"},\"baseAttack\":{\"state\":\"known\",\"value\":500000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:green\",\"name\":{\"state\":\"known\",\"value\":\"架空の緑敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[{\"cooldownTurns\":{\"state\":\"unknown\",\"value\":null},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":2.5},\"displayedDamage\":{\"state\":\"known\",\"value\":1250000},\"effects\":[],\"id\":\"preview:attack:green:1\",\"maxPerTurn\":{\"state\":\"unknown\",\"value\":null},\"name\":{\"state\":\"known\",\"value\":\"架空必殺A\"},\"probabilityPercent\":{\"state\":\"unknown\",\"value\":null},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[]}],\"type\":{\"state\":\"known\",\"value\":\"teq\"}}],\"id\":\"preview:event:forest:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:forest:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ1\"}}]}","contentType":"application/json"},"releases/aa188b3e91d76774/chunked/event-1ced4b5d697ab908.json":{"text":"{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:sky\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・空\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"super\"},\"baseAttack\":{\"state\":\"known\",\"value\":800000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:blue\",\"name\":{\"state\":\"known\",\"value\":\"架空の青敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[{\"cooldownTurns\":{\"state\":\"unknown\",\"value\":null},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":2.5},\"displayedDamage\":{\"state\":\"known\",\"value\":2000000},\"effects\":[],\"id\":\"preview:attack:blue:1\",\"maxPerTurn\":{\"state\":\"unknown\",\"value\":null},\"name\":{\"state\":\"known\",\"value\":\"架空必殺B\"},\"probabilityPercent\":{\"state\":\"unknown\",\"value\":null},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[]}],\"type\":{\"state\":\"known\",\"value\":\"agl\"}}],\"id\":\"preview:event:sky:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:sky:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ2\"}}]}","contentType":"application/json"},"releases/aa188b3e91d76774/chunked/event-e27be6e45f7113ba.json":{"text":"{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:void\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・虚空\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"neutral\"},\"baseAttack\":{\"state\":\"known\",\"value\":1000000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:neutral\",\"name\":{\"state\":\"known\",\"value\":\"架空の中立敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[],\"type\":{\"state\":\"known\",\"value\":\"int\"}}],\"id\":\"preview:event:void:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:void:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ3\"}}]}","contentType":"application/json"}};
+globalThis.__phase8EmbeddedFetch=async function phase8EmbeddedFetch(input){
+  const pathname=new URL(String(input),location.href).pathname.replaceAll('\\','/');
+  const marker='/data/';
+  const markerIndex=pathname.lastIndexOf(marker);
+  const relativePath=markerIndex>=0?decodeURIComponent(pathname.slice(markerIndex+marker.length)):'';
+  const item=phase8EmbeddedFiles[relativePath];
+  if(!item)return new Response('',{status:404});
+  return new Response(item.text,{status:200,headers:{'Content-Type':item.contentType}});
+};
+
+(function initializeCalculationCore(root, factory) {
+  const api = factory();
+
+  if (typeof module === 'object' && module.exports) {
+    module.exports = api;
+  }
+  if (root) {
+    root.DokkanCalcCore = api;
+  }
+})(typeof globalThis !== 'undefined' ? globalThis : this, function createCalculationCore() {
+  'use strict';
+
+  const TYPE_ADVANTAGE = Object.freeze({
+    teq: 'agl',
+    agl: 'str',
+    str: 'phy',
+    phy: 'int',
+    int: 'teq'
+  });
+
+  // Verified incoming-damage variance boundaries.  The UI deliberately shows
+  // only this range; it does not invent an average or representative roll.
+  const DAMAGE_VARIANCE_MIN = 1;
+  const DAMAGE_VARIANCE_MAX = 1.03;
+
+  // This list preserves the Phase 2 production model while disputed DEF
+  // bracket relationships are investigated.  The pure core gives the main
+  // card and preview one implementation without silently settling those
+  // still-open mechanics.
+  const LEGACY_COMPATIBLE_DEFENSE_FIELDS = Object.freeze([
+    'leader',
+    'field',
+    'passive',
+    'memory',
+    'link',
+    'multi_passive',
+    'super_attack',
+    'active',
+    'support_item'
+  ]);
+
+  function numberOrZero(value) {
+    return Number.parseFloat(value) || 0;
+  }
+
+  function booleanValue(value) {
+    return value === true || String(value) === 'true';
+  }
+
+  function multiplierFromPercent(percent) {
+    return 1 + numberOrZero(percent) / 100;
+  }
+
+  /**
+   * Floors a mathematical product while correcting only binary floating-point
+   * noise immediately next to an integer (for example 100000 * 2.3).
+   */
+  function multiplyAndFloor(value, multiplier) {
+    const product = numberOrZero(value) * numberOrZero(multiplier);
+    const stableProduct = stabilizeNearInteger(product);
+    return Math.floor(stableProduct);
+  }
+
+  /** Removes binary floating-point noise only when a value is effectively integer. */
+  function stabilizeNearInteger(value) {
+    const parsedValue = numberOrZero(value);
+    const nearestInteger = Math.round(parsedValue);
+    const tolerance = Math.max(1, Math.abs(parsedValue)) * Number.EPSILON * 8;
+    return Math.abs(parsedValue - nearestInteger) <= tolerance
+      ? nearestInteger
+      : parsedValue;
+  }
+
+  /**
+   * Applies an integer percentage through integer arithmetic when possible.
+   * Enemy ATK data currently uses integer base values and integer percentages,
+   * so this avoids turning an exact 230000 into 229999.99999999997.
+   */
+  function applyPercentAndFloor(value, percent) {
+    const base = numberOrZero(value);
+    const parsedPercent = numberOrZero(percent);
+    const numerator = base * (100 + parsedPercent);
+
+    if (
+      Number.isSafeInteger(base)
+      && Number.isSafeInteger(parsedPercent)
+      && Number.isSafeInteger(numerator)
+    ) {
+      return Math.floor(numerator / 100);
+    }
+
+    return multiplyAndFloor(base, multiplierFromPercent(parsedPercent));
+  }
+
+  /**
+   * Exact Phase 2 DEF behavior, retained temporarily as a compatibility seam.
+   * It is not labelled as the verified game formula.
+   */
+  function calculateLegacyCompatibleDefense(input = {}) {
+    return LEGACY_COMPATIBLE_DEFENSE_FIELDS.reduce(
+      (defense, field) => defense * multiplierFromPercent(input[field]),
+      numberOrZero(input.char_def)
+    );
+  }
+
+  function calculateModifiers(input = {}) {
+    const ownClass = input.own_class ?? 'super';
+    const ownType = input.own_type ?? 'teq';
+    const enemyClass = input.enemy_class ?? 'super';
+    const enemyType = input.enemy_type ?? 'teq';
+
+    let advantageStatus = 'neutral';
+    if (TYPE_ADVANTAGE[ownType] === enemyType) {
+      advantageStatus = 'advantage';
+    } else if (TYPE_ADVANTAGE[enemyType] === ownType) {
+      advantageStatus = 'disadvantage';
+    }
+
+    let guardModifier = advantageStatus === 'advantage' ? 0.5 : 1;
+    let typeModifier = 1;
+    const sameClass = ownClass === enemyClass;
+
+    if (sameClass) {
+      if (advantageStatus === 'advantage') typeModifier = 0.9;
+      else if (advantageStatus === 'disadvantage') typeModifier = 1.25;
+    } else if (advantageStatus === 'advantage') {
+      typeModifier = 1;
+    } else if (advantageStatus === 'disadvantage') {
+      typeModifier = 1.5;
+    } else {
+      typeModifier = 1.15;
+    }
+
+    const guardsAll = booleanValue(input.is_guard);
+    if (guardsAll) {
+      typeModifier = 0.8;
+      guardModifier = 0.5;
+    }
+
+    const typeDefenseLevel = numberOrZero(input.attr_def_up);
+    if (advantageStatus === 'advantage' && typeDefenseLevel > 0) {
+      typeModifier -= typeDefenseLevel * 0.01;
+    }
+
+    let criticalAttackModifier = 1;
+    let criticalDefenseModifier = 1;
+    if (booleanValue(input.is_critical)) {
+      criticalAttackModifier = multiplierFromPercent(input.crit_atk_up);
+      criticalDefenseModifier = 1 - numberOrZero(input.crit_def_down) / 100;
+
+      if (guardsAll) {
+        typeModifier = 0.8;
+        guardModifier = 0.5;
+      } else {
+        typeModifier = 1;
+        guardModifier = 1;
+      }
+
+      if (advantageStatus === 'advantage' && typeDefenseLevel > 0) {
+        typeModifier -= typeDefenseLevel * 0.01;
+      }
+    }
+
+    return {
+      group1_advantage_status: advantageStatus,
+      attr_mod: Math.max(0, typeModifier),
+      guard_mod: guardModifier,
+      dr_mod: 1 - numberOrZero(input.dr_input) / 100,
+      atk_crit_mod: criticalAttackModifier,
+      def_crit_mod: criticalDefenseModifier
+    };
+  }
+
+  function calculateDurability(input = {}) {
+    const finalDefense = calculateLegacyCompatibleDefense(input);
+    const modifiers = calculateModifiers(input);
+
+    return {
+      final_def: finalDefense,
+      final_def_crit_mod: finalDefense * modifiers.def_crit_mod,
+      attr_mod: modifiers.attr_mod,
+      guard_mod: modifiers.guard_mod,
+      dr_mod: modifiers.dr_mod,
+      atk_crit_mod: modifiers.atk_crit_mod,
+      group1_advantage_status: modifiers.group1_advantage_status
+    };
+  }
+
+  /** Damage variance deliberately defaults to the Phase 2 baseline of 1.0. */
+  function calculateDamage(enemyAttack, calculation, variance = 1) {
+    const attackAfterModifiers = numberOrZero(enemyAttack)
+      * calculation.atk_crit_mod
+      * calculation.attr_mod
+      * calculation.dr_mod
+      * numberOrZero(variance);
+    const damage = Math.max(0, attackAfterModifiers - calculation.final_def_crit_mod)
+      * calculation.guard_mod;
+    return stabilizeNearInteger(damage);
+  }
+
+  function calculateDamageRange(enemyAttack, calculation) {
+    const damageAtMinimumVariance = calculateDamage(
+      enemyAttack,
+      calculation,
+      DAMAGE_VARIANCE_MIN
+    );
+    const damageAtMaximumVariance = calculateDamage(
+      enemyAttack,
+      calculation,
+      DAMAGE_VARIANCE_MAX
+    );
+
+    return {
+      minimum: Math.min(damageAtMinimumVariance, damageAtMaximumVariance),
+      maximum: Math.max(damageAtMinimumVariance, damageAtMaximumVariance)
+    };
+  }
+
+  function calculateDurabilityLine(targetDamage, calculation, variance = 1) {
+    return (
+      (numberOrZero(targetDamage) / calculation.guard_mod)
+      + calculation.final_def_crit_mod
+    ) / (
+      calculation.attr_mod
+      * calculation.dr_mod
+      * calculation.atk_crit_mod
+      * numberOrZero(variance)
+    );
+  }
+
+  /** Uses the verified maximum variance so a displayed line is safety-first. */
+  function calculateSafeDurabilityLine(targetDamage, calculation) {
+    return calculateDurabilityLine(targetDamage, calculation, DAMAGE_VARIANCE_MAX);
+  }
+
+  /**
+   * Current enemy-data mapping: turn/HP/appearance are start-of-turn effects;
+   * received-hit buildup is a separate mid-battle bracket.
+   */
+  function calculateEnemyConditionState(baseAttack, conditions = {}) {
+    const startOfTurnPercent = numberOrZero(conditions.turnPct)
+      + numberOrZero(conditions.hpPct)
+      + numberOrZero(conditions.appearPct);
+    const receivedHitPercent = numberOrZero(conditions.hitPct);
+    const afterStartOfTurn = applyPercentAndFloor(baseAttack, startOfTurnPercent);
+    const attack = applyPercentAndFloor(afterStartOfTurn, receivedHitPercent);
+
+    return {
+      attack,
+      afterStartOfTurn,
+      startOfTurnPercent,
+      receivedHitPercent,
+      totalMultiplier: multiplierFromPercent(startOfTurnPercent)
+        * multiplierFromPercent(receivedHitPercent)
+    };
+  }
+
+  function calculateEnemyAttackVariants(boostedAttack, enemy = {}) {
+    const normalAttack = Math.floor(numberOrZero(boostedAttack));
+    const superAttackMultiplier = numberOrZero(enemy.saMulti);
+    const superAttackBuff = numberOrZero(enemy.saBuffMod);
+
+    return {
+      normal: normalAttack,
+      postSaNormal: superAttackBuff > 0
+        ? multiplyAndFloor(normalAttack, 1 + superAttackBuff)
+        : null,
+      superAttack: multiplyAndFloor(
+        normalAttack,
+        superAttackMultiplier + superAttackBuff
+      )
+    };
+  }
+
+  function positiveNumber(value, fallback = 0) {
+    const parsed = numberOrZero(value);
+    return parsed > 0 ? parsed : fallback;
+  }
+
+  function buildTurnConditionOptions(enemy = {}) {
+    const increment = positiveNumber(enemy.turnAtkUp);
+    const maximum = positiveNumber(enemy.turnAtkMax);
+    if (increment === 0 || maximum === 0) return [];
+
+    const startTurn = Math.max(1, Math.floor(positiveNumber(enemy.turnAtkUpStartTurn, 1)));
+    const options = [];
+    if (startTurn > 1) {
+      options.push({
+        value: 0,
+        turn: startTurn - 1,
+        label: `${startTurn - 1}ターンまで (ATK+0%)`
+      });
+    }
+
+    const steps = Math.ceil(maximum / increment);
+    for (let step = 1; step <= steps; step += 1) {
+      const percent = Math.min(maximum, increment * step);
+      const turn = startTurn + step - 1;
+      options.push({ value: percent, turn, label: `${turn}ターン (ATK+${percent}%)` });
+    }
+    return options;
+  }
+
+  function buildHitConditionOptions(enemy = {}) {
+    const increment = positiveNumber(enemy.hitAtkUp);
+    const maximum = positiveNumber(enemy.hitAtkMax);
+    if (increment === 0 || maximum === 0) return [];
+
+    const options = [{ value: 0, hits: 0, label: '0回 (ATK+0%)' }];
+    const steps = Math.ceil(maximum / increment);
+    for (let step = 1; step <= steps; step += 1) {
+      const percent = Math.min(maximum, increment * step);
+      options.push({ value: percent, hits: step, label: `${step}回 (ATK+${percent}%)` });
+    }
+    return options;
+  }
+
+  function formatNumber(value) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return '---';
+    if (parsed >= 10000) return `${Math.floor(parsed / 10000)}万`;
+    return Math.round(parsed).toLocaleString();
+  }
+
+  function formatDamageRangeEndpoint(value, direction) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return '---';
+
+    const stabilized = stabilizeNearInteger(parsed);
+    if (stabilized >= 10000) {
+      const tenthsOfTenThousand = direction === 'up'
+        ? Math.ceil(stabilized / 1000)
+        : Math.floor(stabilized / 1000);
+      const tenThousands = tenthsOfTenThousand / 10;
+      const display = Number.isInteger(tenThousands)
+        ? tenThousands.toFixed(0)
+        : tenThousands.toFixed(1);
+      return `${display}万`;
+    }
+
+    const rounded = direction === 'up'
+      ? Math.ceil(stabilized)
+      : Math.floor(stabilized);
+    return rounded.toLocaleString();
+  }
+
+  function formatDamageRange(range = {}) {
+    const minimum = numberOrZero(range.minimum);
+    const maximum = numberOrZero(range.maximum);
+    if (minimum === 0 && maximum === 0) return '0';
+    return `${formatDamageRangeEndpoint(minimum, 'down')}〜${formatDamageRangeEndpoint(maximum, 'up')}`;
+  }
+
+  function formatDurabilityLimit(value) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return '---';
+
+    const stabilized = stabilizeNearInteger(parsed);
+    if (stabilized >= 10000) return `${Math.floor(stabilized / 10000)}万`;
+    return Math.floor(stabilized).toLocaleString();
+  }
+
+  /**
+   * `hasSaCrit` means that the dedicated Super Attack row can critical-hit.
+   * It must not turn every normal attack into a critical hit when an enemy is
+   * loaded through a different UI path.
+   */
+  function hasGlobalCriticalEffect(enemy = {}) {
+    return numberOrZero(enemy.critHpRate) > 0
+      || numberOrZero(enemy.critTurnUp) > 0
+      || numberOrZero(enemy.critFixedRate) > 0
+      || (booleanValue(enemy.isCriticalDefault) && !booleanValue(enemy.hasSaCrit));
+  }
+
+  return Object.freeze({
+    applyPercentAndFloor,
+    buildHitConditionOptions,
+    buildTurnConditionOptions,
+    calculateDamage,
+    calculateDamageRange,
+    calculateDurability,
+    calculateDurabilityLine,
+    calculateSafeDurabilityLine,
+    calculateEnemyAttackVariants,
+    calculateEnemyConditionState,
+    calculateLegacyCompatibleDefense,
+    calculateModifiers,
+    DAMAGE_VARIANCE_MAX,
+    DAMAGE_VARIANCE_MIN,
+    formatDamageRange,
+    formatDurabilityLimit,
+    formatNumber,
+    hasGlobalCriticalEffect,
+    multiplyAndFloor
+  });
+});
+
+
+/**
+ * Phase 7 one-operation update prototype.
+ * Pure/injected I/O keeps it production-separated and testable offline.
+ */
+
+const encoder = new TextEncoder();
+
+async function sha256Text(text) {
+  const bytes = new Uint8Array(await globalThis.crypto.subtle.digest('SHA-256', encoder.encode(text)));
+  return `sha256:${[...bytes].map((value) => value.toString(16).padStart(2, '0')).join('')}`;
+}
+
+function runtimeCounts(runtime) {
+  let stages = 0;
+  let encounters = 0;
+  let enemies = 0;
+  for (const event of runtime.events) {
+    stages += event.stages.length;
+    for (const stage of event.stages) {
+      encounters += stage.encounters.length;
+      for (const encounter of stage.encounters) enemies += encounter.enemies.length;
+    }
+  }
+  return { events: runtime.events.length, stages, encounters, enemies };
+}
+
+function validateRuntime(runtime) {
+  const errors = [];
+  if (!runtime || typeof runtime !== 'object') return ['runtime must be an object'];
+  if (runtime.schemaVersion !== '1.0.0') errors.push('runtime schemaVersion must be 1.0.0');
+  if (typeof runtime.datasetId !== 'string' || runtime.datasetId.length === 0) errors.push('runtime datasetId is missing');
+  if (!Array.isArray(runtime.events)) errors.push('runtime events must be an array');
+  else {
+    const ids = new Set();
+    for (const event of runtime.events) {
+      if (!event || typeof event.id !== 'string' || !Array.isArray(event.stages)) errors.push('invalid event structure');
+      else if (ids.has(event.id)) errors.push(`duplicate event ID: ${event.id}`);
+      else ids.add(event.id);
+    }
+  }
+  return errors;
+}
+
+function validateDeliveryManifest(manifest) {
+  const errors = [];
+  if (!manifest || typeof manifest !== 'object') return ['manifest must be an object'];
+  if (manifest.schemaVersion !== '1.0.0') errors.push('manifest schemaVersion must be 1.0.0');
+  if (manifest.prototype !== true) errors.push('only a Phase 7 prototype manifest is accepted');
+  if (typeof manifest.datasetVersion !== 'string') errors.push('datasetVersion is missing');
+  if (manifest.validation?.status !== 'passed' || manifest.validation?.hardFailCount !== 0 || manifest.validation?.reviewRequiredCount !== 0) errors.push('manifest validation gate did not pass');
+  if (manifest.permission?.offlinePrototypeAllowed !== true) errors.push('offline prototype permission gate did not pass');
+  if (!manifest.full?.json || !manifest.chunked?.indexJson) errors.push('delivery artifacts are missing');
+  return errors;
+}
+
+function safetyDiff(candidate, previous) {
+  if (!previous) return [];
+  const findings = [];
+  const candidateCounts = runtimeCounts(candidate);
+  const previousCounts = Array.isArray(previous.events)
+    ? runtimeCounts(previous)
+    : previous.counts;
+  if (!previousCounts) return ['previous known-good counts are missing'];
+  for (const key of ['events', 'stages', 'enemies']) {
+    const before = previousCounts[key];
+    const after = candidateCounts[key];
+    if (before > 0 && after < before * 0.8) findings.push(`${key} reduced by more than 20%`);
+  }
+  return findings;
+}
+
+function assembleChunkRuntime(manifest, index, events) {
+  return {
+    schemaVersion: manifest.runtimeSchemaVersion,
+    datasetId: manifest.datasetVersion,
+    canonicalDatasetId: `phase7-chunk-assembly:${manifest.datasetVersion}`,
+    generatedAt: manifest.generatedAt,
+    region: index.region,
+    events
+  };
+}
+
+async function readAndVerify(getText, descriptor, code) {
+  let text;
+  try {
+    text = await getText(descriptor.path);
+  } catch (error) {
+    throw new UpdateError(`${code}_MISSING`, `${descriptor.path}を取得できませんでした。`, error);
+  }
+  if (BufferByteLength(text) !== descriptor.bytes) throw new UpdateError(`${code}_SIZE_MISMATCH`, `${descriptor.path}のsizeがmanifestと一致しません。`);
+  if (await sha256Text(text) !== descriptor.digest) throw new UpdateError(`${code}_DIGEST_MISMATCH`, `${descriptor.path}のdigestが一致しません。`);
+  return text;
+}
+
+function BufferByteLength(text) {
+  return encoder.encode(text).byteLength;
+}
+
+function parseJson(text, code) {
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    throw new UpdateError(`${code}_JSON_INVALID`, 'JSONを解析できません。', error);
+  }
+}
+
+class UpdateError extends Error {
+  constructor(code, message, cause) {
+    super(message, cause === undefined ? undefined : { cause });
+    this.name = 'UpdateError';
+    this.code = code;
+  }
+}
+
+class MemoryReleaseStore {
+  constructor(initialRelease = null) {
+    this.active = initialRelease;
+    this.knownGood = initialRelease;
+    this.releases = new Map(initialRelease ? [[initialRelease.datasetVersion, initialRelease]] : []);
+    this.failpoint = null;
+  }
+
+  snapshot() {
+    return { active: this.active, knownGood: this.knownGood, releases: new Map(this.releases) };
+  }
+
+  restore(snapshot) {
+    this.active = snapshot.active;
+    this.knownGood = snapshot.knownGood;
+    this.releases = new Map(snapshot.releases);
+  }
+
+  async commit(release) {
+    if (this.failpoint === 'before-pointer') throw new Error('simulated failure before active pointer');
+    this.releases.set(release.datasetVersion, release);
+    this.active = release;
+    if (this.failpoint === 'after-pointer') throw new Error('simulated failure after active pointer');
+  }
+
+  async markKnownGood(release) {
+    this.knownGood = release;
+  }
+}
+
+async function performOneOperationUpdate({
+  getText,
+  manifestPath = 'delivery-manifest.json',
+  mode = 'full',
+  store,
+  appVersion = 'phase7-prototype-1',
+  healthCheck = async () => true,
+  manifestValidator = validateDeliveryManifest,
+  runtimeValidator = validateRuntime
+}) {
+  const startedAt = performance.now();
+  let manifestText;
+  try {
+    manifestText = await getText(manifestPath);
+  } catch (error) {
+    return { status: 'rejected', code: 'MANIFEST_MISSING', message: 'manifestを取得できません。', retainedVersion: store.active?.datasetVersion ?? null };
+  }
+  let manifest;
+  try {
+    manifest = JSON.parse(manifestText);
+  } catch {
+    return { status: 'rejected', code: 'MANIFEST_JSON_INVALID', message: 'manifestが壊れています。', retainedVersion: store.active?.datasetVersion ?? null };
+  }
+  const manifestErrors = await manifestValidator(manifest);
+  if (manifestErrors.length > 0) return { status: 'rejected', code: 'MANIFEST_GATE_REJECTED', message: manifestErrors.join(' / '), retainedVersion: store.active?.datasetVersion ?? null };
+  if (manifest.appCompatibility?.minimum !== appVersion || (manifest.appCompatibility.maximum != null && manifest.appCompatibility.maximum !== appVersion)) {
+    return { status: 'rejected', code: 'INCOMPATIBLE_APP_VERSION', message: 'このapp versionとは互換性がありません。', retainedVersion: store.active?.datasetVersion ?? null };
+  }
+  if (store.active?.datasetVersion === manifest.datasetVersion) return { status: 'unchanged', code: 'ALREADY_CURRENT', activeVersion: manifest.datasetVersion, milliseconds: performance.now() - startedAt };
+  if (store.active && Date.parse(manifest.generatedAt) <= Date.parse(store.active.generatedAt)) {
+    return { status: 'rejected', code: 'STALE_DATASET', message: '現在版より古いdatasetです。', retainedVersion: store.active.datasetVersion };
+  }
+
+  let runtime;
+  let payload;
+  try {
+    if (mode === 'full') {
+      const text = await readAndVerify(getText, manifest.full.json, 'FULL_RUNTIME');
+      runtime = parseJson(text, 'FULL_RUNTIME');
+      payload = { mode, text, digest: manifest.full.json.digest };
+    } else if (mode === 'chunk') {
+      const indexText = await readAndVerify(getText, manifest.chunked.indexJson, 'CHUNK_INDEX');
+      const index = parseJson(indexText, 'CHUNK_INDEX');
+      if (index.datasetVersion !== manifest.datasetVersion || !Array.isArray(index.events)) throw new UpdateError('CHUNK_INDEX_VERSION_MISMATCH', 'chunk indexのversionが一致しません。');
+      const events = [];
+      const chunkTexts = new Map();
+      for (const entry of index.events) {
+        const text = await readAndVerify(getText, entry.json, 'EVENT_CHUNK');
+        const event = parseJson(text, 'EVENT_CHUNK');
+        if (event.id !== entry.id) throw new UpdateError('EVENT_CHUNK_ID_MISMATCH', 'event chunkのIDがindexと一致しません。');
+        events.push(event);
+        chunkTexts.set(entry.id, text);
+      }
+      runtime = assembleChunkRuntime(manifest, index, events);
+      payload = { mode, indexText, chunkTexts, digest: manifest.chunked.indexJson.digest };
+    } else {
+      throw new UpdateError('UNKNOWN_DELIVERY_MODE', '未知の配信方式です。');
+    }
+  } catch (error) {
+    const updateError = error instanceof UpdateError ? error : new UpdateError('TRANSFER_FAILED', 'candidate取得中に失敗しました。', error);
+    return { status: 'rejected', code: updateError.code, message: updateError.message, retainedVersion: store.active?.datasetVersion ?? null };
+  }
+
+  const runtimeErrors = await runtimeValidator(runtime);
+  if (runtime.datasetId !== manifest.datasetVersion) runtimeErrors.push('runtime dataset version mismatch');
+  if (runtimeErrors.length > 0) return { status: 'rejected', code: 'RUNTIME_SCHEMA_INVALID', message: runtimeErrors.join(' / '), retainedVersion: store.active?.datasetVersion ?? null };
+  const safetyFindings = safetyDiff(runtime, store.active?.runtime ?? store.active ?? null);
+  if (safetyFindings.length > 0) return { status: 'rejected', code: 'SAFETY_GATE_REJECTED', message: safetyFindings.join(' / '), retainedVersion: store.active?.datasetVersion ?? null };
+
+  const release = { datasetVersion: manifest.datasetVersion, generatedAt: manifest.generatedAt, manifest, runtime, counts: runtimeCounts(runtime), payload };
+  const before = store.snapshot();
+  try {
+    await store.commit(release);
+    if (!await healthCheck(release)) throw new UpdateError('HEALTH_CHECK_FAILED', '適用後health checkに失敗しました。');
+    await store.markKnownGood(release);
+  } catch (error) {
+    store.restore(before);
+    const updateError = error instanceof UpdateError ? error : new UpdateError('ATOMIC_APPLY_FAILED', '適用途中で失敗したため元のknown-goodへ戻しました。', error);
+    return { status: 'rolled-back', code: updateError.code, message: updateError.message, retainedVersion: store.active?.datasetVersion ?? null };
+  }
+  return {
+    status: 'applied',
+    code: 'UPDATE_APPLIED',
+    activeVersion: release.datasetVersion,
+    knownGoodVersion: store.knownGood.datasetVersion,
+    counts: runtimeCounts(runtime),
+    milliseconds: performance.now() - startedAt
+  };
+}
+
+function evaluateZeroOperationReadiness(evidence) {
+  const checks = [
+    ['writtenPermission', evidence.writtenPermission === true, '取得・派生公開・自動適用の書面許可'],
+    ['successfulDays', (evidence.successfulDays ?? 0) >= 60, '60日以上のpilot運用'],
+    ['successfulCandidates', (evidence.successfulCandidates ?? 0) >= 30, '30回以上の連続candidate成功'],
+    ['falsePositiveRate', (evidence.falsePositiveRate ?? 1) <= 0.01, '安全gate誤停止率1%以下'],
+    ['rollbackDrills', (evidence.rollbackDrills ?? 0) >= 3, 'PC/Android/iPhoneを含む3回以上のrollback drill'],
+    ['updateSuccessRate', (evidence.updateSuccessRate ?? 0) >= 0.99, '100回以上の試行で99%以上の更新成功'],
+    ['freshnessWithinSevenDaysRate', (evidence.freshnessWithinSevenDaysRate ?? 0) >= 0.95, '詳細値が7日以内に揃う率95%以上'],
+    ['knownGoodReleases', (evidence.knownGoodReleases ?? 0) >= 3, '最低3世代のknown-good保持'],
+    ['compatibleAppGate', evidence.compatibleAppGate === true, 'app version互換gate'],
+    ['ownerApproval', evidence.ownerApproval === true, '0操作化のowner承認']
+  ];
+  return { ready: checks.every(([, passed]) => passed), checks: checks.map(([code, passed, description]) => ({ code, passed, description })) };
+}
+
+
+
+const DIGEST_PATTERN = /^sha256:[a-f0-9]{64}$/;
+const FIELD_STATES = new Set(['known', 'unknown', 'unavailable', 'not-applicable']);
+
+function isArtifact(value, type) {
+  return value && typeof value.path === 'string' && value.path.length > 0
+    && DIGEST_PATTERN.test(value.digest) && Number.isInteger(value.bytes) && value.bytes > 0
+    && value.contentType === type;
+}
+
+function fieldValid(field) {
+  return field && FIELD_STATES.has(field.state)
+    && (field.state === 'known' ? field.value != null : field.value === null);
+}
+
+function validatePhase8Manifest(manifest) {
+  const errors = [];
+  if (!manifest || typeof manifest !== 'object') return ['manifest must be an object'];
+  if (manifest.schemaVersion !== '1.0.0') errors.push('unsupported manifest schema');
+  if (manifest.releaseCandidate !== true || manifest.productionActivated !== false) errors.push('release candidate boundary is invalid');
+  if (!['synthetic-public-fixture', 'existing-data-internal-only'].includes(manifest.dataClassification)) errors.push('data classification is invalid');
+  if (typeof manifest.datasetVersion !== 'string' || manifest.datasetVersion.length === 0) errors.push('dataset version is missing');
+  if (!Number.isFinite(Date.parse(manifest.generatedAt))) errors.push('generatedAt is invalid');
+  if (manifest.runtimeSchemaVersion !== '1.0.0') errors.push('runtime schema is incompatible');
+  if (typeof manifest.appCompatibility?.minimum !== 'string' || manifest.appCompatibility.minimum.length === 0 || manifest.appCompatibility?.productionAppReadsArtifact !== false) errors.push('app compatibility declaration is invalid');
+  if (!isArtifact(manifest.full?.json, 'application/json') || !isArtifact(manifest.full?.script, 'text/javascript')) errors.push('full artifacts are invalid');
+  if (!isArtifact(manifest.chunked?.indexJson, 'application/json') || !isArtifact(manifest.chunked?.indexScript, 'text/javascript')) errors.push('chunk index artifacts are invalid');
+  if (!manifest.counts || !['events', 'stages', 'encounters', 'enemies'].every((key) => Number.isInteger(manifest.counts[key]) && manifest.counts[key] >= 0)) errors.push('record counts are invalid');
+  if (manifest.chunked?.eventCount !== manifest.counts?.events) errors.push('event count mismatch');
+  if (manifest.validation?.status !== 'passed' || manifest.validation?.hardFailCount !== 0 || manifest.validation?.reviewRequiredCount !== 0) errors.push('validation gate did not pass');
+  if (manifest.permission?.releaseCandidatePreviewAllowed !== true || typeof manifest.permission?.publicArtifactAllowed !== 'boolean' || manifest.permission?.productionActivateAllowed !== false || manifest.permission?.liveSourceAccessAllowed !== false) errors.push('permission boundary is invalid');
+  if (manifest.permission?.publicArtifactAllowed === true && manifest.dataClassification !== 'synthetic-public-fixture') errors.push('only synthetic fixtures may be public artifacts');
+  if (manifest.updatePolicy?.userInitiated !== true || manifest.updatePolicy?.zeroOperationEnabled !== false || manifest.updatePolicy?.browserPatRequired !== false) errors.push('update policy is invalid');
+  if (manifest.knownGood?.datasetVersion !== manifest.datasetVersion || manifest.knownGood?.runtimeDigest !== manifest.full?.json?.digest) errors.push('known-good metadata mismatch');
+  return errors;
+}
+
+function validatePhase8Runtime(runtime) {
+  const errors = validateRuntime(runtime);
+  if (!Array.isArray(runtime?.events)) return errors;
+  for (const event of runtime.events) {
+    if (!fieldValid(event.name) || !fieldValid(event.category)) errors.push(`invalid event fields: ${event.id ?? '?'}`);
+    if (!Array.isArray(event.stages)) continue;
+    for (const stage of event.stages) {
+      if (typeof stage.id !== 'string' || !fieldValid(stage.name) || !Array.isArray(stage.encounters)) errors.push(`invalid stage: ${stage?.id ?? '?'}`);
+      for (const encounter of stage.encounters ?? []) {
+        if (typeof encounter.id !== 'string' || !Array.isArray(encounter.enemies) || !Array.isArray(encounter.areaAttacks)) errors.push(`invalid encounter: ${encounter?.id ?? '?'}`);
+        for (const enemy of encounter.enemies ?? []) {
+          if (typeof enemy.id !== 'string' || !fieldValid(enemy.name) || !fieldValid(enemy.type) || !fieldValid(enemy.alignment) || !fieldValid(enemy.baseAttack)) errors.push(`invalid enemy fields: ${enemy?.id ?? '?'}`);
+          if (!Array.isArray(enemy.superAttacks) || !Array.isArray(enemy.passiveEffects) || !enemy.critical) errors.push(`invalid enemy arrays: ${enemy?.id ?? '?'}`);
+          for (const attack of enemy.superAttacks ?? []) {
+            if (typeof attack.id !== 'string' || !fieldValid(attack.name) || !fieldValid(attack.displayedDamage) || !Array.isArray(attack.usageRules) || !Array.isArray(attack.effects)) errors.push(`invalid super attack: ${attack?.id ?? '?'}`);
+          }
+        }
+      }
+    }
+  }
+  return errors;
+}
+
+function validatePhase8Index(index, manifest) {
+  const errors = [];
+  if (!index || typeof index !== 'object' || index.schemaVersion !== '1.0.0') return ['event index is invalid'];
+  if (index.datasetVersion !== manifest.datasetVersion) errors.push('event index version mismatch');
+  if (!Array.isArray(index.events) || index.events.length !== manifest.counts.events) errors.push('event index count mismatch');
+  const ids = new Set();
+  for (const entry of index.events ?? []) {
+    if (typeof entry.id !== 'string' || ids.has(entry.id)) errors.push(`invalid or duplicate event index ID: ${entry?.id ?? '?'}`);
+    ids.add(entry.id);
+    if (!isArtifact(entry.json, 'application/json') || !isArtifact(entry.script, 'text/javascript')) errors.push(`invalid event artifact: ${entry?.id ?? '?'}`);
+  }
+  return errors;
+}
+
+async function verifyArtifactText(text, descriptor) {
+  if (new TextEncoder().encode(text).byteLength !== descriptor.bytes) return { valid: false, code: 'SIZE_MISMATCH' };
+  if (await sha256Text(text) !== descriptor.digest) return { valid: false, code: 'DIGEST_MISMATCH' };
+  return { valid: true, code: 'OK' };
+}
+
+
+
+const STATE_KEY = 'release-state';
+
+function requestValue(request) {
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function transactionDone(transaction) {
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = resolve;
+    transaction.onabort = () => reject(transaction.error ?? new Error('IndexedDB transaction aborted'));
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+class Phase8ReleaseStore {
+  constructor({ indexedDB = globalThis.indexedDB, dbName = 'dokkan-phase8-rc-releases-v1' } = {}) {
+    if (!indexedDB) throw new Error('IndexedDB is unavailable');
+    this.indexedDB = indexedDB;
+    this.dbName = dbName;
+    this.db = null;
+    this.active = null;
+    this.knownGood = null;
+    this.releases = new Map();
+    this.failpoint = null;
+  }
+
+  async open() {
+    if (this.db) return this.db;
+    const request = this.indexedDB.open(this.dbName, 1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains('releases')) db.createObjectStore('releases', { keyPath: 'datasetVersion' });
+      if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta');
+    };
+    this.db = await requestValue(request);
+    return this.db;
+  }
+
+  async usable(release) {
+    if (!release || validatePhase8Manifest(release.manifest).length > 0 || release.datasetVersion !== release.manifest.datasetVersion) return false;
+    if (release.runtime) {
+      if (validatePhase8Runtime(release.runtime).length > 0 || typeof release.payload?.text !== 'string') return false;
+      if (!(await verifyArtifactText(release.payload.text, release.manifest.full.json)).valid) return false;
+    }
+    return true;
+  }
+
+  async initialize(seedRelease = null) {
+    const db = await this.open();
+    const transaction = db.transaction(['releases', 'meta'], 'readonly');
+    const done = transactionDone(transaction);
+    const releases = transaction.objectStore('releases');
+    const meta = await requestValue(transaction.objectStore('meta').get(STATE_KEY));
+    const active = meta?.activeVersion ? await requestValue(releases.get(meta.activeVersion)) : null;
+    const knownGood = meta?.knownGoodVersion ? await requestValue(releases.get(meta.knownGoodVersion)) : null;
+    const retained = await requestValue(releases.getAll());
+    await done;
+    const activeUsable = await this.usable(active);
+    const knownGoodUsable = await this.usable(knownGood);
+    let recovery = 'stored-active';
+    if (activeUsable) {
+      this.active = active;
+      this.knownGood = knownGoodUsable ? knownGood : active;
+    } else if (knownGoodUsable) {
+      this.active = knownGood;
+      this.knownGood = knownGood;
+      recovery = 'known-good-restored';
+    } else {
+      const fallbackCandidates = retained
+        .filter((release) => release?.datasetVersion !== active?.datasetVersion && release?.datasetVersion !== knownGood?.datasetVersion)
+        .sort((left, right) => Date.parse(right.generatedAt) - Date.parse(left.generatedAt));
+      let fallback = null;
+      for (const release of fallbackCandidates) {
+        if (await this.usable(release)) {
+          fallback = release;
+          break;
+        }
+      }
+      if (fallback) {
+        this.active = fallback;
+        this.knownGood = fallback;
+        recovery = 'retained-release-restored';
+      } else if (await this.usable(seedRelease)) {
+        this.active = seedRelease;
+        this.knownGood = seedRelease;
+        recovery = meta ? 'bundled-seed-restored' : 'bundled-seed-initialized';
+      } else {
+        throw new Error('利用できるknown-good releaseがありません。');
+      }
+    }
+    this.releases = new Map(retained.map((release) => [release.datasetVersion, release]));
+    this.releases.set(this.active.datasetVersion, this.active);
+    this.releases.set(this.knownGood.datasetVersion, this.knownGood);
+    if (recovery !== 'stored-active' || !knownGoodUsable) await this.persistKnownGood(this.active, this.knownGood);
+    return { recovery, activeVersion: this.active.datasetVersion, knownGoodVersion: this.knownGood.datasetVersion };
+  }
+
+  snapshot() {
+    return { active: this.active, knownGood: this.knownGood, releases: new Map(this.releases) };
+  }
+
+  restore(snapshot) {
+    this.active = snapshot.active;
+    this.knownGood = snapshot.knownGood;
+    this.releases = new Map(snapshot.releases);
+  }
+
+  async commit(release) {
+    if (this.failpoint === 'before-pointer') throw new Error('simulated failure before candidate pointer');
+    this.releases.set(release.datasetVersion, release);
+    this.active = release;
+    if (this.failpoint === 'after-pointer') throw new Error('simulated failure after candidate pointer');
+  }
+
+  async persistKnownGood(active, knownGood) {
+    const db = await this.open();
+    const transaction = db.transaction(['releases', 'meta'], 'readwrite');
+    const done = transactionDone(transaction);
+    transaction.objectStore('releases').put(active);
+    transaction.objectStore('releases').put(knownGood);
+    transaction.objectStore('meta').put({ activeVersion: active.datasetVersion, knownGoodVersion: knownGood.datasetVersion }, STATE_KEY);
+    await done;
+    await this.pruneReleases(new Set([active.datasetVersion, knownGood.datasetVersion]), 2);
+  }
+
+  async pruneReleases(protectedVersions, retainCount) {
+    const db = await this.open();
+    const read = db.transaction('releases', 'readonly');
+    const readDone = transactionDone(read);
+    const releases = await requestValue(read.objectStore('releases').getAll());
+    await readDone;
+    const keep = new Set(protectedVersions);
+    for (const release of releases.sort((left, right) => Date.parse(right.generatedAt) - Date.parse(left.generatedAt))) {
+      if (keep.size >= retainCount) break;
+      keep.add(release.datasetVersion);
+    }
+    const remove = releases.filter((release) => !keep.has(release.datasetVersion));
+    if (remove.length === 0) return;
+    const write = db.transaction('releases', 'readwrite');
+    const writeDone = transactionDone(write);
+    for (const release of remove) write.objectStore('releases').delete(release.datasetVersion);
+    await writeDone;
+    for (const release of remove) this.releases.delete(release.datasetVersion);
+  }
+
+  async markKnownGood(release) {
+    if (this.failpoint === 'before-persist') throw new Error('simulated persistent apply failure');
+    await this.persistKnownGood(release, release);
+    this.knownGood = release;
+  }
+
+  async corruptActiveForTest() {
+    const db = await this.open();
+    const broken = { ...this.active, payload: { ...this.active.payload, text: '{broken' } };
+    const transaction = db.transaction('releases', 'readwrite');
+    const done = transactionDone(transaction);
+    transaction.objectStore('releases').put(broken);
+    await done;
+  }
+
+  async deleteKnownGoodForTest() {
+    const db = await this.open();
+    const transaction = db.transaction('releases', 'readwrite');
+    const done = transactionDone(transaction);
+    transaction.objectStore('releases').delete(this.knownGood.datasetVersion);
+    await done;
+  }
+
+  async resetForTest() {
+    this.db?.close();
+    this.db = null;
+    await requestValue(this.indexedDB.deleteDatabase(this.dbName));
+  }
+}
+
+
+
+const METRICS_KEY = 'dokkan_phase8_rc_update_history_v1';
+
+function releaseFromManifest(manifest) {
+  return { datasetVersion: manifest.datasetVersion, generatedAt: manifest.generatedAt, manifest, runtime: null, counts: manifest.counts, payload: { mode: 'manifest-seed' } };
+}
+
+class Phase8RuntimeClient {
+  constructor({ dataRoot = './data', store, fetchImpl = globalThis.fetch.bind(globalThis), cacheStorage = globalThis.caches, storage = globalThis.localStorage, locationHref = globalThis.location?.href } = {}) {
+    this.dataRoot = dataRoot.replace(/\/$/, '');
+    this.store = store;
+    this.fetchImpl = fetchImpl;
+    this.cacheStorage = cacheStorage;
+    this.storage = storage;
+    this.locationHref = locationHref;
+    this.manifest = null;
+    this.index = null;
+    this.eventCache = new Map();
+    this.metrics = { cacheHits: 0, networkLoads: 0, corruptCacheEntries: 0 };
+  }
+
+  url(relativePath) {
+    return new URL(`${this.dataRoot}/${relativePath}`, this.locationHref).href;
+  }
+
+  async networkText(relativePath) {
+    const response = await this.fetchImpl(this.url(relativePath), { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    this.metrics.networkLoads += 1;
+    return response.text();
+  }
+
+  async fetchCandidateManifest() {
+    const manifest = JSON.parse(await this.networkText('release-manifest.json'));
+    const errors = validatePhase8Manifest(manifest);
+    if (errors.length > 0) throw new Error(errors.join(' / '));
+    return manifest;
+  }
+
+  async readVerified(descriptor) {
+    const url = this.url(descriptor.path);
+    const key = `${url}?phase8Digest=${encodeURIComponent(descriptor.digest)}`;
+    const cache = this.cacheStorage ? await this.cacheStorage.open('dokkan-phase8-rc-artifacts-v1') : null;
+    const cached = cache ? await cache.match(key) : null;
+    if (cached) {
+      const text = await cached.text();
+      if ((await verifyArtifactText(text, descriptor)).valid) {
+        this.metrics.cacheHits += 1;
+        return text;
+      }
+      this.metrics.corruptCacheEntries += 1;
+      await cache.delete(key);
+    }
+    const text = await this.networkText(descriptor.path);
+    const verified = await verifyArtifactText(text, descriptor);
+    if (!verified.valid) throw new Error(`${verified.code}: ${descriptor.path}`);
+    if (cache) await cache.put(key, new Response(text, { headers: { 'Content-Type': descriptor.contentType } }));
+    return text;
+  }
+
+  async loadIndex(manifest = this.manifest) {
+    const text = await this.readVerified(manifest.chunked.indexJson);
+    const index = JSON.parse(text);
+    const errors = validatePhase8Index(index, manifest);
+    if (errors.length > 0) throw new Error(errors.join(' / '));
+    if (manifest === this.manifest) this.index = index;
+    return index;
+  }
+
+  async initialize() {
+    let candidate = null;
+    try {
+      candidate = await this.fetchCandidateManifest();
+    } catch {
+      // Stored known-good may still be usable. A visible friendly error is left to the UI only if it is not.
+    }
+    const recovery = await this.store.initialize(candidate ? releaseFromManifest(candidate) : null);
+    this.manifest = this.store.active.manifest;
+    await this.loadIndex();
+    return recovery;
+  }
+
+  async event(eventId) {
+    if (this.eventCache.has(eventId)) return this.eventCache.get(eventId);
+    const entry = this.index.events.find((item) => item.id === eventId);
+    if (!entry) return null;
+    const text = await this.readVerified(entry.json);
+    const event = JSON.parse(text);
+    if (event.id !== eventId || !Array.isArray(event.stages)) throw new Error('EVENT_CHUNK_INVALID');
+    this.eventCache.set(eventId, event);
+    if (this.eventCache.size > 3) this.eventCache.delete(this.eventCache.keys().next().value);
+    return event;
+  }
+
+  recordUpdate(result) {
+    let history = [];
+    try {
+      const saved = JSON.parse(this.storage.getItem(METRICS_KEY) || '[]');
+      if (Array.isArray(saved)) history = saved;
+    } catch {}
+    history.push({ at: new Date().toISOString(), status: result.status, code: result.code, version: result.activeVersion ?? result.retainedVersion ?? null, milliseconds: Math.round(result.milliseconds ?? 0) });
+    this.storage.setItem(METRICS_KEY, JSON.stringify(history.slice(-50)));
+  }
+
+  async update() {
+    const getText = (relativePath) => relativePath === 'release-manifest.json'
+      ? this.networkText(relativePath)
+      : this.networkText(relativePath);
+    const result = await performOneOperationUpdate({
+      getText,
+      manifestPath: 'release-manifest.json',
+      mode: 'full',
+      store: this.store,
+      appVersion: 'phase8-rc-1',
+      manifestValidator: validatePhase8Manifest,
+      runtimeValidator: validatePhase8Runtime,
+      healthCheck: async (release) => {
+        try {
+          const index = await this.loadIndex(release.manifest);
+          return index.events.length === release.counts.events;
+        } catch {
+          return false;
+        }
+      }
+    });
+    this.recordUpdate(result);
+    if (result.status === 'applied') {
+      this.manifest = this.store.active.manifest;
+      this.index = await this.loadIndex();
+      this.eventCache.clear();
+    }
+    return result;
+  }
+}
+
+
+const LAST_EVENT_KEY = 'dokkan_phase8_rc_last_event_v1';
+
+function readLastEvent(storage, eventIds) {
+  const validIds = eventIds instanceof Set ? eventIds : new Set(eventIds);
+  const raw = storage.getItem(LAST_EVENT_KEY);
+  if (raw == null) return { eventId: null, reason: 'first-use' };
+  let eventId;
+  try {
+    const value = JSON.parse(raw);
+    eventId = typeof value === 'string' ? value : value?.schemaVersion === '1.0.0' ? value.eventId : null;
+  } catch {
+    eventId = raw.startsWith('{') || raw.startsWith('[') ? null : raw;
+  }
+  if (typeof eventId === 'string' && validIds.has(eventId)) return { eventId, reason: 'restored' };
+  storage.removeItem(LAST_EVENT_KEY);
+  return { eventId: null, reason: typeof eventId === 'string' ? 'missing-event' : 'invalid-storage' };
+}
+
+function saveLastEvent(storage, eventId, datasetVersion) {
+  storage.setItem(LAST_EVENT_KEY, JSON.stringify({ schemaVersion: '1.0.0', eventId, datasetVersion }));
+}
+
+
+
+const params = new URLSearchParams(location.search);
+const dataRoot = params.get('dataRoot') || './data';
+const storagePrefix = 'dokkan_phase8_rc_imported_';
+const core = globalThis.DokkanCalcCore;
+const elements = Object.fromEntries([...document.querySelectorAll('[id]')].map((element) => [element.id, element]));
+const store = new Phase8ReleaseStore({ dbName: params.get('dbName') || 'dokkan-phase8-rc-releases-v1' });
+const clientOptions = { dataRoot, store };
+if (globalThis.__phase8EmbeddedFetch) {
+  clientOptions.fetchImpl = globalThis.__phase8EmbeddedFetch;
+  clientOptions.cacheStorage = null;
+}
+const client = new Phase8RuntimeClient(clientOptions);
+const state = { event: null };
+const metrics = globalThis.__phase8Metrics = { startedAt: performance.now(), readyMs: null, lastEventMs: null };
+
+function known(field, fallback = '—') {
+  return field?.state === 'known' ? field.value : fallback;
+}
+
+function setStatus(message, error = false) {
+  elements['app-status'].textContent = message;
+  elements['app-status'].classList.toggle('error', error);
+}
+
+function replaceOptions(select, items, placeholder) {
+  select.replaceChildren(new Option(placeholder, ''), ...items.map((item) => new Option(item.label, item.value)));
+  select.disabled = items.length === 0;
+}
+
+function resetEnemySelection(message = 'イベントを選択してください') {
+  state.event = null;
+  replaceOptions(elements['stage-select'], [], '—');
+  replaceOptions(elements['enemy-select'], [], '—');
+  replaceOptions(elements['attack-select'], [], '—');
+  elements['enemy-name'].textContent = message;
+  elements['enemy-details'].textContent = '選んだイベントだけを読み込みます。';
+  elements['calculate-button'].disabled = true;
+}
+
+function allEnemies(stage) {
+  return stage?.encounters.flatMap((encounter) => encounter.enemies) ?? [];
+}
+
+function currentStage() {
+  return state.event?.stages.find((stage) => stage.id === elements['stage-select'].value) ?? null;
+}
+
+function currentEnemy() {
+  return allEnemies(currentStage()).find((enemy) => enemy.id === elements['enemy-select'].value) ?? null;
+}
+
+function renderAttackOptions() {
+  const enemy = currentEnemy();
+  if (!enemy) {
+    replaceOptions(elements['attack-select'], [], '—');
+    elements['calculate-button'].disabled = true;
+    return;
+  }
+  const attacks = [{ value: 'normal', label: '通常攻撃 ' + Number(known(enemy.baseAttack, 0)).toLocaleString() }];
+  enemy.superAttacks.forEach((attack) => attacks.push({ value: attack.id, label: known(attack.name, '必殺技') + ' ' + Number(known(attack.displayedDamage, 0)).toLocaleString() }));
+  replaceOptions(elements['attack-select'], attacks, '攻撃を選択');
+  elements['attack-select'].value = attacks[0].value;
+  elements['enemy-name'].textContent = known(enemy.name, enemy.id);
+  elements['enemy-details'].textContent = known(enemy.alignment, '不明') + ' / ' + known(enemy.type, '不明') + '・基礎ATK ' + Number(known(enemy.baseAttack, 0)).toLocaleString();
+  elements['calculate-button'].disabled = false;
+}
+
+function renderEnemies() {
+  const enemies = allEnemies(currentStage());
+  replaceOptions(elements['enemy-select'], enemies.map((enemy) => ({ value: enemy.id, label: known(enemy.name, enemy.id) })), '敵を選択');
+  if (enemies.length > 0) {
+    elements['enemy-select'].value = enemies[0].id;
+    renderAttackOptions();
+  }
+}
+
+function renderStages() {
+  const stages = state.event?.stages ?? [];
+  replaceOptions(elements['stage-select'], stages.map((stage) => ({ value: stage.id, label: known(stage.name, stage.id) })), 'ステージを選択');
+  if (stages.length > 0) {
+    elements['stage-select'].value = stages[0].id;
+    renderEnemies();
+  }
+}
+
+async function selectEvent(eventId, { persist = true } = {}) {
+  const started = performance.now();
+  if (!eventId) {
+    resetEnemySelection();
+    return false;
+  }
+  setStatus('選んだイベントを読み込んでいます…');
+  try {
+    const event = await client.event(eventId);
+    if (!event) {
+      resetEnemySelection('このイベントは現在のデータにありません');
+      elements['event-select'].value = '';
+      setStatus('イベントを選び直してください。');
+      return false;
+    }
+    state.event = event;
+    elements['event-select'].value = eventId;
+    renderStages();
+    if (persist) saveLastEvent(localStorage, eventId, client.manifest.datasetVersion);
+    metrics.lastEventMs = performance.now() - started;
+    setStatus('準備完了');
+    globalThis.dispatchEvent(new CustomEvent('phase8-event-ready', { detail: { eventId } }));
+    return true;
+  } catch {
+    resetEnemySelection('イベントを読み込めませんでした');
+    setStatus('イベントを読み込めませんでした。現在のデータは変更されていません。', true);
+    return false;
+  }
+}
+
+function calculationInput(enemy) {
+  const ownClass = elements['own-class'].value;
+  const enemyAlignment = known(enemy.alignment, ownClass);
+  return {
+    char_def: elements['char-def'].value, leader: elements.leader.value, passive: elements.passive.value,
+    multi_passive: elements['multi-passive'].value, memory: elements.memory.value, link: elements.link.value,
+    super_attack: elements['super-attack'].value, field: elements.field.value, active: elements.active.value,
+    support_item: elements['support-item'].value, dr_input: elements['damage-reduction'].value,
+    is_guard: elements.guard.checked, attr_def_up: elements['attribute-defense'].value,
+    own_class: ownClass, own_type: elements['own-type'].value,
+    enemy_class: enemyAlignment === 'neutral' ? ownClass : enemyAlignment,
+    enemy_type: known(enemy.type, elements['own-type'].value)
+  };
+}
+
+function selectedAttackValue(enemy) {
+  if (elements['attack-select'].value === 'normal') return Number(known(enemy.baseAttack, 0));
+  const attack = enemy.superAttacks.find((item) => item.id === elements['attack-select'].value);
+  return Number(known(attack?.displayedDamage, 0));
+}
+
+function calculate() {
+  const enemy = currentEnemy();
+  if (!enemy) return;
+  const calculation = core.calculateDurability(calculationInput(enemy));
+  const attack = selectedAttackValue(enemy);
+  const range = core.calculateDamageRange(attack, calculation);
+  elements['final-defense'].textContent = Math.floor(calculation.final_def).toLocaleString();
+  elements['damage-result'].textContent = core.formatDamageRange(range);
+  elements['perfect-defense'].textContent = core.formatDurabilityLimit(core.calculateSafeDurabilityLine(0, calculation));
+}
+
+function updateMessage(result) {
+  if (result.status === 'applied') return { text: '敵データを更新しました。', error: false };
+  if (result.status === 'unchanged') return { text: 'すでに最新です。', error: false };
+  const reasons = {
+    INCOMPATIBLE_APP_VERSION: 'この確認版とは互換性がありません。',
+    STALE_DATASET: '現在より古いデータでした。',
+    SAFETY_GATE_REJECTED: 'データ件数に大きな異常がありました。',
+    RUNTIME_SCHEMA_INVALID: 'データの形式に問題がありました。',
+    HEALTH_CHECK_FAILED: '適用後の確認に失敗したため元に戻しました。',
+    ATOMIC_APPLY_FAILED: '適用途中で問題が起きたため元に戻しました。',
+    FULL_RUNTIME_MISSING: '更新データを取得できませんでした。',
+    FULL_RUNTIME_SIZE_MISMATCH: '取得した更新データが壊れていました。',
+    FULL_RUNTIME_DIGEST_MISMATCH: '取得した更新データが壊れていました。'
+  };
+  return { text: '更新しませんでした。現在の敵データはそのまま安全に使えます。' + (reasons[result.code] ?? '取得または検査に失敗しました。'), error: true };
+}
+
+async function updateData() {
+  elements['update-button'].disabled = true;
+  elements['update-status'].textContent = '更新を確認しています…';
+  elements['update-status'].classList.remove('error');
+  try {
+    const previousEvent = elements['event-select'].value;
+    const result = await client.update();
+    const message = updateMessage(result);
+    elements['update-status'].textContent = message.text;
+    elements['update-status'].classList.toggle('error', message.error);
+    elements['data-version'].textContent = 'データ版: ' + client.store.active.datasetVersion;
+    if (result.status === 'applied') {
+      populateEvents();
+      if (previousEvent && client.index.events.some((entry) => entry.id === previousEvent)) await selectEvent(previousEvent);
+      else resetEnemySelection('イベントを選択してください');
+    }
+  } catch {
+    elements['update-status'].textContent = '更新しませんでした。現在の敵データはそのまま安全に使えます。';
+    elements['update-status'].classList.add('error');
+  } finally {
+    elements['update-button'].disabled = false;
+  }
+}
+
+function populateEvents() {
+  replaceOptions(elements['event-select'], client.index.events.map((entry) => ({ value: entry.id, label: entry.name })), 'イベントを選択してください');
+}
+
+function savedDataSummary() {
+  try {
+    const raw = localStorage.getItem(storagePrefix + 'dokkan_calc_data_v22');
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    elements['saved-data-summary'].textContent = '移行済み: 保存キャラクター ' + (saved.savedCharacters?.length ?? 0) + '件、保存した敵 ' + (saved.savedEnemies?.length ?? 0) + '分類、作業中の状況 ' + (saved.currentScenarios?.length ?? 0) + '件';
+    if (saved.theme === 'dark' && localStorage.getItem('dokkan_phase8_rc_theme') == null) setTheme('dark');
+  } catch {
+    elements['saved-data-summary'].textContent = '移行済みデータを確認できませんでした。元の保存データは変更していません。';
+  }
+}
+
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  elements['theme-button'].textContent = theme === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('dokkan_phase8_rc_theme', theme);
+}
+
+async function initialize() {
+  if (!core) throw new Error('計算コアを読み込めませんでした。');
+  setTheme(localStorage.getItem('dokkan_phase8_rc_theme') === 'dark' ? 'dark' : 'light');
+  try {
+    const recovery = await client.initialize();
+    populateEvents();
+    elements['data-version'].textContent = 'データ版: ' + client.store.active.datasetVersion;
+    const restored = readLastEvent(localStorage, new Set(client.index.events.map((entry) => entry.id)));
+    if (restored.eventId) await selectEvent(restored.eventId, { persist: false });
+    else {
+      resetEnemySelection('初回はイベントを選んでください');
+      setStatus(recovery.recovery.includes('restored') ? '安全な保存版で準備しました。イベントを選んでください。' : '準備完了。イベントを選んでください。');
+    }
+    savedDataSummary();
+    metrics.readyMs = performance.now() - metrics.startedAt;
+    globalThis.__phase8Ready = true;
+    globalThis.dispatchEvent(new CustomEvent('phase8-ready'));
+  } catch {
+    setStatus('敵データを準備できませんでした。OneDrive backupはヘルプから確認できます。', true);
+    globalThis.__phase8Error = true;
+  }
+}
+
+elements['event-select'].addEventListener('change', () => selectEvent(elements['event-select'].value));
+elements['stage-select'].addEventListener('change', renderEnemies);
+elements['enemy-select'].addEventListener('change', renderAttackOptions);
+elements['calculate-button'].addEventListener('click', calculate);
+elements['update-button'].addEventListener('click', updateData);
+elements['theme-button'].addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+globalThis.Phase8RC = { client, store, state, selectEvent, calculate, currentEnemy, updateData };
+initialize();
+</script>
+</body>
+</html>

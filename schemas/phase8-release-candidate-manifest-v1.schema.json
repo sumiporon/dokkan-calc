@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sumiporon.github.io/dokkan-calc/schemas/phase8-release-candidate-manifest-v1.schema.json",
+  "title": "Phase 8 production-separated release candidate manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "releaseCandidate", "productionActivated", "dataClassification", "datasetVersion", "generatedAt", "runtimeSchemaVersion", "appCompatibility", "counts", "full", "chunked", "knownGood", "validation", "permission", "updatePolicy"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "releaseCandidate": { "const": true },
+    "productionActivated": { "const": false },
+    "dataClassification": { "enum": ["synthetic-public-fixture", "existing-data-internal-only"] },
+    "datasetVersion": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "runtimeSchemaVersion": { "const": "1.0.0" },
+    "appCompatibility": {
+      "type": "object", "additionalProperties": false,
+      "required": ["minimum", "maximum", "productionAppReadsArtifact"],
+      "properties": {
+        "minimum": { "type": "string", "minLength": 1 },
+        "maximum": { "type": ["string", "null"] },
+        "productionAppReadsArtifact": { "const": false }
+      }
+    },
+    "counts": { "$ref": "#/$defs/counts" },
+    "full": {
+      "type": "object", "additionalProperties": false, "required": ["json", "script"],
+      "properties": { "json": { "$ref": "#/$defs/artifact" }, "script": { "$ref": "#/$defs/artifact" } }
+    },
+    "chunked": {
+      "type": "object", "additionalProperties": false,
+      "required": ["indexJson", "indexScript", "eventCount", "jsonFiles", "scriptFiles", "totalJsonBytes", "largestChunkBytes"],
+      "properties": {
+        "indexJson": { "$ref": "#/$defs/artifact" }, "indexScript": { "$ref": "#/$defs/artifact" },
+        "eventCount": { "type": "integer", "minimum": 0 }, "jsonFiles": { "type": "integer", "minimum": 0 }, "scriptFiles": { "type": "integer", "minimum": 0 },
+        "totalJsonBytes": { "type": "integer", "minimum": 0 }, "largestChunkBytes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "knownGood": {
+      "type": "object", "additionalProperties": false, "required": ["datasetVersion", "runtimeDigest", "retainedReleaseCount"],
+      "properties": {
+        "datasetVersion": { "type": "string", "minLength": 1 },
+        "runtimeDigest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "retainedReleaseCount": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "validation": {
+      "type": "object", "additionalProperties": false, "required": ["status", "hardFailCount", "reviewRequiredCount", "note"],
+      "properties": {
+        "status": { "const": "passed" }, "hardFailCount": { "const": 0 }, "reviewRequiredCount": { "const": 0 }, "note": { "type": "string" }
+      }
+    },
+    "permission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["releaseCandidatePreviewAllowed", "publicArtifactAllowed", "productionActivateAllowed", "liveSourceAccessAllowed"],
+      "properties": {
+        "releaseCandidatePreviewAllowed": { "const": true },
+        "publicArtifactAllowed": { "type": "boolean" },
+        "productionActivateAllowed": { "const": false },
+        "liveSourceAccessAllowed": { "const": false }
+      }
+    },
+    "updatePolicy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["userInitiated", "zeroOperationEnabled", "browserPatRequired"],
+      "properties": {
+        "userInitiated": { "const": true }, "zeroOperationEnabled": { "const": false }, "browserPatRequired": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "counts": {
+      "type": "object", "additionalProperties": false, "required": ["events", "stages", "encounters", "enemies"],
+      "properties": {
+        "events": { "type": "integer", "minimum": 0 }, "stages": { "type": "integer", "minimum": 0 },
+        "encounters": { "type": "integer", "minimum": 0 }, "enemies": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "artifact": {
+      "type": "object", "additionalProperties": false, "required": ["path", "digest", "bytes", "contentType"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 }, "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "bytes": { "type": "integer", "minimum": 1 }, "contentType": { "enum": ["application/json", "text/javascript"] }
+      }
+    }
+  }
+}

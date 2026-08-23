@@ -68,18 +68,21 @@ export async function validateSavedDataMigrationPackage(packageValue) {
 
 export async function importSavedDataMigrationPackage(storage, packageValue, {
   markerKey = 'phase7_prototype_migration_marker',
-  backupPrefix = 'phase7_prototype_backup_'
+  backupPrefix = 'phase7_prototype_backup_',
+  targetPrefix = ''
 } = {}) {
   const errors = await validateSavedDataMigrationPackage(packageValue);
   if (errors.length > 0) return { status: 'rejected', errors };
-  if (storage.getItem(markerKey) === packageValue.payloadDigest) return { status: 'unchanged', digest: packageValue.payloadDigest, duplicates: Object.keys(packageValue.payload) };
+  const targetMarkerKey = `${targetPrefix}${markerKey}`;
+  const targetKey = (key) => `${targetPrefix}${key}`;
+  if (storage.getItem(targetMarkerKey) === packageValue.payloadDigest) return { status: 'unchanged', digest: packageValue.payloadDigest, duplicates: Object.keys(packageValue.payload) };
 
   const previous = new Map();
   const previousBackups = new Map();
   const duplicates = [];
   const unchanged = [];
   for (const key of MIGRATABLE_KEYS) {
-    const current = storage.getItem(key);
+    const current = storage.getItem(targetKey(key));
     previous.set(key, current);
     const incoming = packageValue.payload[key];
     if (current != null && incoming != null) {
@@ -87,26 +90,29 @@ export async function importSavedDataMigrationPackage(storage, packageValue, {
       else duplicates.push(key);
     }
   }
-  const previousMarker = storage.getItem(markerKey);
+  const previousMarker = storage.getItem(targetMarkerKey);
   try {
     for (const [key, current] of previous) {
-      const backupKey = `${backupPrefix}${key}`;
+      const backupKey = `${targetPrefix}${backupPrefix}${key}`;
       previousBackups.set(backupKey, storage.getItem(backupKey));
       if (current != null) storage.setItem(backupKey, current);
     }
-    for (const [key, value] of Object.entries(packageValue.payload)) storage.setItem(key, value);
-    storage.setItem(markerKey, packageValue.payloadDigest);
+    for (const [key, value] of Object.entries(packageValue.payload)) storage.setItem(targetKey(key), value);
+    const writtenPackage = { ...packageValue, payload: Object.fromEntries(Object.keys(packageValue.payload).map((key) => [key, storage.getItem(targetKey(key))])) };
+    const writtenErrors = await validateSavedDataMigrationPackage(writtenPackage);
+    if (writtenErrors.length > 0) throw new Error(`post-import validation failed: ${writtenErrors.join(' / ')}`);
+    storage.setItem(targetMarkerKey, packageValue.payloadDigest);
   } catch (error) {
     for (const [key, value] of previous) {
-      if (value == null) storage.removeItem(key);
-      else storage.setItem(key, value);
+      if (value == null) storage.removeItem(targetKey(key));
+      else storage.setItem(targetKey(key), value);
     }
     for (const [key, value] of previousBackups) {
       if (value == null) storage.removeItem(key);
       else storage.setItem(key, value);
     }
-    if (previousMarker == null) storage.removeItem(markerKey);
-    else storage.setItem(markerKey, previousMarker);
+    if (previousMarker == null) storage.removeItem(targetMarkerKey);
+    else storage.setItem(targetMarkerKey, previousMarker);
     return { status: 'rolled-back', error: String(error), duplicates };
   }
   return { status: 'imported', digest: packageValue.payloadDigest, duplicates, unchanged, strategy: 'replace-with-backup' };

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:,">
+  <title>耐久計算ツール Phase 8確認版</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <main>
+    <header class="app-header">
+      <div>
+        <span class="rc-badge">Phase 8 確認版</span>
+        <h1>ドッカンバトル<br>耐久計算ツール</h1>
+      </div>
+      <button id="theme-button" class="icon-button" type="button" aria-label="配色を切り替える">🌙</button>
+    </header>
+
+    <p class="preview-notice">本番とは別の確認版です。このbranchでは架空データだけを表示します。</p>
+    <div id="app-status" class="status" role="status" aria-live="polite">敵データを準備しています…</div>
+
+    <section class="card" aria-labelledby="enemy-title">
+      <h2 id="enemy-title">敵を選択</h2>
+      <div class="selector-grid">
+        <label>イベント<select id="event-select" disabled><option value="">イベントを選択してください</option></select></label>
+        <label>ステージ<select id="stage-select" disabled><option value="">—</option></select></label>
+        <label>敵<select id="enemy-select" disabled><option value="">—</option></select></label>
+        <label>攻撃<select id="attack-select" disabled><option value="">—</option></select></label>
+      </div>
+      <div class="enemy-summary" aria-live="polite">
+        <strong id="enemy-name">初回はイベントを選んでください</strong>
+        <span id="enemy-details">選んだイベントだけを読み込みます。</span>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="calculation-title">
+      <h2 id="calculation-title">耐久・被ダメージ計算</h2>
+      <div class="input-grid">
+        <label>キャラクターDEF<input id="char-def" type="number" value="500000" min="0" inputmode="numeric"></label>
+        <label>リーダースキル (%)<input id="leader" type="number" value="0" inputmode="decimal"></label>
+        <label>足し算パッシブ (%)<input id="passive" type="number" value="0" inputmode="decimal"></label>
+        <label>掛け算パッシブ (%)<input id="multi-passive" type="number" value="0" inputmode="decimal"></label>
+        <label>ダメージ軽減率 (%)<input id="damage-reduction" type="number" value="0" inputmode="decimal"></label>
+        <label>自分のクラス<select id="own-class"><option value="super">超</option><option value="extreme">極</option></select></label>
+        <label>自分の属性<select id="own-type"><option value="teq">技</option><option value="agl">速</option><option value="str">力</option><option value="phy">体</option><option value="int">知</option></select></label>
+      </div>
+      <details class="advanced-settings">
+        <summary>追加のDEF設定</summary>
+        <div class="input-grid compact">
+          <label>メモリー (%)<input id="memory" type="number" value="0"></label>
+          <label>リンクスキル (%)<input id="link" type="number" value="0"></label>
+          <label>必殺技効果 (%)<input id="super-attack" type="number" value="0"></label>
+          <label>フィールド (%)<input id="field" type="number" value="0"></label>
+          <label>アクティブ (%)<input id="active" type="number" value="0"></label>
+          <label>サポートアイテム (%)<input id="support-item" type="number" value="0"></label>
+          <label>属性防御Lv<input id="attribute-defense" type="number" value="0" min="0"></label>
+          <label class="checkbox-label"><input id="guard" type="checkbox"> 全属性ガード</label>
+        </div>
+      </details>
+      <button id="calculate-button" class="primary-button" type="button" disabled>計算する</button>
+      <div class="results" aria-live="polite">
+        <div><span>最終DEF</span><strong id="final-defense">—</strong></div>
+        <div><span>被ダメージ（1.00〜1.03）</span><strong id="damage-result">—</strong></div>
+        <div><span>この攻撃を完封するDEF目安</span><strong id="perfect-defense">—</strong></div>
+      </div>
+    </section>
+
+    <details class="card settings-card" id="data-settings">
+      <summary>設定・データ</summary>
+      <div class="settings-content">
+        <div>
+          <h2>敵データ</h2>
+          <p id="data-version">確認中です。</p>
+          <button id="update-button" type="button">敵データを更新</button>
+          <p id="update-status" class="inline-status" role="status" aria-live="polite"></p>
+        </div>
+        <div>
+          <h2>保存データ</h2>
+          <p id="saved-data-summary">この確認版に移行された保存データはありません。</p>
+          <a class="button-link" id="migration-link" href="migration-device-check.html">架空保存データの移行を確認する</a>
+        </div>
+      </div>
+    </details>
+
+    <details class="card help-card">
+      <summary>ヘルプ・問題が起きたとき</summary>
+      <div class="help-content">
+        <p>普段使いは将来のGitHub Pagesを予定しています。更新に失敗しても、直前の敵データはそのまま使えます。</p>
+        <h2>OneDrive backup</h2>
+        <p>通信できない時やPagesに問題がある時だけ、OneDriveに残したknown-good版のHTMLを開きます。現在使っているOneDrive版はまだ変更していません。</p>
+        <p>この確認版は0操作の自動更新を行いません。更新は「敵データを更新」を押した時だけです。</p>
+      </div>
+    </details>
+  </main>
+  <script src="../../src/calculation-core.js"></script>
+  <script type="module" src="app.mjs"></script>
+</body>
+</html>
