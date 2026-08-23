@@ -41,12 +41,13 @@ npm run typecheck
 npm run test:unit
 npm run test:data
 npm run test:phase4
+npm run test:phase6
 npm run test:cached-source
 npm run test:browser
 npm run audit:data
 ```
 
-`npm test`には、第4段階のTypeScript型検査、候補データ変換、schema、互換性、成果物digestの検査も含まれます。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
+`npm test`には、第4段階の候補データ変換と全件再現、第6段階のcanonical/runtime、manifest、安全・permission gate、schema、成果物digestの検査も含まれます。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
 
 ブラウザテストは独立した一時ブラウザを使います。普段使用しているブラウザの保存データやlocalStorageは読み書きしません。
 
@@ -62,6 +63,18 @@ npm run analyze:cached-source
 npm run generate:phase4
 ```
 
+第6段階の非本番canonical/runtime/manifestを同じ保存済み候補からoffline生成する場合は次を使います。full JSONは`generated/phase6/`へ出力され、本番からは読み込まれません。
+
+```powershell
+npm run generate:phase6
+```
+
+生成済みfull JSONのsize・parse性能をlocal PCとheadless Chromiumで測る場合は次を使います。外部siteではなくloopback serverだけを使用します。
+
+```powershell
+npm run benchmark:phase6
+```
+
 ## 主なファイル
 
 - `dokkan_calc_final.html` / `.css` / `.js`：現在の公開アプリ本体
@@ -74,6 +87,9 @@ npm run generate:phase4
 - `scripts/analyze-cached-enemy-source.mjs`：保存HTML専用の読取・比較レポート
 - `scripts/generate-phase4-enemy-candidate.mjs`：第4段階の非本番candidate・fixture・diff・manifestの唯一の生成元
 - `src/data-migration/phase4-enemy-migration.ts`：第4段階だけで試験導入した型付き変換・互換loss判定
+- `src/data-foundation/`：第6段階のcanonical/runtime、manifest、安全・permission gate、adapter contract
+- `scripts/generate-phase6-data-foundation.mjs`：第6段階のoffline全件成果物の唯一の生成元
+- `artifacts/phase6/`：追跡可能なmanifest、検証、permission、性能、omission報告
 - `schemas/`：将来形式の設計案（現行アプリはまだ読み込まない）
 - `docs/`：安全記録、データ形式、計算上の既知差、移行時の注意
 
@@ -92,8 +108,18 @@ npm run generate:phase4
 - DokkanDBは掲載済みstageのAI・AOE・会心表現が豊富ですが、直近4 event sampleのうち3件でstage詳細を確認できず、利用許可も未解決です。DokkanInfo liveにも無許可の自動取得は戻しません。
 - 保存済みDokkanInfo HTMLは削除せず、801 stage／5,032 enemyの照合、parser回帰、移行backupに使います。新sourceが合格した場合は本番生成の必須入力から格下げします。
 - 将来の正本は新schemaの考え方を引き継ぎますが、現在のv1 draftをそのまま本番採用しません。source-neutralなcanonical、軽量runtime projection、release manifestへ分ける案です。
-- 更新・公開の推奨案は、通常時0操作を最終目標とし、初期はアプリ内の「更新を確認」→「適用」の2操作です。普段はPages、OneDriveはoffline backupとするhybridが有力ですが、いずれも所有者承認前の提案であり未実装です。
+- 第5段階時点の2操作案は、その後のowner判断で変更されました。初期更新は`敵データを更新`の1操作で内部検査後に正常なら適用、異常時だけ停止し、将来0操作を目標とします。本番UIは未実装です。
+- Pages＋OneDrive hybridは将来の実機比較候補としてだけ承認され、採用は決定していません。現在のOneDrive/local利用を維持しています。
 - DokkanStatsへの問い合わせ完成稿は作成済みですが、まだ送信していません。本番敵JSON、localStorage、Pages、OneDriveの使い方、workflow、update UIは変更していません。
+
+## 第6段階のofflineデータ基盤
+
+- source-neutral canonical v2、計算用runtime v1、release manifest、candidate/stable/known-good lifecycleを実装しましたが、本番アプリはまだ読みません。
+- 保存済みPhase 4候補5,032体で全件schema・digest・determinism・safety・permissionを検証しました。hard failは0件ですが、初回canonical known-goodと公開許可がないためcandidateから昇格しません。
+- runtimeはpretty 16.7MB、minified約6.05MBです。PCでは問題ない参考結果でしたが、Android/iPhone実機と展開後memoryは未検証なので、event単位chunkとの比較を次段階候補にしています。
+- `file://`から外部JSONを`fetch()`できない実測結果があるため、現在のOneDrive/local単一HTMLを壊す設計は採用していません。
+- DokkanStats専用adapterは作っていません。問い合わせはownerが送信し、書面回答をpermission ledgerへ反映するまで外部取得・派生公開を開始しません。
+- Viteは第6段階のデータ基盤に不要だったため導入していません。
 
 ## 重要な安全上の注意
 
@@ -119,3 +145,8 @@ npm run generate:phase4
 - [第5段階の敵データ正本・継続更新方式の評価](docs/phase5-data-source-and-canonical-design.md)
 - [DokkanStatsへの問い合わせ完成稿（未送信）](docs/phase5-dokkanstats-inquiry-ready.md)
 - [第4段階のDokkanStats問い合わせ草案（履歴・未送信）](docs/phase4-dokkanstats-inquiry-draft.md)
+- [第6段階のsource-neutral敵データ基盤](docs/phase6-canonical-data-foundation.md)
+- [第6段階の保存データ移行設計](docs/phase6-saved-data-migration-design.md)
+- [第6段階のhybrid実機比較設計](docs/phase6-hybrid-hosting-comparison-design.md)
+- [DokkanStatsへの最終問い合わせ文（未送信）](docs/phase6-dokkanstats-inquiry-final.md)
+- [第6段階の完了報告](docs/phase6-completion-report.md)
