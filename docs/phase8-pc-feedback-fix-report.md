@@ -98,7 +98,8 @@ event chunk、manifest、size/digest、runtime schema、件数急減・app互換
 - branch: `codex/phase8-pc-feedback-fixes-20260824`
 - rollback tag: `phase8-complete-2026-08-24`（変更なし）
 - feedback start tag: `phase8-pc-feedback-start-2026-08-24`
-- corrected preview tag: `phase8-pc-feedback-fixed-2026-08-24`
+- corrected preview tag: `phase8-pc-recheck-ready-2026-08-24`
+- diagnostic tag: `phase8-pc-feedback-fixed-2026-08-24`（旧release pathのCDN cache混在を安全gateが検出したためPC確認には使わない。履歴をforce変更せず保存）
 - PC再確認URLと短い手順: [Phase 8修正版 PC再確認手順](phase8-pc-recheck-checklist.md)
 
 ## 停止条件
