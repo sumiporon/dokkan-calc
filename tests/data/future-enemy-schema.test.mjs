@@ -42,6 +42,7 @@ test('意味検査は複合出現ID、順序、派生倍率、null理由を確�
     skills: 1,
     passiveEffects: 2,
     superAttacks: 1,
+    superAttackUsageRules: 0,
     superEffects: 1,
     configuredCriticalProfiles: 0,
     aiActions: 1,

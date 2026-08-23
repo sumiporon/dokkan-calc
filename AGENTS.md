@@ -9,6 +9,10 @@ This file defines the standing development policy for this repository. It applie
 - Ask the owner only when a product preference, game rule, irreversible public change, loss of data, or another decision only the owner can make is involved.
 - Keep the solution proportionate to a personal tool. Prefer correctness, stability, maintainability, and a design that future AI agents can understand over fashionable or excessive architecture.
 - Maintain a basic security standard because the app is public. Never expose credentials or tokens, and treat the GitHub PAT feature as sensitive legacy code.
+- The long-term enemy-data goal is continuing coverage of newly added events, stages, and enemies, not merely cleaning the current snapshot. The ideal pipeline legitimately detects additions, acquires permitted data, validates the schema, reports diffs and anomalies, runs tests, and promotes only safe data without routine owner work.
+- If compliant full automation is unavailable, the acceptable fallback is an update flow completed entirely inside the calculator UI: preferably one update button, or at most check-for-updates followed by one explicit approval. Do not make routine updates depend on visiting source sites, saving HTML, operating an extension, editing JSON, using GitHub administration, running a terminal, or manually copying files.
+- Aim for the same normal calculate-and-update experience on Windows PCs, Android, and iPhone. A PC-only browser extension may remain as preserved legacy code but must not be the required final update path.
+- The owner currently uses HTML opened directly from local storage or OneDrive on both PC and mobile. Preserve that working route until an approved migration exists, and compare it evidence-first with GitHub Pages or a hybrid rather than assuming either is mandatory.
 
 ## Development direction
 
@@ -39,6 +43,7 @@ This file defines the standing development policy for this repository. It applie
 - Do not change the browser `localStorage` schema without a versioned migration and compatibility test.
 - Do not force-push, rewrite shared Git history, or overwrite the public app as an incidental part of another task.
 - Treat third-party terms, rate limits, robots directives, attribution requirements, and technical access controls as design constraints. Do not bypass access controls.
+- Never place data-source, GitHub, or backend credentials in browser code, downloadable files, or `localStorage`. Any future secret needed for updates must remain in a server-side or CI secret store that the browser cannot read.
 
 ## Completion standard
 
@@ -54,5 +59,5 @@ This file defines the standing development policy for this repository. It applie
 - The legacy rollback tag is `legacy-baseline-2026-08-21`.
 - The daily enemy-data schedule is paused. Do not re-enable it until the scraper/data pipeline has validation gates and the data-source policy has been resolved.
 - Phase 3 introduced a small shared calculation core and offline saved-HTML analysis, but did not replace the production enemy dataset, localStorage, deployment, or scraper.
-- Damage variance and minimum-damage presentation remain a product decision. Do not change that UI until the owner selects a presentation based on the Phase 3 report.
-- Phase 4 structural migration and any real data-source migration require the owner's review of the Phase 3 report first.
+- The owner selected a compact 1.00–1.03 damage range in the existing damage field, with durability/perfect-defense thresholds calculated at the safety-side 1.03 value. Keep calculated perfect defense displayed as `0`/`完封`; no minimum-damage disclaimer is needed in the normal UI.
+- Phase 4 may prototype candidate data, compatibility conversion, TypeScript boundaries, and update/hosting designs, but must not replace production enemy data, change localStorage, publish Pages, or alter the owner's normal OneDrive use before the Phase 4 report is reviewed.

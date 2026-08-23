@@ -98,3 +98,45 @@ test('a representative cached sequence exactly matches the corresponding legacy 
 
   assert.equal(cachedStageSignature(stage), legacyStageSignature(legacyStage));
 });
+
+test('HP range blocks stay usage rules of one super attack and never become fake attacks', async () => {
+  const stage = await parse('stage_701_7010013.html');
+  const janemba = stage.enemies.find((enemy) => enemy.name === 'ジャネンバ');
+
+  assert.equal(janemba.superAttacks.length, 1);
+  assert.equal(janemba.superAttacks[0].name, 'ラピッドキャノン');
+  assert.equal(janemba.superAttacks[0].probabilityPercent, null);
+  assert.equal(janemba.superAttacks[0].cooldownTurns, null);
+  assert.deepEqual(janemba.superAttacks[0].usageRules, [
+    {
+      sourceOrder: 1,
+      hpMinPercent: 90,
+      hpMaxPercent: 100,
+      probabilityPercent: 100,
+      maxPerTurn: 1,
+      cooldownTurns: 0,
+      rawText: 'HPレンジ: 90% ~ 100% パーセンテージ: 100% 最大ATK/ターン: 1 再使用までの時間: 0'
+    },
+    {
+      sourceOrder: 2,
+      hpMinPercent: 0,
+      hpMaxPercent: 90,
+      probabilityPercent: 30,
+      maxPerTurn: 1,
+      cooldownTurns: 2,
+      rawText: 'HPレンジ: 0% ~ 90% パーセンテージ: 30% 最大ATK/ターン: 1 再使用までの時間: 2'
+    }
+  ]);
+  assert.ok(stage.enemies.flatMap((enemy) => enemy.superAttacks).every((attack) => !/^HPレンジ\s*:/.test(attack.name ?? '')));
+});
+
+test('an icon-bearing second header remains a real second super attack', async () => {
+  const stage = await parse('stage_1744_17440013.html');
+  const goku = stage.enemies.find((enemy) => enemy.name === '超サイヤ人4孫悟空(DAIMA)');
+
+  assert.deepEqual(goku.superAttacks.map((attack) => [attack.name, attack.damage]), [
+    ['龍撃牙咆', 700_000],
+    ['龍撃拳', 600_000]
+  ]);
+  assert.ok(goku.superAttacks.every((attack) => attack.usageRules.length === 0));
+});

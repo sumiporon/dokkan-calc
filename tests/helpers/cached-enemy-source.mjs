@@ -69,6 +69,108 @@ function parseSkills($, skillColumn) {
   return skills;
 }
 
+function emptySuperAttack() {
+  return {
+    name: null,
+    description: null,
+    damage: null,
+    multiplier: null,
+    probabilityPercent: null,
+    maxPerTurn: null,
+    cooldownTurns: null,
+    attackType: null,
+    attackTypeIcon: null,
+    effectIcons: [],
+    usageRules: [],
+    rawText: null
+  };
+}
+
+function parseSuperAttackUsageRules($, segmentNodes) {
+  const rules = [];
+  let currentNodes = null;
+  for (const node of segmentNodes) {
+    const nodeText = compactText($(node).text());
+    if (/^HPレンジ\s*:/.test(nodeText)) {
+      if (currentNodes) rules.push(currentNodes);
+      currentNodes = [node];
+    } else if (currentNodes) {
+      currentNodes.push(node);
+    }
+  }
+  if (currentNodes) rules.push(currentNodes);
+
+  return rules.map((nodes, sourceIndex) => {
+    const rawText = compactText($(nodes).text());
+    const hpRange = rawText.match(/HPレンジ\s*:\s*([\d.]+)%\s*~\s*([\d.]+)%/);
+    return {
+      sourceOrder: sourceIndex + 1,
+      hpMinPercent: hpRange ? parseDecimal(hpRange[1]) : null,
+      hpMaxPercent: hpRange ? parseDecimal(hpRange[2]) : null,
+      probabilityPercent: matchDecimal(rawText, /パーセンテージ:\s*([\d.]+)%/),
+      maxPerTurn: matchInteger(rawText, /最大ATK\/ターン:\s*([\d,]+)/),
+      cooldownTurns: matchInteger(rawText, /再使用までの時間:\s*([\d,]+)/),
+      rawText
+    };
+  });
+}
+
+function parseSuperAttackSegment($, segmentNodes, atk) {
+  const segment = $(segmentNodes);
+  const segmentText = compactText(segment.text());
+  if (!segmentText) return null;
+
+  const usageRules = parseSuperAttackUsageRules($, segmentNodes);
+  const firstUsageRuleIndex = segmentNodes.findIndex((node) => /^HPレンジ\s*:/.test(compactText($(node).text())));
+  const baseNodes = firstUsageRuleIndex < 0 ? segmentNodes : segmentNodes.slice(0, firstUsageRuleIndex);
+  const baseSegment = $(baseNodes);
+  const baseText = compactText(baseSegment.text());
+
+  const descriptionRow = baseSegment.find('.row.align-items-center').first();
+  const description = compactText(descriptionRow.children('.col-sm').first().text());
+  const attackTypeImage = baseSegment.find('img[src*="sp_skill_icon_"]').first();
+  const attackTypeSource = attackTypeImage.attr('src') || null;
+  const damage = matchInteger(baseText, /ダメージ:\s*([\d,]+)/);
+
+  return {
+    name: baseSegment.find('b').first().text().trim() || null,
+    description: description || null,
+    damage,
+    multiplier: atk > 0 && damage != null ? damage / atk : null,
+    probabilityPercent: matchDecimal(baseText, /パーセンテージ:\s*([\d.]+)%/),
+    maxPerTurn: matchInteger(baseText, /最大ATK\/ターン:\s*([\d,]+)/),
+    cooldownTurns: matchInteger(baseText, /再使用までの時間:\s*([\d,]+)/),
+    attackType: attackTypeImage.attr('alt') || attackTypeSource?.match(/sp_skill_icon_([^./]+)/)?.[1] || null,
+    attackTypeIcon: attackTypeSource,
+    effectIcons: descriptionRow.find('img').map((_, image) => ({
+      alt: $(image).attr('alt') || null,
+      src: $(image).attr('src') || null
+    })).get(),
+    usageRules,
+    rawText: segmentText
+  };
+}
+
+function parseSuperAttacks($, superAttackColumn, atk) {
+  const segments = [];
+  let currentSegment = null;
+  superAttackColumn.contents().each((_, node) => {
+    // A horizontal rule is also used inside one super attack to separate HP
+    // usage bands. Only a new rendered super-attack header/icon starts a new
+    // segment; condition labels such as "HPレンジ:" never do.
+    const startsSuperAttack = node.type === 'tag' && $(node).find('img[src*="sp_skill_icon_"]').length > 0;
+    if (startsSuperAttack) {
+      currentSegment = [node];
+      segments.push(currentSegment);
+    } else if (currentSegment) {
+      currentSegment.push(node);
+    }
+  });
+  return segments
+    .map((nodes) => parseSuperAttackSegment($, nodes, atk))
+    .filter(Boolean);
+}
+
 function parseEnemyRow($, row, identity) {
   const columns = row.children();
   const identityColumn = columns.eq(0);
@@ -86,18 +188,8 @@ function parseEnemyRow($, row, identity) {
   const name = identityColumn.find('.font-size-1_2 b').first().text().trim();
 
   const statsText = compactText(statsColumn.text());
-  const superAttackText = compactText(superAttackColumn.text());
-  const descriptionRow = superAttackColumn.find('.row.padding-top-5 .row.align-items-center').first();
-  const description = compactText(descriptionRow.children('.col-sm').first().text());
-  const superAttackIcons = descriptionRow.find('img').map((_, image) => ({
-    alt: $(image).attr('alt') || null,
-    src: $(image).attr('src') || null
-  })).get();
-  const superAttackTypeImage = superAttackColumn.find('img[src*="sp_skill_icon_"]').first();
-  const superAttackTypeSource = superAttackTypeImage.attr('src') || null;
-
   const atk = matchInteger(statsText, /\bATK:\s*([\d,]+)/i);
-  const superAttackDamage = matchInteger(superAttackText, /ダメージ:\s*([\d,]+)/);
+  const superAttacks = parseSuperAttacks($, superAttackColumn, atk);
 
   return {
     ...identity,
@@ -116,30 +208,26 @@ function parseEnemyRow($, row, identity) {
     def: matchInteger(statsText, /\bDEF:\s*([\d,]+)/i),
     damageReductionPercent: matchDecimal(statsText, /\bDR:\s*([\d.]+)%/i),
     maxAttacksPerTurn: matchInteger(statsText, /最大ATK\/ターン:\s*([\d,]+)/),
-    superAttack: {
-      name: superAttackColumn.find('.row.padding-top-5 b').first().text().trim() || null,
-      description: description || null,
-      damage: superAttackDamage,
-      multiplier: atk > 0 && superAttackDamage != null ? superAttackDamage / atk : null,
-      probabilityPercent: matchDecimal(superAttackText, /パーセンテージ:\s*([\d.]+)%/),
-      maxPerTurn: matchInteger(superAttackText, /最大ATK\/ターン:\s*([\d,]+)/),
-      cooldownTurns: matchInteger(superAttackText, /再使用までの時間:\s*([\d,]+)/),
-      attackType: superAttackTypeImage.attr('alt') || superAttackTypeSource?.match(/sp_skill_icon_([^./]+)/)?.[1] || null,
-      attackTypeIcon: superAttackTypeSource,
-      effectIcons: superAttackIcons
-    },
+    areaDamage: parseAreaDamage(compactText(row.text())),
+    // Keep the first entry under the old singular key so Phase 3 reports and
+    // fingerprints remain byte-for-byte comparable with their previous logic.
+    superAttack: superAttacks[0] ?? emptySuperAttack(),
+    superAttacks,
     skills: parseSkills($, skillColumn)
   };
 }
 
-function parseActions($, box) {
+function parseActions($, root, sequenceIndex = 0, enemyOrder = null) {
   const actions = [];
-  box.find('.col-md-3.border.border-1.border-main-box-darker.padding-5').each((index, element) => {
+  root.find('.col-md-3.border.border-1.border-main-box-darker.padding-5').each((index, element) => {
     const text = compactText($(element).text());
     const match = text.match(/アクション\s*(\d+)(?:\/スロット\s*(\d+))?:\s*(.*?)\s*-\s*([\d.]+)%/);
     const type = match ? compactText(match[3]) : null;
     actions.push({
       order: match ? parseInteger(match[1]) : index + 1,
+      sourceOrder: match ? parseInteger(match[1]) : index + 1,
+      sequenceIndex,
+      enemyOrder,
       slot: match && match[2] != null ? parseInteger(match[2]) : null,
       type,
       conditionExpression: type?.startsWith('[') ? type : null,
@@ -148,6 +236,27 @@ function parseActions($, box) {
     });
   });
   return actions;
+}
+
+function parseActionSequences($, box, rows) {
+  const rowNodes = rows.map((row) => row.get(0));
+  const sequences = [];
+  box.find('.row.border.border-1.border-main-box-darker.margin-3')
+    .filter((_, element) => $(element).find('.col-md-3.border.border-1.border-main-box-darker.padding-5').length > 0)
+    .each((sequenceIndex, element) => {
+      const wrapper = $(element);
+      const precedingEnemy = wrapper.prevAll('.row.d-flex.align-items-center')
+        .filter((_, sibling) => $(sibling).find('img[src*="cha_type_icon_"]').length > 0)
+        .first()
+        .get(0);
+      const enemyOrder = precedingEnemy ? rowNodes.indexOf(precedingEnemy) : null;
+      sequences.push({
+        sequenceIndex,
+        enemyOrder: enemyOrder >= 0 ? enemyOrder : null,
+        actions: parseActions($, wrapper, sequenceIndex, enemyOrder >= 0 ? enemyOrder : null)
+      });
+    });
+  return sequences;
 }
 
 function parseAreaDamage(boxText) {
@@ -205,11 +314,13 @@ export function parseCachedStageHtml(html, metadata) {
     });
 
     const boxText = compactText(box.text());
+    const actionSequences = parseActionSequences($, box, rows);
     groups.push({
       encounterIndex,
       enemyCount: groupEnemies.length,
       enemies: groupEnemies,
-      actions: parseActions($, box),
+      actionSequences,
+      actions: actionSequences.flatMap((sequence) => sequence.actions),
       areaDamage: parseAreaDamage(boxText)
     });
   });

@@ -1,0 +1,72 @@
+{
+  "candidateCounts": {
+    "aiActions": 1679,
+    "aiSequences": 115,
+    "areaAttackEncounters": 65,
+    "areaAttacks": 75,
+    "attributedAreaAttacks": 75,
+    "combatEnemies": 4673,
+    "criticalRateRules": 5,
+    "defenseValues": 4673,
+    "encounters": 1352,
+    "enemies": 5032,
+    "events": 88,
+    "manualCorrections": 0,
+    "missingDisplayedSuperDamageOnCombatEnemy": 95,
+    "neutralEnemies": 443,
+    "passiveEffects": 270,
+    "stages": 801,
+    "superAttacks": 4924,
+    "superAttackUsageRules": 168
+  },
+  "candidateStageClassifications": {
+    "ambiguous-existing": 10,
+    "candidate-only-unconfirmed": 154,
+    "existing-changed": 17,
+    "existing-exact": 620
+  },
+  "comparisonMode": "offline-saved-cache-vs-current-json",
+  "datasetId": "phase4-cache-c8c6a2468861",
+  "fullCompatibilityWarnings": {
+    "AOE_INFORMATION_LOSS": 75,
+    "MISSING_BASE_ATTACK": 359,
+    "MISSING_SUPER_SYNTHESIZED": 95,
+    "NEUTRAL_MAPPED_TO_EXTREME": 168
+  },
+  "generatedAt": "2026-02-23T08:11:11.385Z",
+  "interpretation": {
+    "corrections": "根拠とレビューのない現行値をmanualCorrectionsとして自動採用しない。",
+    "missingSuper": "保存HTMLに必殺ダメージがない行はnull。legacy-threeは旧挙動比較専用で、本番候補へ書き戻さない。",
+    "neutral": "neutral→extremeは現行形式にneutral列挙値がないための互換写像であり、元候補はneutralを保持する。"
+  },
+  "legacyCounts": {
+    "bosses": 4245,
+    "events": 56,
+    "stages": 647
+  },
+  "legacyStageMatches": {
+    "alignment-ignored:ambiguous": 6,
+    "alignment-ignored:unique": 7,
+    "attack-only:ambiguous": 2,
+    "attack-only:unique": 9,
+    "exact:ambiguous": 2,
+    "exact:unique": 620,
+    "human-key:unique": 1
+  },
+  "schemaVersion": 1,
+  "uniqueMatchedBossComparison": {
+    "bossesWithAnyDifference": 100,
+    "changedFields": {
+      "attacks": 98,
+      "enemy-presence": 2,
+      "hasSaCrit": 52,
+      "isCriticalDefault": 47,
+      "saBuffMod": 49
+    },
+    "comparedBosses": 4063,
+    "detailedBosses": 252,
+    "fullyEqualBosses": 3811,
+    "missingSuperSynthesizedOnUniqueMatch": 17,
+    "neutralMappedOnUniqueMatch": 138
+  }
+}

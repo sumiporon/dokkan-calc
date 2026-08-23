@@ -26,6 +26,10 @@
 /test-results/
 *.log
 
+# Reproducible, potentially large Phase 4 migration outputs. Keep the compact
+# manifest, summary, and representative fixture tracked instead.
+/generated/phase4/
+
 # Scraper caches and intermediate data
 # Some of these paths are already tracked in the legacy history. Ignoring them
 # here does not delete or untrack those files; that decision is deferred.

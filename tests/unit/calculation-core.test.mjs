@@ -8,10 +8,16 @@ const {
   buildHitConditionOptions,
   buildTurnConditionOptions,
   calculateDamage,
+  calculateDamageRange,
   calculateDurability,
   calculateDurabilityLine,
+  calculateSafeDurabilityLine,
   calculateEnemyAttackVariants,
   calculateEnemyConditionState,
+  DAMAGE_VARIANCE_MAX,
+  DAMAGE_VARIANCE_MIN,
+  formatDamageRange,
+  formatDurabilityLimit,
   hasGlobalCriticalEffect
 } = calculationCore;
 
@@ -177,13 +183,15 @@ test('verified type matrix: all five natural advantage cycles and their reverse 
   }
 });
 
-test('verified variance range: 1.00, representative 1.015, and 1.03 remain explicit inputs', () => {
+test('verified variance boundaries: raw damage at 1.00 and 1.03 uses independent expectations', () => {
   const result = calculateDurability({ char_def: 200_000, dr_input: 40 });
   const cases = [
     { variance: 1, damage: 400_000 },
-    { variance: 1.015, damage: 409_000 },
     { variance: 1.03, damage: 418_000 }
   ];
+
+  assert.equal(DAMAGE_VARIANCE_MIN, 1);
+  assert.equal(DAMAGE_VARIANCE_MAX, 1.03);
 
   for (const { variance, damage } of cases) {
     assert.equal(calculateDamage(1_000_000, result, variance), damage);
@@ -191,4 +199,65 @@ test('verified variance range: 1.00, representative 1.015, and 1.03 remain expli
       Math.abs(calculateDurabilityLine(damage, result, variance) - 1_000_000) < 1e-9
     );
   }
+});
+
+test('verified damage range: one result contains the 1.00 minimum and 1.03 maximum', () => {
+  const result = calculateDurability({ char_def: 200_000, dr_input: 40 });
+  const range = calculateDamageRange(1_000_000, result);
+
+  // Hand calculation:
+  // min = 1,000,000 * 0.60 - 200,000 = 400,000
+  // max = 1,000,000 * 1.03 * 0.60 - 200,000 = 418,000
+  assert.deepEqual(range, { minimum: 400_000, maximum: 418_000 });
+  assert.equal(formatDamageRange(range), '40万〜41.8万');
+});
+
+test('damage-range formatting rounds outward at 0.1万 and one-point boundaries', () => {
+  assert.equal(
+    formatDamageRange({ minimum: 100_000, maximum: 103_000 }),
+    '10万〜10.3万'
+  );
+  assert.equal(
+    formatDamageRange({ minimum: 9_998.2, maximum: 9_999.2 }),
+    '9,998〜10,000'
+  );
+});
+
+test('verified perfect defence display: a fully stopped range is 0, not 0〜0', () => {
+  const result = calculateDurability({ char_def: 1_100_000 });
+  const range = calculateDamageRange(1_000_000, result);
+
+  assert.deepEqual(range, { minimum: 0, maximum: 0 });
+  assert.equal(formatDamageRange(range), '0');
+});
+
+test('verified boundary range: minimum can be 0 while the 1.03 maximum is positive', () => {
+  const result = calculateDurability({ char_def: 1_010_000 });
+  const range = calculateDamageRange(1_000_000, result);
+
+  assert.deepEqual(range, { minimum: 0, maximum: 20_000 });
+  assert.equal(formatDamageRange(range), '0〜2万');
+});
+
+test('verified safety line: perfect and specified-damage lines use variance 1.03', () => {
+  const result = calculateDurability({ char_def: 1_350_000 });
+
+  // Hand calculation: (target / guard + DEF) / 1.03.
+  const perfectLine = calculateSafeDurabilityLine(0, result);
+  const specifiedLine = calculateSafeDurabilityLine(700_000, result);
+  assert.ok(Math.abs(perfectLine - 1_310_679.6116504853) < 1e-6);
+  assert.ok(Math.abs(specifiedLine - 1_990_291.2621359222) < 1e-6);
+  assert.equal(calculateDamage(perfectLine, result, 1.03), 0);
+  assert.ok(Math.abs(calculateDamage(specifiedLine, result, 1.03) - 700_000) < 1e-6);
+});
+
+test('durability-limit formatting always rounds downward below and above 1万', () => {
+  const result = calculateDurability({ char_def: 9_000 });
+  const perfectLine = calculateSafeDurabilityLine(0, result);
+
+  // Hand calculation: 9,000 / 1.03 = 8,737.864..., so 8,738 is unsafe.
+  assert.ok(Math.abs(perfectLine - 8_737.864077669903) < 1e-9);
+  assert.equal(formatDurabilityLimit(perfectLine), '8,737');
+  assert.equal(formatDurabilityLimit(9_999.9), '9,999');
+  assert.equal(formatDurabilityLimit(10_999.9), '1万');
 });

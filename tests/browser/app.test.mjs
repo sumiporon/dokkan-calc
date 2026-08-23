@@ -7,6 +7,7 @@ import { chromium } from 'playwright';
 import { startStaticServer } from '../helpers/static-server.mjs';
 
 const APP_PATH = '/dokkan_calc_final.html';
+const FILE_APP_URL = new URL('../../dokkan_calc_final.html', import.meta.url).href;
 const SYSTEM_CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const TEST_TIMEOUT = 90_000;
 
@@ -65,10 +66,17 @@ const CDN_STUBS = {
   `,
 };
 
-async function runInFreshApp(runAssertions, { appPath = APP_PATH } = {}) {
+async function runInFreshApp(
+  runAssertions,
+  {
+    appPath = APP_PATH,
+    appUrl,
+    viewport = { width: 1440, height: 1100 },
+  } = {},
+) {
   const context = await browser.newContext({
     locale: 'ja-JP',
-    viewport: { width: 1440, height: 1100 },
+    viewport,
   });
   const emptyStorage = await context.storageState();
   assert.deepEqual(emptyStorage.origins, [], 'A new BrowserContext must start without localStorage data.');
@@ -107,7 +115,7 @@ async function runInFreshApp(runAssertions, { appPath = APP_PATH } = {}) {
 
   let testError;
   try {
-    await page.goto(`${staticServer.origin}${appPath}`, {
+    await page.goto(appUrl ?? `${staticServer.origin}${appPath}`, {
       waitUntil: 'domcontentloaded',
       timeout: 60_000,
     });
@@ -160,7 +168,7 @@ test.after(async () => {
   await staticServer?.close();
 });
 
-test('起動、DEF計算、耐久ライン、モード切替、手動被ダメージ', { timeout: TEST_TIMEOUT }, async () => {
+test('PC viewport: 起動、DEF計算、安全側耐久ライン、モード切替、被ダメ範囲', { timeout: TEST_TIMEOUT }, async () => {
   await runInFreshApp(async ({ page }) => {
     assert.match(await page.locator('h1').innerText(), /耐久計算ツール \(v66\)/);
     assert.equal(await page.locator('#scenario-cards-container .card').count(), 1);
@@ -175,7 +183,7 @@ test('起動、DEF計算、耐久ライン、モード切替、手動被ダメ�
 
     assert.equal(await card.locator('.final-def-display').innerText(), '最終DEF: 1,350,000');
     const durabilityRows = (await card.locator('.result-body tr').allInnerTexts()).map(normalizeText);
-    assert.deepEqual(durabilityRows, ['完封 135万', '70万 205万']);
+    assert.deepEqual(durabilityRows, ['完封 131万', '70万 199万']);
 
     await expandOpponentSettings(card);
     await page.locator('#mode-damage').check();
@@ -184,12 +192,78 @@ test('起動、DEF計算、耐久ライン、モード切替、手動被ダメ�
     await card.locator('[data-input="enemy_atk"]').fill('200');
     assert.equal(
       normalizeText(await card.locator('.manual-damage-result').innerText()),
-      '敵ATK: 200万 → 被ダメ: 65万',
+      '敵ATK: 200万 → 被ダメ: 65万〜71万',
+    );
+
+    await card.locator('[data-input="enemy_atk"]').fill('100');
+    assert.equal(
+      normalizeText(await card.locator('.manual-damage-result').innerText()),
+      '敵ATK: 100万 → 被ダメ: 0',
     );
 
     await page.locator('#mode-durability').check();
     assert.equal(await page.locator('#mode-durability').isChecked(), true);
     assert.equal(await card.locator('.result-body tr').count(), 2);
+  });
+});
+
+test('スマホviewportでも主要なDEF・安全側耐久ライン・被ダメ範囲操作ができる', { timeout: TEST_TIMEOUT }, async () => {
+  await runInFreshApp(async ({ page }) => {
+    assert.deepEqual(page.viewportSize(), { width: 390, height: 844 });
+    assert.equal(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+      true,
+      '390px viewport must not introduce horizontal page overflow',
+    );
+    const card = page.locator('#scenario-cards-container .card').first();
+    await expandScenario(card);
+    await card.locator('[data-input="char_def"]').fill('100000');
+    await card.locator('[data-input="leader"]').fill('200');
+    await card.locator('[data-input="passive"]').fill('100');
+    await card.locator('[data-input="active"]').fill('50');
+    await card.locator('[data-input="support_item"]').fill('50');
+
+    assert.equal(await card.locator('.final-def-display').innerText(), '最終DEF: 1,350,000');
+    assert.deepEqual(
+      (await card.locator('.result-body tr').allInnerTexts()).map(normalizeText),
+      ['完封 131万', '70万 199万'],
+    );
+
+    await expandOpponentSettings(card);
+    await page.locator('#mode-damage').check();
+    await card.locator('[data-input="enemy_atk"]').fill('200');
+    assert.equal(
+      normalizeText(await card.locator('.manual-damage-result').innerText()),
+      '敵ATK: 200万 → 被ダメ: 65万〜71万',
+    );
+
+    await page.locator('#mode-durability').check();
+    assert.equal(await card.locator('.result-body tr').count(), 2);
+  }, { viewport: { width: 390, height: 844 } });
+});
+
+test('表示境界: 被ダメ範囲を外向きに丸め、1万未満の耐久上限を下向きに丸める', { timeout: TEST_TIMEOUT }, async () => {
+  await runInFreshApp(async ({ page }) => {
+    const card = page.locator('#scenario-cards-container .card').first();
+    await expandScenario(card);
+    await expandOpponentSettings(card);
+
+    await card.locator('[data-input="char_def"]').fill('200000');
+    await card.locator('[data-input="dr_input"]').fill('40');
+    await page.locator('#mode-damage').check();
+    await card.locator('[data-input="enemy_atk"]').fill('100');
+    assert.equal(
+      normalizeText(await card.locator('.manual-damage-result').innerText()),
+      '敵ATK: 100万 → 被ダメ: 40万〜41.8万',
+    );
+
+    await page.locator('#mode-durability').check();
+    await card.locator('[data-input="dr_input"]').fill('0');
+    await card.locator('[data-input="char_def"]').fill('9000');
+    assert.equal(
+      normalizeText(await card.locator('.result-body tr').first().innerText()),
+      '完封 8,737',
+    );
   });
 });
 
@@ -219,8 +293,8 @@ test('登録済みの実敵をカスケード選択し、通常・必殺を表�
     const attackTexts = (await attackRows.allInnerTexts()).map(normalizeText);
     // Independent expectation: Super TEQ defending against Extreme AGL is
     // natural advantage across classes (type 1.0, guard 0.5), with zero DEF.
-    assert.equal(attackTexts[0], '通常 ATK: 20万 被ダメ: 10万');
-    assert.equal(attackTexts[1], '必殺 ATK: 50万 被ダメ: 25万');
+    assert.equal(attackTexts[0], '通常 ATK: 20万 被ダメ: 10万〜10.3万');
+    assert.equal(attackTexts[1], '必殺 ATK: 50万 被ダメ: 25万〜25.8万');
     assert.equal(await card.locator('[data-input="enemy_atk"]').isVisible(), false);
   });
 });
@@ -262,6 +336,7 @@ test('暫定データマッピング: 合成敵のターン・被弾・HP・登�
   await runInFreshApp(async ({ page }) => {
     const card = page.locator('#scenario-cards-container .card').first();
     await expandScenario(card);
+    await expandOpponentSettings(card);
 
     const syntheticEnemy = {
       name: '条件テスト敵',
@@ -288,6 +363,8 @@ test('暫定データマッピング: 合成敵のターン・被弾・HP・登�
     await card.evaluate((element, enemy) => {
       element.dataset.loadedEnemy = JSON.stringify(enemy);
     }, syntheticEnemy);
+    await card.locator('[data-input="enemy_class"]').selectOption('extreme');
+    await card.locator('[data-input="enemy_type"]').selectOption('str');
     await page.locator('#mode-damage').check();
 
     const dynamicContainer = card.locator('.dynamic-damage-container');
@@ -310,9 +387,9 @@ test('暫定データマッピング: 合成敵のターン・被弾・HP・登�
     );
 
     const initialRows = (await dynamicContainer.locator('.multi-attack-result-item').allInnerTexts()).map(normalizeText);
-    assert.match(initialRows[0], /^通常 ATK: 100万 被ダメ:/);
-    assert.match(initialRows[1], /^通常\(必殺後\) ATK: 130万 被ダメ:/);
-    assert.match(initialRows[2], /^必殺 ATK: 330万 被ダメ:/);
+    assert.equal(initialRows[0], '通常 ATK: 100万 被ダメ: 115万〜118.5万');
+    assert.equal(initialRows[1], '通常(必殺後) ATK: 130万 被ダメ: 149.5万〜154万');
+    assert.equal(initialRows[2], '必殺 ATK: 330万 被ダメ: 379.5万〜390.9万');
 
     await dynamicContainer.locator('.cond-turn').selectOption('20');
     await dynamicContainer.locator('.cond-hit').selectOption('40');
@@ -329,9 +406,9 @@ test('暫定データマッピング: 合成敵のターン・被弾・HP・登�
     );
 
     const boostedRows = (await dynamicContainer.locator('.multi-attack-result-item').allInnerTexts()).map(normalizeText);
-    assert.match(boostedRows[0], /^通常 ATK: 266万 被ダメ:/);
-    assert.match(boostedRows[1], /^通常\(必殺後\) ATK: 345万 被ダメ:/);
-    assert.match(boostedRows[2], /^必殺 ATK: 877万 被ダメ:/);
+    assert.equal(boostedRows[0], '通常 ATK: 266万 被ダメ: 305.9万〜315.1万');
+    assert.equal(boostedRows[1], '通常(必殺後) ATK: 345万 被ダメ: 397.6万〜409.7万');
+    assert.equal(boostedRows[2], '必殺 ATK: 877万 被ダメ: 1009.4万〜1039.8万');
   });
 });
 
@@ -439,9 +516,9 @@ test('必殺だけ会心の敵はモーダル読込でも通常攻撃を会心�
     assert.equal(await card.locator('[data-input="is_critical"]').isChecked(), false);
     await page.locator('#mode-damage').check();
     const rows = (await card.locator('.multi-attack-result-item').allInnerTexts()).map(normalizeText);
-    assert.match(rows[0], /^通常 ATK: 75万 被ダメ: (?!.*--)/);
-    assert.match(rows[1], /^通常\(必殺後\) ATK: 112万 被ダメ: (?!.*--)/);
-    assert.match(rows[2], /^必殺 ATK: 247万 被ダメ: (?!.*--)/);
+    assert.match(rows[0], /^通常 ATK: 75万 被ダメ: [\d.]+万〜[\d.]+万$/);
+    assert.match(rows[1], /^通常\(必殺後\) ATK: 112万 被ダメ: [\d.]+万〜[\d.]+万$/);
+    assert.match(rows[2], /^必殺 ATK: 247万 被ダメ: [\d.]+万〜[\d.]+万$/);
     assert.match(rows[3], /^必殺\[会心\] ATK: 247万 .*被ダメ: --$/);
 
     await card.locator('[data-input="loaded_enemy_event_type"]').selectOption({ label: 'レッドゾーン' });
@@ -477,8 +554,8 @@ test('一覧・スクリーンショット用プレビューもメイン画面�
       'DEF: 135万',
       '軽減: -',
       '全ガ: -',
-      '完封: 135万',
-      '70万: 205万',
+      '完封: 131万',
+      '70万: 199万',
     ]);
   });
 });
@@ -492,4 +569,40 @@ test('公開入口のindex.htmlも共有計算コアを読み込んで起動す�
       'function',
     );
   }, { appPath: '/index.html' });
+});
+
+test('file直開きでもカード・主要計算・localStorage保存が動作する', { timeout: TEST_TIMEOUT }, async () => {
+  await runInFreshApp(async ({ page }) => {
+    assert.equal(page.url(), FILE_APP_URL);
+    assert.equal(await page.locator('#scenario-cards-container .card').count(), 1);
+    assert.equal(
+      await page.evaluate(() => typeof globalThis.DokkanCalcCore?.calculateDamageRange),
+      'function',
+    );
+
+    const card = page.locator('#scenario-cards-container .card').first();
+    await expandScenario(card);
+    await card.locator('[data-input="char_def"]').fill('100000');
+    await card.locator('[data-input="leader"]').fill('200');
+    await card.locator('[data-input="passive"]').fill('100');
+    await card.locator('[data-input="active"]').fill('50');
+    await card.locator('[data-input="support_item"]').fill('50');
+    assert.deepEqual(
+      (await card.locator('.result-body tr').allInnerTexts()).map(normalizeText),
+      ['完封 131万', '70万 199万'],
+    );
+
+    await expandOpponentSettings(card);
+    await page.locator('#mode-damage').check();
+    await card.locator('[data-input="enemy_atk"]').fill('200');
+    assert.equal(
+      normalizeText(await card.locator('.manual-damage-result').innerText()),
+      '敵ATK: 200万 → 被ダメ: 65万〜71万',
+    );
+
+    await page.locator('#new-character-name').fill('file直開きテスト');
+    await page.locator('#save-character-btn').click();
+    const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('dokkan_calc_data_v22')));
+    assert.equal(stored.savedCharacters.at(-1).name, 'file直開きテスト');
+  }, { appUrl: FILE_APP_URL });
 });

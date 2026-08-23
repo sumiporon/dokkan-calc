@@ -63,6 +63,7 @@
                         "maxPerTurn": 2,
                         "cooldownTurns": 0,
                         "slot": null,
+                        "usageRules": [],
                         "targetMode": "single",
                         "attackType": "super-example",
                         "effectIcons": [

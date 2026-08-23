@@ -1,0 +1,487 @@
+{
+  "datasetId": "phase4-cache-c8c6a2468861-representative",
+  "generatedAt": "2026-02-23T08:11:11.385Z",
+  "schemaVersion": 1,
+  "selection": [
+    {
+      "encounterIndex": 0,
+      "enemyCount": 8,
+      "eventId": "1744",
+      "features": [
+        "ai-actions",
+        "alignment-super",
+        "defense",
+        "explicit-zero",
+        "multiple-ai-sequences",
+        "multiple-super-attacks",
+        "turn-condition",
+        "type-agl",
+        "type-int",
+        "type-phy",
+        "type-str",
+        "type-teq"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1744:17440013:0:0",
+        "dokkaninfo-cache:jpnja:1744:17440013:0:1",
+        "dokkaninfo-cache:jpnja:1744:17440013:0:2",
+        "dokkaninfo-cache:jpnja:1744:17440013:0:3",
+        "dokkaninfo-cache:jpnja:1744:17440013:0:4",
+        "dokkaninfo-cache:jpnja:1744:17440013:0:5",
+        "dokkaninfo-cache:jpnja:1744:17440013:0:6",
+        "dokkaninfo-cache:jpnja:1744:17440013:0:7"
+      ],
+      "stageId": "17440013",
+      "stageName": "DAIMA編"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 2,
+      "eventId": "1704",
+      "features": [
+        "alignment-super",
+        "appearance-condition",
+        "defense",
+        "hp-condition",
+        "received-hit-condition",
+        "type-phy",
+        "type-str"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1704:17040095:0:0",
+        "dokkaninfo-cache:jpnja:1704:17040095:0:1"
+      ],
+      "stageId": "17040095",
+      "stageName": "劇場版 その4"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1704",
+      "features": [
+        "alignment-extreme",
+        "critical",
+        "defense",
+        "type-teq"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1704:17040025:0:0"
+      ],
+      "stageId": "17040025",
+      "stageName": "劇場版 その1"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "730",
+      "features": [
+        "explicit-zero",
+        "neutral-alignment",
+        "null-combat-stats",
+        "type-agl"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:730:7300011:0:0"
+      ],
+      "stageId": "7300011",
+      "stageName": "【vs速】戦闘シミュレーション"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1716",
+      "features": [
+        "alignment-extreme",
+        "area-attack",
+        "defense",
+        "type-phy"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1716:17160085:0:0"
+      ],
+      "stageId": "17160085",
+      "stageName": "VSセル(第一形態)"
+    },
+    {
+      "encounterIndex": 9,
+      "enemyCount": 4,
+      "eventId": "701",
+      "features": [
+        "alignment-super",
+        "defense",
+        "explicit-zero",
+        "missing-super-display",
+        "type-teq"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:701:7010014:9:0",
+        "dokkaninfo-cache:jpnja:701:7010014:9:1",
+        "dokkaninfo-cache:jpnja:701:7010014:9:2",
+        "dokkaninfo-cache:jpnja:701:7010014:9:3"
+      ],
+      "stageId": "7010014",
+      "stageName": "超激戦BOSSラッシュ1"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1702",
+      "features": [
+        "alignment-super",
+        "defense",
+        "hp-condition",
+        "type-int"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1702:17020055:0:0"
+      ],
+      "stageId": "17020055",
+      "stageName": "破壊神ビルス編"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1703",
+      "features": [
+        "alignment-super",
+        "defense",
+        "type-agl"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1703:17030055:0:0"
+      ],
+      "stageId": "17030055",
+      "stageName": "破壊神ビルス編"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1705",
+      "features": [
+        "alignment-extreme",
+        "defense",
+        "explicit-zero",
+        "turn-condition",
+        "type-int"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1705:17050015:0:0"
+      ],
+      "stageId": "17050015",
+      "stageName": "1st anniversary"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1714",
+      "features": [
+        "alignment-extreme",
+        "defense",
+        "multiple-super-attacks",
+        "type-phy"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1714:17140015:0:0"
+      ],
+      "stageId": "17140015",
+      "stageName": "ステージ1"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1715",
+      "features": [
+        "alignment-extreme",
+        "defense",
+        "type-phy"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1715:17150015:0:0"
+      ],
+      "stageId": "17150015",
+      "stageName": "VSピラフ一味"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1717",
+      "features": [
+        "ai-actions",
+        "alignment-super",
+        "defense",
+        "type-str"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1717:17170015:0:0"
+      ],
+      "stageId": "17170015",
+      "stageName": "予選"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1721",
+      "features": [
+        "ai-actions",
+        "alignment-super",
+        "defense",
+        "type-str"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1721:17210015:0:0"
+      ],
+      "stageId": "17210015",
+      "stageName": "予選"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1722",
+      "features": [
+        "alignment-extreme",
+        "area-attack",
+        "defense",
+        "type-phy"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1722:17220033:0:0"
+      ],
+      "stageId": "17220033",
+      "stageName": "ステージ3"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1726",
+      "features": [
+        "ai-actions",
+        "alignment-super",
+        "defense",
+        "type-teq"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1726:17260045:0:0"
+      ],
+      "stageId": "17260045",
+      "stageName": "VS孫悟飯&孫悟天&トランクス1"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1728",
+      "features": [
+        "alignment-extreme",
+        "defense",
+        "type-teq"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1728:17280014:0:0"
+      ],
+      "stageId": "17280014",
+      "stageName": "「融合/合体戦士」3体必須"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1729",
+      "features": [
+        "alignment-extreme",
+        "defense",
+        "type-phy"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1729:17290015:0:0"
+      ],
+      "stageId": "17290015",
+      "stageName": "VS ラディッツ"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1731",
+      "features": [
+        "alignment-extreme",
+        "defense",
+        "type-agl"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1731:17310013:0:0"
+      ],
+      "stageId": "17310013",
+      "stageName": "サバイバル1"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1733",
+      "features": [
+        "ai-actions",
+        "alignment-super",
+        "appearance-condition",
+        "defense",
+        "multiple-super-attacks",
+        "type-agl"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1733:17330015:0:0"
+      ],
+      "stageId": "17330015",
+      "stageName": "ステージ1"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1735",
+      "features": [
+        "alignment-super",
+        "defense",
+        "type-agl"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1735:17350012:0:0"
+      ],
+      "stageId": "17350012",
+      "stageName": "スペシャルバトル"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1736",
+      "features": [
+        "alignment-extreme",
+        "defense",
+        "received-hit-condition",
+        "type-phy"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1736:17360045:0:0"
+      ],
+      "stageId": "17360045",
+      "stageName": "VSバイオブロリー"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1737",
+      "features": [
+        "alignment-extreme",
+        "defense",
+        "type-agl"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1737:17370013:0:0"
+      ],
+      "stageId": "17370013",
+      "stageName": "GT編ステージ1"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1738",
+      "features": [
+        "alignment-super",
+        "defense",
+        "type-int"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1738:17380033:0:0"
+      ],
+      "stageId": "17380033",
+      "stageName": "ドラゴンボール超編ステージ3"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1742",
+      "features": [
+        "alignment-super",
+        "area-attack",
+        "defense",
+        "turn-condition",
+        "type-teq"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1742:17420013:0:0"
+      ],
+      "stageId": "17420013",
+      "stageName": "ステージ1"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1748",
+      "features": [
+        "alignment-super",
+        "defense",
+        "type-phy"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1748:17480012:0:0"
+      ],
+      "stageId": "17480012",
+      "stageName": "VSタマガミ・ナンバー・スリー"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "1749",
+      "features": [
+        "alignment-extreme",
+        "defense",
+        "type-phy"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:1749:17490015:0:0"
+      ],
+      "stageId": "17490015",
+      "stageName": "ステージ1"
+    },
+    {
+      "encounterIndex": 2,
+      "enemyCount": 1,
+      "eventId": "710",
+      "features": [
+        "alignment-super",
+        "defense",
+        "type-phy"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:710:7100195:2:0"
+      ],
+      "stageId": "7100195",
+      "stageName": "「魔人ブウ編」のみ挑戦可"
+    },
+    {
+      "encounterIndex": 2,
+      "enemyCount": 1,
+      "eventId": "720",
+      "features": [
+        "alignment-super",
+        "defense",
+        "type-agl"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:720:7200195:2:0"
+      ],
+      "stageId": "7200195",
+      "stageName": "「魔人ブウ編」のみ挑戦可"
+    },
+    {
+      "encounterIndex": 0,
+      "enemyCount": 1,
+      "eventId": "731",
+      "features": [
+        "explicit-zero",
+        "neutral-alignment",
+        "null-combat-stats",
+        "type-agl"
+      ],
+      "occurrenceIds": [
+        "dokkaninfo-cache:jpnja:731:7310011:0:0"
+      ],
+      "stageId": "7310011",
+      "stageName": "【vs速】戦闘シミュレーション"
+    }
+  ],
+  "uncoveredFeatures": []
+}

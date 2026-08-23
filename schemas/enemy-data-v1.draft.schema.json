@@ -175,7 +175,7 @@
     "superAttack": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["skillId", "name", "description", "displayedDamage", "derivedMultiplier", "probabilityPercent", "maxPerTurn", "cooldownTurns", "slot", "targetMode", "attackType", "effectIcons", "effects", "criticalOverride"],
+      "required": ["skillId", "name", "description", "displayedDamage", "derivedMultiplier", "probabilityPercent", "maxPerTurn", "cooldownTurns", "slot", "usageRules", "targetMode", "attackType", "effectIcons", "effects", "criticalOverride"],
       "properties": {
         "skillId": { "$ref": "#/$defs/nullableId" },
         "name": { "type": ["string", "null"] },
@@ -186,6 +186,11 @@
         "maxPerTurn": { "$ref": "#/$defs/nullableNonNegativeInteger" },
         "cooldownTurns": { "$ref": "#/$defs/nullableNonNegativeInteger" },
         "slot": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "usageRules": {
+          "type": "array",
+          "description": "One super attack can render multiple HP/probability/cooldown bands. These are conditions of that attack, not additional attacks.",
+          "items": { "$ref": "#/$defs/superAttackUsageRule" }
+        },
         "targetMode": { "enum": ["single", "all", "unknown"] },
         "attackType": { "type": ["string", "null"] },
         "effectIcons": { "type": "array", "items": { "$ref": "#/$defs/icon" } },
@@ -196,6 +201,20 @@
             { "$ref": "#/$defs/critical" }
           ]
         }
+      }
+    },
+    "superAttackUsageRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceOrder", "hpMinPercent", "hpMaxPercent", "probabilityPercent", "maxPerTurn", "cooldownTurns", "rawText"],
+      "properties": {
+        "sourceOrder": { "type": "integer", "minimum": 1 },
+        "hpMinPercent": { "$ref": "#/$defs/nullablePercent" },
+        "hpMaxPercent": { "$ref": "#/$defs/nullablePercent" },
+        "probabilityPercent": { "$ref": "#/$defs/nullablePercent" },
+        "maxPerTurn": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "cooldownTurns": { "$ref": "#/$defs/nullableNonNegativeInteger" },
+        "rawText": { "type": "string", "minLength": 1 }
       }
     },
     "effect": {

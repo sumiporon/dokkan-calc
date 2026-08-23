@@ -28,6 +28,7 @@ function countDataset(dataset) {
     skills: 0,
     passiveEffects: 0,
     superAttacks: 0,
+    superAttackUsageRules: 0,
     superEffects: 0,
     configuredCriticalProfiles: 0,
     aiActions: 0,
@@ -48,6 +49,10 @@ function countDataset(dataset) {
           counts.passiveEffects += (enemy.passiveEffects ?? []).length;
           counts.fieldStates += (enemy.fieldStates ?? []).length;
           counts.superAttacks += (enemy.attacks?.superAttacks ?? []).length;
+          counts.superAttackUsageRules += (enemy.attacks?.superAttacks ?? []).reduce(
+            (sum, superAttack) => sum + (superAttack.usageRules ?? []).length,
+            0
+          );
           counts.superEffects += (enemy.attacks?.superAttacks ?? []).reduce(
             (sum, superAttack) => sum + (superAttack.effects ?? []).length,
             0
@@ -208,6 +213,30 @@ export function auditFutureEnemyDataset(dataset, options = {}) {
                 );
               }
             }
+
+            const usageOrders = new Set();
+            for (const [ruleIndex, rule] of (superAttack.usageRules ?? []).entries()) {
+              const rulePrefix = `${superPrefix}.usageRules.${ruleIndex}`;
+              if (usageOrders.has(rule.sourceOrder)) {
+                addError('DUPLICATE_SUPER_USAGE_ORDER', `${enemyPath}.${rulePrefix}.sourceOrder`, '同じ必殺内でusage ruleのsourceOrderが重複しています。');
+              }
+              usageOrders.add(rule.sourceOrder);
+              if (
+                rule.hpMinPercent != null
+                && rule.hpMaxPercent != null
+                && rule.hpMinPercent > rule.hpMaxPercent
+              ) {
+                addError('INVALID_SUPER_USAGE_HP_RANGE', `${enemyPath}.${rulePrefix}`, '必殺usage ruleのHP下限が上限を超えています。');
+              }
+              for (const fieldName of ['hpMinPercent', 'hpMaxPercent', 'probabilityPercent', 'maxPerTurn', 'cooldownTurns']) {
+                requireNullState(`${rulePrefix}.${fieldName}`, rule[fieldName]);
+              }
+            }
+            [...usageOrders].sort((left, right) => left - right).forEach((sourceOrder, index) => {
+              if (sourceOrder !== index + 1) {
+                addError('SUPER_USAGE_ORDER_GAP', `${enemyPath}.${superPrefix}.usageRules`, 'usage ruleのsourceOrderは元表示どおり1からの連番である必要があります。');
+              }
+            });
           }
 
           for (const [skillIndex, skill] of (enemy.skills ?? []).entries()) {

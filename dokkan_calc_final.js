@@ -160648,8 +160648,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (isCritUnconfigured) {
               atkDisplay = "--";
           } else {
-              const requiredEnemyAtk = calculationCore.calculateDurabilityLine(dmg, calcResults);
-              atkDisplay = formatNumber(requiredEnemyAtk);
+              const requiredEnemyAtk = calculationCore.calculateSafeDurabilityLine(dmg, calcResults);
+              atkDisplay = calculationCore.formatDurabilityLimit(requiredEnemyAtk);
           }
           const row = resultBody.insertRow();
           row.innerHTML = `<th>${line.name}</th><td>${atkDisplay}</td>`;
@@ -160816,14 +160816,14 @@ document.addEventListener('DOMContentLoaded', () => {
                   ...scenarioData,
                   is_critical: is_this_attack_crit
                 });
-                const dmg = calculationCore.calculateDamage(atk.value, attackCalculation);
+                const damageRange = calculationCore.calculateDamageRange(atk.value, attackCalculation);
                 const critBadge = (is_this_attack_crit && !atk.name.includes('会心')) ? ' <span style="background:#dc3545;color:white;padding:0.1rem 0.3rem;border-radius:3px;font-size:0.7rem;">会心</span>' : '';
                 html += '<div class="multi-attack-result-item" style="padding:0.3rem 0;border-bottom:1px solid var(--border-color);">' +
                   '<div style="display:flex;justify-content:space-between;align-items:center;">' +
                   '<span class="attack-name" style="font-weight:bold;">' + atk.name + critBadge + '</span>' +
                   '<span style="font-size:0.85rem;color:var(--secondary-color);">ATK: ' + formatNumber(atk.value) + '</span>' +
                   '</div>' +
-                  '<div style="text-align:right;font-size:1.1rem;font-weight:bold;color:var(--danger-color);">被ダメ: ' + formatNumber(dmg) + '</div>' +
+                  '<div style="text-align:right;font-size:1.1rem;font-weight:bold;color:var(--danger-color);">被ダメ: ' + calculationCore.formatDamageRange(damageRange) + '</div>' +
                   '</div>';
               });
 
@@ -160864,7 +160864,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }
 
-          const damage_taken = calculationCore.calculateDamage(enemy_atk_input, calcResults);
+          const damageRange = calculationCore.calculateDamageRange(enemy_atk_input, calcResults);
           const critBadge = is_critical ? ' <span style="background:#dc3545;color:white;padding:0.1rem 0.3rem;border-radius:3px;font-size:0.7rem;">会心</span>' : '';
 
           resultSection.innerHTML = `
@@ -160872,7 +160872,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="attack-details">
                             <span class="attack-stat">敵ATK: ${formatNumber(enemy_atk_input)}${critBadge}</span>
                             <span class="arrow">→</span>
-                            <span class="damage-value">被ダメ: ${formatNumber(damage_taken)}</span>
+                            <span class="damage-value">被ダメ: ${calculationCore.formatDamageRange(damageRange)}</span>
                         </div>
                     </div>
                 `;
@@ -160937,7 +160937,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lines.forEach(line => {
           const enemyAtkDisplay = isCritUnconfigured
             ? '--'
-            : formatNumber(calculationCore.calculateDurabilityLine(line.value, previewCalculation));
+            : calculationCore.formatDurabilityLimit(calculationCore.calculateSafeDurabilityLine(line.value, previewCalculation));
           addInfoItem(infoArea, line.name, enemyAtkDisplay);
         });
 

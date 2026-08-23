@@ -18,6 +18,11 @@
     int: 'teq'
   });
 
+  // Verified incoming-damage variance boundaries.  The UI deliberately shows
+  // only this range; it does not invent an average or representative roll.
+  const DAMAGE_VARIANCE_MIN = 1;
+  const DAMAGE_VARIANCE_MAX = 1.03;
+
   // This list preserves the Phase 2 production model while disputed DEF
   // bracket relationships are investigated.  The pure core gives the main
   // card and preview one implementation without silently settling those
@@ -193,6 +198,24 @@
     return stabilizeNearInteger(damage);
   }
 
+  function calculateDamageRange(enemyAttack, calculation) {
+    const damageAtMinimumVariance = calculateDamage(
+      enemyAttack,
+      calculation,
+      DAMAGE_VARIANCE_MIN
+    );
+    const damageAtMaximumVariance = calculateDamage(
+      enemyAttack,
+      calculation,
+      DAMAGE_VARIANCE_MAX
+    );
+
+    return {
+      minimum: Math.min(damageAtMinimumVariance, damageAtMaximumVariance),
+      maximum: Math.max(damageAtMinimumVariance, damageAtMaximumVariance)
+    };
+  }
+
   function calculateDurabilityLine(targetDamage, calculation, variance = 1) {
     return (
       (numberOrZero(targetDamage) / calculation.guard_mod)
@@ -203,6 +226,11 @@
       * calculation.atk_crit_mod
       * numberOrZero(variance)
     );
+  }
+
+  /** Uses the verified maximum variance so a displayed line is safety-first. */
+  function calculateSafeDurabilityLine(targetDamage, calculation) {
+    return calculateDurabilityLine(targetDamage, calculation, DAMAGE_VARIANCE_MAX);
   }
 
   /**
@@ -294,6 +322,44 @@
     return Math.round(parsed).toLocaleString();
   }
 
+  function formatDamageRangeEndpoint(value, direction) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return '---';
+
+    const stabilized = stabilizeNearInteger(parsed);
+    if (stabilized >= 10000) {
+      const tenthsOfTenThousand = direction === 'up'
+        ? Math.ceil(stabilized / 1000)
+        : Math.floor(stabilized / 1000);
+      const tenThousands = tenthsOfTenThousand / 10;
+      const display = Number.isInteger(tenThousands)
+        ? tenThousands.toFixed(0)
+        : tenThousands.toFixed(1);
+      return `${display}万`;
+    }
+
+    const rounded = direction === 'up'
+      ? Math.ceil(stabilized)
+      : Math.floor(stabilized);
+    return rounded.toLocaleString();
+  }
+
+  function formatDamageRange(range = {}) {
+    const minimum = numberOrZero(range.minimum);
+    const maximum = numberOrZero(range.maximum);
+    if (minimum === 0 && maximum === 0) return '0';
+    return `${formatDamageRangeEndpoint(minimum, 'down')}〜${formatDamageRangeEndpoint(maximum, 'up')}`;
+  }
+
+  function formatDurabilityLimit(value) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return '---';
+
+    const stabilized = stabilizeNearInteger(parsed);
+    if (stabilized >= 10000) return `${Math.floor(stabilized / 10000)}万`;
+    return Math.floor(stabilized).toLocaleString();
+  }
+
   /**
    * `hasSaCrit` means that the dedicated Super Attack row can critical-hit.
    * It must not turn every normal attack into a critical hit when an enemy is
@@ -311,12 +377,18 @@
     buildHitConditionOptions,
     buildTurnConditionOptions,
     calculateDamage,
+    calculateDamageRange,
     calculateDurability,
     calculateDurabilityLine,
+    calculateSafeDurabilityLine,
     calculateEnemyAttackVariants,
     calculateEnemyConditionState,
     calculateLegacyCompatibleDefense,
     calculateModifiers,
+    DAMAGE_VARIANCE_MAX,
+    DAMAGE_VARIANCE_MIN,
+    formatDamageRange,
+    formatDurabilityLimit,
     formatNumber,
     hasGlobalCriticalEffect,
     multiplyAndFloor
