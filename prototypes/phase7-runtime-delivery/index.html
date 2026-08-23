@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>Phase 7 runtime delivery prototype</title>
+  <link rel="stylesheet" href="prototype.css">
+</head>
+<body>
+  <main>
+    <p class="prototype-badge">Phase 7 非本番prototype</p>
+    <h1>敵データ配信方式の比較</h1>
+    <p id="mode-description">読み込み中です。</p>
+    <section class="status-panel" aria-live="polite">
+      <strong id="load-status">準備中</strong>
+      <span id="metrics-summary"></span>
+    </section>
+
+    <section class="selectors" aria-label="敵選択">
+      <label>イベント<select id="event-select" disabled></select></label>
+      <label>ステージ<select id="stage-select" disabled></select></label>
+      <label>敵<select id="enemy-select" disabled></select></label>
+    </section>
+
+    <section class="enemy-card">
+      <h2 id="enemy-name">敵を選択してください</h2>
+      <dl>
+        <div><dt>属性</dt><dd id="enemy-attribute">—</dd></div>
+        <div><dt>基礎ATK</dt><dd id="enemy-attack">—</dd></div>
+        <div><dt>必殺</dt><dd id="enemy-super">—</dd></div>
+      </dl>
+    </section>
+
+    <section class="calculation-panel">
+      <h2>主要計算の確認</h2>
+      <label>キャラクターDEF<input id="character-defense" type="number" value="500000" min="0"></label>
+      <button id="calculate-button" type="button">被ダメージを計算</button>
+      <output id="damage-result">—</output>
+    </section>
+
+    <nav>
+      <a href="update-prototype.html">1操作更新prototype</a>
+      <a href="migration-source.html">保存データ1回移行prototype</a>
+    </nav>
+  </main>
+  <script src="../../src/calculation-core.js"></script>
+  <script src="prototype.js"></script>
+</body>
+</html>

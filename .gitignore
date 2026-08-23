@@ -34,6 +34,10 @@
 # modules. Compact reports and representative fixtures stay tracked.
 /generated/phase6/
 
+# Reproducible Phase 7 full/chunk/file-compatible prototype outputs. Compact
+# manifests, measurements, and representative fixtures stay tracked.
+/generated/phase7/
+
 # Scraper caches and intermediate data
 # Some of these paths are already tracked in the legacy history. Ignoring them
 # here does not delete or untrack those files; that decision is deferred.

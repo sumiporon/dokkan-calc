@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sumiporon.github.io/dokkan-calc/schemas/phase7-runtime-delivery-manifest-v1.schema.json",
+  "title": "Phase 7 production-separated runtime delivery manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "prototype", "datasetVersion", "generatedAt", "runtimeSchemaVersion", "appCompatibility", "full", "chunked", "knownGood", "validation", "permission"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "prototype": { "const": true },
+    "datasetVersion": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "runtimeSchemaVersion": { "const": "1.0.0" },
+    "appCompatibility": {
+      "type": "object", "additionalProperties": false,
+      "required": ["minimum", "maximum", "productionAppReadsArtifact"],
+      "properties": { "minimum": { "type": "string", "minLength": 1 }, "maximum": { "type": ["string", "null"] }, "productionAppReadsArtifact": { "const": false } }
+    },
+    "full": {
+      "type": "object", "additionalProperties": false,
+      "required": ["json", "script"],
+      "properties": { "json": { "$ref": "#/$defs/artifact" }, "script": { "$ref": "#/$defs/artifact" } }
+    },
+    "chunked": {
+      "type": "object", "additionalProperties": false,
+      "required": ["indexJson", "indexScript", "eventCount", "jsonFiles", "scriptFiles", "totalJsonBytes", "largestChunkBytes"],
+      "properties": {
+        "indexJson": { "$ref": "#/$defs/artifact" }, "indexScript": { "$ref": "#/$defs/artifact" },
+        "eventCount": { "type": "integer", "minimum": 0 }, "jsonFiles": { "type": "integer", "minimum": 0 }, "scriptFiles": { "type": "integer", "minimum": 0 },
+        "totalJsonBytes": { "type": "integer", "minimum": 0 }, "largestChunkBytes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "knownGood": {
+      "type": "object", "additionalProperties": false,
+      "required": ["datasetVersion", "manifestDigest", "runtimeDigest"],
+      "properties": { "datasetVersion": { "type": "string", "minLength": 1 }, "manifestDigest": { "type": ["string", "null"], "pattern": "^sha256:[a-f0-9]{64}$" }, "runtimeDigest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" } }
+    },
+    "validation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "hardFailCount", "reviewRequiredCount", "note"],
+      "properties": { "status": { "enum": ["passed", "review-required", "hard-fail"] }, "hardFailCount": { "type": "integer", "minimum": 0 }, "reviewRequiredCount": { "type": "integer", "minimum": 0 }, "note": { "type": "string" } }
+    },
+    "permission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["offlinePrototypeAllowed", "productionPublishAllowed"],
+      "properties": { "offlinePrototypeAllowed": { "const": true }, "productionPublishAllowed": { "const": false } }
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "digest", "bytes", "contentType"],
+      "properties": { "path": { "type": "string", "minLength": 1 }, "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }, "bytes": { "type": "integer", "minimum": 1 }, "contentType": { "enum": ["application/json", "text/javascript"] } }
+    }
+  }
+}

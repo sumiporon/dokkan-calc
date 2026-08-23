@@ -1,0 +1,11 @@
+{
+  "datasetVersion": "runtime:canonical:jpnja:phase4-cache-c8c6a2468861",
+  "events": 88,
+  "enemies": 5032,
+  "fullJsonBytes": 6048874,
+  "indexJsonBytes": 47030,
+  "totalChunkJsonBytes": 6095593,
+  "largestChunkBytes": 871769,
+  "fullRuntimeDigest": "sha256:c31ba5f8d057b31cca58b6f07a569f3432819b48c714122794adbb2896ca7e04",
+  "eventIndexDigest": "sha256:f49a77c1dfdf0bf48fef92dafcdc7733505cc8c5d9ce82a48e4069f58edfbdad"
+}

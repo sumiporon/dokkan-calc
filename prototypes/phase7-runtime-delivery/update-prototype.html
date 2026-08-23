@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="ja">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>Phase 7 one-operation update prototype</title><link rel="stylesheet" href="prototype.css"></head>
+<body><main>
+  <p class="prototype-badge">Phase 7 非本番prototype</p>
+  <h1>1操作更新の内部確認</h1>
+  <p>この画面はmock/fixtureだけを使い、本番データや本番localStorageを変更しません。</p>
+  <label>配信方式<select id="update-mode"><option value="full">full runtime</option><option value="chunk">event chunk</option></select></label>
+  <label>失敗scenario<select id="failure-scenario"><option value="none">正常</option><option value="digest">digest不一致</option><option value="missing">通信途中失敗</option><option value="apply">適用途中失敗</option><option value="health">health check失敗</option></select></label>
+  <button id="update-button" type="button">敵データを更新</button>
+  <output id="update-result">まだ実行していません。</output>
+  <a href="index.html">配信比較へ戻る</a>
+</main><script type="module" src="update-prototype.mjs"></script></body>
+</html>

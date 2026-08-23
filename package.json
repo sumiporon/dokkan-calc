@@ -4,8 +4,8 @@
   "private": true,
   "description": "Characterization, calculation-reference, enemy-data, and browser tests for the legacy Dokkan calculator.",
   "scripts": {
-    "test": "npm run test:syntax && npm run typecheck && npm run test:unit && npm run test:data && npm run test:phase4 && npm run test:phase6 && npm run test:browser",
-    "test:syntax": "node --check src/calculation-core.js && node --check dokkan_calc_final.js && node --check chrome_extension/content.js && node --check scripts/generate-phase4-enemy-candidate.mjs && node --check scripts/generate-phase6-data-foundation.mjs && node --check scripts/benchmark-phase6-data-foundation.mjs",
+    "test": "npm run test:syntax && npm run typecheck && npm run test:unit && npm run test:data && npm run test:phase4 && npm run test:phase6 && npm run test:phase7 && npm run test:browser",
+    "test:syntax": "node --check src/calculation-core.js && node --check dokkan_calc_final.js && node --check chrome_extension/content.js && node --check scripts/generate-phase4-enemy-candidate.mjs && node --check scripts/generate-phase6-data-foundation.mjs && node --check scripts/benchmark-phase6-data-foundation.mjs && node --check scripts/generate-phase7-runtime-delivery.mjs && node --check scripts/benchmark-phase7-runtime-delivery.mjs && node --check src/prototype/phase7-update-engine.mjs && node --check src/prototype/phase7-saved-data-migration.mjs && node --check prototypes/phase7-runtime-delivery/prototype.js && node --check prototypes/phase7-runtime-delivery/update-prototype.mjs && node --check prototypes/phase7-runtime-delivery/migration-source.js && node --check prototypes/phase7-runtime-delivery/migration-target.js",
     "typecheck": "tsc -p tsconfig.phase6.json",
     "build:phase4": "tsc -p tsconfig.phase4.build.json",
     "build:phase6": "tsc -p tsconfig.phase6.build.json",
@@ -13,13 +13,16 @@
     "test:data": "node --test --test-reporter=spec tests/data/enemy-data.test.mjs tests/data/storage-schema.test.mjs tests/data/future-enemy-schema.test.mjs tests/data/cached-source.test.mjs",
     "test:phase4": "npm run build:phase4 && npm run build:phase6 && node --test --test-reporter=spec tests/data/phase4-data-migration.test.mjs",
     "test:phase6": "npm run build:phase6 && node --test --test-reporter=spec tests/data/phase6-data-foundation.test.mjs",
+    "test:phase7": "npm run generate:phase7 && node --test --test-reporter=spec tests/data/phase7-runtime-delivery.test.mjs tests/data/phase7-full-scale.test.mjs && node --test --test-concurrency=1 --test-reporter=spec tests/browser/phase7-prototype.test.mjs",
     "test:cached-source": "node --test --test-reporter=spec tests/data/cached-source.test.mjs",
     "test:browser": "node --test --test-concurrency=1 --test-reporter=spec tests/browser/app.test.mjs",
     "audit:data": "node scripts/audit-enemy-data.mjs",
     "analyze:cached-source": "node scripts/analyze-cached-enemy-source.mjs",
     "generate:phase4": "npm run build:phase4 && node scripts/generate-phase4-enemy-candidate.mjs",
     "generate:phase6": "npm run build:phase4 && npm run build:phase6 && node scripts/generate-phase6-data-foundation.mjs",
-    "benchmark:phase6": "npm run build:phase6 && node --expose-gc scripts/benchmark-phase6-data-foundation.mjs"
+    "generate:phase7": "npm run generate:phase6 && node scripts/generate-phase7-runtime-delivery.mjs && node scripts/generate-phase7-runtime-delivery.mjs --representative",
+    "benchmark:phase6": "npm run build:phase6 && node --expose-gc scripts/benchmark-phase6-data-foundation.mjs",
+    "benchmark:phase7": "npm run generate:phase7 && node --expose-gc scripts/benchmark-phase7-runtime-delivery.mjs"
   },
   "engines": {
     "node": ">=20"
