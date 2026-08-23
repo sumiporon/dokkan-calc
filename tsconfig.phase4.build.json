@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.phase4.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "rootDir": "src/data-migration",
+    "outDir": "generated/phase4/runtime",
+    "declaration": false,
+    "sourceMap": false
+  }
+}

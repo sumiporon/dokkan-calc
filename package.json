@@ -4,14 +4,18 @@
   "private": true,
   "description": "Characterization, calculation-reference, enemy-data, and browser tests for the legacy Dokkan calculator.",
   "scripts": {
-    "test": "npm run test:syntax && npm run test:unit && npm run test:data && npm run test:browser",
-    "test:syntax": "node --check src/calculation-core.js && node --check dokkan_calc_final.js && node --check chrome_extension/content.js",
+    "test": "npm run test:syntax && npm run typecheck && npm run test:unit && npm run test:data && npm run test:phase4 && npm run test:browser",
+    "test:syntax": "node --check src/calculation-core.js && node --check dokkan_calc_final.js && node --check chrome_extension/content.js && node --check scripts/generate-phase4-enemy-candidate.mjs",
+    "typecheck": "tsc -p tsconfig.phase4.json",
+    "build:phase4": "tsc -p tsconfig.phase4.build.json",
     "test:unit": "node --test --test-reporter=spec tests/unit/*.test.mjs",
     "test:data": "node --test --test-reporter=spec tests/data/enemy-data.test.mjs tests/data/storage-schema.test.mjs tests/data/future-enemy-schema.test.mjs tests/data/cached-source.test.mjs",
+    "test:phase4": "npm run build:phase4 && node --test --test-reporter=spec tests/data/phase4-data-migration.test.mjs",
     "test:cached-source": "node --test --test-reporter=spec tests/data/cached-source.test.mjs",
     "test:browser": "node --test --test-concurrency=1 --test-reporter=spec tests/browser/app.test.mjs",
     "audit:data": "node scripts/audit-enemy-data.mjs",
-    "analyze:cached-source": "node scripts/analyze-cached-enemy-source.mjs"
+    "analyze:cached-source": "node scripts/analyze-cached-enemy-source.mjs",
+    "generate:phase4": "npm run build:phase4 && node scripts/generate-phase4-enemy-candidate.mjs"
   },
   "engines": {
     "node": ">=20"

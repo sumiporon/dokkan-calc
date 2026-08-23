@@ -6,8 +6,8 @@
       "path": "generated/phase4/candidate/enemy-data-v1.candidate.json"
     },
     "comparison": {
-      "bytes": 621561,
-      "digest": "sha256:a9b653913efbbfb20809f0b79a7015df95d19deb5bf0f6573a01aaca0de3ba82",
+      "bytes": 4103413,
+      "digest": "sha256:4e5bb334b0736222698664aeafa12e74673a3dc52f9722d2e12dcb8345af8ac9",
       "path": "artifacts/phase4/legacy-vs-candidate.diff.json"
     },
     "compatibility": {
@@ -16,20 +16,410 @@
       "path": "generated/phase4/candidate/legacy-compatible.from-candidate.json"
     },
     "representative": {
-      "bytes": 402725,
-      "digest": "sha256:23d3a4faaee4ed0ae5c170be06c2f42e0a20052191d2009f899beef87c4c782e",
+      "bytes": 377238,
+      "digest": "sha256:306f3d45208c1f1c7f60b1e8492580d2252036dede4680cba41e5e98c3deda07",
       "path": "tests/fixtures/future/enemy-data-v1.representative.json"
     },
     "summary": {
-      "bytes": 2203,
-      "digest": "sha256:2cbebf342b57ea589186d183bcedca188303dbaac37754eb74f4ff5b742dd0f4",
+      "bytes": 4558,
+      "digest": "sha256:216ffeed879e60c99eee45326936f73c44a518336378eeaead70fe8da7b47da6",
       "path": "artifacts/phase4/legacy-comparison-summary.json"
     }
   },
   "compatibilityGate": {
-    "note": "比較用lossy policyを明示指定した出力。本番採用gateはwarningsが0件の場合だけ成功とする。",
-    "safeForProduction": false,
-    "warningCount": 697
+    "counts": {
+      "informational": 0,
+      "loss": 37690,
+      "warning": 0
+    },
+    "findings": [
+      {
+        "affectedCount": 100,
+        "code": "AI_ACTIONS_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "encounter.aiActions"
+        ],
+        "message": "現行形式にはAI action・sequence・確率・対象・回数条件を保持する欄がありません。",
+        "sampleScopeIds": [
+          "701:7010014:6",
+          "701:7010024:1",
+          "701:7010025:1",
+          "701:7010035:3",
+          "701:7010075:2"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 75,
+        "code": "AOE_INFORMATION_LOSS",
+        "fieldPaths": [
+          "encounter.areaAttacks"
+        ],
+        "message": "現行aoeDamageには先頭対象値1つだけを写し、追加対象値・倍率・対象attack・targetMode・出典は表現できません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010013:0:0",
+          "dokkaninfo-cache:jpnja:701:7010014:0:0",
+          "dokkaninfo-cache:jpnja:701:7010095:4:3",
+          "dokkaninfo-cache:jpnja:701:7010175:2:2",
+          "dokkaninfo-cache:jpnja:701:7010175:2:3"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 1,
+        "code": "CRITICAL_RULE_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "critical.rateRules"
+        ],
+        "message": "現行boss形式で意味を保てない会心条件があります。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:1704:17040105:0:0"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 5032,
+        "code": "DAMAGE_REDUCTION_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "stats.damageReductionPercent"
+        ],
+        "message": "現行boss形式には敵ダメージ軽減率を保持する欄がありません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010013:0:0",
+          "dokkaninfo-cache:jpnja:701:7010013:1:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:1",
+          "dokkaninfo-cache:jpnja:701:7010013:2:2"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 4673,
+        "code": "DEFENSE_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "stats.defense"
+        ],
+        "message": "現行boss形式には敵DEFを保持する欄がありません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010013:0:0",
+          "dokkaninfo-cache:jpnja:701:7010013:1:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:1",
+          "dokkaninfo-cache:jpnja:701:7010013:2:2"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 5032,
+        "code": "EVIDENCE_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "evidence",
+          "fieldStates"
+        ],
+        "message": "現行boss形式には出典・信頼度・field stateを保持する欄がありません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010013:0:0",
+          "dokkaninfo-cache:jpnja:701:7010013:1:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:1",
+          "dokkaninfo-cache:jpnja:701:7010013:2:2"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 60,
+        "code": "HP_CONDITION_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "attacks.superAttacks[].usageRules[].hpMinPercent",
+          "attacks.superAttacks[].usageRules[].hpMaxPercent"
+        ],
+        "message": "現行boss形式には必殺ごとのHP条件を保持する欄がありません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010013:2:1",
+          "dokkaninfo-cache:jpnja:701:7010013:4:0",
+          "dokkaninfo-cache:jpnja:701:7010014:2:1",
+          "dokkaninfo-cache:jpnja:701:7010014:4:0",
+          "dokkaninfo-cache:jpnja:701:7010024:1:0"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 4673,
+        "code": "HP_STAT_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "stats.hp"
+        ],
+        "message": "現行boss形式には敵HPを保持する欄がありません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010013:0:0",
+          "dokkaninfo-cache:jpnja:701:7010013:1:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:1",
+          "dokkaninfo-cache:jpnja:701:7010013:2:2"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 4673,
+        "code": "MAX_ATTACKS_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "stats.maxAttacksPerTurn"
+        ],
+        "message": "現行boss形式には最大攻撃回数を保持する欄がありません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010013:0:0",
+          "dokkaninfo-cache:jpnja:701:7010013:1:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:1",
+          "dokkaninfo-cache:jpnja:701:7010013:2:2"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 359,
+        "code": "MISSING_BASE_ATTACK",
+        "fieldPaths": [
+          "stats.baseAttack"
+        ],
+        "message": "現行UI用の基礎ATKがないため互換bossへ変換しません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:704:7040014:0:0",
+          "dokkaninfo-cache:jpnja:704:7040014:0:1",
+          "dokkaninfo-cache:jpnja:704:7040014:0:2",
+          "dokkaninfo-cache:jpnja:704:7040014:0:3",
+          "dokkaninfo-cache:jpnja:704:7040014:1:0"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 95,
+        "code": "MISSING_SUPER_SYNTHESIZED",
+        "fieldPaths": [
+          "attacks.superAttacks.0.displayedDamage",
+          "attacks.superAttacks.0.derivedMultiplier"
+        ],
+        "message": "取得元に表示値がない必殺を、旧挙動互換の3倍として一時補完しました。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010014:9:3",
+          "dokkaninfo-cache:jpnja:710:7100625:2:3",
+          "dokkaninfo-cache:jpnja:710:7100635:2:1",
+          "dokkaninfo-cache:jpnja:710:7100635:2:2",
+          "dokkaninfo-cache:jpnja:710:7100635:2:3"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 71,
+        "code": "MULTIPLE_SUPER_ATTACKS_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "attacks.superAttacks"
+        ],
+        "message": "現行boss形式は必殺を1種類しか表せないため、2種類のうち先頭以外が失われます。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010014:6:2",
+          "dokkaninfo-cache:jpnja:701:7010035:3:3",
+          "dokkaninfo-cache:jpnja:701:7010095:1:2",
+          "dokkaninfo-cache:jpnja:701:7010115:0:3",
+          "dokkaninfo-cache:jpnja:701:7010115:2:4"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 8,
+        "code": "MULTIPLE_SUPER_ATTACKS_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "attacks.superAttacks"
+        ],
+        "message": "現行boss形式は必殺を1種類しか表せないため、3種類のうち先頭以外が失われます。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010045:3:2",
+          "dokkaninfo-cache:jpnja:750:7500115:0:0",
+          "dokkaninfo-cache:jpnja:750:7500145:0:3",
+          "dokkaninfo-cache:jpnja:761:7610025:0:0",
+          "dokkaninfo-cache:jpnja:766:7660095:1:2"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 168,
+        "code": "NEUTRAL_MAPPED_TO_EXTREME",
+        "fieldPaths": [
+          "alignment"
+        ],
+        "message": "現行形式にneutralがないため、互換表示に限ってextremeへ写像しました。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:711:7110011:0:0",
+          "dokkaninfo-cache:jpnja:711:7110011:0:1",
+          "dokkaninfo-cache:jpnja:711:7110011:0:2",
+          "dokkaninfo-cache:jpnja:711:7110011:0:3",
+          "dokkaninfo-cache:jpnja:711:7110011:0:4"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 60,
+        "code": "PASSIVE_EFFECT_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "passiveEffects"
+        ],
+        "message": "現行boss形式で意味を保てないpassive effectがあります。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:796:7960045:0:0",
+          "dokkaninfo-cache:jpnja:796:7960075:0:0",
+          "dokkaninfo-cache:jpnja:796:7960105:0:0",
+          "dokkaninfo-cache:jpnja:797:7970045:0:5",
+          "dokkaninfo-cache:jpnja:1702:17020085:0:0"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 2873,
+        "code": "SKILLS_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "skills"
+        ],
+        "message": "現行boss形式には取得元のskill情報を保持する欄がありません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010013:1:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:2",
+          "dokkaninfo-cache:jpnja:701:7010013:4:0",
+          "dokkaninfo-cache:jpnja:701:7010013:4:1"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 1,
+        "code": "SOURCE_SNAPSHOT_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "datasetId",
+          "sourceSnapshot"
+        ],
+        "message": "現行形式には候補datasetの版・取得元snapshot・digestを保持する欄がありません。",
+        "sampleScopeIds": [
+          "phase4-cache-c8c6a2468861"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 5032,
+        "code": "STABLE_AND_SOURCE_IDS_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "occurrenceId",
+          "identity.sourceEnemyId",
+          "identity.cardId",
+          "identity.thumbId"
+        ],
+        "message": "現行boss形式には安定occurrence IDと取得元IDを保持する欄がありません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010013:0:0",
+          "dokkaninfo-cache:jpnja:701:7010013:1:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:1",
+          "dokkaninfo-cache:jpnja:701:7010013:2:2"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 4518,
+        "code": "SUPER_CONDITION_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "attacks.superAttacks[].probabilityPercent",
+          "attacks.superAttacks[].maxPerTurn",
+          "attacks.superAttacks[].cooldownTurns",
+          "attacks.superAttacks[].slot"
+        ],
+        "message": "現行boss形式には必殺の確率・回数・再使用・slot条件を保持する欄がありません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010013:0:0",
+          "dokkaninfo-cache:jpnja:701:7010013:1:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:0",
+          "dokkaninfo-cache:jpnja:701:7010013:2:2",
+          "dokkaninfo-cache:jpnja:701:7010013:3:0"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 13,
+        "code": "SUPER_EFFECT_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "attacks.superAttacks[].effects"
+        ],
+        "message": "現行boss形式で表現できない必殺効果があります。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010045:3:2",
+          "dokkaninfo-cache:jpnja:761:7610025:0:0",
+          "dokkaninfo-cache:jpnja:766:7660095:1:2",
+          "dokkaninfo-cache:jpnja:786:7860035:0:2",
+          "dokkaninfo-cache:jpnja:1702:17020085:0:2"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 60,
+        "code": "SUPER_USAGE_RULES_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "attacks.superAttacks[].usageRules"
+        ],
+        "message": "現行boss形式には必殺ごとのusage ruleを保持する欄がありません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010013:2:1",
+          "dokkaninfo-cache:jpnja:701:7010013:4:0",
+          "dokkaninfo-cache:jpnja:701:7010014:2:1",
+          "dokkaninfo-cache:jpnja:701:7010014:4:0",
+          "dokkaninfo-cache:jpnja:701:7010024:1:0"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 1,
+        "code": "TURN_CONDITION_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "passiveEffects[].trigger",
+          "critical.rateRules[].trigger"
+        ],
+        "message": "現行boss形式で意味を保てないターン条件があります。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:1704:17040105:0:0"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 60,
+        "code": "TURN_CONDITION_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "attacks.superAttacks[].usageRules[].cooldownTurns"
+        ],
+        "message": "現行boss形式には必殺ごとの再使用ターン条件を保持する欄がありません。",
+        "sampleScopeIds": [
+          "dokkaninfo-cache:jpnja:701:7010013:2:1",
+          "dokkaninfo-cache:jpnja:701:7010013:4:0",
+          "dokkaninfo-cache:jpnja:701:7010014:2:1",
+          "dokkaninfo-cache:jpnja:701:7010014:4:0",
+          "dokkaninfo-cache:jpnja:701:7010024:1:0"
+        ],
+        "severity": "loss"
+      },
+      {
+        "affectedCount": 52,
+        "code": "TURN_CONDITION_NOT_REPRESENTABLE",
+        "fieldPaths": [
+          "encounter.aiActions[].cooldownTurns",
+          "encounter.aiActions[].slot"
+        ],
+        "message": "現行形式にはAI actionの再使用・slot条件を保持する欄がありません。",
+        "sampleScopeIds": [
+          "706:7060015:0",
+          "766:7660095:1",
+          "774:7740045:0",
+          "776:7760075:0",
+          "781:7810105:0"
+        ],
+        "severity": "loss"
+      }
+    ],
+    "note": "比較用lossy policyを明示指定した出力。本番採用gateは重大なlossが0件の場合だけ成功とする。",
+    "safeForProduction": false
   },
   "counts": {
     "aiActions": 1679,
@@ -79,21 +469,21 @@
   },
   "manifestVersion": 1,
   "representative": {
-    "selectionCount": 29,
+    "selectionCount": 20,
     "semanticCounts": {
-      "aiActions": 44,
-      "areaAttacks": 3,
+      "aiActions": 41,
+      "areaAttacks": 2,
       "configuredCriticalProfiles": 1,
-      "encounters": 29,
+      "encounters": 20,
       "enemies": 40,
-      "events": 28,
-      "fieldStates": 440,
-      "passiveEffects": 10,
-      "skills": 139,
-      "stages": 29,
-      "superAttacks": 43,
-      "superAttackUsageRules": 4,
-      "superEffects": 11
+      "events": 18,
+      "fieldStates": 415,
+      "passiveEffects": 8,
+      "skills": 123,
+      "stages": 20,
+      "superAttacks": 42,
+      "superAttackUsageRules": 8,
+      "superEffects": 10
     },
     "uncoveredFeatures": []
   },

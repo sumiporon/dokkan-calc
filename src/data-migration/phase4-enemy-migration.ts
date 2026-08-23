@@ -64,6 +64,41 @@ export interface FutureCritical {
   rateRules: FutureEffect[];
 }
 
+export interface FutureEvidence {
+  sourceUrl: string | null;
+  sourceFile: string;
+  checkedAt: string;
+  confidence: string;
+  notes: string;
+}
+
+export interface FutureAiAction {
+  sequenceIndex: number;
+  sourceOrder: number;
+  kind: string;
+  enemyOrder: number | null;
+  slot: number | null;
+  probabilityPercent: number | null;
+  hpMinPercent: number | null;
+  hpMaxPercent: number | null;
+  maxUses: number | null;
+  cooldownTurns: number | null;
+  rawText: string;
+}
+
+export interface FutureAreaAttack {
+  sourceOccurrenceId: string | null;
+  attackKind: string;
+  maxPerTurn: number | null;
+  firstTargetDamage: number | null;
+  additionalTargetDamage: number | null;
+  firstTargetMultiplierDerived: number | null;
+  additionalTargetMultiplierDerived: number | null;
+  targetMode: string;
+  evidence: FutureEvidence;
+  rawText: string | null;
+}
+
 export interface FutureEnemy {
   occurrenceId: string;
   orderInEncounter: number;
@@ -87,7 +122,7 @@ export interface FutureEnemy {
   passiveEffects: FutureEffect[];
   critical: FutureCritical;
   skills: unknown[];
-  evidence: unknown;
+  evidence: FutureEvidence;
   fieldStates: unknown[];
   raw: Record<string, unknown>;
 }
@@ -97,13 +132,8 @@ export interface FutureEncounter {
   phaseId: string | null;
   layoutKind: string;
   enemies: FutureEnemy[];
-  aiActions: unknown[];
-  areaAttacks: Array<{
-    sourceOccurrenceId: string | null;
-    firstTargetDamage: number | null;
-    additionalTargetDamage: number | null;
-    [key: string]: unknown;
-  }>;
+  aiActions: FutureAiAction[];
+  areaAttacks: FutureAreaAttack[];
 }
 
 export interface FutureStage {
@@ -199,15 +229,61 @@ export interface CompatibilityOptions {
   missingSuperPolicy: MissingSuperCompatibilityPolicy;
 }
 
-export interface CompatibilityWarning {
-  code: 'NEUTRAL_MAPPED_TO_EXTREME' | 'UNKNOWN_ALIGNMENT' | 'UNKNOWN_TYPE' | 'MISSING_BASE_ATTACK' | 'MISSING_SUPER_SYNTHESIZED' | 'MISSING_SUPER_PRESERVED' | 'AOE_INFORMATION_LOSS';
-  occurrenceId: string;
+export type CompatibilitySeverity = 'loss' | 'warning' | 'informational';
+
+export type CompatibilityCode =
+  | 'NEUTRAL_MAPPED_TO_EXTREME'
+  | 'UNKNOWN_ALIGNMENT'
+  | 'UNKNOWN_TYPE'
+  | 'MISSING_BASE_ATTACK'
+  | 'MISSING_SUPER_SYNTHESIZED'
+  | 'MISSING_SUPER_PRESERVED'
+  | 'MULTIPLE_SUPER_ATTACKS_NOT_REPRESENTABLE'
+  | 'SUPER_USAGE_RULES_NOT_REPRESENTABLE'
+  | 'SUPER_CONDITION_NOT_REPRESENTABLE'
+  | 'SUPER_EFFECT_NOT_REPRESENTABLE'
+  | 'AOE_INFORMATION_LOSS'
+  | 'AI_ACTIONS_NOT_REPRESENTABLE'
+  | 'HP_CONDITION_NOT_REPRESENTABLE'
+  | 'TURN_CONDITION_NOT_REPRESENTABLE'
+  | 'PASSIVE_EFFECT_NOT_REPRESENTABLE'
+  | 'CRITICAL_RULE_NOT_REPRESENTABLE'
+  | 'HP_STAT_NOT_REPRESENTABLE'
+  | 'DEFENSE_NOT_REPRESENTABLE'
+  | 'DAMAGE_REDUCTION_NOT_REPRESENTABLE'
+  | 'MAX_ATTACKS_NOT_REPRESENTABLE'
+  | 'STABLE_AND_SOURCE_IDS_NOT_REPRESENTABLE'
+  | 'EVIDENCE_NOT_REPRESENTABLE'
+  | 'SKILLS_NOT_REPRESENTABLE'
+  | 'SOURCE_SNAPSHOT_NOT_REPRESENTABLE'
+  | 'MANUAL_CORRECTIONS_NOT_REPRESENTABLE';
+
+export interface CompatibilityFinding {
+  severity: CompatibilitySeverity;
+  code: CompatibilityCode;
+  scopeId: string;
+  occurrenceId: string | null;
+  fieldPaths: string[];
   message: string;
 }
 
 export interface EnemyCompatibilityResult {
   boss: LegacyBoss | null;
-  warnings: CompatibilityWarning[];
+  findings: CompatibilityFinding[];
+}
+
+export interface CompatibilityFindingSummary {
+  severity: CompatibilitySeverity;
+  code: CompatibilityCode;
+  affectedCount: number;
+  sampleScopeIds: string[];
+  fieldPaths: string[];
+  message: string;
+}
+
+export interface CompatibilityReport {
+  counts: Record<CompatibilitySeverity, number>;
+  findings: CompatibilityFindingSummary[];
 }
 
 const DEFAULT_COMPATIBILITY_OPTIONS: CompatibilityOptions = {
@@ -216,6 +292,50 @@ const DEFAULT_COMPATIBILITY_OPTIONS: CompatibilityOptions = {
   neutralPolicy: 'reject',
   missingSuperPolicy: 'preserve-null'
 };
+
+function compatibilityFinding(
+  severity: CompatibilitySeverity,
+  code: CompatibilityCode,
+  scopeId: string,
+  fieldPaths: string[],
+  message: string,
+  occurrenceId: string | null = scopeId
+): CompatibilityFinding {
+  return { severity, code, scopeId, occurrenceId, fieldPaths, message };
+}
+
+function summarizeCompatibilityFindings(findings: CompatibilityFinding[]): CompatibilityReport {
+  const grouped = new Map<string, CompatibilityFindingSummary>();
+  const counts: CompatibilityReport['counts'] = { loss: 0, warning: 0, informational: 0 };
+  for (const finding of findings) {
+    counts[finding.severity] += 1;
+    const key = JSON.stringify([finding.severity, finding.code, finding.fieldPaths, finding.message]);
+    const existing = grouped.get(key);
+    if (existing) {
+      existing.affectedCount += 1;
+      if (existing.sampleScopeIds.length < 5 && !existing.sampleScopeIds.includes(finding.scopeId)) {
+        existing.sampleScopeIds.push(finding.scopeId);
+      }
+    } else {
+      grouped.set(key, {
+        severity: finding.severity,
+        code: finding.code,
+        affectedCount: 1,
+        sampleScopeIds: [finding.scopeId],
+        fieldPaths: finding.fieldPaths,
+        message: finding.message
+      });
+    }
+  }
+  return {
+    counts,
+    findings: [...grouped.values()].sort((left, right) => (
+      left.severity.localeCompare(right.severity, 'en')
+      || left.code.localeCompare(right.code, 'en')
+      || left.message.localeCompare(right.message, 'ja')
+    ))
+  };
+}
 
 function sortJsonValue(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(sortJsonValue);
@@ -265,17 +385,182 @@ function normalizeType(type: EnemyType): Exclude<EnemyType, 'unknown'> | null {
 export function candidateEnemyToLegacy(
   enemy: FutureEnemy,
   options: CompatibilityOptions = DEFAULT_COMPATIBILITY_OPTIONS,
-  areaDamage = 0
+  areaAttacks: FutureAreaAttack[] = []
 ): EnemyCompatibilityResult {
-  const warnings: CompatibilityWarning[] = [];
+  const findings: CompatibilityFinding[] = [];
+  const addFinding = (
+    severity: CompatibilitySeverity,
+    code: CompatibilityCode,
+    fieldPaths: string[],
+    message: string
+  ): void => {
+    findings.push(compatibilityFinding(severity, code, enemy.occurrenceId, fieldPaths, message));
+  };
+
+  addFinding(
+    'loss',
+    'STABLE_AND_SOURCE_IDS_NOT_REPRESENTABLE',
+    ['occurrenceId', 'identity.sourceEnemyId', 'identity.cardId', 'identity.thumbId'],
+    '現行boss形式には安定occurrence IDと取得元IDを保持する欄がありません。'
+  );
+  addFinding(
+    'loss',
+    'EVIDENCE_NOT_REPRESENTABLE',
+    ['evidence', 'fieldStates'],
+    '現行boss形式には出典・信頼度・field stateを保持する欄がありません。'
+  );
+  if (enemy.stats.hp != null) {
+    addFinding('loss', 'HP_STAT_NOT_REPRESENTABLE', ['stats.hp'], '現行boss形式には敵HPを保持する欄がありません。');
+  }
+  if (enemy.stats.defense != null) {
+    addFinding('loss', 'DEFENSE_NOT_REPRESENTABLE', ['stats.defense'], '現行boss形式には敵DEFを保持する欄がありません。');
+  }
+  if (enemy.stats.damageReductionPercent != null) {
+    addFinding('loss', 'DAMAGE_REDUCTION_NOT_REPRESENTABLE', ['stats.damageReductionPercent'], '現行boss形式には敵ダメージ軽減率を保持する欄がありません。');
+  }
+  if (enemy.stats.maxAttacksPerTurn != null) {
+    addFinding('loss', 'MAX_ATTACKS_NOT_REPRESENTABLE', ['stats.maxAttacksPerTurn'], '現行boss形式には最大攻撃回数を保持する欄がありません。');
+  }
+  if (enemy.skills.length > 0) {
+    addFinding('loss', 'SKILLS_NOT_REPRESENTABLE', ['skills'], '現行boss形式には取得元のskill情報を保持する欄がありません。');
+  }
+
+  const superAttacks = enemy.attacks.superAttacks;
+  if (superAttacks.length > 1) {
+    addFinding(
+      'loss',
+      'MULTIPLE_SUPER_ATTACKS_NOT_REPRESENTABLE',
+      ['attacks.superAttacks'],
+      `現行boss形式は必殺を1種類しか表せないため、${superAttacks.length}種類のうち先頭以外が失われます。`
+    );
+  }
+  if (superAttacks.some((attack) => attack.usageRules.length > 0)) {
+    addFinding(
+      'loss',
+      'SUPER_USAGE_RULES_NOT_REPRESENTABLE',
+      ['attacks.superAttacks[].usageRules'],
+      '現行boss形式には必殺ごとのusage ruleを保持する欄がありません。'
+    );
+  }
+  if (superAttacks.some((attack) => (
+    attack.probabilityPercent != null
+    || attack.maxPerTurn != null
+    || attack.cooldownTurns != null
+    || attack.slot != null
+  ))) {
+    addFinding(
+      'loss',
+      'SUPER_CONDITION_NOT_REPRESENTABLE',
+      ['attacks.superAttacks[].probabilityPercent', 'attacks.superAttacks[].maxPerTurn', 'attacks.superAttacks[].cooldownTurns', 'attacks.superAttacks[].slot'],
+      '現行boss形式には必殺の確率・回数・再使用・slot条件を保持する欄がありません。'
+    );
+  }
+  if (superAttacks.some((attack) => attack.usageRules.some((rule) => rule.hpMinPercent != null || rule.hpMaxPercent != null))) {
+    addFinding(
+      'loss',
+      'HP_CONDITION_NOT_REPRESENTABLE',
+      ['attacks.superAttacks[].usageRules[].hpMinPercent', 'attacks.superAttacks[].usageRules[].hpMaxPercent'],
+      '現行boss形式には必殺ごとのHP条件を保持する欄がありません。'
+    );
+  }
+  if (superAttacks.some((attack) => attack.usageRules.some((rule) => rule.cooldownTurns != null))) {
+    addFinding(
+      'loss',
+      'TURN_CONDITION_NOT_REPRESENTABLE',
+      ['attacks.superAttacks[].usageRules[].cooldownTurns'],
+      '現行boss形式には必殺ごとの再使用ターン条件を保持する欄がありません。'
+    );
+  }
+
+  const firstSuper = superAttacks[0];
+  const representedPostSuperEffect = firstSuper?.effects.find(
+    (effect) => effect.target === 'attack' && effect.bracket === 'post-super' && effect.operation === 'add-percent'
+  );
+  const hasUnrepresentedSuperEffect = superAttacks.some((attack, attackIndex) => attack.effects.some(
+    (effect) => attackIndex !== 0 || effect !== representedPostSuperEffect
+  ));
+  if (hasUnrepresentedSuperEffect) {
+    addFinding(
+      'loss',
+      'SUPER_EFFECT_NOT_REPRESENTABLE',
+      ['attacks.superAttacks[].effects'],
+      '現行boss形式で表現できない必殺効果があります。'
+    );
+  }
+
+  const supportedPassiveKinds = new Set(['elapsed-turn', 'received-hit-count', 'hp-range', 'appearance-turn']);
+  const firstPassiveByKind = new Map<string, FutureEffect>();
+  let hasUnrepresentedPassive = false;
+  let hasUnrepresentedHpCondition = false;
+  let hasUnrepresentedTurnCondition = false;
+  for (const effect of enemy.passiveEffects) {
+    const first = firstPassiveByKind.get(effect.trigger.kind);
+    if (!first) firstPassiveByKind.set(effect.trigger.kind, effect);
+    const commonSupported = effect.appliesTo === 'enemy-stats'
+      && effect.target === 'attack'
+      && effect.operation === 'add-percent'
+      && effect.durationTurns == null;
+    let supported = commonSupported && supportedPassiveKinds.has(effect.trigger.kind);
+    if (effect.trigger.kind !== 'appearance-turn' && first && first !== effect) supported = false;
+    if (effect.trigger.kind === 'elapsed-turn') {
+      const lost = effect.trigger.end != null || effect.trigger.hpMinPercent != null || effect.trigger.hpMaxPercent != null;
+      supported &&= !lost;
+      hasUnrepresentedTurnCondition ||= lost || (first != null && first !== effect);
+    } else if (effect.trigger.kind === 'received-hit-count') {
+      supported &&= effect.trigger.start == null && effect.trigger.end == null
+        && effect.trigger.hpMinPercent == null && effect.trigger.hpMaxPercent == null;
+    } else if (effect.trigger.kind === 'hp-range') {
+      const lost = effect.trigger.hpMaxPercent == null
+        || (effect.trigger.hpMinPercent != null && effect.trigger.hpMinPercent !== 0)
+        || effect.trigger.start != null || effect.trigger.end != null || effect.cap != null;
+      supported &&= !lost;
+      hasUnrepresentedHpCondition ||= lost || (first != null && first !== effect);
+    } else if (effect.trigger.kind === 'appearance-turn') {
+      const lost = effect.trigger.start == null || effect.trigger.end != null
+        || effect.trigger.hpMinPercent != null || effect.trigger.hpMaxPercent != null || effect.cap != null;
+      supported &&= !lost;
+      hasUnrepresentedTurnCondition ||= lost;
+    }
+    hasUnrepresentedPassive ||= !supported;
+  }
+  if (hasUnrepresentedPassive) {
+    addFinding('loss', 'PASSIVE_EFFECT_NOT_REPRESENTABLE', ['passiveEffects'], '現行boss形式で意味を保てないpassive effectがあります。');
+  }
+  const criticalKindCounts = new Map<string, number>();
+  let hasUnrepresentedCritical = false;
+  for (const rule of enemy.critical.rateRules) {
+    criticalKindCounts.set(rule.trigger.kind, (criticalKindCounts.get(rule.trigger.kind) ?? 0) + 1);
+    const supportedKind = rule.trigger.kind === 'hp-range' || rule.trigger.kind === 'elapsed-turn' || rule.trigger.kind === 'always';
+    const commonSupported = rule.target === 'critical-rate' && rule.operation === 'add-percent' && rule.durationTurns == null;
+    let supported = supportedKind && commonSupported;
+    if (rule.trigger.kind === 'hp-range') {
+      const lost = (rule.trigger.hpMinPercent != null && rule.trigger.hpMinPercent !== 0)
+        || rule.trigger.hpMaxPercent == null || rule.trigger.start != null || rule.trigger.end != null;
+      supported &&= !lost;
+      hasUnrepresentedHpCondition ||= lost;
+    } else if (rule.trigger.kind === 'elapsed-turn') {
+      const lost = rule.trigger.start != null || rule.trigger.end != null
+        || rule.trigger.hpMinPercent != null || rule.trigger.hpMaxPercent != null;
+      supported &&= !lost;
+      hasUnrepresentedTurnCondition ||= lost;
+    }
+    hasUnrepresentedCritical ||= !supported;
+  }
+  hasUnrepresentedCritical ||= [...criticalKindCounts.values()].some((count) => count > 1);
+  if (hasUnrepresentedCritical) {
+    addFinding('loss', 'CRITICAL_RULE_NOT_REPRESENTABLE', ['critical.rateRules'], '現行boss形式で意味を保てない会心条件があります。');
+  }
+  if (hasUnrepresentedHpCondition) {
+    addFinding('loss', 'HP_CONDITION_NOT_REPRESENTABLE', ['passiveEffects[].trigger', 'critical.rateRules[].trigger'], '現行boss形式で意味を保てないHP条件があります。');
+  }
+  if (hasUnrepresentedTurnCondition) {
+    addFinding('loss', 'TURN_CONDITION_NOT_REPRESENTABLE', ['passiveEffects[].trigger', 'critical.rateRules[].trigger'], '現行boss形式で意味を保てないターン条件があります。');
+  }
+
   const baseAttack = enemy.stats.baseAttack;
   if (baseAttack == null || baseAttack <= 0) {
-    warnings.push({
-      code: 'MISSING_BASE_ATTACK',
-      occurrenceId: enemy.occurrenceId,
-      message: '現行UI用の基礎ATKがないため互換bossへ変換しません。'
-    });
-    return { boss: null, warnings };
+    addFinding('loss', 'MISSING_BASE_ATTACK', ['stats.baseAttack'], '現行UI用の基礎ATKがないため互換bossへ変換しません。');
+    return { boss: null, findings };
   }
 
   let enemyClass: 'super' | 'extreme';
@@ -283,54 +568,30 @@ export function candidateEnemyToLegacy(
     enemyClass = enemy.alignment;
   } else if (enemy.alignment === 'neutral' && options.neutralPolicy === 'legacy-extreme') {
     enemyClass = 'extreme';
-    warnings.push({
-      code: 'NEUTRAL_MAPPED_TO_EXTREME',
-      occurrenceId: enemy.occurrenceId,
-      message: '現行形式にneutralがないため、互換表示に限ってextremeへ写像しました。'
-    });
+    addFinding('loss', 'NEUTRAL_MAPPED_TO_EXTREME', ['alignment'], '現行形式にneutralがないため、互換表示に限ってextremeへ写像しました。');
   } else {
-    warnings.push({
-      code: 'UNKNOWN_ALIGNMENT',
-      occurrenceId: enemy.occurrenceId,
-      message: '現行形式へ安全に写像できる超/極区分がありません。'
-    });
-    return { boss: null, warnings };
+    addFinding('loss', 'UNKNOWN_ALIGNMENT', ['alignment'], '現行形式へ安全に写像できる超/極区分がありません。');
+    return { boss: null, findings };
   }
 
   const enemyType = normalizeType(enemy.type);
   if (!enemyType) {
-    warnings.push({
-      code: 'UNKNOWN_TYPE',
-      occurrenceId: enemy.occurrenceId,
-      message: '現行形式へ安全に写像できる属性がありません。'
-    });
-    return { boss: null, warnings };
+    addFinding('loss', 'UNKNOWN_TYPE', ['type'], '現行形式へ安全に写像できる属性がありません。');
+    return { boss: null, findings };
   }
 
-  const firstSuper = enemy.attacks.superAttacks[0];
   let saMulti: number | null = firstSuper?.derivedMultiplier ?? null;
   if (saMulti == null && firstSuper?.displayedDamage != null) {
     saMulti = firstSuper.displayedDamage / baseAttack;
   }
   if (saMulti == null && options.missingSuperPolicy === 'legacy-three') {
     saMulti = 3;
-    warnings.push({
-      code: 'MISSING_SUPER_SYNTHESIZED',
-      occurrenceId: enemy.occurrenceId,
-      message: '取得元に表示値がない必殺を、旧挙動互換の3倍として一時補完しました。'
-    });
+    addFinding('loss', 'MISSING_SUPER_SYNTHESIZED', ['attacks.superAttacks.0.displayedDamage', 'attacks.superAttacks.0.derivedMultiplier'], '取得元に表示値がない必殺を、旧挙動互換の3倍として一時補完しました。');
   } else if (saMulti == null) {
-    warnings.push({
-      code: 'MISSING_SUPER_PRESERVED',
-      occurrenceId: enemy.occurrenceId,
-      message: '取得元に必殺表示値がないためnullを維持しました。'
-    });
+    addFinding('warning', 'MISSING_SUPER_PRESERVED', ['attacks.superAttacks.0.displayedDamage', 'attacks.superAttacks.0.derivedMultiplier'], '取得元に必殺表示値がないためnullを維持しました。');
   }
 
-  const postSuperEffect = firstSuper?.effects.find(
-    (effect) => effect.target === 'attack' && effect.bracket === 'post-super' && effect.operation === 'add-percent'
-  );
-  const saBuffMod = finiteNumber(postSuperEffect?.value) / 100;
+  const saBuffMod = finiteNumber(representedPostSuperEffect?.value) / 100;
   const turn = matchingEffect(enemy.passiveEffects, 'elapsed-turn');
   const hit = matchingEffect(enemy.passiveEffects, 'received-hit-count');
   const hp = matchingEffect(enemy.passiveEffects, 'hp-range');
@@ -361,13 +622,16 @@ export function candidateEnemyToLegacy(
     if (hasSaCrit) superAttack.isCrit = true;
     attacks.push(superAttack);
   }
+  const primaryAreaAttack = areaAttacks.find((area) => area.firstTargetDamage != null) ?? areaAttacks[0];
+  const areaDamage = primaryAreaAttack?.firstTargetDamage ?? 0;
   if (areaDamage > 0) attacks.push({ name: '全体攻撃', value: areaDamage });
-  if (areaDamage > 0) {
-    warnings.push({
-      code: 'AOE_INFORMATION_LOSS',
-      occurrenceId: enemy.occurrenceId,
-      message: '現行aoeDamageには先頭対象値だけを写し、追加対象値・targetMode・出典は表現できません。'
-    });
+  if (areaAttacks.length > 0) {
+    addFinding(
+      'loss',
+      'AOE_INFORMATION_LOSS',
+      ['encounter.areaAttacks'],
+      '現行aoeDamageには先頭対象値1つだけを写し、追加対象値・倍率・対象attack・targetMode・出典は表現できません。'
+    );
   }
 
   const boss: LegacyBoss = {
@@ -399,12 +663,12 @@ export function candidateEnemyToLegacy(
     critTurnMax: finiteNumber(turnCritical?.cap),
     critFixedRate: finiteNumber(fixedCritical?.value)
   };
-  return { boss, warnings };
+  return { boss, findings };
 }
 
 export interface DatasetCompatibilityResult {
   data: LegacyEvent[];
-  warnings: CompatibilityWarning[];
+  report: CompatibilityReport;
   safeForProduction: boolean;
 }
 
@@ -416,7 +680,24 @@ export function candidateDatasetToLegacy(
   const output: LegacyEvent[] = [];
   const eventMap = new Map<string, LegacyEvent>();
   const seriesMaps = new Map<string, Map<string, LegacySeries>>();
-  const warnings: CompatibilityWarning[] = [];
+  const findings: CompatibilityFinding[] = [compatibilityFinding(
+    'loss',
+    'SOURCE_SNAPSHOT_NOT_REPRESENTABLE',
+    dataset.datasetId,
+    ['datasetId', 'sourceSnapshot'],
+    '現行形式には候補datasetの版・取得元snapshot・digestを保持する欄がありません。',
+    null
+  )];
+  if (dataset.manualCorrections.length > 0) {
+    findings.push(compatibilityFinding(
+      'loss',
+      'MANUAL_CORRECTIONS_NOT_REPRESENTABLE',
+      dataset.datasetId,
+      ['manualCorrections'],
+      '現行形式には根拠付きmanual correctionを保持する欄がありません。',
+      null
+    ));
+  }
 
   for (const event of dataset.events) {
     const eventType = event.legacyEventType ?? event.name;
@@ -438,26 +719,63 @@ export function candidateDatasetToLegacy(
       }
       const bosses: LegacyBoss[] = [];
       for (const encounter of stage.encounters) {
-        const areaByOccurrence = new Map<string, number>();
-        for (const area of encounter.areaAttacks) {
-          if (area.sourceOccurrenceId && area.firstTargetDamage != null) {
-            areaByOccurrence.set(area.sourceOccurrenceId, area.firstTargetDamage);
+        const encounterScopeId = `${event.eventId}:${stage.stageId}:${encounter.encounterIndex}`;
+        if (encounter.aiActions.length > 0) {
+          findings.push(compatibilityFinding(
+            'loss',
+            'AI_ACTIONS_NOT_REPRESENTABLE',
+            encounterScopeId,
+            ['encounter.aiActions'],
+            '現行形式にはAI action・sequence・確率・対象・回数条件を保持する欄がありません。',
+            null
+          ));
+          if (encounter.aiActions.some((action) => action.hpMinPercent != null || action.hpMaxPercent != null)) {
+            findings.push(compatibilityFinding(
+              'loss',
+              'HP_CONDITION_NOT_REPRESENTABLE',
+              encounterScopeId,
+              ['encounter.aiActions[].hpMinPercent', 'encounter.aiActions[].hpMaxPercent'],
+              '現行形式にはAI actionのHP条件を保持する欄がありません。',
+              null
+            ));
+          }
+          if (encounter.aiActions.some((action) => action.cooldownTurns != null || action.slot != null)) {
+            findings.push(compatibilityFinding(
+              'loss',
+              'TURN_CONDITION_NOT_REPRESENTABLE',
+              encounterScopeId,
+              ['encounter.aiActions[].cooldownTurns', 'encounter.aiActions[].slot'],
+              '現行形式にはAI actionの再使用・slot条件を保持する欄がありません。',
+              null
+            ));
           }
         }
+        if (encounter.areaAttacks.some((area) => area.sourceOccurrenceId == null)) {
+          findings.push(compatibilityFinding(
+            'loss',
+            'AOE_INFORMATION_LOSS',
+            encounterScopeId,
+            ['encounter.areaAttacks'],
+            '取得元enemyへ結び付かないAOEがあり、現行boss形式へ安全に割り当てられません。',
+            null
+          ));
+        }
         for (const enemy of encounter.enemies) {
+          const enemyAreaAttacks = encounter.areaAttacks.filter((area) => area.sourceOccurrenceId === enemy.occurrenceId);
           const result = candidateEnemyToLegacy(
             enemy,
             options,
-            areaByOccurrence.get(enemy.occurrenceId) ?? 0
+            enemyAreaAttacks
           );
-          warnings.push(...result.warnings);
+          findings.push(...result.findings);
           if (result.boss) bosses.push(result.boss);
         }
       }
       outputSeries.stages.push({ stageName: stage.name, bosses });
     }
   }
-  return { data: output, warnings, safeForProduction: warnings.length === 0 };
+  const report = summarizeCompatibilityFindings(findings);
+  return { data: output, report, safeForProduction: report.counts.loss === 0 };
 }
 
 function fnv1a64(text: string): string {
@@ -756,6 +1074,7 @@ interface FlatFutureStage {
   seriesName: string;
   stageName: string;
   enemies: FutureEnemy[];
+  encounterByOccurrenceId: Map<string, FutureEncounter>;
 }
 
 function flattenLegacy(legacy: LegacyEvent[]): FlatLegacyStage[] {
@@ -780,6 +1099,12 @@ function flattenFuture(dataset: FutureDataset): FlatFutureStage[] {
   const stages: FlatFutureStage[] = [];
   dataset.events.forEach((event, eventIndex) => {
     event.stages.forEach((stage, stageIndex) => {
+      const encounterByOccurrenceId = new Map<string, FutureEncounter>();
+      const enemies = stage.encounters.flatMap((encounter) => encounter.enemies)
+        .filter((enemy) => (enemy.stats.baseAttack ?? 0) > 0);
+      for (const encounter of stage.encounters) {
+        for (const enemy of encounter.enemies) encounterByOccurrenceId.set(enemy.occurrenceId, encounter);
+      }
       stages.push({
         candidatePath: `${eventIndex}/${stageIndex}`,
         eventId: event.eventId,
@@ -787,7 +1112,8 @@ function flattenFuture(dataset: FutureDataset): FlatFutureStage[] {
         eventType: event.legacyEventType ?? event.name,
         seriesName: stage.legacySeriesName ?? '-',
         stageName: stage.name,
-        enemies: stage.encounters.flatMap((encounter) => encounter.enemies).filter((enemy) => (enemy.stats.baseAttack ?? 0) > 0)
+        enemies,
+        encounterByOccurrenceId
       });
     });
   });
@@ -912,6 +1238,7 @@ export interface FieldDifference {
   legacyValue: unknown;
   candidateCompatibilityValue: unknown;
   equal: boolean;
+  representation: 'legacy-field' | 'candidate-only';
 }
 
 const COMPARED_BOSS_FIELDS: Array<keyof LegacyBoss> = [
@@ -955,7 +1282,7 @@ export interface MigrationComparison {
       } | null;
       candidateEvidence: unknown;
       differences: FieldDifference[];
-      warnings: CompatibilityWarning[];
+      findings: CompatibilityFinding[];
     }>;
   }>;
 }
@@ -998,16 +1325,21 @@ export function compareLegacyAndCandidate(
             field: 'enemy-presence',
             legacyValue: Boolean(legacyBoss),
             candidateCompatibilityValue: Boolean(candidateEnemy),
-            equal: false
+            equal: false,
+            representation: 'legacy-field'
           }],
-          warnings: []
+          findings: []
         });
         continue;
       }
+      const encounter = candidateStage.encounterByOccurrenceId.get(candidateEnemy.occurrenceId);
+      const candidateAreaAttacks = encounter?.areaAttacks.filter(
+        (area) => area.sourceOccurrenceId === candidateEnemy.occurrenceId
+      ) ?? [];
       const converted = candidateEnemyToLegacy(candidateEnemy, {
         neutralPolicy: 'legacy-extreme',
         missingSuperPolicy: 'legacy-three'
-      });
+      }, candidateAreaAttacks);
       const differences: FieldDifference[] = [];
       for (const field of COMPARED_BOSS_FIELDS) {
         const candidateValue = converted.boss?.[field];
@@ -1015,11 +1347,81 @@ export function compareLegacyAndCandidate(
           field,
           legacyValue: legacyBoss[field],
           candidateCompatibilityValue: candidateValue,
-          equal: sameValue(legacyBoss[field], candidateValue)
+          equal: sameValue(legacyBoss[field], candidateValue),
+          representation: 'legacy-field' as const
         };
         if (!difference.equal) differences.push(difference);
       }
-      if (differences.length === 0 && converted.warnings.length === 0) {
+
+      const superAttacks = candidateEnemy.attacks.superAttacks;
+      if (superAttacks.length > 1 || superAttacks.some((attack) => attack.usageRules.length > 0)) {
+        differences.push({
+          field: 'attacks.superAttacks.detail',
+          legacyValue: {
+            present: legacyBoss.saMulti != null,
+            representedCount: legacyBoss.saMulti == null ? 0 : 1,
+            saMulti: legacyBoss.saMulti,
+            attacks: legacyBoss.attacks.filter((attack) => attack.name.includes('必殺'))
+          },
+          candidateCompatibilityValue: {
+            present: superAttacks.length > 0,
+            attacks: superAttacks.map((attack) => ({
+              skillId: attack.skillId,
+              name: attack.name,
+              displayedDamage: attack.displayedDamage,
+              derivedMultiplier: attack.derivedMultiplier,
+              probabilityPercent: attack.probabilityPercent,
+              maxPerTurn: attack.maxPerTurn,
+              cooldownTurns: attack.cooldownTurns,
+              slot: attack.slot,
+              targetMode: attack.targetMode,
+              usageRules: attack.usageRules
+            }))
+          },
+          equal: false,
+          representation: 'candidate-only'
+        });
+      }
+      if (candidateAreaAttacks.length > 0 || legacyBoss.aoeDamage > 0) {
+        differences.push({
+          field: 'encounter.areaAttacks',
+          legacyValue: {
+            present: legacyBoss.aoeDamage > 0,
+            aoeDamage: legacyBoss.aoeDamage
+          },
+          candidateCompatibilityValue: {
+            present: candidateAreaAttacks.length > 0,
+            attacks: candidateAreaAttacks
+          },
+          equal: false,
+          representation: 'candidate-only'
+        });
+      }
+      const candidateAiActions = candidateEnemy.orderInEncounter === 0
+        ? encounter?.aiActions ?? []
+        : [];
+      if (candidateAiActions.length > 0) {
+        differences.push({
+          field: 'encounter.aiActions',
+          legacyValue: { present: false, actions: [] },
+          candidateCompatibilityValue: { present: true, actions: candidateAiActions },
+          equal: false,
+          representation: 'candidate-only'
+        });
+      }
+
+      const detailedFindingCodes = new Set<CompatibilityCode>([
+        'NEUTRAL_MAPPED_TO_EXTREME',
+        'MISSING_SUPER_SYNTHESIZED',
+        'MULTIPLE_SUPER_ATTACKS_NOT_REPRESENTABLE',
+        'SUPER_USAGE_RULES_NOT_REPRESENTABLE',
+        'SUPER_EFFECT_NOT_REPRESENTABLE',
+        'AOE_INFORMATION_LOSS',
+        'PASSIVE_EFFECT_NOT_REPRESENTABLE',
+        'CRITICAL_RULE_NOT_REPRESENTABLE'
+      ]);
+      const hasDetailedFinding = converted.findings.some((finding) => detailedFindingCodes.has(finding.code));
+      if (differences.length === 0 && !hasDetailedFinding) {
         fullyEqualBosses += 1;
       } else {
         bosses.push({
@@ -1032,7 +1434,7 @@ export function compareLegacyAndCandidate(
           },
           candidateEvidence: candidateEnemy.evidence,
           differences,
-          warnings: converted.warnings
+          findings: converted.findings
         });
       }
     }

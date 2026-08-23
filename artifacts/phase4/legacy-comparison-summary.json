@@ -27,11 +27,98 @@
   },
   "comparisonMode": "offline-saved-cache-vs-current-json",
   "datasetId": "phase4-cache-c8c6a2468861",
-  "fullCompatibilityWarnings": {
-    "AOE_INFORMATION_LOSS": 75,
-    "MISSING_BASE_ATTACK": 359,
-    "MISSING_SUPER_SYNTHESIZED": 95,
-    "NEUTRAL_MAPPED_TO_EXTREME": 168
+  "fullCompatibilityReport": {
+    "counts": {
+      "informational": 0,
+      "loss": 37690,
+      "warning": 0
+    },
+    "findings": {
+      "AI_ACTIONS_NOT_REPRESENTABLE": {
+        "affectedCount": 100,
+        "severity": "loss"
+      },
+      "AOE_INFORMATION_LOSS": {
+        "affectedCount": 75,
+        "severity": "loss"
+      },
+      "CRITICAL_RULE_NOT_REPRESENTABLE": {
+        "affectedCount": 1,
+        "severity": "loss"
+      },
+      "DAMAGE_REDUCTION_NOT_REPRESENTABLE": {
+        "affectedCount": 5032,
+        "severity": "loss"
+      },
+      "DEFENSE_NOT_REPRESENTABLE": {
+        "affectedCount": 4673,
+        "severity": "loss"
+      },
+      "EVIDENCE_NOT_REPRESENTABLE": {
+        "affectedCount": 5032,
+        "severity": "loss"
+      },
+      "HP_CONDITION_NOT_REPRESENTABLE": {
+        "affectedCount": 60,
+        "severity": "loss"
+      },
+      "HP_STAT_NOT_REPRESENTABLE": {
+        "affectedCount": 4673,
+        "severity": "loss"
+      },
+      "MAX_ATTACKS_NOT_REPRESENTABLE": {
+        "affectedCount": 4673,
+        "severity": "loss"
+      },
+      "MISSING_BASE_ATTACK": {
+        "affectedCount": 359,
+        "severity": "loss"
+      },
+      "MISSING_SUPER_SYNTHESIZED": {
+        "affectedCount": 95,
+        "severity": "loss"
+      },
+      "MULTIPLE_SUPER_ATTACKS_NOT_REPRESENTABLE": {
+        "affectedCount": 79,
+        "severity": "loss"
+      },
+      "NEUTRAL_MAPPED_TO_EXTREME": {
+        "affectedCount": 168,
+        "severity": "loss"
+      },
+      "PASSIVE_EFFECT_NOT_REPRESENTABLE": {
+        "affectedCount": 60,
+        "severity": "loss"
+      },
+      "SKILLS_NOT_REPRESENTABLE": {
+        "affectedCount": 2873,
+        "severity": "loss"
+      },
+      "SOURCE_SNAPSHOT_NOT_REPRESENTABLE": {
+        "affectedCount": 1,
+        "severity": "loss"
+      },
+      "STABLE_AND_SOURCE_IDS_NOT_REPRESENTABLE": {
+        "affectedCount": 5032,
+        "severity": "loss"
+      },
+      "SUPER_CONDITION_NOT_REPRESENTABLE": {
+        "affectedCount": 4518,
+        "severity": "loss"
+      },
+      "SUPER_EFFECT_NOT_REPRESENTABLE": {
+        "affectedCount": 13,
+        "severity": "loss"
+      },
+      "SUPER_USAGE_RULES_NOT_REPRESENTABLE": {
+        "affectedCount": 60,
+        "severity": "loss"
+      },
+      "TURN_CONDITION_NOT_REPRESENTABLE": {
+        "affectedCount": 113,
+        "severity": "loss"
+      }
+    }
   },
   "generatedAt": "2026-02-23T08:11:11.385Z",
   "interpretation": {
@@ -55,17 +142,21 @@
   },
   "schemaVersion": 1,
   "uniqueMatchedBossComparison": {
-    "bossesWithAnyDifference": 100,
+    "bossesWithAnyDifference": 298,
     "changedFields": {
-      "attacks": 98,
+      "aoeDamage": 63,
+      "attacks": 154,
+      "attacks.superAttacks.detail": 97,
+      "encounter.aiActions": 80,
+      "encounter.areaAttacks": 63,
       "enemy-presence": 2,
       "hasSaCrit": 52,
       "isCriticalDefault": 47,
       "saBuffMod": 49
     },
     "comparedBosses": 4063,
-    "detailedBosses": 252,
-    "fullyEqualBosses": 3811,
+    "detailedBosses": 492,
+    "fullyEqualBosses": 3571,
     "missingSuperSynthesizedOnUniqueMatch": 17,
     "neutralMappedOnUniqueMatch": 138
   }

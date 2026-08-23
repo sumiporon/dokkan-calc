@@ -5,8 +5,8 @@
  *
  * Reads the saved HTML cache and current JSON, writes only clearly separated
  * non-production artifacts, and never performs a network request.
- * Run with Node 22 type stripping because the pure adapter is a small TS trial:
- *   node --experimental-strip-types scripts/generate-phase4-enemy-candidate.mjs
+ * The TypeScript adapter is compiled to ordinary JavaScript before this runs:
+ *   npm run generate:phase4
  */
 
 import { createHash } from 'node:crypto';
@@ -20,7 +20,7 @@ import {
   compareLegacyAndCandidate,
   legacyDatasetToFuture,
   stableJson
-} from '../src/data-migration/phase4-enemy-migration.ts';
+} from '../generated/phase4/runtime/phase4-enemy-migration.js';
 import { classifyCachedEvent, parseCachedStageHtml } from '../tests/helpers/cached-enemy-source.mjs';
 import { auditFutureEnemyDataset } from '../tests/helpers/future-enemy-schema-audit.mjs';
 
@@ -504,6 +504,9 @@ function encounterFeatures(encounter) {
   if (encounter.aiActions.length > 0) features.add('ai-actions');
   if (new Set(encounter.aiActions.map((action) => action.sequenceIndex)).size > 1) features.add('multiple-ai-sequences');
   if (encounter.enemies.some((enemy) => enemy.attacks.superAttacks.length > 1)) features.add('multiple-super-attacks');
+  if (encounter.enemies.some((enemy) => enemy.attacks.superAttacks.some((attack) => attack.usageRules.length > 0))) features.add('super-usage-rules');
+  if (encounter.aiActions.some((action) => action.hpMinPercent != null || action.hpMaxPercent != null)) features.add('hp-conditioned-ai');
+  if (encounter.aiActions.some((action) => action.cooldownTurns != null || action.slot != null)) features.add('turn-conditioned-ai');
   if (encounter.enemies.some((enemy) => enemy.stats.defense != null)) features.add('defense');
   if (encounter.enemies.some((enemy) => enemy.stats.baseAttack == null)) features.add('null-combat-stats');
   if (encounter.enemies.some((enemy) => enemy.stats.damageReductionPercent === 0)) features.add('explicit-zero');
@@ -527,7 +530,8 @@ function selectRepresentative(dataset) {
   })));
   const required = new Set([
     'neutral-alignment', 'missing-super-display', 'area-attack', 'ai-actions', 'multiple-ai-sequences',
-    'multiple-super-attacks', 'defense', 'null-combat-stats', 'explicit-zero', 'turn-condition',
+    'multiple-super-attacks', 'super-usage-rules', 'turn-conditioned-ai',
+    'defense', 'null-combat-stats', 'explicit-zero', 'turn-condition',
     'received-hit-condition', 'hp-condition', 'appearance-condition', 'critical',
     'type-agl', 'type-teq', 'type-int', 'type-str', 'type-phy', 'alignment-super', 'alignment-extreme'
   ]);
@@ -625,6 +629,7 @@ function selectRepresentative(dataset) {
 
 export async function buildCandidateFromCache(options = {}) {
   const selectedFiles = options.stageFiles ? new Set(options.stageFiles) : null;
+  const showProgress = options.progress ?? !selectedFiles;
   const indexBytes = await readFile(CACHE_INDEX_PATH);
   const index = JSON.parse(indexBytes.toString('utf8'));
   const sourceHash = createHash('sha256');
@@ -675,7 +680,7 @@ export async function buildCandidateFromCache(options = {}) {
         }))
       });
       parsedStageCount += 1;
-      if (!selectedFiles && parsedStageCount % 50 === 0) process.stdout.write(`parsed ${parsedStageCount}/${index.events.reduce((sum, event) => sum + event.stages.length, 0)} stages\n`);
+      if (showProgress && parsedStageCount % 50 === 0) process.stdout.write(`parsed ${parsedStageCount}/${index.events.reduce((sum, event) => sum + event.stages.length, 0)} stages\n`);
     }
     if (stages.length > 0) {
       events.push({
@@ -720,7 +725,7 @@ function countLegacy(legacy) {
   return { events: legacy.length, stages, bosses };
 }
 
-function comparisonSummary(diff, candidateCounts, legacyCounts, compatibilityWarnings) {
+function comparisonSummary(diff, candidateCounts, legacyCounts, compatibilityReport) {
   const matchCounts = {};
   for (const match of diff.legacyMatches) {
     const key = `${match.tier}:${match.cardinality}`;
@@ -736,11 +741,18 @@ function comparisonSummary(diff, candidateCounts, legacyCounts, compatibilityWar
     const differences = boss.differences.filter((field) => !field.equal);
     if (differences.length > 0) bossesWithAnyDifference += 1;
     for (const difference of differences) changedFields[difference.field] = (changedFields[difference.field] ?? 0) + 1;
-    if (boss.warnings.some((warning) => warning.code === 'MISSING_SUPER_SYNTHESIZED')) missingSuperSynthesizedOnUniqueMatch += 1;
-    if (boss.warnings.some((warning) => warning.code === 'NEUTRAL_MAPPED_TO_EXTREME')) neutralMappedOnUniqueMatch += 1;
+    if (boss.findings.some((finding) => finding.code === 'MISSING_SUPER_SYNTHESIZED')) missingSuperSynthesizedOnUniqueMatch += 1;
+    if (boss.findings.some((finding) => finding.code === 'NEUTRAL_MAPPED_TO_EXTREME')) neutralMappedOnUniqueMatch += 1;
   }
-  const warningCounts = {};
-  for (const warning of compatibilityWarnings) warningCounts[warning.code] = (warningCounts[warning.code] ?? 0) + 1;
+  const findingCounts = {};
+  for (const finding of compatibilityReport.findings) {
+    const existing = findingCounts[finding.code];
+    if (existing) existing.affectedCount += finding.affectedCount;
+    else findingCounts[finding.code] = {
+      severity: finding.severity,
+      affectedCount: finding.affectedCount
+    };
+  }
   return {
     schemaVersion: 1,
     datasetId: diff.datasetId,
@@ -759,7 +771,10 @@ function comparisonSummary(diff, candidateCounts, legacyCounts, compatibilityWar
       missingSuperSynthesizedOnUniqueMatch,
       neutralMappedOnUniqueMatch
     },
-    fullCompatibilityWarnings: warningCounts,
+    fullCompatibilityReport: {
+      counts: compatibilityReport.counts,
+      findings: findingCounts
+    },
     interpretation: {
       neutral: 'neutral→extremeは現行形式にneutral列挙値がないための互換写像であり、元候補はneutralを保持する。',
       missingSuper: '保存HTMLに必殺ダメージがない行はnull。legacy-threeは旧挙動比較専用で、本番候補へ書き戻さない。',
@@ -778,12 +793,12 @@ async function validateDataset(dataset, schema) {
   return semantic.counts;
 }
 
-async function main() {
+export async function createPhase4Artifacts({ write = false } = {}) {
   const [legacy, schema] = await Promise.all([
     readFile(LEGACY_PATH, 'utf8').then(JSON.parse),
     readFile(SCHEMA_PATH, 'utf8').then(JSON.parse)
   ]);
-  const { dataset } = await buildCandidateFromCache();
+  const { dataset } = await buildCandidateFromCache({ progress: write });
   const semanticCounts = await validateDataset(dataset, schema);
   const candidateCounts = countCandidate(dataset);
   const candidateJson = stableJson(dataset);
@@ -803,7 +818,7 @@ async function main() {
   const diff = compareLegacyAndCandidate(legacy, dataset);
   const diffJson = stableJson(diff);
   const diffDigest = sha256(diffJson);
-  const summary = comparisonSummary(diff, candidateCounts, countLegacy(legacy), compatibility.warnings);
+  const summary = comparisonSummary(diff, candidateCounts, countLegacy(legacy), compatibility.report);
   summary.generatedAt = dataset.generatedAt;
   const summaryJson = stableJson(summary);
   const summaryDigest = sha256(summaryJson);
@@ -845,8 +860,9 @@ async function main() {
     },
     compatibilityGate: {
       safeForProduction: compatibility.safeForProduction,
-      warningCount: compatibility.warnings.length,
-      note: '比較用lossy policyを明示指定した出力。本番採用gateはwarningsが0件の場合だけ成功とする。'
+      counts: compatibility.report.counts,
+      findings: compatibility.report.findings,
+      note: '比較用lossy policyを明示指定した出力。本番採用gateは重大なlossが0件の場合だけ成功とする。'
     },
     legacyImportProof,
     safety: {
@@ -865,28 +881,54 @@ async function main() {
     uncoveredFeatures
   };
 
-  await Promise.all([
-    mkdir(path.dirname(CANDIDATE_PATH), { recursive: true }),
-    mkdir(path.dirname(DIFF_PATH), { recursive: true }),
-    mkdir(path.dirname(REPRESENTATIVE_PATH), { recursive: true }),
-    mkdir(ARTIFACT_ROOT, { recursive: true })
-  ]);
-  await Promise.all([
-    writeFile(CANDIDATE_PATH, candidateJson, 'utf8'),
-    writeFile(COMPATIBILITY_PATH, compatibilityJson, 'utf8'),
-    writeFile(DIFF_PATH, diffJson, 'utf8'),
-    writeFile(REPRESENTATIVE_PATH, representativeJson, 'utf8'),
-    writeFile(SUMMARY_PATH, summaryJson, 'utf8'),
-    writeFile(SELECTION_PATH, stableJson(selectionArtifact), 'utf8'),
-    writeFile(MANIFEST_PATH, stableJson(manifest), 'utf8')
-  ]);
-  process.stdout.write(`${stableJson({
+  if (write) {
+    await Promise.all([
+      mkdir(path.dirname(CANDIDATE_PATH), { recursive: true }),
+      mkdir(path.dirname(DIFF_PATH), { recursive: true }),
+      mkdir(path.dirname(REPRESENTATIVE_PATH), { recursive: true }),
+      mkdir(ARTIFACT_ROOT, { recursive: true })
+    ]);
+    await Promise.all([
+      writeFile(CANDIDATE_PATH, candidateJson, 'utf8'),
+      writeFile(COMPATIBILITY_PATH, compatibilityJson, 'utf8'),
+      writeFile(DIFF_PATH, diffJson, 'utf8'),
+      writeFile(REPRESENTATIVE_PATH, representativeJson, 'utf8'),
+      writeFile(SUMMARY_PATH, summaryJson, 'utf8'),
+      writeFile(SELECTION_PATH, stableJson(selectionArtifact), 'utf8'),
+      writeFile(MANIFEST_PATH, stableJson(manifest), 'utf8')
+    ]);
+  }
+  const cliSummary = {
     candidate: { path: path.relative(REPO_ROOT, CANDIDATE_PATH), digest: candidateDigest, counts: candidateCounts },
     representative: { path: path.relative(REPO_ROOT, REPRESENTATIVE_PATH), digest: representativeDigest, enemies: representativeSemanticCounts.enemies },
     comparison: { path: path.relative(REPO_ROOT, DIFF_PATH), digest: diffDigest },
     summary,
     manifest: path.relative(REPO_ROOT, MANIFEST_PATH)
-  })}`);
+  };
+  return {
+    dataset,
+    compatibility,
+    diff,
+    representative,
+    summary,
+    selectionArtifact,
+    manifest,
+    serialized: {
+      candidate: candidateJson,
+      compatibility: compatibilityJson,
+      comparison: diffJson,
+      representative: representativeJson,
+      summary: summaryJson,
+      selection: stableJson(selectionArtifact),
+      manifest: stableJson(manifest)
+    },
+    cliSummary
+  };
+}
+
+async function main() {
+  const result = await createPhase4Artifacts({ write: true });
+  process.stdout.write(stableJson(result.cliSummary));
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
