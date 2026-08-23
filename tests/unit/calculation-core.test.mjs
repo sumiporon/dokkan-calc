@@ -11,6 +11,7 @@ const {
   calculateDamageRange,
   calculateDurability,
   calculateDurabilityLine,
+  calculateRequiredDefenseForZeroDamage,
   calculateSafeDurabilityLine,
   calculateEnemyAttackVariants,
   calculateEnemyConditionState,
@@ -20,6 +21,43 @@ const {
   formatDurabilityLimit,
   hasGlobalCriticalEffect
 } = calculationCore;
+
+test('zero-damage DEF is directly comparable with displayed final DEF at safety-side 1.03', () => {
+  const settings = {
+    own_class: 'super',
+    own_type: 'agl',
+    enemy_class: 'extreme',
+    enemy_type: 'teq',
+    is_guard: true,
+    attr_def_up: 15,
+    dr_input: 40,
+    is_critical: true,
+    crit_atk_up: 50,
+    crit_def_down: 25
+  };
+  const modifiers = calculateDurability(settings);
+  const requiredDefense = calculateRequiredDefenseForZeroDamage(1_000_000, modifiers);
+  const atThreshold = calculateDurability({ ...settings, char_def: requiredDefense });
+  const belowThreshold = calculateDurability({ ...settings, char_def: requiredDefense - 1 });
+
+  assert.equal(calculateDamageRange(1_000_000, atThreshold).maximum, 0);
+  assert.ok(calculateDamageRange(1_000_000, belowThreshold).maximum > 0);
+});
+
+test('reported PC contradiction is prevented: a final DEF above the shown threshold has zero damage', () => {
+  const attack = 1_000_000;
+  const modifiers = calculateDurability({
+    own_class: 'super', own_type: 'teq', enemy_class: 'super', enemy_type: 'teq', dr_input: 66
+  });
+  const requiredDefense = calculateRequiredDefenseForZeroDamage(attack, modifiers);
+  assert.equal(requiredDefense, 350_200);
+
+  const displayedFinalDefense = calculateDurability({
+    char_def: 420_000,
+    own_class: 'super', own_type: 'teq', enemy_class: 'super', enemy_type: 'teq', dr_input: 66
+  });
+  assert.equal(calculateDamageRange(attack, displayedFinalDefense).maximum, 0);
+});
 
 test('legacy-compatible core: main-card DEF keeps the Phase 2 active/item behavior', () => {
   const result = calculateDurability({

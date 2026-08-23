@@ -21,61 +21,149 @@
   --error-bg: #fff0f0;
   --error: #a51d2d;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  line-height: 1.5;
+  line-height: 1.45;
 }
 :root[data-theme="dark"] {
-  --bg: #111522; --surface: #1b2130; --text: #f2f5fb; --muted: #b5bed1; --border: #394258;
-  --accent: #72a9ff; --accent-text: #071325; --accent-soft: #1c304f; --success-bg: #123923; --success: #9ee5b6; --error-bg: #4a1f27; --error: #ffbec5;
+  --bg: #111522;
+  --surface: #1b2130;
+  --text: #f2f5fb;
+  --muted: #b5bed1;
+  --border: #394258;
+  --accent: #72a9ff;
+  --accent-text: #071325;
+  --accent-soft: #1c304f;
+  --success-bg: #123923;
+  --success: #9ee5b6;
+  --error-bg: #4a1f27;
+  --error: #ffbec5;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body { margin: 0; background: var(--bg); color: var(--text); }
-main { width: min(980px, calc(100% - 2rem)); margin: 1rem auto 3rem; }
-.app-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
-h1 { margin: .4rem 0 1rem; font-size: clamp(1.65rem, 5vw, 2.35rem); line-height: 1.2; }
-h2 { margin: 0 0 .75rem; font-size: 1.15rem; }
+main { width: min(1040px, calc(100% - 2rem)); margin: 1rem auto 3rem; }
+.app-header, .scenario-header, .section-heading, .dialog-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+h1 { margin: .35rem 0 .8rem; font-size: clamp(1.65rem, 5vw, 2.35rem); line-height: 1.18; }
+h2 { margin: 0 0 .65rem; font-size: 1.15rem; }
+h3 { margin: 1rem 0 .55rem; font-size: 1rem; }
+p { margin: .35rem 0 .7rem; }
 .rc-badge { display: inline-block; border-radius: 999px; padding: .25rem .65rem; background: #6f42c1; color: #fff; font-size: .8rem; font-weight: 800; }
 .icon-button { min-width: 3rem; border-radius: 999px; }
-.preview-notice { margin: 0 0 1rem; color: var(--muted); }
+.preview-notice, .section-help, .section-heading p { color: var(--muted); }
+.preview-notice { margin: 0 0 1rem; }
 .card { margin: 1rem 0; border: 1px solid var(--border); border-radius: .85rem; background: var(--surface); padding: 1rem; box-shadow: 0 3px 14px #0000000a; }
 .status { min-height: 2.8rem; padding: .7rem 1rem; border-radius: .65rem; background: var(--success-bg); color: var(--success); font-weight: 700; }
 .status.error, .inline-status.error { background: var(--error-bg); color: var(--error); }
-.selector-grid, .input-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+.mode-selector, .button-row, .line-list, .inline-form { display: flex; flex-wrap: wrap; gap: .6rem; align-items: end; }
+.mode-option { display: flex; grid-auto-flow: column; align-items: center; gap: .45rem; padding: .45rem .75rem; border: 1px solid var(--border); border-radius: .6rem; color: var(--text); }
+.mode-option input { width: 1.2rem; height: 1.2rem; min-height: auto; }
+.selector-grid, .input-grid, .management-grid, .settings-content, .results, .condition-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .7rem;
+}
 .input-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-label { display: grid; gap: .3rem; color: var(--muted); font-size: .9rem; font-weight: 700; }
-select, input, button, .button-link { min-height: 2.8rem; border: 1px solid var(--border); border-radius: .55rem; background: var(--surface); color: var(--text); padding: .55rem .7rem; font: inherit; }
+.management-grid { align-items: end; }
+.management-grid .button-row { align-self: end; }
+label { display: grid; gap: .25rem; min-width: 0; color: var(--muted); font-size: .86rem; font-weight: 700; }
+select, input, button, .button-link {
+  min-width: 0;
+  min-height: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: .55rem;
+  background: var(--surface);
+  color: var(--text);
+  padding: .48rem .65rem;
+  font: inherit;
+}
 button, .button-link { cursor: pointer; font-weight: 800; }
 button:disabled { cursor: not-allowed; opacity: .55; }
-.primary-button { width: 100%; margin-top: 1rem; border-color: var(--accent); background: var(--accent); color: var(--accent-text); }
+.primary-button { border-color: var(--accent); background: var(--accent); color: var(--accent-text); }
+.secondary-button { width: 100%; margin-top: .75rem; border-color: var(--accent); color: var(--accent); }
+.danger-button { color: var(--error); }
 .button-link { display: inline-flex; align-items: center; text-decoration: none; }
-.enemy-summary { display: grid; gap: .25rem; margin-top: 1rem; padding: .8rem; border-radius: .6rem; background: var(--accent-soft); }
-.enemy-summary span { color: var(--muted); }
-.advanced-settings { margin-top: 1rem; }
+.inline-form label { flex: 1 1 230px; }
+.line-badge { display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px; padding: .25rem .35rem .25rem .65rem; background: var(--accent-soft); font-weight: 800; }
+.line-badge button { min-height: 2rem; width: 2rem; padding: 0; border-radius: 999px; }
+.section-heading { margin: 1.3rem 0 .65rem; align-items: end; }
+.section-heading h2 { margin: 0; }
+.section-heading .primary-button { flex: 0 0 auto; }
+.scenario-card { border-width: 2px; }
+.scenario-header { align-items: end; padding-bottom: .75rem; border-bottom: 1px solid var(--border); }
+.scenario-title-label { flex: 1; max-width: 32rem; }
+.compact-buttons button { min-height: 2.45rem; }
+.final-defense-banner { margin: .8rem 0; padding: .65rem .8rem; border-radius: .65rem; background: var(--accent-soft); }
+.final-defense-banner strong { margin-left: .5rem; font-size: 1.25rem; }
+.affinity-section { margin-top: .75rem; border-top: 1px solid var(--border); }
+.affinity-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.checkbox-label { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; align-self: end; min-height: 2.75rem; }
+.checkbox-label input { width: 1.3rem; height: 1.3rem; min-height: auto; flex: 0 0 auto; }
+.result-panel, .damage-panel { margin-top: 1rem; padding-top: .2rem; border-top: 2px solid var(--border); }
+.durability-table { width: 100%; border-collapse: collapse; }
+.durability-table th, .durability-table td { padding: .55rem; border-bottom: 1px solid var(--border); text-align: left; }
+.durability-table td { text-align: right; font-size: 1.05rem; font-weight: 800; }
+.enemy-summary { display: grid; gap: .28rem; margin-top: .75rem; padding: .75rem; border-radius: .6rem; background: var(--accent-soft); }
+.enemy-summary > span { color: var(--muted); }
+.attack-summary { display: grid; gap: .18rem; }
+.attack-summary-row { display: flex; justify-content: space-between; gap: .7rem; border-top: 1px solid var(--border); padding-top: .25rem; }
+.condition-controls { margin-top: .7rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.results { grid-template-columns: repeat(3, 1fr); margin-top: .75rem; }
+.results > div { display: grid; align-content: start; gap: .25rem; min-width: 0; padding: .7rem; border: 1px solid var(--border); border-radius: .6rem; }
+.results span { color: var(--muted); font-size: .8rem; }
+.results strong { overflow-wrap: anywhere; font-size: 1.08rem; }
+.settings-card, .help-card { padding-top: .3rem; }
 summary { cursor: pointer; min-height: 2.7rem; display: flex; align-items: center; font-weight: 800; }
-.advanced-settings .input-grid, .settings-content, .help-content { margin-top: .75rem; }
-.checkbox-label { display: flex; grid-auto-flow: column; justify-content: start; align-items: center; align-self: end; min-height: 2.8rem; }
-.checkbox-label input { min-height: auto; width: 1.3rem; height: 1.3rem; }
-.results { display: grid; grid-template-columns: repeat(3, 1fr); gap: .7rem; margin-top: 1rem; }
-.results div { display: grid; gap: .3rem; padding: .8rem; border: 1px solid var(--border); border-radius: .6rem; }
-.results span { color: var(--muted); font-size: .82rem; }
-.results strong { font-size: 1.15rem; }
-.settings-card, .help-card { padding-top: .35rem; }
-.settings-content { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.settings-content, .help-content { margin-top: .7rem; }
 .settings-content > div { padding: .8rem; border-top: 1px solid var(--border); }
 .inline-status { min-height: 1.5rem; padding: .35rem; border-radius: .4rem; }
 .help-content h2 { margin-top: 1.2rem; }
+.migration-summary-list { margin: .45rem 0; padding-left: 1.3rem; }
+dialog { width: min(780px, calc(100% - 1rem)); max-height: calc(100dvh - 1rem); overflow: auto; border: 1px solid var(--border); border-radius: .8rem; background: var(--surface); color: var(--text); }
+dialog::backdrop { background: #0008; }
+.dialog-heading { align-items: center; }
+.preview-item { margin: .7rem 0; padding: .75rem; border: 1px solid var(--border); border-radius: .6rem; }
+.preview-item h3 { margin: 0 0 .45rem; }
+
 @media (max-width: 700px) {
-  main { width: min(100% - 1rem, 980px); margin-top: .5rem; }
-  .selector-grid, .input-grid, .settings-content, .results { grid-template-columns: 1fr; }
-  .card { padding: .85rem; }
+  main { width: min(100% - .65rem, 1040px); margin-top: .35rem; }
+  .card { margin: .65rem 0; padding: .7rem; border-radius: .7rem; }
+  .app-header, .section-heading { gap: .5rem; }
+  .input-grid, .selector-grid, .condition-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .45rem; }
+  .management-grid, .settings-content { grid-template-columns: 1fr; gap: .55rem; }
+  .affinity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .results { grid-template-columns: 1fr; gap: .45rem; }
+  .scenario-header { gap: .5rem; }
+  .scenario-title-label { max-width: none; }
+  .compact-buttons { justify-content: flex-end; }
+  label { font-size: .78rem; gap: .15rem; }
+  select, input, button, .button-link { min-height: 2.7rem; padding: .4rem .48rem; }
+  h3 { margin: .75rem 0 .4rem; }
+  .final-defense-banner { margin: .6rem 0; padding: .5rem .6rem; }
+  .section-heading { align-items: stretch; flex-direction: column; }
+  .section-heading .primary-button { width: 100%; }
 }
-@media (pointer: coarse) { select, input, button, .button-link, summary { min-height: 3rem; } }
+
+@media (max-width: 380px) {
+  .scenario-header { align-items: stretch; flex-direction: column; }
+  .compact-buttons { justify-content: stretch; }
+  .compact-buttons button { flex: 1; }
+  .attack-summary-row { display: grid; gap: .05rem; }
+}
+
+@media (pointer: coarse) {
+  select, input, button, .button-link, summary { min-height: 2.75rem; }
+}
 </style>
 </head>
 <body>
   <main>
     <header class="app-header">
       <div>
-        <span class="rc-badge">Phase 8 確認版</span>
+        <span class="rc-badge">Phase 8 PC再確認版</span>
         <h1>ドッカンバトル<br>耐久計算ツール</h1>
       </div>
       <button id="theme-button" class="icon-button" type="button" aria-label="配色を切り替える">🌙</button>
@@ -84,51 +172,130 @@ summary { cursor: pointer; min-height: 2.7rem; display: flex; align-items: cente
     <p class="preview-notice">本番とは別の単一HTML確認版です。架空データだけを内蔵し、現行OneDrive版は変更しません。</p>
     <div id="app-status" class="status" role="status" aria-live="polite">敵データを準備しています…</div>
 
-    <section class="card" aria-labelledby="enemy-title">
-      <h2 id="enemy-title">敵を選択</h2>
-      <div class="selector-grid">
-        <label>イベント<select id="event-select" disabled><option value="">イベントを選択してください</option></select></label>
-        <label>ステージ<select id="stage-select" disabled><option value="">—</option></select></label>
-        <label>敵<select id="enemy-select" disabled><option value="">—</option></select></label>
-        <label>攻撃<select id="attack-select" disabled><option value="">—</option></select></label>
-      </div>
-      <div class="enemy-summary" aria-live="polite">
-        <strong id="enemy-name">初回はイベントを選んでください</strong>
-        <span id="enemy-details">選んだイベントだけを読み込みます。</span>
+    <section class="card mode-card" aria-labelledby="mode-title">
+      <h2 id="mode-title">計算モード</h2>
+      <div class="mode-selector">
+        <label class="mode-option"><input id="mode-durability" name="calculation-mode" type="radio" value="durability" checked>耐久ライン</label>
+        <label class="mode-option"><input id="mode-damage" name="calculation-mode" type="radio" value="damage">被ダメージ計算</label>
       </div>
     </section>
 
-    <section class="card" aria-labelledby="calculation-title">
-      <h2 id="calculation-title">耐久・被ダメージ計算</h2>
-      <div class="input-grid">
-        <label>キャラクターDEF<input id="char-def" type="number" value="500000" min="0" inputmode="numeric"></label>
-        <label>リーダースキル (%)<input id="leader" type="number" value="0" inputmode="decimal"></label>
-        <label>足し算パッシブ (%)<input id="passive" type="number" value="0" inputmode="decimal"></label>
-        <label>掛け算パッシブ (%)<input id="multi-passive" type="number" value="0" inputmode="decimal"></label>
-        <label>ダメージ軽減率 (%)<input id="damage-reduction" type="number" value="0" inputmode="decimal"></label>
-        <label>自分のクラス<select id="own-class"><option value="super">超</option><option value="extreme">極</option></select></label>
-        <label>自分の属性<select id="own-type"><option value="teq">技</option><option value="agl">速</option><option value="str">力</option><option value="phy">体</option><option value="int">知</option></select></label>
-      </div>
-      <details class="advanced-settings">
-        <summary>追加のDEF設定</summary>
-        <div class="input-grid compact">
-          <label>メモリー (%)<input id="memory" type="number" value="0"></label>
-          <label>リンクスキル (%)<input id="link" type="number" value="0"></label>
-          <label>必殺技効果 (%)<input id="super-attack" type="number" value="0"></label>
-          <label>フィールド (%)<input id="field" type="number" value="0"></label>
-          <label>アクティブ (%)<input id="active" type="number" value="0"></label>
-          <label>サポートアイテム (%)<input id="support-item" type="number" value="0"></label>
-          <label>属性防御Lv<input id="attribute-defense" type="number" value="0" min="0"></label>
-          <label class="checkbox-label"><input id="guard" type="checkbox"> 全属性ガード</label>
-        </div>
-      </details>
-      <button id="calculate-button" class="primary-button" type="button" disabled>計算する</button>
-      <div class="results" aria-live="polite">
-        <div><span>最終DEF</span><strong id="final-defense">—</strong></div>
-        <div><span>被ダメージ（1.00〜1.03）</span><strong id="damage-result">—</strong></div>
-        <div><span>この攻撃を完封するDEF目安</span><strong id="perfect-defense">—</strong></div>
+    <section class="card" id="durability-settings" aria-labelledby="durability-settings-title">
+      <h2 id="durability-settings-title">耐久ライン設定</h2>
+      <p class="section-help">現在のDEFで、各被ダメージまで耐えられる敵ATKを安全側1.03で表示します。</p>
+      <div id="durability-lines-list" class="line-list"></div>
+      <div class="inline-form">
+        <label>追加する被ダメージ（万）<input id="new-line-input" type="number" min="0" inputmode="numeric" placeholder="例: 50"></label>
+        <button id="add-line-button" type="button">ラインを追加</button>
       </div>
     </section>
+
+    <section class="card" id="character-management" aria-labelledby="character-title">
+      <h2 id="character-title">キャラクター管理</h2>
+      <div class="management-grid">
+        <label>保存済みキャラクター<select id="characters-list"><option value="">保存済みキャラクターはいません</option></select></label>
+        <div class="button-row">
+          <button id="load-character-button" type="button">読み込み</button>
+          <button id="new-character-button" type="button">新規作成</button>
+          <button id="preview-button" type="button">一覧プレビュー</button>
+          <button id="delete-character-button" class="danger-button" type="button">削除</button>
+        </div>
+        <label>キャラクター名<input id="character-name" type="text" placeholder="名前を入力"></label>
+        <button id="save-character-button" class="primary-button" type="button">現在の状況を保存</button>
+      </div>
+      <p id="character-status" class="inline-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="scenario-area" aria-labelledby="scenario-area-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="scenario-area-title">計算する状況</h2>
+          <p>複数の状況カードを追加して比較できます。入力変更は自動で再計算・保存されます。</p>
+        </div>
+        <button id="add-scenario-button" class="primary-button" type="button">＋ 状況カードを追加</button>
+      </div>
+      <div id="scenario-cards-container"></div>
+    </section>
+
+    <template id="scenario-card-template">
+      <article class="card scenario-card">
+        <header class="scenario-header">
+          <label class="scenario-title-label">状況名<input data-role="scenario-title" data-input="scenario_title" type="text"></label>
+          <div class="button-row compact-buttons">
+            <button data-action="duplicate" type="button">複製</button>
+            <button data-action="delete" class="danger-button" type="button">削除</button>
+          </div>
+        </header>
+
+        <div class="final-defense-banner">最終DEF <strong data-role="final-defense">—</strong></div>
+
+        <section aria-label="基本DEF設定">
+          <h3>DEF設定</h3>
+          <div class="input-grid">
+            <label>キャラクターDEF<input data-role="char-def" data-input="char_def" type="number" value="0" min="0" inputmode="numeric"></label>
+            <label>リーダースキル (%)<input data-role="leader" data-input="leader" type="number" value="0" inputmode="decimal"></label>
+            <label>足し算パッシブ (%)<input data-role="passive" data-input="passive" type="number" value="0" inputmode="decimal"></label>
+            <label>掛け算パッシブ (%)<input data-role="multi-passive" data-input="multi_passive" type="number" value="0" inputmode="decimal"></label>
+            <label>ダメージ軽減率 (%)<input data-role="damage-reduction" data-input="dr_input" type="number" value="0" inputmode="decimal"></label>
+            <label>メモリー (%)<input data-role="memory" data-input="memory" type="number" value="0" inputmode="decimal"></label>
+            <label>リンクスキル (%)<input data-role="link" data-input="link" type="number" value="0" inputmode="decimal"></label>
+            <label>必殺技効果 (%)<input data-role="super-attack" data-input="super_attack" type="number" value="0" inputmode="decimal"></label>
+            <label>フィールド (%)<input data-role="field" data-input="field" type="number" value="0" inputmode="decimal"></label>
+            <label>アクティブ (%)<input data-role="active" data-input="active" type="number" value="0" inputmode="decimal"></label>
+            <label>サポートアイテム (%)<input data-role="support-item" data-input="support_item" type="number" value="0" inputmode="decimal"></label>
+          </div>
+        </section>
+
+        <section class="affinity-section" aria-label="属性と防御設定">
+          <h3>属性・防御設定</h3>
+          <div class="input-grid affinity-grid">
+            <label>自分のクラス<select data-role="own-class" data-input="own_class"><option value="super">超</option><option value="extreme">極</option></select></label>
+            <label>自分の属性<select data-role="own-type" data-input="own_type"><option value="teq">技</option><option value="agl">速</option><option value="str">力</option><option value="phy">体</option><option value="int">知</option></select></label>
+            <label>属性防御Lv<input data-role="attribute-defense" data-input="attr_def_up" type="number" value="0" min="0" inputmode="numeric"></label>
+            <label class="checkbox-label"><input data-role="guard" data-input="is_guard" type="checkbox">全属性ガード</label>
+            <label class="checkbox-label"><input data-role="is-critical" data-input="is_critical" type="checkbox">敵の会心を想定</label>
+            <label>会心時ATK補正 (%)<input data-role="critical-attack" data-input="crit_atk_up" type="number" value="0" inputmode="decimal"></label>
+            <label>会心時DEF低下 (%)<input data-role="critical-defense" data-input="crit_def_down" type="number" value="0" inputmode="decimal"></label>
+          </div>
+        </section>
+
+        <section data-role="durability-result" class="result-panel" aria-label="耐久ライン結果">
+          <h3>耐久ライン（敵ATK）</h3>
+          <p class="section-help">敵を選ばず、自分と同じ属性・同じクラスの相性で計算します。</p>
+          <div data-role="durability-table"></div>
+        </section>
+
+        <section data-role="damage-panel" class="damage-panel" aria-label="敵と被ダメージ計算" hidden>
+          <h3>敵を選択</h3>
+          <div class="selector-grid">
+            <label>イベント<select data-role="event-select" disabled><option value="">イベントを選択してください</option></select></label>
+            <label>ステージ<select data-role="stage-select" disabled><option value="">—</option></select></label>
+            <label>敵<select data-role="enemy-select" disabled><option value="">敵を選択してください</option></select></label>
+            <label>計算する攻撃<select data-role="attack-select" disabled><option value="">—</option></select></label>
+          </div>
+          <div data-role="condition-controls" class="condition-controls"></div>
+          <details class="manual-attack-settings">
+            <summary>保存敵にない攻撃を手動入力</summary>
+            <div class="input-grid affinity-grid">
+              <label>敵ATK（万）<input data-role="manual-enemy-attack" data-input="enemy_atk" type="number" value="" min="0" inputmode="decimal" placeholder="例: 300"></label>
+              <label>敵のクラス<select data-role="manual-enemy-class" data-input="enemy_class"><option value="super">超</option><option value="extreme">極</option></select></label>
+              <label>敵の属性<select data-role="manual-enemy-type" data-input="enemy_type"><option value="teq">技</option><option value="agl">速</option><option value="str">力</option><option value="phy">体</option><option value="int">知</option></select></label>
+            </div>
+          </details>
+          <div class="enemy-summary" aria-live="polite">
+            <strong data-role="enemy-name">敵を選択してください</strong>
+            <span data-role="enemy-type">敵属性：未選択</span>
+            <div data-role="enemy-attack-summary" class="attack-summary">敵を選ぶと通常攻撃・必殺攻撃を表示します。</div>
+          </div>
+          <button data-role="calculate-button" class="secondary-button" type="button" disabled>今すぐ再計算</button>
+          <div class="results damage-results" aria-live="polite">
+            <div><span>被ダメージ（1.00〜1.03）</span><strong data-role="damage-result">敵を選択してください</strong></div>
+            <div><span>被ダメージ0に必要なDEF</span><strong data-role="perfect-defense">—</strong></div>
+            <div><span>属性</span><strong data-role="result-types">自分：超技<br>敵：未選択</strong></div>
+          </div>
+        </section>
+      </article>
+    </template>
 
     <details class="card settings-card" id="data-settings">
       <summary>設定・データ</summary>
@@ -140,9 +307,10 @@ summary { cursor: pointer; min-height: 2.7rem; display: flex; align-items: cente
           <p id="update-status" class="inline-status" role="status" aria-live="polite"></p>
         </div>
         <div>
-          <h2>保存データ</h2>
-          <p id="saved-data-summary">この確認版に移行された保存データはありません。</p>
-          <a class="button-link" id="migration-link" href="https://rawcdn.githack.com/sumiporon/dokkan-calc/phase8-complete-2026-08-24/release-candidate/phase8/migration-device-check.html">架空保存データの移行を確認する</a>
+          <h2>保存データ移行</h2>
+          <div id="saved-data-summary">この確認版に移行された保存データはありません。</div>
+          <p class="section-help">保存データ移行ではイベント・ステージ・敵データ本体は増えません。</p>
+          <a class="button-link" id="migration-link" href="https://rawcdn.githack.com/sumiporon/dokkan-calc/phase8-pc-feedback-fixed-2026-08-24/release-candidate/phase8/migration-device-check.html">架空保存データの移行を確認する</a>
         </div>
       </div>
     </details>
@@ -153,11 +321,16 @@ summary { cursor: pointer; min-height: 2.7rem; display: flex; align-items: cente
         <p>普段使いは将来のGitHub Pagesを予定しています。更新に失敗しても、直前の敵データはそのまま使えます。</p>
         <h2>OneDrive backup</h2>
         <p>通信できない時やPagesに問題がある時だけ、OneDriveに残したknown-good版のHTMLを開きます。現在使っているOneDrive版はまだ変更していません。</p>
-        <p>この確認版は0操作の自動更新を行いません。更新は「敵データを更新」を押した時だけです。</p>
+        <p>この確認版は0操作の自動更新を行いません。敵データ更新は「敵データを更新」を押した時だけです。計算結果は入力のたびに自動更新します。</p>
       </div>
     </details>
   </main>
-<script>const phase8EmbeddedFiles={"release-manifest.json":{"text":"{\"appCompatibility\":{\"maximum\":null,\"minimum\":\"phase8-rc-1\",\"productionAppReadsArtifact\":false},\"chunked\":{\"eventCount\":3,\"indexJson\":{\"bytes\":1810,\"contentType\":\"application/json\",\"digest\":\"sha256:da5c6c3ab227823acf93636ac32f9946cfaa3739593ff25502c669f9a54456ff\",\"path\":\"releases/aa188b3e91d76774/chunked/event-index.json\"},\"indexScript\":{\"bytes\":1853,\"contentType\":\"text/javascript\",\"digest\":\"sha256:a0fda1aa71fb5b71e1bcedb54b364e3e273189cdad22f03ab087aef3c3694637\",\"path\":\"releases/aa188b3e91d76774/chunked/event-index.data.js\"},\"jsonFiles\":4,\"largestChunkBytes\":1336,\"scriptFiles\":4,\"totalJsonBytes\":5308},\"counts\":{\"encounters\":3,\"enemies\":3,\"events\":3,\"stages\":3},\"dataClassification\":\"synthetic-public-fixture\",\"datasetVersion\":\"phase8-synthetic-preview-v1\",\"full\":{\"json\":{\"bytes\":3702,\"contentType\":\"application/json\",\"digest\":\"sha256:246a9f886493fc6b567b1a83ffdc7c53f1c34b037ed7d9b0e4d1b436b990c760\",\"path\":\"releases/aa188b3e91d76774/full/runtime.min.json\"},\"script\":{\"bytes\":3746,\"contentType\":\"text/javascript\",\"digest\":\"sha256:6d20e58a85190196a5f24960b58b935d76a886e712529231da3baaa29c86a136\",\"path\":\"releases/aa188b3e91d76774/full/runtime.data.js\"}},\"generatedAt\":\"2026-08-24T00:00:00.000Z\",\"knownGood\":{\"datasetVersion\":\"phase8-synthetic-preview-v1\",\"retainedReleaseCount\":2,\"runtimeDigest\":\"sha256:246a9f886493fc6b567b1a83ffdc7c53f1c34b037ed7d9b0e4d1b436b990c760\"},\"permission\":{\"liveSourceAccessAllowed\":false,\"productionActivateAllowed\":false,\"publicArtifactAllowed\":true,\"releaseCandidatePreviewAllowed\":true},\"productionActivated\":false,\"releaseCandidate\":true,\"runtimeSchemaVersion\":\"1.0.0\",\"schemaVersion\":\"1.0.0\",\"updatePolicy\":{\"browserPatRequired\":false,\"userInitiated\":true,\"zeroOperationEnabled\":false},\"validation\":{\"hardFailCount\":0,\"note\":\"Fictional Phase 8 public preview fixture; production activation is prohibited.\",\"reviewRequiredCount\":0,\"status\":\"passed\"}}","contentType":"application/json"},"releases/aa188b3e91d76774/full/runtime.min.json":{"text":"{\"canonicalDatasetId\":\"phase8-synthetic-preview-canonical-v1\",\"datasetId\":\"phase8-synthetic-preview-v1\",\"events\":[{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:forest\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・森\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"extreme\"},\"baseAttack\":{\"state\":\"known\",\"value\":500000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:green\",\"name\":{\"state\":\"known\",\"value\":\"架空の緑敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[{\"cooldownTurns\":{\"state\":\"unknown\",\"value\":null},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":2.5},\"displayedDamage\":{\"state\":\"known\",\"value\":1250000},\"effects\":[],\"id\":\"preview:attack:green:1\",\"maxPerTurn\":{\"state\":\"unknown\",\"value\":null},\"name\":{\"state\":\"known\",\"value\":\"架空必殺A\"},\"probabilityPercent\":{\"state\":\"unknown\",\"value\":null},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[]}],\"type\":{\"state\":\"known\",\"value\":\"teq\"}}],\"id\":\"preview:event:forest:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:forest:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ1\"}}]},{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:sky\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・空\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"super\"},\"baseAttack\":{\"state\":\"known\",\"value\":800000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:blue\",\"name\":{\"state\":\"known\",\"value\":\"架空の青敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[{\"cooldownTurns\":{\"state\":\"unknown\",\"value\":null},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":2.5},\"displayedDamage\":{\"state\":\"known\",\"value\":2000000},\"effects\":[],\"id\":\"preview:attack:blue:1\",\"maxPerTurn\":{\"state\":\"unknown\",\"value\":null},\"name\":{\"state\":\"known\",\"value\":\"架空必殺B\"},\"probabilityPercent\":{\"state\":\"unknown\",\"value\":null},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[]}],\"type\":{\"state\":\"known\",\"value\":\"agl\"}}],\"id\":\"preview:event:sky:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:sky:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ2\"}}]},{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:void\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・虚空\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"neutral\"},\"baseAttack\":{\"state\":\"known\",\"value\":1000000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:neutral\",\"name\":{\"state\":\"known\",\"value\":\"架空の中立敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[],\"type\":{\"state\":\"known\",\"value\":\"int\"}}],\"id\":\"preview:event:void:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:void:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ3\"}}]}],\"generatedAt\":\"2026-08-24T00:00:00.000Z\",\"region\":\"synthetic\",\"schemaVersion\":\"1.0.0\"}","contentType":"application/json"},"releases/aa188b3e91d76774/chunked/event-index.json":{"text":"{\"datasetVersion\":\"phase8-synthetic-preview-v1\",\"events\":[{\"category\":\"preview\",\"counts\":{\"encounters\":1,\"enemies\":1,\"stages\":1},\"id\":\"preview:event:forest\",\"json\":{\"bytes\":1336,\"contentType\":\"application/json\",\"digest\":\"sha256:fa42ddd94cde633d6d09985f8893127c951dcf5feda5d349e59dbdbf510cf2f1\",\"path\":\"releases/aa188b3e91d76774/chunked/event-393bb27c8b954774.json\"},\"name\":\"架空イベント・森\",\"script\":{\"bytes\":1510,\"contentType\":\"text/javascript\",\"digest\":\"sha256:ad5d7572163b99b05bff3ee4a1e7dc093af5407976163f1bb62981893b1bce38\",\"path\":\"releases/aa188b3e91d76774/chunked/event-393bb27c8b954774.data.js\"}},{\"category\":\"preview\",\"counts\":{\"encounters\":1,\"enemies\":1,\"stages\":1},\"id\":\"preview:event:sky\",\"json\":{\"bytes\":1323,\"contentType\":\"application/json\",\"digest\":\"sha256:01dd119b46b8a5db97f7d36251ce4de75ae894475690accb98797fd7f2cf473b\",\"path\":\"releases/aa188b3e91d76774/chunked/event-1ced4b5d697ab908.json\"},\"name\":\"架空イベント・空\",\"script\":{\"bytes\":1494,\"contentType\":\"text/javascript\",\"digest\":\"sha256:2d2449ac67856724ae154dce539f071b86c89c6ff02938640ce6bc9eb7ca0361\",\"path\":\"releases/aa188b3e91d76774/chunked/event-1ced4b5d697ab908.data.js\"}},{\"category\":\"preview\",\"counts\":{\"encounters\":1,\"enemies\":1,\"stages\":1},\"id\":\"preview:event:void\",\"json\":{\"bytes\":839,\"contentType\":\"application/json\",\"digest\":\"sha256:1da155225bc7679d96e245fa9d522c1f0cc50c4505ae72670e58d6e47f26dc66\",\"path\":\"releases/aa188b3e91d76774/chunked/event-e27be6e45f7113ba.json\"},\"name\":\"架空イベント・虚空\",\"script\":{\"bytes\":1011,\"contentType\":\"text/javascript\",\"digest\":\"sha256:e94eccb921911fcc1893bfa7fbc208d1ba658b74e42ef03d804524e4b2a1a36c\",\"path\":\"releases/aa188b3e91d76774/chunked/event-e27be6e45f7113ba.data.js\"}}],\"generatedAt\":\"2026-08-24T00:00:00.000Z\",\"region\":\"synthetic\",\"schemaVersion\":\"1.0.0\"}","contentType":"application/json"},"releases/aa188b3e91d76774/chunked/event-393bb27c8b954774.json":{"text":"{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:forest\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・森\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"extreme\"},\"baseAttack\":{\"state\":\"known\",\"value\":500000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:green\",\"name\":{\"state\":\"known\",\"value\":\"架空の緑敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[{\"cooldownTurns\":{\"state\":\"unknown\",\"value\":null},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":2.5},\"displayedDamage\":{\"state\":\"known\",\"value\":1250000},\"effects\":[],\"id\":\"preview:attack:green:1\",\"maxPerTurn\":{\"state\":\"unknown\",\"value\":null},\"name\":{\"state\":\"known\",\"value\":\"架空必殺A\"},\"probabilityPercent\":{\"state\":\"unknown\",\"value\":null},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[]}],\"type\":{\"state\":\"known\",\"value\":\"teq\"}}],\"id\":\"preview:event:forest:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:forest:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ1\"}}]}","contentType":"application/json"},"releases/aa188b3e91d76774/chunked/event-1ced4b5d697ab908.json":{"text":"{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:sky\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・空\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"super\"},\"baseAttack\":{\"state\":\"known\",\"value\":800000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:blue\",\"name\":{\"state\":\"known\",\"value\":\"架空の青敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[{\"cooldownTurns\":{\"state\":\"unknown\",\"value\":null},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":2.5},\"displayedDamage\":{\"state\":\"known\",\"value\":2000000},\"effects\":[],\"id\":\"preview:attack:blue:1\",\"maxPerTurn\":{\"state\":\"unknown\",\"value\":null},\"name\":{\"state\":\"known\",\"value\":\"架空必殺B\"},\"probabilityPercent\":{\"state\":\"unknown\",\"value\":null},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[]}],\"type\":{\"state\":\"known\",\"value\":\"agl\"}}],\"id\":\"preview:event:sky:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:sky:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ2\"}}]}","contentType":"application/json"},"releases/aa188b3e91d76774/chunked/event-e27be6e45f7113ba.json":{"text":"{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:void\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・虚空\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"neutral\"},\"baseAttack\":{\"state\":\"known\",\"value\":1000000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:neutral\",\"name\":{\"state\":\"known\",\"value\":\"架空の中立敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[],\"type\":{\"state\":\"known\",\"value\":\"int\"}}],\"id\":\"preview:event:void:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:void:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ3\"}}]}","contentType":"application/json"}};
+
+  <dialog id="preview-dialog">
+    <div class="dialog-heading"><h2>状況一覧プレビュー</h2><button id="close-preview-button" type="button">閉じる</button></div>
+    <div id="preview-content"></div>
+  </dialog>
+<script>const phase8EmbeddedFiles={"release-manifest.json":{"text":"{\"appCompatibility\":{\"maximum\":null,\"minimum\":\"phase8-rc-1\",\"productionAppReadsArtifact\":false},\"chunked\":{\"eventCount\":3,\"indexJson\":{\"bytes\":1810,\"contentType\":\"application/json\",\"digest\":\"sha256:4628604585a2a278a9b8ae5fc9e6bacd5525b87fccc6d90894ce8a74e0db3d6d\",\"path\":\"releases/aa188b3e91d76774/chunked/event-index.json\"},\"indexScript\":{\"bytes\":1853,\"contentType\":\"text/javascript\",\"digest\":\"sha256:7499ddb1b5ced93d19ce6e114da515b41c3a0af7da228e7b84d92ff85050c9d9\",\"path\":\"releases/aa188b3e91d76774/chunked/event-index.data.js\"},\"jsonFiles\":4,\"largestChunkBytes\":3913,\"scriptFiles\":4,\"totalJsonBytes\":7885},\"counts\":{\"encounters\":3,\"enemies\":3,\"events\":3,\"stages\":3},\"dataClassification\":\"synthetic-public-fixture\",\"datasetVersion\":\"phase8-synthetic-preview-v1\",\"full\":{\"json\":{\"bytes\":6279,\"contentType\":\"application/json\",\"digest\":\"sha256:09de8589fc657fa5e70633da6757af6ca7a44de4d7da46f99a558ff3fdf15bd4\",\"path\":\"releases/aa188b3e91d76774/full/runtime.min.json\"},\"script\":{\"bytes\":6323,\"contentType\":\"text/javascript\",\"digest\":\"sha256:6f9587db3e17793529f7944c7802b95ee43bb2a7449f9473bbeaffd4a0a82661\",\"path\":\"releases/aa188b3e91d76774/full/runtime.data.js\"}},\"generatedAt\":\"2026-08-24T00:00:00.000Z\",\"knownGood\":{\"datasetVersion\":\"phase8-synthetic-preview-v1\",\"retainedReleaseCount\":2,\"runtimeDigest\":\"sha256:09de8589fc657fa5e70633da6757af6ca7a44de4d7da46f99a558ff3fdf15bd4\"},\"permission\":{\"liveSourceAccessAllowed\":false,\"productionActivateAllowed\":false,\"publicArtifactAllowed\":true,\"releaseCandidatePreviewAllowed\":true},\"productionActivated\":false,\"releaseCandidate\":true,\"runtimeSchemaVersion\":\"1.0.0\",\"schemaVersion\":\"1.0.0\",\"updatePolicy\":{\"browserPatRequired\":false,\"userInitiated\":true,\"zeroOperationEnabled\":false},\"validation\":{\"hardFailCount\":0,\"note\":\"Fictional Phase 8 public preview fixture; production activation is prohibited.\",\"reviewRequiredCount\":0,\"status\":\"passed\"}}","contentType":"application/json"},"releases/aa188b3e91d76774/full/runtime.min.json":{"text":"{\"canonicalDatasetId\":\"phase8-synthetic-preview-canonical-v1\",\"datasetId\":\"phase8-synthetic-preview-v1\",\"events\":[{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:forest\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・森\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[{\"additionalTargetDamage\":{\"state\":\"known\",\"value\":450000},\"additionalTargetMultiplier\":{\"state\":\"known\",\"value\":0.9},\"attackKind\":{\"state\":\"known\",\"value\":\"normal\"},\"firstTargetDamage\":{\"state\":\"known\",\"value\":600000},\"firstTargetMultiplier\":{\"state\":\"known\",\"value\":1.2},\"id\":\"preview:area:green:1\",\"maxPerTurn\":{\"state\":\"known\",\"value\":1},\"sourceEnemyId\":{\"state\":\"known\",\"value\":\"preview:enemy:green\"},\"targetMode\":{\"state\":\"known\",\"value\":\"all\"}}],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"extreme\"},\"baseAttack\":{\"state\":\"known\",\"value\":500000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:green\",\"name\":{\"state\":\"known\",\"value\":\"架空の緑敵\"},\"orderInEncounter\":0,\"passiveEffects\":[{\"appliesTo\":\"enemy-stats\",\"bracket\":\"start-of-turn\",\"cap\":{\"state\":\"known\",\"value\":60},\"durationTurns\":{\"state\":\"unknown\",\"value\":null},\"id\":\"preview:enemy:green:passive:turn\",\"operation\":\"add-percent\",\"target\":\"attack\",\"trigger\":{\"end\":{\"state\":\"unknown\",\"value\":null},\"hpMaxPercent\":{\"state\":\"unknown\",\"value\":null},\"hpMinPercent\":{\"state\":\"unknown\",\"value\":null},\"kind\":\"elapsed-turn\",\"start\":{\"state\":\"known\",\"value\":1}},\"value\":{\"state\":\"known\",\"value\":20}},{\"appliesTo\":\"enemy-stats\",\"bracket\":\"start-of-turn\",\"cap\":{\"state\":\"unknown\",\"value\":null},\"durationTurns\":{\"state\":\"unknown\",\"value\":null},\"id\":\"preview:enemy:green:passive:hp\",\"operation\":\"add-percent\",\"target\":\"attack\",\"trigger\":{\"end\":{\"state\":\"unknown\",\"value\":null},\"hpMaxPercent\":{\"state\":\"known\",\"value\":50},\"hpMinPercent\":{\"state\":\"known\",\"value\":0},\"kind\":\"hp-range\",\"start\":{\"state\":\"unknown\",\"value\":null}},\"value\":{\"state\":\"known\",\"value\":40}}],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[{\"cooldownTurns\":{\"state\":\"unknown\",\"value\":null},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":2.5},\"displayedDamage\":{\"state\":\"known\",\"value\":1250000},\"effects\":[{\"appliesTo\":\"subsequent-normal-attacks\",\"bracket\":\"post-super\",\"cap\":{\"state\":\"unknown\",\"value\":null},\"durationTurns\":{\"state\":\"known\",\"value\":1},\"id\":\"preview:attack:green:1:effect:post-super\",\"operation\":\"add-percent\",\"target\":\"attack\",\"trigger\":{\"end\":{\"state\":\"unknown\",\"value\":null},\"hpMaxPercent\":{\"state\":\"unknown\",\"value\":null},\"hpMinPercent\":{\"state\":\"unknown\",\"value\":null},\"kind\":\"after-super\",\"start\":{\"state\":\"unknown\",\"value\":null}},\"value\":{\"state\":\"known\",\"value\":30}}],\"id\":\"preview:attack:green:1\",\"maxPerTurn\":{\"state\":\"unknown\",\"value\":null},\"name\":{\"state\":\"known\",\"value\":\"架空必殺A\"},\"probabilityPercent\":{\"state\":\"unknown\",\"value\":null},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[]},{\"cooldownTurns\":{\"state\":\"known\",\"value\":2},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":3.5},\"displayedDamage\":{\"state\":\"known\",\"value\":1750000},\"effects\":[],\"id\":\"preview:attack:green:2\",\"maxPerTurn\":{\"state\":\"known\",\"value\":1},\"name\":{\"state\":\"known\",\"value\":\"架空必殺B\"},\"probabilityPercent\":{\"state\":\"known\",\"value\":25},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[{\"cooldownTurns\":{\"state\":\"known\",\"value\":2},\"hpMaxPercent\":{\"state\":\"known\",\"value\":50},\"hpMinPercent\":{\"state\":\"known\",\"value\":0},\"maxPerTurn\":{\"state\":\"known\",\"value\":1},\"order\":1,\"probabilityPercent\":{\"state\":\"known\",\"value\":25}}]}],\"type\":{\"state\":\"known\",\"value\":\"teq\"}}],\"id\":\"preview:event:forest:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:forest:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ1\"}}]},{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:sky\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・空\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"super\"},\"baseAttack\":{\"state\":\"known\",\"value\":800000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:blue\",\"name\":{\"state\":\"known\",\"value\":\"架空の青敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[{\"cooldownTurns\":{\"state\":\"unknown\",\"value\":null},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":2.5},\"displayedDamage\":{\"state\":\"known\",\"value\":2000000},\"effects\":[],\"id\":\"preview:attack:blue:1\",\"maxPerTurn\":{\"state\":\"unknown\",\"value\":null},\"name\":{\"state\":\"known\",\"value\":\"架空必殺B\"},\"probabilityPercent\":{\"state\":\"unknown\",\"value\":null},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[]}],\"type\":{\"state\":\"known\",\"value\":\"agl\"}}],\"id\":\"preview:event:sky:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:sky:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ2\"}}]},{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:void\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・虚空\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"neutral\"},\"baseAttack\":{\"state\":\"known\",\"value\":1000000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:neutral\",\"name\":{\"state\":\"known\",\"value\":\"架空の中立敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[],\"type\":{\"state\":\"known\",\"value\":\"int\"}}],\"id\":\"preview:event:void:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:void:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ3\"}}]}],\"generatedAt\":\"2026-08-24T00:00:00.000Z\",\"region\":\"synthetic\",\"schemaVersion\":\"1.0.0\"}","contentType":"application/json"},"releases/aa188b3e91d76774/chunked/event-index.json":{"text":"{\"datasetVersion\":\"phase8-synthetic-preview-v1\",\"events\":[{\"category\":\"preview\",\"counts\":{\"encounters\":1,\"enemies\":1,\"stages\":1},\"id\":\"preview:event:forest\",\"json\":{\"bytes\":3913,\"contentType\":\"application/json\",\"digest\":\"sha256:5215ae9812b56eb00f6ed8052d82102f0b0c15f75bf3022767637e143a243146\",\"path\":\"releases/aa188b3e91d76774/chunked/event-393bb27c8b954774.json\"},\"name\":\"架空イベント・森\",\"script\":{\"bytes\":4087,\"contentType\":\"text/javascript\",\"digest\":\"sha256:1de74ae874828668df0d8762716666fd10941b235145d2e1084d9564372306e2\",\"path\":\"releases/aa188b3e91d76774/chunked/event-393bb27c8b954774.data.js\"}},{\"category\":\"preview\",\"counts\":{\"encounters\":1,\"enemies\":1,\"stages\":1},\"id\":\"preview:event:sky\",\"json\":{\"bytes\":1323,\"contentType\":\"application/json\",\"digest\":\"sha256:01dd119b46b8a5db97f7d36251ce4de75ae894475690accb98797fd7f2cf473b\",\"path\":\"releases/aa188b3e91d76774/chunked/event-1ced4b5d697ab908.json\"},\"name\":\"架空イベント・空\",\"script\":{\"bytes\":1494,\"contentType\":\"text/javascript\",\"digest\":\"sha256:2d2449ac67856724ae154dce539f071b86c89c6ff02938640ce6bc9eb7ca0361\",\"path\":\"releases/aa188b3e91d76774/chunked/event-1ced4b5d697ab908.data.js\"}},{\"category\":\"preview\",\"counts\":{\"encounters\":1,\"enemies\":1,\"stages\":1},\"id\":\"preview:event:void\",\"json\":{\"bytes\":839,\"contentType\":\"application/json\",\"digest\":\"sha256:1da155225bc7679d96e245fa9d522c1f0cc50c4505ae72670e58d6e47f26dc66\",\"path\":\"releases/aa188b3e91d76774/chunked/event-e27be6e45f7113ba.json\"},\"name\":\"架空イベント・虚空\",\"script\":{\"bytes\":1011,\"contentType\":\"text/javascript\",\"digest\":\"sha256:e94eccb921911fcc1893bfa7fbc208d1ba658b74e42ef03d804524e4b2a1a36c\",\"path\":\"releases/aa188b3e91d76774/chunked/event-e27be6e45f7113ba.data.js\"}}],\"generatedAt\":\"2026-08-24T00:00:00.000Z\",\"region\":\"synthetic\",\"schemaVersion\":\"1.0.0\"}","contentType":"application/json"},"releases/aa188b3e91d76774/chunked/event-393bb27c8b954774.json":{"text":"{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:forest\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・森\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[{\"additionalTargetDamage\":{\"state\":\"known\",\"value\":450000},\"additionalTargetMultiplier\":{\"state\":\"known\",\"value\":0.9},\"attackKind\":{\"state\":\"known\",\"value\":\"normal\"},\"firstTargetDamage\":{\"state\":\"known\",\"value\":600000},\"firstTargetMultiplier\":{\"state\":\"known\",\"value\":1.2},\"id\":\"preview:area:green:1\",\"maxPerTurn\":{\"state\":\"known\",\"value\":1},\"sourceEnemyId\":{\"state\":\"known\",\"value\":\"preview:enemy:green\"},\"targetMode\":{\"state\":\"known\",\"value\":\"all\"}}],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"extreme\"},\"baseAttack\":{\"state\":\"known\",\"value\":500000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:green\",\"name\":{\"state\":\"known\",\"value\":\"架空の緑敵\"},\"orderInEncounter\":0,\"passiveEffects\":[{\"appliesTo\":\"enemy-stats\",\"bracket\":\"start-of-turn\",\"cap\":{\"state\":\"known\",\"value\":60},\"durationTurns\":{\"state\":\"unknown\",\"value\":null},\"id\":\"preview:enemy:green:passive:turn\",\"operation\":\"add-percent\",\"target\":\"attack\",\"trigger\":{\"end\":{\"state\":\"unknown\",\"value\":null},\"hpMaxPercent\":{\"state\":\"unknown\",\"value\":null},\"hpMinPercent\":{\"state\":\"unknown\",\"value\":null},\"kind\":\"elapsed-turn\",\"start\":{\"state\":\"known\",\"value\":1}},\"value\":{\"state\":\"known\",\"value\":20}},{\"appliesTo\":\"enemy-stats\",\"bracket\":\"start-of-turn\",\"cap\":{\"state\":\"unknown\",\"value\":null},\"durationTurns\":{\"state\":\"unknown\",\"value\":null},\"id\":\"preview:enemy:green:passive:hp\",\"operation\":\"add-percent\",\"target\":\"attack\",\"trigger\":{\"end\":{\"state\":\"unknown\",\"value\":null},\"hpMaxPercent\":{\"state\":\"known\",\"value\":50},\"hpMinPercent\":{\"state\":\"known\",\"value\":0},\"kind\":\"hp-range\",\"start\":{\"state\":\"unknown\",\"value\":null}},\"value\":{\"state\":\"known\",\"value\":40}}],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[{\"cooldownTurns\":{\"state\":\"unknown\",\"value\":null},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":2.5},\"displayedDamage\":{\"state\":\"known\",\"value\":1250000},\"effects\":[{\"appliesTo\":\"subsequent-normal-attacks\",\"bracket\":\"post-super\",\"cap\":{\"state\":\"unknown\",\"value\":null},\"durationTurns\":{\"state\":\"known\",\"value\":1},\"id\":\"preview:attack:green:1:effect:post-super\",\"operation\":\"add-percent\",\"target\":\"attack\",\"trigger\":{\"end\":{\"state\":\"unknown\",\"value\":null},\"hpMaxPercent\":{\"state\":\"unknown\",\"value\":null},\"hpMinPercent\":{\"state\":\"unknown\",\"value\":null},\"kind\":\"after-super\",\"start\":{\"state\":\"unknown\",\"value\":null}},\"value\":{\"state\":\"known\",\"value\":30}}],\"id\":\"preview:attack:green:1\",\"maxPerTurn\":{\"state\":\"unknown\",\"value\":null},\"name\":{\"state\":\"known\",\"value\":\"架空必殺A\"},\"probabilityPercent\":{\"state\":\"unknown\",\"value\":null},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[]},{\"cooldownTurns\":{\"state\":\"known\",\"value\":2},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":3.5},\"displayedDamage\":{\"state\":\"known\",\"value\":1750000},\"effects\":[],\"id\":\"preview:attack:green:2\",\"maxPerTurn\":{\"state\":\"known\",\"value\":1},\"name\":{\"state\":\"known\",\"value\":\"架空必殺B\"},\"probabilityPercent\":{\"state\":\"known\",\"value\":25},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[{\"cooldownTurns\":{\"state\":\"known\",\"value\":2},\"hpMaxPercent\":{\"state\":\"known\",\"value\":50},\"hpMinPercent\":{\"state\":\"known\",\"value\":0},\"maxPerTurn\":{\"state\":\"known\",\"value\":1},\"order\":1,\"probabilityPercent\":{\"state\":\"known\",\"value\":25}}]}],\"type\":{\"state\":\"known\",\"value\":\"teq\"}}],\"id\":\"preview:event:forest:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:forest:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ1\"}}]}","contentType":"application/json"},"releases/aa188b3e91d76774/chunked/event-1ced4b5d697ab908.json":{"text":"{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:sky\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・空\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"super\"},\"baseAttack\":{\"state\":\"known\",\"value\":800000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:blue\",\"name\":{\"state\":\"known\",\"value\":\"架空の青敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[{\"cooldownTurns\":{\"state\":\"unknown\",\"value\":null},\"criticalOverride\":{\"state\":\"unknown\",\"value\":null},\"derivedMultiplier\":{\"state\":\"known\",\"value\":2.5},\"displayedDamage\":{\"state\":\"known\",\"value\":2000000},\"effects\":[],\"id\":\"preview:attack:blue:1\",\"maxPerTurn\":{\"state\":\"unknown\",\"value\":null},\"name\":{\"state\":\"known\",\"value\":\"架空必殺B\"},\"probabilityPercent\":{\"state\":\"unknown\",\"value\":null},\"slot\":{\"state\":\"unknown\",\"value\":null},\"targetMode\":{\"state\":\"known\",\"value\":\"single\"},\"usageRules\":[]}],\"type\":{\"state\":\"known\",\"value\":\"agl\"}}],\"id\":\"preview:event:sky:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:sky:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ2\"}}]}","contentType":"application/json"},"releases/aa188b3e91d76774/chunked/event-e27be6e45f7113ba.json":{"text":"{\"category\":{\"state\":\"known\",\"value\":\"preview\"},\"id\":\"preview:event:void\",\"name\":{\"state\":\"known\",\"value\":\"架空イベント・虚空\"},\"stages\":[{\"encounters\":[{\"areaAttacks\":[],\"enemies\":[{\"alignment\":{\"state\":\"known\",\"value\":\"neutral\"},\"baseAttack\":{\"state\":\"known\",\"value\":1000000},\"critical\":{\"attackMultiplier\":{\"state\":\"unknown\",\"value\":null},\"defenseIgnorePercent\":{\"state\":\"unknown\",\"value\":null},\"enabled\":{\"state\":\"known\",\"value\":false},\"rateRules\":[]},\"id\":\"preview:enemy:neutral\",\"name\":{\"state\":\"known\",\"value\":\"架空の中立敵\"},\"orderInEncounter\":0,\"passiveEffects\":[],\"role\":{\"state\":\"known\",\"value\":\"combat\"},\"superAttacks\":[],\"type\":{\"state\":\"known\",\"value\":\"int\"}}],\"id\":\"preview:event:void:stage:1:encounter:1\",\"order\":1}],\"id\":\"preview:event:void:stage:1\",\"name\":{\"state\":\"known\",\"value\":\"架空ステージ3\"}}]}","contentType":"application/json"}};
 globalThis.__phase8EmbeddedFetch=async function phase8EmbeddedFetch(input){
   const pathname=new URL(String(input),location.href).pathname.replaceAll('\\','/');
   const marker='/data/';
@@ -348,6 +521,7 @@ globalThis.__phase8EmbeddedFetch=async function phase8EmbeddedFetch(input){
     return {
       final_def: finalDefense,
       final_def_crit_mod: finalDefense * modifiers.def_crit_mod,
+      def_crit_mod: modifiers.def_crit_mod,
       attr_mod: modifiers.attr_mod,
       guard_mod: modifiers.guard_mod,
       dr_mod: modifiers.dr_mod,
@@ -384,6 +558,31 @@ globalThis.__phase8EmbeddedFetch=async function phase8EmbeddedFetch(input){
       minimum: Math.min(damageAtMinimumVariance, damageAtMaximumVariance),
       maximum: Math.max(damageAtMinimumVariance, damageAtMaximumVariance)
     };
+  }
+
+  /**
+   * Returns the minimum displayed final DEF that makes the safety-side
+   * (1.03) incoming damage exactly zero for the same calculation settings.
+   *
+   * Unlike calculateSafeDurabilityLine(), this value is DEF, not enemy ATK,
+   * so it can be compared directly with `calculation.final_def` in the UI.
+   * Guard is applied after the zero clamp and therefore does not change the
+   * zero-damage boundary. All-type guard still affects `attr_mod` above.
+   */
+  function calculateRequiredDefenseForZeroDamage(enemyAttack, calculation) {
+    const defenseCriticalModifier = Number(calculation.def_crit_mod);
+    if (!Number.isFinite(defenseCriticalModifier) || defenseCriticalModifier <= 0) {
+      return Number.POSITIVE_INFINITY;
+    }
+
+    const incomingAtMaximumVariance = numberOrZero(enemyAttack)
+      * calculation.atk_crit_mod
+      * calculation.attr_mod
+      * calculation.dr_mod
+      * DAMAGE_VARIANCE_MAX;
+    return Math.ceil(stabilizeNearInteger(
+      incomingAtMaximumVariance / defenseCriticalModifier
+    ));
   }
 
   function calculateDurabilityLine(targetDamage, calculation, variance = 1) {
@@ -548,6 +747,7 @@ globalThis.__phase8EmbeddedFetch=async function phase8EmbeddedFetch(input){
     buildTurnConditionOptions,
     calculateDamage,
     calculateDamageRange,
+    calculateRequiredDefenseForZeroDamage,
     calculateDurability,
     calculateDurabilityLine,
     calculateSafeDurabilityLine,
@@ -1237,10 +1437,240 @@ function saveLastEvent(storage, eventId, datasetVersion) {
 }
 
 
+const TYPE_LABELS = Object.freeze({ agl: '速', teq: '技', int: '知', str: '力', phy: '体' });
+const ALIGNMENT_LABELS = Object.freeze({ super: '超', extreme: '極', neutral: '中立' });
+
+function known(field, fallback = null) {
+  return field?.state === 'known' ? field.value : fallback;
+}
+
+function japaneseType(alignment, type) {
+  const alignmentLabel = ALIGNMENT_LABELS[alignment] ?? '属性不明';
+  const typeLabel = TYPE_LABELS[type] ?? '不明';
+  return alignment === 'neutral'
+    ? `中立（${typeLabel}属性）`
+    : `${alignmentLabel}${typeLabel}`;
+}
+
+function normalizeNumericInputValue(value) {
+  const text = String(value ?? '');
+  if (text === '' || text === '-' || /^-?0(?:\.\d*)?$/.test(text)) return text;
+  const match = text.match(/^(-?)0+(\d.*)$/);
+  if (!match) return text;
+  return `${match[1]}${match[2].replace(/^0+(?=\d)/, '')}`;
+}
+
+function knownNumber(field, fallback = 0) {
+  const value = Number(known(field, fallback));
+  return Number.isFinite(value) ? value : fallback;
+}
+
+function relevantEffects(enemy) {
+  return (enemy?.passiveEffects ?? []).filter((effect) =>
+    effect.appliesTo === 'enemy-stats'
+    && effect.target === 'attack'
+    && effect.operation === 'add-percent'
+    && effect.value?.state === 'known'
+  );
+}
+
+function sortedUnique(values) {
+  return [...new Set(values.filter(Number.isFinite))].sort((left, right) => left - right);
+}
+
+function turnOptions(effects) {
+  const timed = effects.filter((effect) => ['elapsed-turn', 'appearance-turn'].includes(effect.trigger.kind));
+  if (timed.length === 0) return [{ value: 1, label: '1ターン' }];
+  const candidates = [1];
+  for (const effect of timed) {
+    const start = Math.max(1, Math.floor(knownNumber(effect.trigger.start, 1)));
+    candidates.push(start);
+    if (start > 1) candidates.push(start - 1);
+    if (effect.trigger.kind === 'elapsed-turn') {
+      const value = Math.abs(knownNumber(effect.value));
+      const cap = Math.abs(knownNumber(effect.cap));
+      if (value > 0 && cap > 0) candidates.push(start + Math.max(0, Math.ceil(cap / value) - 1));
+    }
+    const end = knownNumber(effect.trigger.end, 0);
+    if (end > 0) candidates.push(Math.floor(end), Math.floor(end) + 1);
+  }
+  return sortedUnique(candidates.filter((value) => value >= 1)).map((value) => ({ value, label: `${value}ターン` }));
+}
+
+function hitOptions(effects) {
+  const hitEffects = effects.filter((effect) => effect.trigger.kind === 'received-hit-count');
+  if (hitEffects.length === 0) return [{ value: 0, label: '被弾0回' }];
+  const candidates = [0];
+  for (const effect of hitEffects) {
+    const start = Math.max(1, Math.floor(knownNumber(effect.trigger.start, 1)));
+    const value = Math.abs(knownNumber(effect.value));
+    const cap = Math.abs(knownNumber(effect.cap));
+    candidates.push(start);
+    if (value > 0 && cap > 0) candidates.push(start + Math.max(0, Math.ceil(cap / value) - 1));
+  }
+  return sortedUnique(candidates).map((value) => ({ value, label: `被弾${value}回` }));
+}
+
+function hpOptions(effects, usageRules = []) {
+  const hpEffects = effects.filter((effect) => effect.trigger.kind === 'hp-range');
+  if (hpEffects.length === 0 && usageRules.length === 0) return [{ value: 100, label: 'HP100%' }];
+  const candidates = [0, 100];
+  const ranges = [
+    ...hpEffects.map((effect) => ({ minimum: effect.trigger.hpMinPercent, maximum: effect.trigger.hpMaxPercent })),
+    ...usageRules.map((rule) => ({ minimum: rule.hpMinPercent, maximum: rule.hpMaxPercent }))
+  ];
+  for (const range of ranges) {
+    const minimum = knownNumber(range.minimum, 0);
+    const maximum = knownNumber(range.maximum, 100);
+    candidates.push(minimum, maximum);
+    if (minimum > 0) candidates.push(Math.max(0, minimum - 0.01));
+    if (maximum < 100) candidates.push(Math.min(100, maximum + 0.01));
+  }
+  return sortedUnique(candidates.filter((value) => value >= 0 && value <= 100)).map((value) => ({
+    value,
+    label: `HP${Number.isInteger(value) ? value : value.toFixed(2).replace(/0+$/, '')}%`
+  }));
+}
+
+function enemyConditionDimensions(enemy) {
+  const effects = relevantEffects(enemy);
+  const usageRules = (enemy?.superAttacks ?? []).flatMap((attack) => attack.usageRules ?? []);
+  return {
+    turns: turnOptions(effects),
+    hits: hitOptions(effects),
+    hp: hpOptions(effects, usageRules),
+    hasConditions: effects.length > 0 || usageRules.length > 0
+  };
+}
+
+function effectPercent(effect, state) {
+  const value = knownNumber(effect.value);
+  const cap = knownNumber(effect.cap, Number.POSITIVE_INFINITY);
+  const start = Math.max(1, Math.floor(knownNumber(effect.trigger.start, 1)));
+  const end = knownNumber(effect.trigger.end, Number.POSITIVE_INFINITY);
+  if (effect.trigger.kind === 'elapsed-turn') {
+    if (state.turn < start || state.turn > end) return 0;
+    return Math.min(cap, value * (state.turn - start + 1));
+  }
+  if (effect.trigger.kind === 'received-hit-count') {
+    if (state.hits < start || state.hits > end) return 0;
+    return Math.min(cap, value * (state.hits - start + 1));
+  }
+  if (effect.trigger.kind === 'hp-range') {
+    const minimum = knownNumber(effect.trigger.hpMinPercent, 0);
+    const maximum = knownNumber(effect.trigger.hpMaxPercent, 100);
+    return state.hp >= minimum && state.hp <= maximum ? value : 0;
+  }
+  if (effect.trigger.kind === 'appearance-turn') {
+    return state.turn >= start && state.turn <= end ? value : 0;
+  }
+  return 0;
+}
+
+function enemyAttackState(enemy, state, core) {
+  const effects = relevantEffects(enemy);
+  let startOfTurnPercent = 0;
+  let receivedHitPercent = 0;
+  for (const effect of effects) {
+    const percent = effectPercent(effect, state);
+    if (effect.bracket === 'mid-battle') receivedHitPercent += percent;
+    else startOfTurnPercent += percent;
+  }
+  const apply = (base) => {
+    const atTurnStart = core.applyPercentAndFloor(base, startOfTurnPercent);
+    return core.applyPercentAndFloor(atTurnStart, receivedHitPercent);
+  };
+  const normal = apply(knownNumber(enemy.baseAttack));
+  const postSuperPercents = (enemy.superAttacks ?? []).flatMap((attack) => attack.effects ?? [])
+    .filter((effect) => effect.appliesTo === 'subsequent-normal-attacks' && effect.target === 'attack' && effect.operation === 'add-percent')
+    .map((effect) => knownNumber(effect.value))
+    .filter((value) => value !== 0);
+  const normalValues = [normal, ...postSuperPercents.map((percent) => core.applyPercentAndFloor(normal, percent))];
+  const supers = (enemy.superAttacks ?? []).map((attack) => ({
+    id: attack.id,
+    name: String(known(attack.name, '必殺技')),
+    value: apply(knownNumber(attack.displayedDamage))
+  }));
+  return { normalValues, supers, startOfTurnPercent, receivedHitPercent };
+}
+
+function enumerateValidEnemyStates(enemy, core) {
+  const dimensions = enemyConditionDimensions(enemy);
+  const states = [];
+  for (const turn of dimensions.turns) {
+    for (const hits of dimensions.hits) {
+      for (const hp of dimensions.hp) {
+        const state = { turn: turn.value, hits: hits.value, hp: hp.value };
+        states.push({ state, attacks: enemyAttackState(enemy, state, core) });
+      }
+    }
+  }
+  return states;
+}
+
+function superAttackAvailableInState(attack, state) {
+  const rules = Array.isArray(attack?.usageRules) ? attack.usageRules : [];
+  if (rules.length === 0) return true;
+  return rules.some((rule) => {
+    const minimum = knownNumber(rule.hpMinPercent, 0);
+    const maximum = knownNumber(rule.hpMaxPercent, 100);
+    return state.hp >= minimum && state.hp <= maximum;
+  });
+}
+
+function rangeOf(values) {
+  const finite = values.map(Number).filter(Number.isFinite);
+  return finite.length === 0 ? null : { minimum: Math.min(...finite), maximum: Math.max(...finite) };
+}
+
+function enemyAttackRanges(enemy, core) {
+  const states = enumerateValidEnemyStates(enemy, core);
+  const normal = rangeOf(states.flatMap((entry) => entry.attacks.normalValues));
+  const supers = (enemy.superAttacks ?? []).map((attack) => ({
+    id: attack.id,
+    name: String(known(attack.name, '必殺技')),
+    range: rangeOf(states
+      .filter((entry) => superAttackAvailableInState(attack, entry.state))
+      .map((entry) => entry.attacks.supers.find((item) => item.id === attack.id)?.value))
+  }));
+  return { normal, supers, validStateCount: states.length };
+}
+
+function formatAttackRange(range) {
+  if (!range) return '不明';
+  const minimum = Math.floor(range.minimum).toLocaleString();
+  const maximum = Math.floor(range.maximum).toLocaleString();
+  return range.minimum === range.maximum ? minimum : `${minimum}～${maximum}`;
+}
+
+function describeImportedStorage(saved = {}) {
+  const characters = Array.isArray(saved.savedCharacters) ? saved.savedCharacters : [];
+  const currentScenarios = Array.isArray(saved.currentScenarios) ? saved.currentScenarios : [];
+  const manualEnemies = Array.isArray(saved.savedEnemies)
+    ? saved.savedEnemies.reduce((total, eventType) => total + (eventType.series ?? []).reduce(
+      (seriesTotal, series) => seriesTotal + (series.stages ?? []).reduce(
+        (stageTotal, stage) => stageTotal + (stage.bosses?.length ?? 0), 0
+      ), 0
+    ), 0)
+    : 0;
+  const savedScenarios = characters.reduce((total, character) => total + (character.scenarios?.length ?? 0), 0);
+  const settings = [Array.isArray(saved.durabilityLines), typeof saved.theme === 'string'].filter(Boolean).length;
+  return {
+    characters: characters.length,
+    characterNames: characters.map((character) => character.name).filter(Boolean),
+    savedScenarios,
+    currentScenarios: currentScenarios.length,
+    manualEnemies,
+    settings
+  };
+}
+
+
 
 const params = new URLSearchParams(location.search);
 const dataRoot = params.get('dataRoot') || './data';
 const storagePrefix = 'dokkan_phase8_rc_imported_';
+const storageKey = storagePrefix + 'dokkan_calc_data_v22';
 const core = globalThis.DokkanCalcCore;
 const elements = Object.fromEntries([...document.querySelectorAll('[id]')].map((element) => [element.id, element]));
 const store = new Phase8ReleaseStore({ dbName: params.get('dbName') || 'dokkan-phase8-rc-releases-v1' });
@@ -1250,16 +1680,52 @@ if (globalThis.__phase8EmbeddedFetch) {
   clientOptions.cacheStorage = null;
 }
 const client = new Phase8RuntimeClient(clientOptions);
-const state = { event: null };
+const state = {
+  event: null,
+  cards: [],
+  cardCounter: 0,
+  durabilityLines: [],
+  savedCharacters: [],
+  savedEnemies: [],
+  savedRoot: {},
+  selectedCharacterIndex: -1,
+  initializing: true
+};
 const metrics = globalThis.__phase8Metrics = { startedAt: performance.now(), readyMs: null, lastEventMs: null };
 
-function known(field, fallback = '—') {
-  return field?.state === 'known' ? field.value : fallback;
-}
+const firstCardIds = Object.freeze({
+  'event-select': 'event-select',
+  'stage-select': 'stage-select',
+  'enemy-select': 'enemy-select',
+  'attack-select': 'attack-select',
+  'char-def': 'char-def',
+  leader: 'leader',
+  passive: 'passive',
+  'multi-passive': 'multi-passive',
+  'damage-reduction': 'damage-reduction',
+  'own-class': 'own-class',
+  'own-type': 'own-type',
+  memory: 'memory',
+  link: 'link',
+  'super-attack': 'super-attack',
+  field: 'field',
+  active: 'active',
+  'support-item': 'support-item',
+  'attribute-defense': 'attribute-defense',
+  guard: 'guard',
+  'calculate-button': 'calculate-button',
+  'final-defense': 'final-defense',
+  'damage-result': 'damage-result',
+  'perfect-defense': 'perfect-defense'
+});
 
 function setStatus(message, error = false) {
   elements['app-status'].textContent = message;
   elements['app-status'].classList.toggle('error', error);
+}
+
+function role(context, name) {
+  return context.element.querySelector(`[data-role="${name}"]`);
 }
 
 function replaceOptions(select, items, placeholder) {
@@ -1267,122 +1733,690 @@ function replaceOptions(select, items, placeholder) {
   select.disabled = items.length === 0;
 }
 
-function resetEnemySelection(message = 'イベントを選択してください') {
-  state.event = null;
-  replaceOptions(elements['stage-select'], [], '—');
-  replaceOptions(elements['enemy-select'], [], '—');
-  replaceOptions(elements['attack-select'], [], '—');
-  elements['enemy-name'].textContent = message;
-  elements['enemy-details'].textContent = '選んだイベントだけを読み込みます。';
-  elements['calculate-button'].disabled = true;
+function defaultScenario(index = 0) {
+  return {
+    scenario_title: `状況 ${index + 1}`,
+    char_def: '0', leader: '0', passive: '0', multi_passive: '0', memory: '0', link: '0',
+    super_attack: '0', field: '0', active: '0', support_item: '0', dr_input: '0',
+    own_class: 'super', own_type: 'teq', attr_def_up: '0', is_guard: false,
+    is_critical: false, crit_atk_up: '0', crit_def_down: '0',
+    enemy_atk: '', enemy_class: 'super', enemy_type: 'teq'
+  };
+}
+
+function inputValue(element) {
+  return element.type === 'checkbox' ? element.checked : element.value;
+}
+
+function scenarioData(context) {
+  const data = { originalIndex: state.cards.indexOf(context) };
+  for (const input of context.element.querySelectorAll('[data-input]')) data[input.dataset.input] = inputValue(input);
+  data.phase8_event_id = role(context, 'event-select').value;
+  data.phase8_stage_id = role(context, 'stage-select').value;
+  data.phase8_enemy_id = role(context, 'enemy-select').value;
+  data.phase8_attack_id = role(context, 'attack-select').value;
+  for (const select of context.element.querySelectorAll('[data-condition]')) data[`phase8_condition_${select.dataset.condition}`] = select.value;
+  if (context.legacyEnemy) data.loadedEnemy = context.legacyEnemy;
+  return data;
+}
+
+function allScenarioData() {
+  return state.cards.map(scenarioData);
+}
+
+function persistState() {
+  if (state.initializing) return;
+  const next = {
+    ...state.savedRoot,
+    durabilityLines: state.durabilityLines,
+    savedCharacters: state.savedCharacters,
+    savedEnemies: state.savedEnemies,
+    currentScenarios: allScenarioData(),
+    theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+  };
+  state.savedRoot = next;
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(next));
+  } catch (error) {
+    console.error('Failed to save Phase 8 RC state', error);
+  }
+}
+
+function readSavedState() {
+  try {
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return null;
+    const saved = JSON.parse(raw);
+    if (!saved || typeof saved !== 'object') return null;
+    state.savedRoot = saved;
+    state.durabilityLines = Array.isArray(saved.durabilityLines) ? saved.durabilityLines : [];
+    state.savedCharacters = Array.isArray(saved.savedCharacters) ? saved.savedCharacters : [];
+    state.savedEnemies = Array.isArray(saved.savedEnemies) ? saved.savedEnemies : [];
+    return saved;
+  } catch {
+    elements['saved-data-summary'].textContent = '移行済みデータを確認できませんでした。元の保存データは変更していません。';
+    return null;
+  }
+}
+
+function setTheme(theme, { persist = true } = {}) {
+  document.documentElement.dataset.theme = theme;
+  elements['theme-button'].textContent = theme === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('dokkan_phase8_rc_theme', theme);
+  if (persist) persistState();
+}
+
+function formatTargetDamage(value) {
+  if (Number(value) === 0) return '完封（0）';
+  return core.formatNumber(value);
+}
+
+function renderDurabilityLines() {
+  elements['durability-lines-list'].replaceChildren();
+  state.durabilityLines.forEach((line, index) => {
+    const badge = document.createElement('span');
+    badge.className = 'line-badge';
+    const label = document.createElement('span');
+    label.textContent = line.name || formatTargetDamage(line.value);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.lineIndex = String(index);
+    button.setAttribute('aria-label', `${label.textContent}を削除`);
+    button.textContent = '×';
+    badge.append(label, button);
+    elements['durability-lines-list'].append(badge);
+  });
+  updateAllCards();
+}
+
+function addDurabilityLine() {
+  if (state.durabilityLines.length >= 4) {
+    elements['character-status'].textContent = '耐久ラインは4件までです。';
+    return;
+  }
+  const raw = Number.parseInt(elements['new-line-input'].value, 10);
+  if (!Number.isFinite(raw) || raw < 0) return;
+  const value = raw * 10_000;
+  if (!state.durabilityLines.some((line) => Number(line.value) === value)) {
+    state.durabilityLines.push({ name: value === 0 ? '完封' : core.formatNumber(value), value });
+    state.durabilityLines.sort((left, right) => Number(left.value) - Number(right.value));
+  }
+  elements['new-line-input'].value = '';
+  renderDurabilityLines();
+  persistState();
+}
+
+function renderCharacterList() {
+  const selected = state.selectedCharacterIndex;
+  elements['characters-list'].replaceChildren();
+  if (state.savedCharacters.length === 0) {
+    elements['characters-list'].append(new Option('保存済みキャラクターはいません', ''));
+    return;
+  }
+  state.savedCharacters.forEach((character, index) => elements['characters-list'].append(new Option(character.name, String(index))));
+  if (selected >= 0 && state.savedCharacters[selected]) elements['characters-list'].value = String(selected);
+}
+
+function saveCharacter() {
+  const name = elements['character-name'].value.trim();
+  if (!name) {
+    elements['character-status'].textContent = 'キャラクター名を入力してください。';
+    elements['character-status'].classList.add('error');
+    return;
+  }
+  const character = { name, scenarios: allScenarioData() };
+  const byName = state.savedCharacters.findIndex((item) => item.name === name);
+  if (state.selectedCharacterIndex >= 0) {
+    state.savedCharacters[state.selectedCharacterIndex] = character;
+  } else if (byName >= 0) {
+    state.savedCharacters[byName] = character;
+    state.selectedCharacterIndex = byName;
+  } else {
+    state.savedCharacters.push(character);
+    state.selectedCharacterIndex = state.savedCharacters.length - 1;
+  }
+  renderCharacterList();
+  persistState();
+  elements['character-status'].textContent = `「${name}」を保存しました（状況 ${character.scenarios.length}件）。`;
+  elements['character-status'].classList.remove('error');
+  renderSavedDataSummary();
+}
+
+async function loadCharacter() {
+  const index = Number.parseInt(elements['characters-list'].value, 10);
+  if (!Number.isInteger(index) || !state.savedCharacters[index]) {
+    elements['character-status'].textContent = '読み込むキャラクターを選択してください。';
+    return;
+  }
+  if (!confirm('現在の作業中の状況を置き換えて、選択したキャラクターを読み込みますか？')) return;
+  const character = state.savedCharacters[index];
+  state.selectedCharacterIndex = index;
+  elements['character-name'].value = character.name;
+  await recreateScenarioCards(character.scenarios);
+  persistState();
+  elements['character-status'].textContent = `「${character.name}」を読み込みました。`;
+}
+
+async function startNewCharacter() {
+  if (!confirm('現在の作業中の状況を新しいキャラクター用に入れ替えますか？')) return;
+  state.selectedCharacterIndex = -1;
+  elements['character-name'].value = '';
+  renderCharacterList();
+  await recreateScenarioCards([defaultScenario(0)]);
+  persistState();
+  elements['character-status'].textContent = '新しいキャラクターを作成できます。';
+}
+
+function deleteCharacter() {
+  const index = Number.parseInt(elements['characters-list'].value, 10);
+  if (!Number.isInteger(index) || !state.savedCharacters[index]) return;
+  const name = state.savedCharacters[index].name;
+  if (!confirm(`「${name}」を保存一覧から削除しますか？`)) return;
+  state.savedCharacters.splice(index, 1);
+  state.selectedCharacterIndex = -1;
+  renderCharacterList();
+  persistState();
+  renderSavedDataSummary();
+  elements['character-status'].textContent = `「${name}」を削除しました。作業中のカードは残しています。`;
+}
+
+function renderPreview() {
+  elements['preview-content'].replaceChildren();
+  for (const context of state.cards) {
+    const data = scenarioData(context);
+    const calculation = core.calculateDurability(calculationInput(context, null, true));
+    const item = document.createElement('section');
+    item.className = 'preview-item';
+    const title = document.createElement('h3');
+    title.textContent = data.scenario_title || '名称なし';
+    const summary = document.createElement('p');
+    summary.textContent = `最終DEF ${Math.round(calculation.final_def).toLocaleString()} / 軽減 ${data.dr_input || 0}% / 全属性ガード ${data.is_guard ? 'あり' : 'なし'}`;
+    const lines = document.createElement('ul');
+    for (const line of state.durabilityLines) {
+      const row = document.createElement('li');
+      row.textContent = `${line.name || formatTargetDamage(line.value)}：敵ATK ${core.formatDurabilityLimit(core.calculateSafeDurabilityLine(line.value, calculation))}`;
+      lines.append(row);
+    }
+    item.append(title, summary, lines);
+    elements['preview-content'].append(item);
+  }
+  elements['preview-dialog'].showModal();
+}
+
+function runtimeField(value, stateName = 'known') {
+  return value == null ? { state: 'unknown', value: null } : { state: stateName, value };
+}
+
+function legacyEffect(id, kind, value, { start = null, hpMax = null, cap = null, bracket = 'start-of-turn' } = {}) {
+  return {
+    id,
+    trigger: {
+      kind,
+      start: runtimeField(start),
+      end: runtimeField(null),
+      hpMinPercent: kind === 'hp-range' ? runtimeField(0) : runtimeField(null),
+      hpMaxPercent: runtimeField(hpMax)
+    },
+    appliesTo: 'enemy-stats', target: 'attack', operation: 'add-percent',
+    value: runtimeField(value), cap: runtimeField(cap), durationTurns: runtimeField(null), bracket
+  };
+}
+
+function legacyEnemyToRuntime(enemy) {
+  const baseAttack = Number(enemy.baseAtk) || Number(enemy.attacks?.find((attack) => attack.name === '通常')?.value) || 0;
+  const passiveEffects = [];
+  if (Number(enemy.turnAtkUp) > 0) passiveEffects.push(legacyEffect('legacy-turn', 'elapsed-turn', Number(enemy.turnAtkUp), { start: Number(enemy.turnAtkUpStartTurn) || 1, cap: Number(enemy.turnAtkMax) || null }));
+  if (Number(enemy.hitAtkUp) > 0) passiveEffects.push(legacyEffect('legacy-hit', 'received-hit-count', Number(enemy.hitAtkUp), { start: 1, cap: Number(enemy.hitAtkMax) || null, bracket: 'mid-battle' }));
+  if (Number(enemy.hpAtkUp) > 0) passiveEffects.push(legacyEffect('legacy-hp', 'hp-range', Number(enemy.hpAtkUp), { hpMax: Number(enemy.hpAtkThreshold) || 100 }));
+  let previousAppearance = 0;
+  for (const [index, entry] of (enemy.appearEntries ?? []).entries()) {
+    const cumulative = Number(entry.cumulativeAtkUp) || 0;
+    passiveEffects.push(legacyEffect(`legacy-appearance-${index}`, 'appearance-turn', cumulative - previousAppearance, { start: Number(entry.turn) || 1 }));
+    previousAppearance = cumulative;
+  }
+  const superRows = (enemy.attacks ?? []).filter((attack) => String(attack.name).includes('必殺'));
+  if (superRows.length === 0 && Number(enemy.saMulti) > 0) {
+    superRows.push({ name: '必殺', value: Math.floor(baseAttack * (Number(enemy.saMulti) + Number(enemy.saBuffMod || 0))) });
+  }
+  const postSuperEffect = Number(enemy.saBuffMod) > 0 ? [{
+    id: 'legacy-post-super', trigger: { kind: 'after-super', start: runtimeField(null), end: runtimeField(null), hpMinPercent: runtimeField(null), hpMaxPercent: runtimeField(null) },
+    appliesTo: 'subsequent-normal-attacks', target: 'attack', operation: 'add-percent', value: runtimeField(Number(enemy.saBuffMod) * 100),
+    cap: runtimeField(null), durationTurns: runtimeField(1), bracket: 'post-super'
+  }] : [];
+  return {
+    id: `legacy:${enemy.name || 'enemy'}`,
+    name: runtimeField(enemy.name || '移行済み保存敵'),
+    type: runtimeField(enemy.type || 'teq'),
+    alignment: runtimeField(enemy.class || 'neutral'),
+    baseAttack: runtimeField(baseAttack),
+    passiveEffects,
+    superAttacks: superRows.map((attack, index) => ({
+      id: `legacy-super-${index}`, name: runtimeField(attack.name || `必殺${index + 1}`), displayedDamage: runtimeField(Number(attack.value) || 0), effects: index === 0 ? postSuperEffect : []
+    }))
+  };
 }
 
 function allEnemies(stage) {
-  return stage?.encounters.flatMap((encounter) => encounter.enemies) ?? [];
+  return stage?.encounters.flatMap((encounter) => encounter.enemies.map((enemy) => ({ enemy, encounter }))) ?? [];
 }
 
-function currentStage() {
-  return state.event?.stages.find((stage) => stage.id === elements['stage-select'].value) ?? null;
+function currentStage(context) {
+  return context.event?.stages.find((stage) => stage.id === role(context, 'stage-select').value) ?? null;
 }
 
-function currentEnemy() {
-  return allEnemies(currentStage()).find((enemy) => enemy.id === elements['enemy-select'].value) ?? null;
+function currentEnemyContext(context) {
+  if (context.legacyEnemy) return { enemy: context.runtimeLegacyEnemy, encounter: { areaAttacks: [] } };
+  return allEnemies(currentStage(context)).find((item) => item.enemy.id === role(context, 'enemy-select').value) ?? null;
 }
 
-function renderAttackOptions() {
-  const enemy = currentEnemy();
-  if (!enemy) {
-    replaceOptions(elements['attack-select'], [], '—');
-    elements['calculate-button'].disabled = true;
+function clearEnemyResult(context, message = '敵を選択してください') {
+  replaceOptions(role(context, 'attack-select'), [], '—');
+  role(context, 'condition-controls').replaceChildren();
+  role(context, 'enemy-name').textContent = message;
+  role(context, 'enemy-type').textContent = '敵属性：未選択';
+  role(context, 'enemy-attack-summary').textContent = '敵を選ぶと通常攻撃・必殺攻撃を表示します。';
+  role(context, 'calculate-button').disabled = true;
+  renderCard(context);
+}
+
+function renderConditionControls(context, enemy, initial = {}) {
+  const container = role(context, 'condition-controls');
+  container.replaceChildren();
+  const dimensions = enemyConditionDimensions(enemy);
+  const configurations = [
+    ['turn', 'ターン', dimensions.turns, initial.phase8_condition_turn],
+    ['hits', '被弾回数', dimensions.hits, initial.phase8_condition_hits],
+    ['hp', 'HP', dimensions.hp, initial.phase8_condition_hp]
+  ];
+  for (const [name, labelText, options, saved] of configurations) {
+    if (options.length <= 1) continue;
+    const label = document.createElement('label');
+    label.textContent = labelText;
+    const select = document.createElement('select');
+    select.dataset.condition = name;
+    options.forEach((option) => select.append(new Option(option.label, String(option.value))));
+    if (saved != null && options.some((option) => String(option.value) === String(saved))) select.value = String(saved);
+    else if (name === 'hp' && options.some((option) => option.value === 100)) select.value = '100';
+    label.append(select);
+    container.append(label);
+  }
+}
+
+function currentCondition(context) {
+  const dimensions = enemyConditionDimensions(currentEnemyContext(context)?.enemy);
+  const selected = Object.fromEntries([...context.element.querySelectorAll('[data-condition]')].map((select) => [select.dataset.condition, Number(select.value)]));
+  return {
+    turn: selected.turn ?? dimensions.turns[0]?.value ?? 1,
+    hits: selected.hits ?? dimensions.hits[0]?.value ?? 0,
+    hp: selected.hp ?? dimensions.hp.find((option) => option.value === 100)?.value ?? dimensions.hp[0]?.value ?? 100
+  };
+}
+
+function areaAttacksFor(item) {
+  if (!item) return [];
+  return (item.encounter.areaAttacks ?? []).filter((attack) => {
+    const sourceId = known(attack.sourceEnemyId, null);
+    return sourceId == null || sourceId === item.enemy.id;
+  });
+}
+
+function areaAttackValue(attack, stateResult, target = 'first') {
+  const field = target === 'additional' ? attack.additionalTargetDamage : attack.firstTargetDamage;
+  let value = Number(known(field, 0));
+  value = core.applyPercentAndFloor(value, stateResult.startOfTurnPercent);
+  return core.applyPercentAndFloor(value, stateResult.receivedHitPercent);
+}
+
+function renderEnemyAttackSummary(context, item) {
+  const ranges = enemyAttackRanges(item.enemy, core);
+  const container = role(context, 'enemy-attack-summary');
+  container.replaceChildren();
+  const rows = [
+    ['通常攻撃', formatAttackRange(ranges.normal)],
+    ...ranges.supers.map((attack) => [attack.name, formatAttackRange(attack.range)])
+  ];
+  const validStates = enumerateValidEnemyStates(item.enemy, core);
+  for (const area of areaAttacksFor(item)) {
+    const values = validStates.map((entry) => areaAttackValue(area, entry.attacks, 'first'));
+    rows.push(['全体攻撃', formatAttackRange({ minimum: Math.min(...values), maximum: Math.max(...values) })]);
+  }
+  for (const [name, value] of rows) {
+    const row = document.createElement('div');
+    row.className = 'attack-summary-row';
+    const label = document.createElement('span');
+    label.textContent = name;
+    const strong = document.createElement('strong');
+    strong.textContent = value;
+    row.append(label, strong);
+    container.append(row);
+  }
+  if (ranges.supers.length > 1) {
+    const note = document.createElement('small');
+    note.textContent = '複数の必殺技は、情報をまとめず技ごとに表示しています。';
+    container.append(note);
+  }
+}
+
+function renderAttackOptions(context, { initial = {} } = {}) {
+  const item = currentEnemyContext(context);
+  if (!item) {
+    clearEnemyResult(context);
     return;
   }
-  const attacks = [{ value: 'normal', label: '通常攻撃 ' + Number(known(enemy.baseAttack, 0)).toLocaleString() }];
-  enemy.superAttacks.forEach((attack) => attacks.push({ value: attack.id, label: known(attack.name, '必殺技') + ' ' + Number(known(attack.displayedDamage, 0)).toLocaleString() }));
-  replaceOptions(elements['attack-select'], attacks, '攻撃を選択');
-  elements['attack-select'].value = attacks[0].value;
-  elements['enemy-name'].textContent = known(enemy.name, enemy.id);
-  elements['enemy-details'].textContent = known(enemy.alignment, '不明') + ' / ' + known(enemy.type, '不明') + '・基礎ATK ' + Number(known(enemy.baseAttack, 0)).toLocaleString();
-  elements['calculate-button'].disabled = false;
-}
-
-function renderEnemies() {
-  const enemies = allEnemies(currentStage());
-  replaceOptions(elements['enemy-select'], enemies.map((enemy) => ({ value: enemy.id, label: known(enemy.name, enemy.id) })), '敵を選択');
-  if (enemies.length > 0) {
-    elements['enemy-select'].value = enemies[0].id;
-    renderAttackOptions();
+  const ranges = enemyAttackRanges(item.enemy, core);
+  const options = [{ value: 'normal', label: `通常攻撃 ${formatAttackRange(ranges.normal)}` }];
+  const baseState = enemyAttackState(item.enemy, currentCondition(context), core);
+  baseState.normalValues.slice(1).forEach((value, index) => options.push({ value: `post-super:${index}`, label: `通常攻撃（必殺後） ${value.toLocaleString()}` }));
+  const selectedState = currentCondition(context);
+  ranges.supers.forEach((attack) => {
+    const source = item.enemy.superAttacks.find((candidate) => candidate.id === attack.id);
+    if (superAttackAvailableInState(source, selectedState)) options.push({ value: `super:${attack.id}`, label: `${attack.name} ${formatAttackRange(attack.range)}` });
+  });
+  for (const area of areaAttacksFor(item)) {
+    options.push({ value: `area:${area.id}:first`, label: `全体攻撃 ${Number(known(area.firstTargetDamage, 0)).toLocaleString()}` });
+    if (known(area.additionalTargetDamage, null) != null && known(area.additionalTargetDamage, null) !== known(area.firstTargetDamage, null)) {
+      options.push({ value: `area:${area.id}:additional`, label: `全体攻撃（2体目以降） ${Number(known(area.additionalTargetDamage, 0)).toLocaleString()}` });
+    }
   }
+  replaceOptions(role(context, 'attack-select'), options, '攻撃を選択');
+  const wanted = initial.phase8_attack_id || context.pendingAttackId;
+  role(context, 'attack-select').value = options.some((option) => option.value === wanted) ? wanted : 'normal';
+  context.pendingAttackId = null;
+  const alignment = known(item.enemy.alignment, 'neutral');
+  const type = known(item.enemy.type, null);
+  role(context, 'enemy-name').textContent = String(known(item.enemy.name, item.enemy.id));
+  role(context, 'enemy-type').textContent = `敵属性：${japaneseType(alignment, type)}`;
+  renderEnemyAttackSummary(context, item);
+  role(context, 'calculate-button').disabled = false;
+  renderCard(context);
 }
 
-function renderStages() {
-  const stages = state.event?.stages ?? [];
-  replaceOptions(elements['stage-select'], stages.map((stage) => ({ value: stage.id, label: known(stage.name, stage.id) })), 'ステージを選択');
-  if (stages.length > 0) {
-    elements['stage-select'].value = stages[0].id;
-    renderEnemies();
-  }
+function renderEnemies(context, { selectedEnemyId = '', initial = {} } = {}) {
+  context.legacyEnemy = null;
+  context.runtimeLegacyEnemy = null;
+  const enemies = allEnemies(currentStage(context));
+  replaceOptions(role(context, 'enemy-select'), enemies.map(({ enemy }) => ({ value: enemy.id, label: String(known(enemy.name, enemy.id)) })), '敵を選択してください');
+  if (selectedEnemyId && enemies.some(({ enemy }) => enemy.id === selectedEnemyId)) {
+    role(context, 'enemy-select').value = selectedEnemyId;
+    const item = currentEnemyContext(context);
+    renderConditionControls(context, item.enemy, initial);
+    renderAttackOptions(context, { initial });
+  } else clearEnemyResult(context);
 }
 
-async function selectEvent(eventId, { persist = true } = {}) {
+function renderStages(context, { selectedStageId = '', selectedEnemyId = '', initial = {} } = {}) {
+  const stages = context.event?.stages ?? [];
+  replaceOptions(role(context, 'stage-select'), stages.map((stage) => ({ value: stage.id, label: String(known(stage.name, stage.id)) })), 'ステージを選択');
+  if (stages.length === 0) return renderEnemies(context);
+  role(context, 'stage-select').value = stages.some((stage) => stage.id === selectedStageId) ? selectedStageId : stages[0].id;
+  renderEnemies(context, { selectedEnemyId, initial });
+}
+
+async function selectEventForCard(context, eventId, { persist = true, selectedStageId = '', selectedEnemyId = '', initial = {} } = {}) {
   const started = performance.now();
+  context.legacyEnemy = null;
+  context.runtimeLegacyEnemy = null;
   if (!eventId) {
-    resetEnemySelection();
+    context.event = null;
+    replaceOptions(role(context, 'stage-select'), [], '—');
+    replaceOptions(role(context, 'enemy-select'), [], '敵を選択してください');
+    clearEnemyResult(context, 'イベントを選択してください');
     return false;
   }
   setStatus('選んだイベントを読み込んでいます…');
   try {
     const event = await client.event(eventId);
-    if (!event) {
-      resetEnemySelection('このイベントは現在のデータにありません');
-      elements['event-select'].value = '';
-      setStatus('イベントを選び直してください。');
-      return false;
-    }
-    state.event = event;
-    elements['event-select'].value = eventId;
-    renderStages();
+    if (!event) throw new Error('missing event');
+    context.event = event;
+    role(context, 'event-select').value = eventId;
+    renderStages(context, { selectedStageId, selectedEnemyId, initial });
+    if (state.cards[0] === context) state.event = event;
     if (persist) saveLastEvent(localStorage, eventId, client.manifest.datasetVersion);
     metrics.lastEventMs = performance.now() - started;
     setStatus('準備完了');
-    globalThis.dispatchEvent(new CustomEvent('phase8-event-ready', { detail: { eventId } }));
+    globalThis.dispatchEvent(new CustomEvent('phase8-event-ready', { detail: { eventId, cardId: context.id } }));
+    persistState();
     return true;
   } catch {
-    resetEnemySelection('イベントを読み込めませんでした');
+    context.event = null;
+    role(context, 'event-select').value = '';
+    replaceOptions(role(context, 'stage-select'), [], '—');
+    replaceOptions(role(context, 'enemy-select'), [], '敵を選択してください');
+    clearEnemyResult(context, 'イベントを読み込めませんでした');
     setStatus('イベントを読み込めませんでした。現在のデータは変更されていません。', true);
     return false;
   }
 }
 
-function calculationInput(enemy) {
-  const ownClass = elements['own-class'].value;
-  const enemyAlignment = known(enemy.alignment, ownClass);
-  return {
-    char_def: elements['char-def'].value, leader: elements.leader.value, passive: elements.passive.value,
-    multi_passive: elements['multi-passive'].value, memory: elements.memory.value, link: elements.link.value,
-    super_attack: elements['super-attack'].value, field: elements.field.value, active: elements.active.value,
-    support_item: elements['support-item'].value, dr_input: elements['damage-reduction'].value,
-    is_guard: elements.guard.checked, attr_def_up: elements['attribute-defense'].value,
-    own_class: ownClass, own_type: elements['own-type'].value,
-    enemy_class: enemyAlignment === 'neutral' ? ownClass : enemyAlignment,
-    enemy_type: known(enemy.type, elements['own-type'].value)
-  };
+function configureLegacyEnemy(context, data) {
+  context.legacyEnemy = data.loadedEnemy;
+  context.runtimeLegacyEnemy = legacyEnemyToRuntime(data.loadedEnemy);
+  const eventSelect = role(context, 'event-select');
+  eventSelect.append(new Option('移行済みの保存敵', '__legacy__'));
+  eventSelect.disabled = false;
+  eventSelect.value = '__legacy__';
+  replaceOptions(role(context, 'stage-select'), [{ value: '__legacy__', label: '保存データ' }], '—');
+  role(context, 'stage-select').value = '__legacy__';
+  replaceOptions(role(context, 'enemy-select'), [{ value: context.runtimeLegacyEnemy.id, label: String(known(context.runtimeLegacyEnemy.name, '保存敵')) }], '敵を選択してください');
+  role(context, 'enemy-select').value = context.runtimeLegacyEnemy.id;
+  renderConditionControls(context, context.runtimeLegacyEnemy, data);
+  context.pendingAttackId = data.phase8_attack_id;
+  renderAttackOptions(context, { initial: data });
 }
 
-function selectedAttackValue(enemy) {
-  if (elements['attack-select'].value === 'normal') return Number(known(enemy.baseAttack, 0));
-  const attack = enemy.superAttacks.find((item) => item.id === elements['attack-select'].value);
-  return Number(known(attack?.displayedDamage, 0));
+function populateEventSelect(context) {
+  replaceOptions(role(context, 'event-select'), client.index.events.map((entry) => ({ value: entry.id, label: entry.name })), 'イベントを選択してください');
 }
 
-function calculate() {
-  const enemy = currentEnemy();
-  if (!enemy) return;
-  const calculation = core.calculateDurability(calculationInput(enemy));
-  const attack = selectedAttackValue(enemy);
-  const range = core.calculateDamageRange(attack, calculation);
-  elements['final-defense'].textContent = Math.floor(calculation.final_def).toLocaleString();
-  elements['damage-result'].textContent = core.formatDamageRange(range);
-  elements['perfect-defense'].textContent = core.formatDurabilityLimit(core.calculateSafeDurabilityLine(0, calculation));
+function applyScenarioInputs(context, data) {
+  const merged = { ...defaultScenario(state.cards.length), ...data };
+  for (const input of context.element.querySelectorAll('[data-input]')) {
+    const value = merged[input.dataset.input];
+    if (value === undefined || value === null) continue;
+    if (input.type === 'checkbox') input.checked = value === true || String(value) === 'true';
+    else input.value = String(value);
+  }
+}
+
+function assignCardIds(context, isFirst) {
+  for (const element of context.element.querySelectorAll('[data-role]')) {
+    const name = element.dataset.role;
+    element.id = isFirst && firstCardIds[name] ? firstCardIds[name] : `${context.id}-${name}`;
+  }
+}
+
+async function addScenarioCard(data = defaultScenario(state.cards.length), { insertAfter = null, restoreLastEvent = false } = {}) {
+  state.cardCounter += 1;
+  const element = elements['scenario-card-template'].content.firstElementChild.cloneNode(true);
+  const context = { id: `scenario-${state.cardCounter}`, element, event: null, legacyEnemy: null, runtimeLegacyEnemy: null, pendingAttackId: null };
+  const insertIndex = insertAfter ? state.cards.indexOf(insertAfter) + 1 : state.cards.length;
+  state.cards.splice(insertIndex, 0, context);
+  assignCardIds(context, state.cards.length === 1);
+  applyScenarioInputs(context, data);
+  if (insertAfter) insertAfter.element.insertAdjacentElement('afterend', element);
+  else elements['scenario-cards-container'].append(element);
+  populateEventSelect(context);
+  if (data.loadedEnemy && typeof data.loadedEnemy === 'object') {
+    configureLegacyEnemy(context, data);
+  } else {
+    let eventId = data.phase8_event_id || '';
+    if (!eventId && restoreLastEvent) eventId = readLastEvent(localStorage, new Set(client.index.events.map((entry) => entry.id))).eventId || '';
+    if (eventId) await selectEventForCard(context, eventId, {
+      persist: false,
+      selectedStageId: data.phase8_stage_id || '',
+      selectedEnemyId: data.phase8_enemy_id || '',
+      initial: data
+    });
+    else clearEnemyResult(context, '敵を選択してください');
+  }
+  updateMode();
+  renderCard(context);
+  persistState();
+  return context;
+}
+
+async function recreateScenarioCards(scenarios = []) {
+  state.cards = [];
+  state.cardCounter = 0;
+  elements['scenario-cards-container'].replaceChildren();
+  const values = scenarios.length > 0 ? scenarios : [defaultScenario(0)];
+  for (const [index, data] of values.entries()) await addScenarioCard(data, { restoreLastEvent: index === 0 && !data.loadedEnemy && !data.phase8_event_id });
+}
+
+function calculationInput(context, enemy, durabilityMode = false) {
+  const ownClass = role(context, 'own-class').value;
+  const ownType = role(context, 'own-type').value;
+  const alignment = durabilityMode ? ownClass : known(enemy?.alignment, ownClass);
+  const enemyClass = alignment === 'neutral' ? ownClass : alignment;
+  const enemyType = durabilityMode ? ownType : known(enemy?.type, ownType);
+  const values = Object.fromEntries([...context.element.querySelectorAll('[data-input]')].map((input) => [input.dataset.input, inputValue(input)]));
+  return { ...values, own_class: ownClass, own_type: ownType, enemy_class: enemyClass, enemy_type: enemyType };
+}
+
+function selectedAttack(context, item) {
+  const condition = enemyAttackState(item.enemy, currentCondition(context), core);
+  const value = role(context, 'attack-select').value;
+  if (value === 'normal') return { name: '通常攻撃', value: condition.normalValues[0] };
+  if (value.startsWith('post-super:')) {
+    const index = Number.parseInt(value.split(':')[1], 10);
+    return { name: '通常攻撃（必殺後）', value: condition.normalValues[index + 1] };
+  }
+  if (value.startsWith('super:')) {
+    const id = value.slice('super:'.length);
+    const attack = condition.supers.find((candidate) => candidate.id === id);
+    return attack ? { name: attack.name, value: attack.value } : null;
+  }
+  if (value.startsWith('area:')) {
+    const [, id, target] = value.split(':');
+    const attack = areaAttacksFor(item).find((candidate) => candidate.id === id);
+    return attack ? { name: target === 'additional' ? '全体攻撃（2体目以降）' : '全体攻撃', value: areaAttackValue(attack, condition, target) } : null;
+  }
+  return null;
+}
+
+function renderDurabilityResult(context, calculation) {
+  const container = role(context, 'durability-table');
+  if (state.durabilityLines.length === 0) {
+    container.textContent = '耐久ライン設定から1件以上追加してください。';
+    return;
+  }
+  const table = document.createElement('table');
+  table.className = 'durability-table';
+  const body = document.createElement('tbody');
+  const criticalUnconfigured = role(context, 'is-critical').checked
+    && Number(role(context, 'critical-attack').value || 0) === 0
+    && Number(role(context, 'critical-defense').value || 0) === 0;
+  for (const line of state.durabilityLines) {
+    const row = document.createElement('tr');
+    const target = document.createElement('th');
+    target.textContent = line.name || formatTargetDamage(line.value);
+    const result = document.createElement('td');
+    result.textContent = criticalUnconfigured
+      ? '—（会心補正を設定）'
+      : core.formatDurabilityLimit(core.calculateSafeDurabilityLine(line.value, calculation));
+    row.append(target, result);
+    body.append(row);
+  }
+  table.append(body);
+  container.replaceChildren(table);
+}
+
+function renderDamageResult(context) {
+  const ownLabel = japaneseType(role(context, 'own-class').value, role(context, 'own-type').value);
+  const item = currentEnemyContext(context);
+  const manualAttack = Number(role(context, 'manual-enemy-attack').value || 0) * 10_000;
+  const usesManualAttack = (!item || !role(context, 'enemy-select').value) && manualAttack > 0;
+  if ((!item || !role(context, 'enemy-select').value) && !usesManualAttack) {
+    role(context, 'damage-result').textContent = '敵を選択してください';
+    role(context, 'perfect-defense').textContent = '—';
+    role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：未選択`;
+    return;
+  }
+  if (
+    role(context, 'is-critical').checked
+    && Number(role(context, 'critical-attack').value || 0) === 0
+    && Number(role(context, 'critical-defense').value || 0) === 0
+  ) {
+    role(context, 'damage-result').textContent = '会心補正を設定してください';
+    role(context, 'perfect-defense').textContent = '—';
+    return;
+  }
+  const manualEnemy = usesManualAttack ? {
+    alignment: runtimeField(role(context, 'manual-enemy-class').value),
+    type: runtimeField(role(context, 'manual-enemy-type').value)
+  } : null;
+  const enemy = item?.enemy ?? manualEnemy;
+  const attack = usesManualAttack ? { name: '手動ATK', value: manualAttack } : selectedAttack(context, item);
+  if (!attack || !Number.isFinite(Number(attack.value))) {
+    role(context, 'damage-result').textContent = '攻撃を選択してください';
+    role(context, 'perfect-defense').textContent = '—';
+    return;
+  }
+  const calculation = core.calculateDurability(calculationInput(context, enemy, false));
+  const range = core.calculateDamageRange(attack.value, calculation);
+  const required = core.calculateRequiredDefenseForZeroDamage(attack.value, calculation);
+  const enemyLabel = japaneseType(known(enemy.alignment, 'neutral'), known(enemy.type, null));
+  role(context, 'damage-result').textContent = `${attack.name}：${core.formatDamageRange(range)}`;
+  role(context, 'perfect-defense').textContent = Number.isFinite(required) ? Math.ceil(required).toLocaleString() : '—';
+  role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：${enemyLabel}`;
+}
+
+function renderCard(context) {
+  const durabilityCalculation = core.calculateDurability(calculationInput(context, null, true));
+  role(context, 'final-defense').textContent = Math.round(durabilityCalculation.final_def).toLocaleString();
+  renderDurabilityResult(context, durabilityCalculation);
+  renderDamageResult(context);
+}
+
+function updateAllCards() {
+  state.cards.forEach(renderCard);
+}
+
+function updateMode() {
+  const mode = document.querySelector('input[name="calculation-mode"]:checked')?.value || 'durability';
+  elements['durability-settings'].hidden = mode !== 'durability';
+  state.cards.forEach((context) => {
+    role(context, 'durability-result').hidden = mode !== 'durability';
+    role(context, 'damage-panel').hidden = mode !== 'damage';
+  });
+  updateAllCards();
+}
+
+function renderSavedDataSummary() {
+  const container = elements['saved-data-summary'];
+  container.replaceChildren();
+  const raw = localStorage.getItem(storageKey);
+  if (!raw) {
+    container.textContent = 'この確認版に移行された保存データはありません。';
+    return;
+  }
+  try {
+    const saved = JSON.parse(raw);
+    const summary = describeImportedStorage(saved);
+    const intro = document.createElement('p');
+    intro.textContent = '移行済みの内容：';
+    const list = document.createElement('ul');
+    list.className = 'migration-summary-list';
+    const entries = [
+      `保存キャラクター：${summary.characters}件${summary.characterNames.length ? `（${summary.characterNames.join('、')}）` : ''}`,
+      `保存済み状況：${summary.savedScenarios}件`,
+      `作業中の状況：${summary.currentScenarios}件`,
+      `手動保存した敵：${summary.manualEnemies}件`,
+      `設定：${summary.settings}分類（耐久ライン・配色）`,
+      'GitHub PAT：移行していません',
+      'イベント・ステージ・配布敵データ：増えません'
+    ];
+    entries.forEach((text) => {
+      const item = document.createElement('li');
+      item.textContent = text;
+      list.append(item);
+    });
+    const guide = document.createElement('p');
+    guide.textContent = '上の「キャラクター管理」で名前を選び「読み込み」を押すと、移行した内容を確認できます。';
+    container.append(intro, list, guide);
+  } catch {
+    container.textContent = '移行済みデータを確認できませんでした。元の保存データは変更していません。';
+  }
 }
 
 function updateMessage(result) {
@@ -1407,16 +2441,20 @@ async function updateData() {
   elements['update-status'].textContent = '更新を確認しています…';
   elements['update-status'].classList.remove('error');
   try {
-    const previousEvent = elements['event-select'].value;
+    const selections = state.cards.map((context) => ({ context, data: scenarioData(context) }));
     const result = await client.update();
     const message = updateMessage(result);
     elements['update-status'].textContent = message.text;
     elements['update-status'].classList.toggle('error', message.error);
     elements['data-version'].textContent = 'データ版: ' + client.store.active.datasetVersion;
     if (result.status === 'applied') {
-      populateEvents();
-      if (previousEvent && client.index.events.some((entry) => entry.id === previousEvent)) await selectEvent(previousEvent);
-      else resetEnemySelection('イベントを選択してください');
+      for (const { context, data } of selections) {
+        populateEventSelect(context);
+        if (data.loadedEnemy) configureLegacyEnemy(context, data);
+        else if (data.phase8_event_id && client.index.events.some((entry) => entry.id === data.phase8_event_id)) {
+          await selectEventForCard(context, data.phase8_event_id, { persist: false, selectedStageId: data.phase8_stage_id, selectedEnemyId: data.phase8_enemy_id, initial: data });
+        } else clearEnemyResult(context);
+      }
     }
   } catch {
     elements['update-status'].textContent = '更新しませんでした。現在の敵データはそのまま安全に使えます。';
@@ -1426,58 +2464,131 @@ async function updateData() {
   }
 }
 
-function populateEvents() {
-  replaceOptions(elements['event-select'], client.index.events.map((entry) => ({ value: entry.id, label: entry.name })), 'イベントを選択してください');
+function cardContext(element) {
+  const card = element.closest('.scenario-card');
+  return state.cards.find((context) => context.element === card) ?? null;
 }
 
-function savedDataSummary() {
-  try {
-    const raw = localStorage.getItem(storagePrefix + 'dokkan_calc_data_v22');
-    if (!raw) return;
-    const saved = JSON.parse(raw);
-    elements['saved-data-summary'].textContent = '移行済み: 保存キャラクター ' + (saved.savedCharacters?.length ?? 0) + '件、保存した敵 ' + (saved.savedEnemies?.length ?? 0) + '分類、作業中の状況 ' + (saved.currentScenarios?.length ?? 0) + '件';
-    if (saved.theme === 'dark' && localStorage.getItem('dokkan_phase8_rc_theme') == null) setTheme('dark');
-  } catch {
-    elements['saved-data-summary'].textContent = '移行済みデータを確認できませんでした。元の保存データは変更していません。';
+elements['scenario-cards-container'].addEventListener('focusin', (event) => {
+  if (event.target.matches('input[type="number"]') && event.target.value === '0') event.target.select();
+});
+
+elements['scenario-cards-container'].addEventListener('input', (event) => {
+  const context = cardContext(event.target);
+  if (!context || !event.target.matches('[data-input]')) return;
+  if (event.target.type === 'number') {
+    const normalized = normalizeNumericInputValue(event.target.value);
+    if (normalized !== event.target.value) event.target.value = normalized;
   }
-}
+  renderCard(context);
+  persistState();
+});
 
-function setTheme(theme) {
-  document.documentElement.dataset.theme = theme;
-  elements['theme-button'].textContent = theme === 'dark' ? '☀️' : '🌙';
-  localStorage.setItem('dokkan_phase8_rc_theme', theme);
-}
+elements['scenario-cards-container'].addEventListener('change', async (event) => {
+  const context = cardContext(event.target);
+  if (!context) return;
+  if (event.target.matches('[data-role="event-select"]')) {
+    if (event.target.value === '__legacy__' && context.legacyEnemy) configureLegacyEnemy(context, scenarioData(context));
+    else await selectEventForCard(context, event.target.value);
+  } else if (event.target.matches('[data-role="stage-select"]')) {
+    renderEnemies(context);
+  } else if (event.target.matches('[data-role="enemy-select"]')) {
+    const item = currentEnemyContext(context);
+    if (item) {
+      renderConditionControls(context, item.enemy);
+      renderAttackOptions(context);
+    } else clearEnemyResult(context);
+  } else if (event.target.matches('[data-condition]')) {
+    renderAttackOptions(context);
+  } else {
+    renderCard(context);
+  }
+  persistState();
+});
+
+elements['scenario-cards-container'].addEventListener('click', async (event) => {
+  const context = cardContext(event.target);
+  if (!context) return;
+  if (event.target.matches('[data-role="calculate-button"]')) renderCard(context);
+  if (event.target.matches('[data-action="duplicate"]')) await addScenarioCard(scenarioData(context), { insertAfter: context });
+  if (event.target.matches('[data-action="delete"]')) {
+    if (state.cards.length === 1) {
+      elements['character-status'].textContent = '状況カードは最低1件必要です。';
+      return;
+    }
+    state.cards.splice(state.cards.indexOf(context), 1);
+    context.element.remove();
+    state.cards.forEach((item, index) => role(item, 'scenario-title').value ||= `状況 ${index + 1}`);
+    persistState();
+  }
+});
+
+for (const input of document.querySelectorAll('input[name="calculation-mode"]')) input.addEventListener('change', updateMode);
+elements['add-line-button'].addEventListener('click', addDurabilityLine);
+elements['new-line-input'].addEventListener('input', (event) => {
+  const normalized = normalizeNumericInputValue(event.target.value);
+  if (normalized !== event.target.value) event.target.value = normalized;
+});
+elements['new-line-input'].addEventListener('focus', (event) => { if (event.target.value === '0') event.target.select(); });
+elements['durability-lines-list'].addEventListener('click', (event) => {
+  const index = Number.parseInt(event.target.dataset.lineIndex, 10);
+  if (!Number.isInteger(index)) return;
+  state.durabilityLines.splice(index, 1);
+  renderDurabilityLines();
+  persistState();
+});
+elements['add-scenario-button'].addEventListener('click', () => addScenarioCard(defaultScenario(state.cards.length)));
+elements['save-character-button'].addEventListener('click', saveCharacter);
+elements['load-character-button'].addEventListener('click', loadCharacter);
+elements['new-character-button'].addEventListener('click', startNewCharacter);
+elements['delete-character-button'].addEventListener('click', deleteCharacter);
+elements['preview-button'].addEventListener('click', renderPreview);
+elements['close-preview-button'].addEventListener('click', () => elements['preview-dialog'].close());
+elements['update-button'].addEventListener('click', updateData);
+elements['theme-button'].addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
 
 async function initialize() {
   if (!core) throw new Error('計算コアを読み込めませんでした。');
-  setTheme(localStorage.getItem('dokkan_phase8_rc_theme') === 'dark' ? 'dark' : 'light');
+  const saved = readSavedState();
+  const savedTheme = saved?.theme === 'dark' || localStorage.getItem('dokkan_phase8_rc_theme') === 'dark' ? 'dark' : 'light';
+  setTheme(savedTheme, { persist: false });
+  if (!saved) {
+    state.durabilityLines = [{ name: '完封', value: 0 }, { name: '70万', value: 700_000 }];
+    state.savedCharacters = [];
+    state.savedEnemies = [];
+  }
   try {
     const recovery = await client.initialize();
-    populateEvents();
     elements['data-version'].textContent = 'データ版: ' + client.store.active.datasetVersion;
-    const restored = readLastEvent(localStorage, new Set(client.index.events.map((entry) => entry.id)));
-    if (restored.eventId) await selectEvent(restored.eventId, { persist: false });
-    else {
-      resetEnemySelection('初回はイベントを選んでください');
-      setStatus(recovery.recovery.includes('restored') ? '安全な保存版で準備しました。イベントを選んでください。' : '準備完了。イベントを選んでください。');
-    }
-    savedDataSummary();
+    renderDurabilityLines();
+    renderCharacterList();
+    await recreateScenarioCards(saved?.currentScenarios ?? []);
+    renderSavedDataSummary();
+    state.initializing = false;
+    persistState();
+    const restoredEvent = role(state.cards[0], 'event-select').value;
+    setStatus(restoredEvent || recovery.recovery.includes('restored') ? '準備完了' : '準備完了。被ダメージ計算ではイベントと敵を選んでください。');
     metrics.readyMs = performance.now() - metrics.startedAt;
     globalThis.__phase8Ready = true;
     globalThis.dispatchEvent(new CustomEvent('phase8-ready'));
-  } catch {
+  } catch (error) {
+    console.error(error);
     setStatus('敵データを準備できませんでした。OneDrive backupはヘルプから確認できます。', true);
     globalThis.__phase8Error = true;
   }
 }
 
-elements['event-select'].addEventListener('change', () => selectEvent(elements['event-select'].value));
-elements['stage-select'].addEventListener('change', renderEnemies);
-elements['enemy-select'].addEventListener('change', renderAttackOptions);
-elements['calculate-button'].addEventListener('click', calculate);
-elements['update-button'].addEventListener('click', updateData);
-elements['theme-button'].addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
-globalThis.Phase8RC = { client, store, state, selectEvent, calculate, currentEnemy, updateData };
+globalThis.Phase8RC = {
+  client,
+  store,
+  state,
+  selectEvent: async (eventId) => selectEventForCard(state.cards[0], eventId),
+  calculate: () => renderCard(state.cards[0]),
+  currentEnemy: () => currentEnemyContext(state.cards[0])?.enemy ?? null,
+  updateData,
+  scenarioData: () => allScenarioData()
+};
+
 initialize();
 </script>
 </body>

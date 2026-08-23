@@ -1,10 +1,23 @@
 import { Phase8ReleaseStore } from '../../src/release-candidate/phase8-release-store.mjs';
 import { Phase8RuntimeClient } from '../../src/release-candidate/phase8-runtime-client.mjs';
 import { readLastEvent, saveLastEvent } from '../../src/release-candidate/phase8-selection-state.mjs';
+import {
+  describeImportedStorage,
+  enemyAttackRanges,
+  enemyAttackState,
+  enemyConditionDimensions,
+  enumerateValidEnemyStates,
+  formatAttackRange,
+  japaneseType,
+  known,
+  normalizeNumericInputValue,
+  superAttackAvailableInState
+} from '../../src/release-candidate/phase8-ui-model.mjs';
 
 const params = new URLSearchParams(location.search);
 const dataRoot = params.get('dataRoot') || './data';
 const storagePrefix = 'dokkan_phase8_rc_imported_';
+const storageKey = storagePrefix + 'dokkan_calc_data_v22';
 const core = globalThis.DokkanCalcCore;
 const elements = Object.fromEntries([...document.querySelectorAll('[id]')].map((element) => [element.id, element]));
 const store = new Phase8ReleaseStore({ dbName: params.get('dbName') || 'dokkan-phase8-rc-releases-v1' });
@@ -14,16 +27,52 @@ if (globalThis.__phase8EmbeddedFetch) {
   clientOptions.cacheStorage = null;
 }
 const client = new Phase8RuntimeClient(clientOptions);
-const state = { event: null };
+const state = {
+  event: null,
+  cards: [],
+  cardCounter: 0,
+  durabilityLines: [],
+  savedCharacters: [],
+  savedEnemies: [],
+  savedRoot: {},
+  selectedCharacterIndex: -1,
+  initializing: true
+};
 const metrics = globalThis.__phase8Metrics = { startedAt: performance.now(), readyMs: null, lastEventMs: null };
 
-function known(field, fallback = '—') {
-  return field?.state === 'known' ? field.value : fallback;
-}
+const firstCardIds = Object.freeze({
+  'event-select': 'event-select',
+  'stage-select': 'stage-select',
+  'enemy-select': 'enemy-select',
+  'attack-select': 'attack-select',
+  'char-def': 'char-def',
+  leader: 'leader',
+  passive: 'passive',
+  'multi-passive': 'multi-passive',
+  'damage-reduction': 'damage-reduction',
+  'own-class': 'own-class',
+  'own-type': 'own-type',
+  memory: 'memory',
+  link: 'link',
+  'super-attack': 'super-attack',
+  field: 'field',
+  active: 'active',
+  'support-item': 'support-item',
+  'attribute-defense': 'attribute-defense',
+  guard: 'guard',
+  'calculate-button': 'calculate-button',
+  'final-defense': 'final-defense',
+  'damage-result': 'damage-result',
+  'perfect-defense': 'perfect-defense'
+});
 
 function setStatus(message, error = false) {
   elements['app-status'].textContent = message;
   elements['app-status'].classList.toggle('error', error);
+}
+
+function role(context, name) {
+  return context.element.querySelector(`[data-role="${name}"]`);
 }
 
 function replaceOptions(select, items, placeholder) {
@@ -31,122 +80,690 @@ function replaceOptions(select, items, placeholder) {
   select.disabled = items.length === 0;
 }
 
-function resetEnemySelection(message = 'イベントを選択してください') {
-  state.event = null;
-  replaceOptions(elements['stage-select'], [], '—');
-  replaceOptions(elements['enemy-select'], [], '—');
-  replaceOptions(elements['attack-select'], [], '—');
-  elements['enemy-name'].textContent = message;
-  elements['enemy-details'].textContent = '選んだイベントだけを読み込みます。';
-  elements['calculate-button'].disabled = true;
+function defaultScenario(index = 0) {
+  return {
+    scenario_title: `状況 ${index + 1}`,
+    char_def: '0', leader: '0', passive: '0', multi_passive: '0', memory: '0', link: '0',
+    super_attack: '0', field: '0', active: '0', support_item: '0', dr_input: '0',
+    own_class: 'super', own_type: 'teq', attr_def_up: '0', is_guard: false,
+    is_critical: false, crit_atk_up: '0', crit_def_down: '0',
+    enemy_atk: '', enemy_class: 'super', enemy_type: 'teq'
+  };
+}
+
+function inputValue(element) {
+  return element.type === 'checkbox' ? element.checked : element.value;
+}
+
+function scenarioData(context) {
+  const data = { originalIndex: state.cards.indexOf(context) };
+  for (const input of context.element.querySelectorAll('[data-input]')) data[input.dataset.input] = inputValue(input);
+  data.phase8_event_id = role(context, 'event-select').value;
+  data.phase8_stage_id = role(context, 'stage-select').value;
+  data.phase8_enemy_id = role(context, 'enemy-select').value;
+  data.phase8_attack_id = role(context, 'attack-select').value;
+  for (const select of context.element.querySelectorAll('[data-condition]')) data[`phase8_condition_${select.dataset.condition}`] = select.value;
+  if (context.legacyEnemy) data.loadedEnemy = context.legacyEnemy;
+  return data;
+}
+
+function allScenarioData() {
+  return state.cards.map(scenarioData);
+}
+
+function persistState() {
+  if (state.initializing) return;
+  const next = {
+    ...state.savedRoot,
+    durabilityLines: state.durabilityLines,
+    savedCharacters: state.savedCharacters,
+    savedEnemies: state.savedEnemies,
+    currentScenarios: allScenarioData(),
+    theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+  };
+  state.savedRoot = next;
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(next));
+  } catch (error) {
+    console.error('Failed to save Phase 8 RC state', error);
+  }
+}
+
+function readSavedState() {
+  try {
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return null;
+    const saved = JSON.parse(raw);
+    if (!saved || typeof saved !== 'object') return null;
+    state.savedRoot = saved;
+    state.durabilityLines = Array.isArray(saved.durabilityLines) ? saved.durabilityLines : [];
+    state.savedCharacters = Array.isArray(saved.savedCharacters) ? saved.savedCharacters : [];
+    state.savedEnemies = Array.isArray(saved.savedEnemies) ? saved.savedEnemies : [];
+    return saved;
+  } catch {
+    elements['saved-data-summary'].textContent = '移行済みデータを確認できませんでした。元の保存データは変更していません。';
+    return null;
+  }
+}
+
+function setTheme(theme, { persist = true } = {}) {
+  document.documentElement.dataset.theme = theme;
+  elements['theme-button'].textContent = theme === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('dokkan_phase8_rc_theme', theme);
+  if (persist) persistState();
+}
+
+function formatTargetDamage(value) {
+  if (Number(value) === 0) return '完封（0）';
+  return core.formatNumber(value);
+}
+
+function renderDurabilityLines() {
+  elements['durability-lines-list'].replaceChildren();
+  state.durabilityLines.forEach((line, index) => {
+    const badge = document.createElement('span');
+    badge.className = 'line-badge';
+    const label = document.createElement('span');
+    label.textContent = line.name || formatTargetDamage(line.value);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.lineIndex = String(index);
+    button.setAttribute('aria-label', `${label.textContent}を削除`);
+    button.textContent = '×';
+    badge.append(label, button);
+    elements['durability-lines-list'].append(badge);
+  });
+  updateAllCards();
+}
+
+function addDurabilityLine() {
+  if (state.durabilityLines.length >= 4) {
+    elements['character-status'].textContent = '耐久ラインは4件までです。';
+    return;
+  }
+  const raw = Number.parseInt(elements['new-line-input'].value, 10);
+  if (!Number.isFinite(raw) || raw < 0) return;
+  const value = raw * 10_000;
+  if (!state.durabilityLines.some((line) => Number(line.value) === value)) {
+    state.durabilityLines.push({ name: value === 0 ? '完封' : core.formatNumber(value), value });
+    state.durabilityLines.sort((left, right) => Number(left.value) - Number(right.value));
+  }
+  elements['new-line-input'].value = '';
+  renderDurabilityLines();
+  persistState();
+}
+
+function renderCharacterList() {
+  const selected = state.selectedCharacterIndex;
+  elements['characters-list'].replaceChildren();
+  if (state.savedCharacters.length === 0) {
+    elements['characters-list'].append(new Option('保存済みキャラクターはいません', ''));
+    return;
+  }
+  state.savedCharacters.forEach((character, index) => elements['characters-list'].append(new Option(character.name, String(index))));
+  if (selected >= 0 && state.savedCharacters[selected]) elements['characters-list'].value = String(selected);
+}
+
+function saveCharacter() {
+  const name = elements['character-name'].value.trim();
+  if (!name) {
+    elements['character-status'].textContent = 'キャラクター名を入力してください。';
+    elements['character-status'].classList.add('error');
+    return;
+  }
+  const character = { name, scenarios: allScenarioData() };
+  const byName = state.savedCharacters.findIndex((item) => item.name === name);
+  if (state.selectedCharacterIndex >= 0) {
+    state.savedCharacters[state.selectedCharacterIndex] = character;
+  } else if (byName >= 0) {
+    state.savedCharacters[byName] = character;
+    state.selectedCharacterIndex = byName;
+  } else {
+    state.savedCharacters.push(character);
+    state.selectedCharacterIndex = state.savedCharacters.length - 1;
+  }
+  renderCharacterList();
+  persistState();
+  elements['character-status'].textContent = `「${name}」を保存しました（状況 ${character.scenarios.length}件）。`;
+  elements['character-status'].classList.remove('error');
+  renderSavedDataSummary();
+}
+
+async function loadCharacter() {
+  const index = Number.parseInt(elements['characters-list'].value, 10);
+  if (!Number.isInteger(index) || !state.savedCharacters[index]) {
+    elements['character-status'].textContent = '読み込むキャラクターを選択してください。';
+    return;
+  }
+  if (!confirm('現在の作業中の状況を置き換えて、選択したキャラクターを読み込みますか？')) return;
+  const character = state.savedCharacters[index];
+  state.selectedCharacterIndex = index;
+  elements['character-name'].value = character.name;
+  await recreateScenarioCards(character.scenarios);
+  persistState();
+  elements['character-status'].textContent = `「${character.name}」を読み込みました。`;
+}
+
+async function startNewCharacter() {
+  if (!confirm('現在の作業中の状況を新しいキャラクター用に入れ替えますか？')) return;
+  state.selectedCharacterIndex = -1;
+  elements['character-name'].value = '';
+  renderCharacterList();
+  await recreateScenarioCards([defaultScenario(0)]);
+  persistState();
+  elements['character-status'].textContent = '新しいキャラクターを作成できます。';
+}
+
+function deleteCharacter() {
+  const index = Number.parseInt(elements['characters-list'].value, 10);
+  if (!Number.isInteger(index) || !state.savedCharacters[index]) return;
+  const name = state.savedCharacters[index].name;
+  if (!confirm(`「${name}」を保存一覧から削除しますか？`)) return;
+  state.savedCharacters.splice(index, 1);
+  state.selectedCharacterIndex = -1;
+  renderCharacterList();
+  persistState();
+  renderSavedDataSummary();
+  elements['character-status'].textContent = `「${name}」を削除しました。作業中のカードは残しています。`;
+}
+
+function renderPreview() {
+  elements['preview-content'].replaceChildren();
+  for (const context of state.cards) {
+    const data = scenarioData(context);
+    const calculation = core.calculateDurability(calculationInput(context, null, true));
+    const item = document.createElement('section');
+    item.className = 'preview-item';
+    const title = document.createElement('h3');
+    title.textContent = data.scenario_title || '名称なし';
+    const summary = document.createElement('p');
+    summary.textContent = `最終DEF ${Math.round(calculation.final_def).toLocaleString()} / 軽減 ${data.dr_input || 0}% / 全属性ガード ${data.is_guard ? 'あり' : 'なし'}`;
+    const lines = document.createElement('ul');
+    for (const line of state.durabilityLines) {
+      const row = document.createElement('li');
+      row.textContent = `${line.name || formatTargetDamage(line.value)}：敵ATK ${core.formatDurabilityLimit(core.calculateSafeDurabilityLine(line.value, calculation))}`;
+      lines.append(row);
+    }
+    item.append(title, summary, lines);
+    elements['preview-content'].append(item);
+  }
+  elements['preview-dialog'].showModal();
+}
+
+function runtimeField(value, stateName = 'known') {
+  return value == null ? { state: 'unknown', value: null } : { state: stateName, value };
+}
+
+function legacyEffect(id, kind, value, { start = null, hpMax = null, cap = null, bracket = 'start-of-turn' } = {}) {
+  return {
+    id,
+    trigger: {
+      kind,
+      start: runtimeField(start),
+      end: runtimeField(null),
+      hpMinPercent: kind === 'hp-range' ? runtimeField(0) : runtimeField(null),
+      hpMaxPercent: runtimeField(hpMax)
+    },
+    appliesTo: 'enemy-stats', target: 'attack', operation: 'add-percent',
+    value: runtimeField(value), cap: runtimeField(cap), durationTurns: runtimeField(null), bracket
+  };
+}
+
+function legacyEnemyToRuntime(enemy) {
+  const baseAttack = Number(enemy.baseAtk) || Number(enemy.attacks?.find((attack) => attack.name === '通常')?.value) || 0;
+  const passiveEffects = [];
+  if (Number(enemy.turnAtkUp) > 0) passiveEffects.push(legacyEffect('legacy-turn', 'elapsed-turn', Number(enemy.turnAtkUp), { start: Number(enemy.turnAtkUpStartTurn) || 1, cap: Number(enemy.turnAtkMax) || null }));
+  if (Number(enemy.hitAtkUp) > 0) passiveEffects.push(legacyEffect('legacy-hit', 'received-hit-count', Number(enemy.hitAtkUp), { start: 1, cap: Number(enemy.hitAtkMax) || null, bracket: 'mid-battle' }));
+  if (Number(enemy.hpAtkUp) > 0) passiveEffects.push(legacyEffect('legacy-hp', 'hp-range', Number(enemy.hpAtkUp), { hpMax: Number(enemy.hpAtkThreshold) || 100 }));
+  let previousAppearance = 0;
+  for (const [index, entry] of (enemy.appearEntries ?? []).entries()) {
+    const cumulative = Number(entry.cumulativeAtkUp) || 0;
+    passiveEffects.push(legacyEffect(`legacy-appearance-${index}`, 'appearance-turn', cumulative - previousAppearance, { start: Number(entry.turn) || 1 }));
+    previousAppearance = cumulative;
+  }
+  const superRows = (enemy.attacks ?? []).filter((attack) => String(attack.name).includes('必殺'));
+  if (superRows.length === 0 && Number(enemy.saMulti) > 0) {
+    superRows.push({ name: '必殺', value: Math.floor(baseAttack * (Number(enemy.saMulti) + Number(enemy.saBuffMod || 0))) });
+  }
+  const postSuperEffect = Number(enemy.saBuffMod) > 0 ? [{
+    id: 'legacy-post-super', trigger: { kind: 'after-super', start: runtimeField(null), end: runtimeField(null), hpMinPercent: runtimeField(null), hpMaxPercent: runtimeField(null) },
+    appliesTo: 'subsequent-normal-attacks', target: 'attack', operation: 'add-percent', value: runtimeField(Number(enemy.saBuffMod) * 100),
+    cap: runtimeField(null), durationTurns: runtimeField(1), bracket: 'post-super'
+  }] : [];
+  return {
+    id: `legacy:${enemy.name || 'enemy'}`,
+    name: runtimeField(enemy.name || '移行済み保存敵'),
+    type: runtimeField(enemy.type || 'teq'),
+    alignment: runtimeField(enemy.class || 'neutral'),
+    baseAttack: runtimeField(baseAttack),
+    passiveEffects,
+    superAttacks: superRows.map((attack, index) => ({
+      id: `legacy-super-${index}`, name: runtimeField(attack.name || `必殺${index + 1}`), displayedDamage: runtimeField(Number(attack.value) || 0), effects: index === 0 ? postSuperEffect : []
+    }))
+  };
 }
 
 function allEnemies(stage) {
-  return stage?.encounters.flatMap((encounter) => encounter.enemies) ?? [];
+  return stage?.encounters.flatMap((encounter) => encounter.enemies.map((enemy) => ({ enemy, encounter }))) ?? [];
 }
 
-function currentStage() {
-  return state.event?.stages.find((stage) => stage.id === elements['stage-select'].value) ?? null;
+function currentStage(context) {
+  return context.event?.stages.find((stage) => stage.id === role(context, 'stage-select').value) ?? null;
 }
 
-function currentEnemy() {
-  return allEnemies(currentStage()).find((enemy) => enemy.id === elements['enemy-select'].value) ?? null;
+function currentEnemyContext(context) {
+  if (context.legacyEnemy) return { enemy: context.runtimeLegacyEnemy, encounter: { areaAttacks: [] } };
+  return allEnemies(currentStage(context)).find((item) => item.enemy.id === role(context, 'enemy-select').value) ?? null;
 }
 
-function renderAttackOptions() {
-  const enemy = currentEnemy();
-  if (!enemy) {
-    replaceOptions(elements['attack-select'], [], '—');
-    elements['calculate-button'].disabled = true;
+function clearEnemyResult(context, message = '敵を選択してください') {
+  replaceOptions(role(context, 'attack-select'), [], '—');
+  role(context, 'condition-controls').replaceChildren();
+  role(context, 'enemy-name').textContent = message;
+  role(context, 'enemy-type').textContent = '敵属性：未選択';
+  role(context, 'enemy-attack-summary').textContent = '敵を選ぶと通常攻撃・必殺攻撃を表示します。';
+  role(context, 'calculate-button').disabled = true;
+  renderCard(context);
+}
+
+function renderConditionControls(context, enemy, initial = {}) {
+  const container = role(context, 'condition-controls');
+  container.replaceChildren();
+  const dimensions = enemyConditionDimensions(enemy);
+  const configurations = [
+    ['turn', 'ターン', dimensions.turns, initial.phase8_condition_turn],
+    ['hits', '被弾回数', dimensions.hits, initial.phase8_condition_hits],
+    ['hp', 'HP', dimensions.hp, initial.phase8_condition_hp]
+  ];
+  for (const [name, labelText, options, saved] of configurations) {
+    if (options.length <= 1) continue;
+    const label = document.createElement('label');
+    label.textContent = labelText;
+    const select = document.createElement('select');
+    select.dataset.condition = name;
+    options.forEach((option) => select.append(new Option(option.label, String(option.value))));
+    if (saved != null && options.some((option) => String(option.value) === String(saved))) select.value = String(saved);
+    else if (name === 'hp' && options.some((option) => option.value === 100)) select.value = '100';
+    label.append(select);
+    container.append(label);
+  }
+}
+
+function currentCondition(context) {
+  const dimensions = enemyConditionDimensions(currentEnemyContext(context)?.enemy);
+  const selected = Object.fromEntries([...context.element.querySelectorAll('[data-condition]')].map((select) => [select.dataset.condition, Number(select.value)]));
+  return {
+    turn: selected.turn ?? dimensions.turns[0]?.value ?? 1,
+    hits: selected.hits ?? dimensions.hits[0]?.value ?? 0,
+    hp: selected.hp ?? dimensions.hp.find((option) => option.value === 100)?.value ?? dimensions.hp[0]?.value ?? 100
+  };
+}
+
+function areaAttacksFor(item) {
+  if (!item) return [];
+  return (item.encounter.areaAttacks ?? []).filter((attack) => {
+    const sourceId = known(attack.sourceEnemyId, null);
+    return sourceId == null || sourceId === item.enemy.id;
+  });
+}
+
+function areaAttackValue(attack, stateResult, target = 'first') {
+  const field = target === 'additional' ? attack.additionalTargetDamage : attack.firstTargetDamage;
+  let value = Number(known(field, 0));
+  value = core.applyPercentAndFloor(value, stateResult.startOfTurnPercent);
+  return core.applyPercentAndFloor(value, stateResult.receivedHitPercent);
+}
+
+function renderEnemyAttackSummary(context, item) {
+  const ranges = enemyAttackRanges(item.enemy, core);
+  const container = role(context, 'enemy-attack-summary');
+  container.replaceChildren();
+  const rows = [
+    ['通常攻撃', formatAttackRange(ranges.normal)],
+    ...ranges.supers.map((attack) => [attack.name, formatAttackRange(attack.range)])
+  ];
+  const validStates = enumerateValidEnemyStates(item.enemy, core);
+  for (const area of areaAttacksFor(item)) {
+    const values = validStates.map((entry) => areaAttackValue(area, entry.attacks, 'first'));
+    rows.push(['全体攻撃', formatAttackRange({ minimum: Math.min(...values), maximum: Math.max(...values) })]);
+  }
+  for (const [name, value] of rows) {
+    const row = document.createElement('div');
+    row.className = 'attack-summary-row';
+    const label = document.createElement('span');
+    label.textContent = name;
+    const strong = document.createElement('strong');
+    strong.textContent = value;
+    row.append(label, strong);
+    container.append(row);
+  }
+  if (ranges.supers.length > 1) {
+    const note = document.createElement('small');
+    note.textContent = '複数の必殺技は、情報をまとめず技ごとに表示しています。';
+    container.append(note);
+  }
+}
+
+function renderAttackOptions(context, { initial = {} } = {}) {
+  const item = currentEnemyContext(context);
+  if (!item) {
+    clearEnemyResult(context);
     return;
   }
-  const attacks = [{ value: 'normal', label: '通常攻撃 ' + Number(known(enemy.baseAttack, 0)).toLocaleString() }];
-  enemy.superAttacks.forEach((attack) => attacks.push({ value: attack.id, label: known(attack.name, '必殺技') + ' ' + Number(known(attack.displayedDamage, 0)).toLocaleString() }));
-  replaceOptions(elements['attack-select'], attacks, '攻撃を選択');
-  elements['attack-select'].value = attacks[0].value;
-  elements['enemy-name'].textContent = known(enemy.name, enemy.id);
-  elements['enemy-details'].textContent = known(enemy.alignment, '不明') + ' / ' + known(enemy.type, '不明') + '・基礎ATK ' + Number(known(enemy.baseAttack, 0)).toLocaleString();
-  elements['calculate-button'].disabled = false;
-}
-
-function renderEnemies() {
-  const enemies = allEnemies(currentStage());
-  replaceOptions(elements['enemy-select'], enemies.map((enemy) => ({ value: enemy.id, label: known(enemy.name, enemy.id) })), '敵を選択');
-  if (enemies.length > 0) {
-    elements['enemy-select'].value = enemies[0].id;
-    renderAttackOptions();
+  const ranges = enemyAttackRanges(item.enemy, core);
+  const options = [{ value: 'normal', label: `通常攻撃 ${formatAttackRange(ranges.normal)}` }];
+  const baseState = enemyAttackState(item.enemy, currentCondition(context), core);
+  baseState.normalValues.slice(1).forEach((value, index) => options.push({ value: `post-super:${index}`, label: `通常攻撃（必殺後） ${value.toLocaleString()}` }));
+  const selectedState = currentCondition(context);
+  ranges.supers.forEach((attack) => {
+    const source = item.enemy.superAttacks.find((candidate) => candidate.id === attack.id);
+    if (superAttackAvailableInState(source, selectedState)) options.push({ value: `super:${attack.id}`, label: `${attack.name} ${formatAttackRange(attack.range)}` });
+  });
+  for (const area of areaAttacksFor(item)) {
+    options.push({ value: `area:${area.id}:first`, label: `全体攻撃 ${Number(known(area.firstTargetDamage, 0)).toLocaleString()}` });
+    if (known(area.additionalTargetDamage, null) != null && known(area.additionalTargetDamage, null) !== known(area.firstTargetDamage, null)) {
+      options.push({ value: `area:${area.id}:additional`, label: `全体攻撃（2体目以降） ${Number(known(area.additionalTargetDamage, 0)).toLocaleString()}` });
+    }
   }
+  replaceOptions(role(context, 'attack-select'), options, '攻撃を選択');
+  const wanted = initial.phase8_attack_id || context.pendingAttackId;
+  role(context, 'attack-select').value = options.some((option) => option.value === wanted) ? wanted : 'normal';
+  context.pendingAttackId = null;
+  const alignment = known(item.enemy.alignment, 'neutral');
+  const type = known(item.enemy.type, null);
+  role(context, 'enemy-name').textContent = String(known(item.enemy.name, item.enemy.id));
+  role(context, 'enemy-type').textContent = `敵属性：${japaneseType(alignment, type)}`;
+  renderEnemyAttackSummary(context, item);
+  role(context, 'calculate-button').disabled = false;
+  renderCard(context);
 }
 
-function renderStages() {
-  const stages = state.event?.stages ?? [];
-  replaceOptions(elements['stage-select'], stages.map((stage) => ({ value: stage.id, label: known(stage.name, stage.id) })), 'ステージを選択');
-  if (stages.length > 0) {
-    elements['stage-select'].value = stages[0].id;
-    renderEnemies();
-  }
+function renderEnemies(context, { selectedEnemyId = '', initial = {} } = {}) {
+  context.legacyEnemy = null;
+  context.runtimeLegacyEnemy = null;
+  const enemies = allEnemies(currentStage(context));
+  replaceOptions(role(context, 'enemy-select'), enemies.map(({ enemy }) => ({ value: enemy.id, label: String(known(enemy.name, enemy.id)) })), '敵を選択してください');
+  if (selectedEnemyId && enemies.some(({ enemy }) => enemy.id === selectedEnemyId)) {
+    role(context, 'enemy-select').value = selectedEnemyId;
+    const item = currentEnemyContext(context);
+    renderConditionControls(context, item.enemy, initial);
+    renderAttackOptions(context, { initial });
+  } else clearEnemyResult(context);
 }
 
-async function selectEvent(eventId, { persist = true } = {}) {
+function renderStages(context, { selectedStageId = '', selectedEnemyId = '', initial = {} } = {}) {
+  const stages = context.event?.stages ?? [];
+  replaceOptions(role(context, 'stage-select'), stages.map((stage) => ({ value: stage.id, label: String(known(stage.name, stage.id)) })), 'ステージを選択');
+  if (stages.length === 0) return renderEnemies(context);
+  role(context, 'stage-select').value = stages.some((stage) => stage.id === selectedStageId) ? selectedStageId : stages[0].id;
+  renderEnemies(context, { selectedEnemyId, initial });
+}
+
+async function selectEventForCard(context, eventId, { persist = true, selectedStageId = '', selectedEnemyId = '', initial = {} } = {}) {
   const started = performance.now();
+  context.legacyEnemy = null;
+  context.runtimeLegacyEnemy = null;
   if (!eventId) {
-    resetEnemySelection();
+    context.event = null;
+    replaceOptions(role(context, 'stage-select'), [], '—');
+    replaceOptions(role(context, 'enemy-select'), [], '敵を選択してください');
+    clearEnemyResult(context, 'イベントを選択してください');
     return false;
   }
   setStatus('選んだイベントを読み込んでいます…');
   try {
     const event = await client.event(eventId);
-    if (!event) {
-      resetEnemySelection('このイベントは現在のデータにありません');
-      elements['event-select'].value = '';
-      setStatus('イベントを選び直してください。');
-      return false;
-    }
-    state.event = event;
-    elements['event-select'].value = eventId;
-    renderStages();
+    if (!event) throw new Error('missing event');
+    context.event = event;
+    role(context, 'event-select').value = eventId;
+    renderStages(context, { selectedStageId, selectedEnemyId, initial });
+    if (state.cards[0] === context) state.event = event;
     if (persist) saveLastEvent(localStorage, eventId, client.manifest.datasetVersion);
     metrics.lastEventMs = performance.now() - started;
     setStatus('準備完了');
-    globalThis.dispatchEvent(new CustomEvent('phase8-event-ready', { detail: { eventId } }));
+    globalThis.dispatchEvent(new CustomEvent('phase8-event-ready', { detail: { eventId, cardId: context.id } }));
+    persistState();
     return true;
   } catch {
-    resetEnemySelection('イベントを読み込めませんでした');
+    context.event = null;
+    role(context, 'event-select').value = '';
+    replaceOptions(role(context, 'stage-select'), [], '—');
+    replaceOptions(role(context, 'enemy-select'), [], '敵を選択してください');
+    clearEnemyResult(context, 'イベントを読み込めませんでした');
     setStatus('イベントを読み込めませんでした。現在のデータは変更されていません。', true);
     return false;
   }
 }
 
-function calculationInput(enemy) {
-  const ownClass = elements['own-class'].value;
-  const enemyAlignment = known(enemy.alignment, ownClass);
-  return {
-    char_def: elements['char-def'].value, leader: elements.leader.value, passive: elements.passive.value,
-    multi_passive: elements['multi-passive'].value, memory: elements.memory.value, link: elements.link.value,
-    super_attack: elements['super-attack'].value, field: elements.field.value, active: elements.active.value,
-    support_item: elements['support-item'].value, dr_input: elements['damage-reduction'].value,
-    is_guard: elements.guard.checked, attr_def_up: elements['attribute-defense'].value,
-    own_class: ownClass, own_type: elements['own-type'].value,
-    enemy_class: enemyAlignment === 'neutral' ? ownClass : enemyAlignment,
-    enemy_type: known(enemy.type, elements['own-type'].value)
-  };
+function configureLegacyEnemy(context, data) {
+  context.legacyEnemy = data.loadedEnemy;
+  context.runtimeLegacyEnemy = legacyEnemyToRuntime(data.loadedEnemy);
+  const eventSelect = role(context, 'event-select');
+  eventSelect.append(new Option('移行済みの保存敵', '__legacy__'));
+  eventSelect.disabled = false;
+  eventSelect.value = '__legacy__';
+  replaceOptions(role(context, 'stage-select'), [{ value: '__legacy__', label: '保存データ' }], '—');
+  role(context, 'stage-select').value = '__legacy__';
+  replaceOptions(role(context, 'enemy-select'), [{ value: context.runtimeLegacyEnemy.id, label: String(known(context.runtimeLegacyEnemy.name, '保存敵')) }], '敵を選択してください');
+  role(context, 'enemy-select').value = context.runtimeLegacyEnemy.id;
+  renderConditionControls(context, context.runtimeLegacyEnemy, data);
+  context.pendingAttackId = data.phase8_attack_id;
+  renderAttackOptions(context, { initial: data });
 }
 
-function selectedAttackValue(enemy) {
-  if (elements['attack-select'].value === 'normal') return Number(known(enemy.baseAttack, 0));
-  const attack = enemy.superAttacks.find((item) => item.id === elements['attack-select'].value);
-  return Number(known(attack?.displayedDamage, 0));
+function populateEventSelect(context) {
+  replaceOptions(role(context, 'event-select'), client.index.events.map((entry) => ({ value: entry.id, label: entry.name })), 'イベントを選択してください');
 }
 
-function calculate() {
-  const enemy = currentEnemy();
-  if (!enemy) return;
-  const calculation = core.calculateDurability(calculationInput(enemy));
-  const attack = selectedAttackValue(enemy);
-  const range = core.calculateDamageRange(attack, calculation);
-  elements['final-defense'].textContent = Math.floor(calculation.final_def).toLocaleString();
-  elements['damage-result'].textContent = core.formatDamageRange(range);
-  elements['perfect-defense'].textContent = core.formatDurabilityLimit(core.calculateSafeDurabilityLine(0, calculation));
+function applyScenarioInputs(context, data) {
+  const merged = { ...defaultScenario(state.cards.length), ...data };
+  for (const input of context.element.querySelectorAll('[data-input]')) {
+    const value = merged[input.dataset.input];
+    if (value === undefined || value === null) continue;
+    if (input.type === 'checkbox') input.checked = value === true || String(value) === 'true';
+    else input.value = String(value);
+  }
+}
+
+function assignCardIds(context, isFirst) {
+  for (const element of context.element.querySelectorAll('[data-role]')) {
+    const name = element.dataset.role;
+    element.id = isFirst && firstCardIds[name] ? firstCardIds[name] : `${context.id}-${name}`;
+  }
+}
+
+async function addScenarioCard(data = defaultScenario(state.cards.length), { insertAfter = null, restoreLastEvent = false } = {}) {
+  state.cardCounter += 1;
+  const element = elements['scenario-card-template'].content.firstElementChild.cloneNode(true);
+  const context = { id: `scenario-${state.cardCounter}`, element, event: null, legacyEnemy: null, runtimeLegacyEnemy: null, pendingAttackId: null };
+  const insertIndex = insertAfter ? state.cards.indexOf(insertAfter) + 1 : state.cards.length;
+  state.cards.splice(insertIndex, 0, context);
+  assignCardIds(context, state.cards.length === 1);
+  applyScenarioInputs(context, data);
+  if (insertAfter) insertAfter.element.insertAdjacentElement('afterend', element);
+  else elements['scenario-cards-container'].append(element);
+  populateEventSelect(context);
+  if (data.loadedEnemy && typeof data.loadedEnemy === 'object') {
+    configureLegacyEnemy(context, data);
+  } else {
+    let eventId = data.phase8_event_id || '';
+    if (!eventId && restoreLastEvent) eventId = readLastEvent(localStorage, new Set(client.index.events.map((entry) => entry.id))).eventId || '';
+    if (eventId) await selectEventForCard(context, eventId, {
+      persist: false,
+      selectedStageId: data.phase8_stage_id || '',
+      selectedEnemyId: data.phase8_enemy_id || '',
+      initial: data
+    });
+    else clearEnemyResult(context, '敵を選択してください');
+  }
+  updateMode();
+  renderCard(context);
+  persistState();
+  return context;
+}
+
+async function recreateScenarioCards(scenarios = []) {
+  state.cards = [];
+  state.cardCounter = 0;
+  elements['scenario-cards-container'].replaceChildren();
+  const values = scenarios.length > 0 ? scenarios : [defaultScenario(0)];
+  for (const [index, data] of values.entries()) await addScenarioCard(data, { restoreLastEvent: index === 0 && !data.loadedEnemy && !data.phase8_event_id });
+}
+
+function calculationInput(context, enemy, durabilityMode = false) {
+  const ownClass = role(context, 'own-class').value;
+  const ownType = role(context, 'own-type').value;
+  const alignment = durabilityMode ? ownClass : known(enemy?.alignment, ownClass);
+  const enemyClass = alignment === 'neutral' ? ownClass : alignment;
+  const enemyType = durabilityMode ? ownType : known(enemy?.type, ownType);
+  const values = Object.fromEntries([...context.element.querySelectorAll('[data-input]')].map((input) => [input.dataset.input, inputValue(input)]));
+  return { ...values, own_class: ownClass, own_type: ownType, enemy_class: enemyClass, enemy_type: enemyType };
+}
+
+function selectedAttack(context, item) {
+  const condition = enemyAttackState(item.enemy, currentCondition(context), core);
+  const value = role(context, 'attack-select').value;
+  if (value === 'normal') return { name: '通常攻撃', value: condition.normalValues[0] };
+  if (value.startsWith('post-super:')) {
+    const index = Number.parseInt(value.split(':')[1], 10);
+    return { name: '通常攻撃（必殺後）', value: condition.normalValues[index + 1] };
+  }
+  if (value.startsWith('super:')) {
+    const id = value.slice('super:'.length);
+    const attack = condition.supers.find((candidate) => candidate.id === id);
+    return attack ? { name: attack.name, value: attack.value } : null;
+  }
+  if (value.startsWith('area:')) {
+    const [, id, target] = value.split(':');
+    const attack = areaAttacksFor(item).find((candidate) => candidate.id === id);
+    return attack ? { name: target === 'additional' ? '全体攻撃（2体目以降）' : '全体攻撃', value: areaAttackValue(attack, condition, target) } : null;
+  }
+  return null;
+}
+
+function renderDurabilityResult(context, calculation) {
+  const container = role(context, 'durability-table');
+  if (state.durabilityLines.length === 0) {
+    container.textContent = '耐久ライン設定から1件以上追加してください。';
+    return;
+  }
+  const table = document.createElement('table');
+  table.className = 'durability-table';
+  const body = document.createElement('tbody');
+  const criticalUnconfigured = role(context, 'is-critical').checked
+    && Number(role(context, 'critical-attack').value || 0) === 0
+    && Number(role(context, 'critical-defense').value || 0) === 0;
+  for (const line of state.durabilityLines) {
+    const row = document.createElement('tr');
+    const target = document.createElement('th');
+    target.textContent = line.name || formatTargetDamage(line.value);
+    const result = document.createElement('td');
+    result.textContent = criticalUnconfigured
+      ? '—（会心補正を設定）'
+      : core.formatDurabilityLimit(core.calculateSafeDurabilityLine(line.value, calculation));
+    row.append(target, result);
+    body.append(row);
+  }
+  table.append(body);
+  container.replaceChildren(table);
+}
+
+function renderDamageResult(context) {
+  const ownLabel = japaneseType(role(context, 'own-class').value, role(context, 'own-type').value);
+  const item = currentEnemyContext(context);
+  const manualAttack = Number(role(context, 'manual-enemy-attack').value || 0) * 10_000;
+  const usesManualAttack = (!item || !role(context, 'enemy-select').value) && manualAttack > 0;
+  if ((!item || !role(context, 'enemy-select').value) && !usesManualAttack) {
+    role(context, 'damage-result').textContent = '敵を選択してください';
+    role(context, 'perfect-defense').textContent = '—';
+    role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：未選択`;
+    return;
+  }
+  if (
+    role(context, 'is-critical').checked
+    && Number(role(context, 'critical-attack').value || 0) === 0
+    && Number(role(context, 'critical-defense').value || 0) === 0
+  ) {
+    role(context, 'damage-result').textContent = '会心補正を設定してください';
+    role(context, 'perfect-defense').textContent = '—';
+    return;
+  }
+  const manualEnemy = usesManualAttack ? {
+    alignment: runtimeField(role(context, 'manual-enemy-class').value),
+    type: runtimeField(role(context, 'manual-enemy-type').value)
+  } : null;
+  const enemy = item?.enemy ?? manualEnemy;
+  const attack = usesManualAttack ? { name: '手動ATK', value: manualAttack } : selectedAttack(context, item);
+  if (!attack || !Number.isFinite(Number(attack.value))) {
+    role(context, 'damage-result').textContent = '攻撃を選択してください';
+    role(context, 'perfect-defense').textContent = '—';
+    return;
+  }
+  const calculation = core.calculateDurability(calculationInput(context, enemy, false));
+  const range = core.calculateDamageRange(attack.value, calculation);
+  const required = core.calculateRequiredDefenseForZeroDamage(attack.value, calculation);
+  const enemyLabel = japaneseType(known(enemy.alignment, 'neutral'), known(enemy.type, null));
+  role(context, 'damage-result').textContent = `${attack.name}：${core.formatDamageRange(range)}`;
+  role(context, 'perfect-defense').textContent = Number.isFinite(required) ? Math.ceil(required).toLocaleString() : '—';
+  role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：${enemyLabel}`;
+}
+
+function renderCard(context) {
+  const durabilityCalculation = core.calculateDurability(calculationInput(context, null, true));
+  role(context, 'final-defense').textContent = Math.round(durabilityCalculation.final_def).toLocaleString();
+  renderDurabilityResult(context, durabilityCalculation);
+  renderDamageResult(context);
+}
+
+function updateAllCards() {
+  state.cards.forEach(renderCard);
+}
+
+function updateMode() {
+  const mode = document.querySelector('input[name="calculation-mode"]:checked')?.value || 'durability';
+  elements['durability-settings'].hidden = mode !== 'durability';
+  state.cards.forEach((context) => {
+    role(context, 'durability-result').hidden = mode !== 'durability';
+    role(context, 'damage-panel').hidden = mode !== 'damage';
+  });
+  updateAllCards();
+}
+
+function renderSavedDataSummary() {
+  const container = elements['saved-data-summary'];
+  container.replaceChildren();
+  const raw = localStorage.getItem(storageKey);
+  if (!raw) {
+    container.textContent = 'この確認版に移行された保存データはありません。';
+    return;
+  }
+  try {
+    const saved = JSON.parse(raw);
+    const summary = describeImportedStorage(saved);
+    const intro = document.createElement('p');
+    intro.textContent = '移行済みの内容：';
+    const list = document.createElement('ul');
+    list.className = 'migration-summary-list';
+    const entries = [
+      `保存キャラクター：${summary.characters}件${summary.characterNames.length ? `（${summary.characterNames.join('、')}）` : ''}`,
+      `保存済み状況：${summary.savedScenarios}件`,
+      `作業中の状況：${summary.currentScenarios}件`,
+      `手動保存した敵：${summary.manualEnemies}件`,
+      `設定：${summary.settings}分類（耐久ライン・配色）`,
+      'GitHub PAT：移行していません',
+      'イベント・ステージ・配布敵データ：増えません'
+    ];
+    entries.forEach((text) => {
+      const item = document.createElement('li');
+      item.textContent = text;
+      list.append(item);
+    });
+    const guide = document.createElement('p');
+    guide.textContent = '上の「キャラクター管理」で名前を選び「読み込み」を押すと、移行した内容を確認できます。';
+    container.append(intro, list, guide);
+  } catch {
+    container.textContent = '移行済みデータを確認できませんでした。元の保存データは変更していません。';
+  }
 }
 
 function updateMessage(result) {
@@ -171,16 +788,20 @@ async function updateData() {
   elements['update-status'].textContent = '更新を確認しています…';
   elements['update-status'].classList.remove('error');
   try {
-    const previousEvent = elements['event-select'].value;
+    const selections = state.cards.map((context) => ({ context, data: scenarioData(context) }));
     const result = await client.update();
     const message = updateMessage(result);
     elements['update-status'].textContent = message.text;
     elements['update-status'].classList.toggle('error', message.error);
     elements['data-version'].textContent = 'データ版: ' + client.store.active.datasetVersion;
     if (result.status === 'applied') {
-      populateEvents();
-      if (previousEvent && client.index.events.some((entry) => entry.id === previousEvent)) await selectEvent(previousEvent);
-      else resetEnemySelection('イベントを選択してください');
+      for (const { context, data } of selections) {
+        populateEventSelect(context);
+        if (data.loadedEnemy) configureLegacyEnemy(context, data);
+        else if (data.phase8_event_id && client.index.events.some((entry) => entry.id === data.phase8_event_id)) {
+          await selectEventForCard(context, data.phase8_event_id, { persist: false, selectedStageId: data.phase8_stage_id, selectedEnemyId: data.phase8_enemy_id, initial: data });
+        } else clearEnemyResult(context);
+      }
     }
   } catch {
     elements['update-status'].textContent = '更新しませんでした。現在の敵データはそのまま安全に使えます。';
@@ -190,56 +811,129 @@ async function updateData() {
   }
 }
 
-function populateEvents() {
-  replaceOptions(elements['event-select'], client.index.events.map((entry) => ({ value: entry.id, label: entry.name })), 'イベントを選択してください');
+function cardContext(element) {
+  const card = element.closest('.scenario-card');
+  return state.cards.find((context) => context.element === card) ?? null;
 }
 
-function savedDataSummary() {
-  try {
-    const raw = localStorage.getItem(storagePrefix + 'dokkan_calc_data_v22');
-    if (!raw) return;
-    const saved = JSON.parse(raw);
-    elements['saved-data-summary'].textContent = '移行済み: 保存キャラクター ' + (saved.savedCharacters?.length ?? 0) + '件、保存した敵 ' + (saved.savedEnemies?.length ?? 0) + '分類、作業中の状況 ' + (saved.currentScenarios?.length ?? 0) + '件';
-    if (saved.theme === 'dark' && localStorage.getItem('dokkan_phase8_rc_theme') == null) setTheme('dark');
-  } catch {
-    elements['saved-data-summary'].textContent = '移行済みデータを確認できませんでした。元の保存データは変更していません。';
+elements['scenario-cards-container'].addEventListener('focusin', (event) => {
+  if (event.target.matches('input[type="number"]') && event.target.value === '0') event.target.select();
+});
+
+elements['scenario-cards-container'].addEventListener('input', (event) => {
+  const context = cardContext(event.target);
+  if (!context || !event.target.matches('[data-input]')) return;
+  if (event.target.type === 'number') {
+    const normalized = normalizeNumericInputValue(event.target.value);
+    if (normalized !== event.target.value) event.target.value = normalized;
   }
-}
+  renderCard(context);
+  persistState();
+});
 
-function setTheme(theme) {
-  document.documentElement.dataset.theme = theme;
-  elements['theme-button'].textContent = theme === 'dark' ? '☀️' : '🌙';
-  localStorage.setItem('dokkan_phase8_rc_theme', theme);
-}
+elements['scenario-cards-container'].addEventListener('change', async (event) => {
+  const context = cardContext(event.target);
+  if (!context) return;
+  if (event.target.matches('[data-role="event-select"]')) {
+    if (event.target.value === '__legacy__' && context.legacyEnemy) configureLegacyEnemy(context, scenarioData(context));
+    else await selectEventForCard(context, event.target.value);
+  } else if (event.target.matches('[data-role="stage-select"]')) {
+    renderEnemies(context);
+  } else if (event.target.matches('[data-role="enemy-select"]')) {
+    const item = currentEnemyContext(context);
+    if (item) {
+      renderConditionControls(context, item.enemy);
+      renderAttackOptions(context);
+    } else clearEnemyResult(context);
+  } else if (event.target.matches('[data-condition]')) {
+    renderAttackOptions(context);
+  } else {
+    renderCard(context);
+  }
+  persistState();
+});
+
+elements['scenario-cards-container'].addEventListener('click', async (event) => {
+  const context = cardContext(event.target);
+  if (!context) return;
+  if (event.target.matches('[data-role="calculate-button"]')) renderCard(context);
+  if (event.target.matches('[data-action="duplicate"]')) await addScenarioCard(scenarioData(context), { insertAfter: context });
+  if (event.target.matches('[data-action="delete"]')) {
+    if (state.cards.length === 1) {
+      elements['character-status'].textContent = '状況カードは最低1件必要です。';
+      return;
+    }
+    state.cards.splice(state.cards.indexOf(context), 1);
+    context.element.remove();
+    state.cards.forEach((item, index) => role(item, 'scenario-title').value ||= `状況 ${index + 1}`);
+    persistState();
+  }
+});
+
+for (const input of document.querySelectorAll('input[name="calculation-mode"]')) input.addEventListener('change', updateMode);
+elements['add-line-button'].addEventListener('click', addDurabilityLine);
+elements['new-line-input'].addEventListener('input', (event) => {
+  const normalized = normalizeNumericInputValue(event.target.value);
+  if (normalized !== event.target.value) event.target.value = normalized;
+});
+elements['new-line-input'].addEventListener('focus', (event) => { if (event.target.value === '0') event.target.select(); });
+elements['durability-lines-list'].addEventListener('click', (event) => {
+  const index = Number.parseInt(event.target.dataset.lineIndex, 10);
+  if (!Number.isInteger(index)) return;
+  state.durabilityLines.splice(index, 1);
+  renderDurabilityLines();
+  persistState();
+});
+elements['add-scenario-button'].addEventListener('click', () => addScenarioCard(defaultScenario(state.cards.length)));
+elements['save-character-button'].addEventListener('click', saveCharacter);
+elements['load-character-button'].addEventListener('click', loadCharacter);
+elements['new-character-button'].addEventListener('click', startNewCharacter);
+elements['delete-character-button'].addEventListener('click', deleteCharacter);
+elements['preview-button'].addEventListener('click', renderPreview);
+elements['close-preview-button'].addEventListener('click', () => elements['preview-dialog'].close());
+elements['update-button'].addEventListener('click', updateData);
+elements['theme-button'].addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
 
 async function initialize() {
   if (!core) throw new Error('計算コアを読み込めませんでした。');
-  setTheme(localStorage.getItem('dokkan_phase8_rc_theme') === 'dark' ? 'dark' : 'light');
+  const saved = readSavedState();
+  const savedTheme = saved?.theme === 'dark' || localStorage.getItem('dokkan_phase8_rc_theme') === 'dark' ? 'dark' : 'light';
+  setTheme(savedTheme, { persist: false });
+  if (!saved) {
+    state.durabilityLines = [{ name: '完封', value: 0 }, { name: '70万', value: 700_000 }];
+    state.savedCharacters = [];
+    state.savedEnemies = [];
+  }
   try {
     const recovery = await client.initialize();
-    populateEvents();
     elements['data-version'].textContent = 'データ版: ' + client.store.active.datasetVersion;
-    const restored = readLastEvent(localStorage, new Set(client.index.events.map((entry) => entry.id)));
-    if (restored.eventId) await selectEvent(restored.eventId, { persist: false });
-    else {
-      resetEnemySelection('初回はイベントを選んでください');
-      setStatus(recovery.recovery.includes('restored') ? '安全な保存版で準備しました。イベントを選んでください。' : '準備完了。イベントを選んでください。');
-    }
-    savedDataSummary();
+    renderDurabilityLines();
+    renderCharacterList();
+    await recreateScenarioCards(saved?.currentScenarios ?? []);
+    renderSavedDataSummary();
+    state.initializing = false;
+    persistState();
+    const restoredEvent = role(state.cards[0], 'event-select').value;
+    setStatus(restoredEvent || recovery.recovery.includes('restored') ? '準備完了' : '準備完了。被ダメージ計算ではイベントと敵を選んでください。');
     metrics.readyMs = performance.now() - metrics.startedAt;
     globalThis.__phase8Ready = true;
     globalThis.dispatchEvent(new CustomEvent('phase8-ready'));
-  } catch {
+  } catch (error) {
+    console.error(error);
     setStatus('敵データを準備できませんでした。OneDrive backupはヘルプから確認できます。', true);
     globalThis.__phase8Error = true;
   }
 }
 
-elements['event-select'].addEventListener('change', () => selectEvent(elements['event-select'].value));
-elements['stage-select'].addEventListener('change', renderEnemies);
-elements['enemy-select'].addEventListener('change', renderAttackOptions);
-elements['calculate-button'].addEventListener('click', calculate);
-elements['update-button'].addEventListener('click', updateData);
-elements['theme-button'].addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
-globalThis.Phase8RC = { client, store, state, selectEvent, calculate, currentEnemy, updateData };
+globalThis.Phase8RC = {
+  client,
+  store,
+  state,
+  selectEvent: async (eventId) => selectEventForCard(state.cards[0], eventId),
+  calculate: () => renderCard(state.cards[0]),
+  currentEnemy: () => currentEnemyContext(state.cards[0])?.enemy ?? null,
+  updateData,
+  scenarioData: () => allScenarioData()
+};
+
 initialize();

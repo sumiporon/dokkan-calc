@@ -38,11 +38,87 @@
                       "slot": { "state": "unknown", "value": null },
                       "usageRules": [],
                       "targetMode": { "state": "known", "value": "single" },
+                      "effects": [
+                        {
+                          "id": "preview:attack:green:1:effect:post-super",
+                          "trigger": {
+                            "kind": "after-super",
+                            "start": { "state": "unknown", "value": null },
+                            "end": { "state": "unknown", "value": null },
+                            "hpMinPercent": { "state": "unknown", "value": null },
+                            "hpMaxPercent": { "state": "unknown", "value": null }
+                          },
+                          "appliesTo": "subsequent-normal-attacks",
+                          "target": "attack",
+                          "operation": "add-percent",
+                          "value": { "state": "known", "value": 30 },
+                          "cap": { "state": "unknown", "value": null },
+                          "durationTurns": { "state": "known", "value": 1 },
+                          "bracket": "post-super"
+                        }
+                      ],
+                      "criticalOverride": { "state": "unknown", "value": null }
+                    },
+                    {
+                      "id": "preview:attack:green:2",
+                      "name": { "state": "known", "value": "架空必殺B" },
+                      "displayedDamage": { "state": "known", "value": 1750000 },
+                      "derivedMultiplier": { "state": "known", "value": 3.5 },
+                      "probabilityPercent": { "state": "known", "value": 25 },
+                      "maxPerTurn": { "state": "known", "value": 1 },
+                      "cooldownTurns": { "state": "known", "value": 2 },
+                      "slot": { "state": "unknown", "value": null },
+                      "usageRules": [
+                        {
+                          "order": 1,
+                          "hpMinPercent": { "state": "known", "value": 0 },
+                          "hpMaxPercent": { "state": "known", "value": 50 },
+                          "probabilityPercent": { "state": "known", "value": 25 },
+                          "maxPerTurn": { "state": "known", "value": 1 },
+                          "cooldownTurns": { "state": "known", "value": 2 }
+                        }
+                      ],
+                      "targetMode": { "state": "known", "value": "single" },
                       "effects": [],
                       "criticalOverride": { "state": "unknown", "value": null }
                     }
                   ],
-                  "passiveEffects": [],
+                  "passiveEffects": [
+                    {
+                      "id": "preview:enemy:green:passive:turn",
+                      "trigger": {
+                        "kind": "elapsed-turn",
+                        "start": { "state": "known", "value": 1 },
+                        "end": { "state": "unknown", "value": null },
+                        "hpMinPercent": { "state": "unknown", "value": null },
+                        "hpMaxPercent": { "state": "unknown", "value": null }
+                      },
+                      "appliesTo": "enemy-stats",
+                      "target": "attack",
+                      "operation": "add-percent",
+                      "value": { "state": "known", "value": 20 },
+                      "cap": { "state": "known", "value": 60 },
+                      "durationTurns": { "state": "unknown", "value": null },
+                      "bracket": "start-of-turn"
+                    },
+                    {
+                      "id": "preview:enemy:green:passive:hp",
+                      "trigger": {
+                        "kind": "hp-range",
+                        "start": { "state": "unknown", "value": null },
+                        "end": { "state": "unknown", "value": null },
+                        "hpMinPercent": { "state": "known", "value": 0 },
+                        "hpMaxPercent": { "state": "known", "value": 50 }
+                      },
+                      "appliesTo": "enemy-stats",
+                      "target": "attack",
+                      "operation": "add-percent",
+                      "value": { "state": "known", "value": 40 },
+                      "cap": { "state": "unknown", "value": null },
+                      "durationTurns": { "state": "unknown", "value": null },
+                      "bracket": "start-of-turn"
+                    }
+                  ],
                   "critical": {
                     "enabled": { "state": "known", "value": false },
                     "attackMultiplier": { "state": "unknown", "value": null },
@@ -51,7 +127,19 @@
                   }
                 }
               ],
-              "areaAttacks": []
+              "areaAttacks": [
+                {
+                  "id": "preview:area:green:1",
+                  "sourceEnemyId": { "state": "known", "value": "preview:enemy:green" },
+                  "attackKind": { "state": "known", "value": "normal" },
+                  "maxPerTurn": { "state": "known", "value": 1 },
+                  "firstTargetDamage": { "state": "known", "value": 600000 },
+                  "additionalTargetDamage": { "state": "known", "value": 450000 },
+                  "firstTargetMultiplier": { "state": "known", "value": 1.2 },
+                  "additionalTargetMultiplier": { "state": "known", "value": 0.9 },
+                  "targetMode": { "state": "known", "value": "all" }
+                }
+              ]
             }
           ]
         }

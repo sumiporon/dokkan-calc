@@ -178,6 +178,7 @@
     return {
       final_def: finalDefense,
       final_def_crit_mod: finalDefense * modifiers.def_crit_mod,
+      def_crit_mod: modifiers.def_crit_mod,
       attr_mod: modifiers.attr_mod,
       guard_mod: modifiers.guard_mod,
       dr_mod: modifiers.dr_mod,
@@ -214,6 +215,31 @@
       minimum: Math.min(damageAtMinimumVariance, damageAtMaximumVariance),
       maximum: Math.max(damageAtMinimumVariance, damageAtMaximumVariance)
     };
+  }
+
+  /**
+   * Returns the minimum displayed final DEF that makes the safety-side
+   * (1.03) incoming damage exactly zero for the same calculation settings.
+   *
+   * Unlike calculateSafeDurabilityLine(), this value is DEF, not enemy ATK,
+   * so it can be compared directly with `calculation.final_def` in the UI.
+   * Guard is applied after the zero clamp and therefore does not change the
+   * zero-damage boundary. All-type guard still affects `attr_mod` above.
+   */
+  function calculateRequiredDefenseForZeroDamage(enemyAttack, calculation) {
+    const defenseCriticalModifier = Number(calculation.def_crit_mod);
+    if (!Number.isFinite(defenseCriticalModifier) || defenseCriticalModifier <= 0) {
+      return Number.POSITIVE_INFINITY;
+    }
+
+    const incomingAtMaximumVariance = numberOrZero(enemyAttack)
+      * calculation.atk_crit_mod
+      * calculation.attr_mod
+      * calculation.dr_mod
+      * DAMAGE_VARIANCE_MAX;
+    return Math.ceil(stabilizeNearInteger(
+      incomingAtMaximumVariance / defenseCriticalModifier
+    ));
   }
 
   function calculateDurabilityLine(targetDamage, calculation, variance = 1) {
@@ -378,6 +404,7 @@
     buildTurnConditionOptions,
     calculateDamage,
     calculateDamageRange,
+    calculateRequiredDefenseForZeroDamage,
     calculateDurability,
     calculateDurabilityLine,
     calculateSafeDurabilityLine,

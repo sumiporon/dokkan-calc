@@ -5,10 +5,23 @@
   <span class="rc-badge">Phase 8 架空データ確認</span>
   <h1>保存データ移行を実機確認</h1>
   <section class="card">
-    <p>本番の保存データではなく、確認専用の架空キャラクターと会心設定だけをPages確認版へ移します。</p>
+    <h2>このテストの目的</h2>
+    <p>現在のOneDrive／端末版にある自分の保存内容だけを、将来のPages版でも引き続き使えるか確認します。敵データ更新のテストではありません。</p>
+    <p>本番の保存内容には触れず、次の架空データだけをPages確認版へ移します。</p>
+    <ul class="migration-summary-list">
+      <li>保存キャラクター：2件（架空の保存キャラクターA・B）</li>
+      <li>保存済み状況：2件</li>
+      <li>作業中の状況：1件</li>
+      <li>手動保存した敵：1件</li>
+      <li>設定：2分類（耐久ライン・配色）</li>
+      <li>会心補正：1件</li>
+      <li>GitHub PAT：移行しません</li>
+    </ul>
+    <p><strong>イベント・ステージ・配布敵データは増えません。</strong> 移行後は、開いた確認版の「キャラクター管理」で架空名を選び「読み込み」を押すと成功を確認できます。</p>
     <p>GitHub PATと端末内の未知の保存項目は読み取りも移行もしません。</p>
     <button id="migration-button" class="primary-button" type="button">架空保存データを1回で移行</button>
     <p id="migration-status" class="inline-status" role="status" aria-live="polite">まだ移行していません。</p>
+    <div id="migration-result-details" aria-live="polite"></div>
   </section>
   <a href="index.html">確認版へ戻る</a>
 </main>

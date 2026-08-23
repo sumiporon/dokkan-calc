@@ -6,7 +6,7 @@ const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..
 const RC_ROOT = path.join(REPO_ROOT, 'release-candidate', 'phase8');
 const DATA_ROOT = path.join(RC_ROOT, 'data');
 const OUTPUT = path.join(RC_ROOT, 'device-preview.html');
-const MIGRATION_PREVIEW_URL = 'https://rawcdn.githack.com/sumiporon/dokkan-calc/phase8-complete-2026-08-24/release-candidate/phase8/migration-device-check.html';
+const MIGRATION_PREVIEW_URL = 'https://rawcdn.githack.com/sumiporon/dokkan-calc/phase8-pc-feedback-fixed-2026-08-24/release-candidate/phase8/migration-device-check.html';
 
 const modulePaths = [
   'src/prototype/phase7-update-engine.mjs',
@@ -14,12 +14,13 @@ const modulePaths = [
   'src/release-candidate/phase8-release-store.mjs',
   'src/release-candidate/phase8-runtime-client.mjs',
   'src/release-candidate/phase8-selection-state.mjs',
+  'src/release-candidate/phase8-ui-model.mjs',
   'release-candidate/phase8/app.mjs'
 ];
 
 function moduleToClassic(source) {
   return source
-    .replace(/^import\s+.*?;\r?\n/gm, '')
+    .replace(/^import\s+[\s\S]*?;\r?\n/gm, '')
     .replace(/\bexport\s+(?=(?:async\s+)?(?:function|class|const|let|var)\b)/g, '');
 }
 
