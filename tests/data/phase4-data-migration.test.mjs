@@ -376,6 +376,17 @@ test('追跡対象のPhase 4成果物とmanifest digestは現在の唯一のgene
   assert.equal(phase6.serialized.sourceMaterial, stableJson(phase6SourceMaterial));
   assert.equal(phase6.serialized.representativeCanonical, stableJson(phase6RepresentativeCanonical));
   assert.equal(phase6.serialized.representativeRuntime, stableJson(phase6RepresentativeRuntime));
+  const phase6Artifacts = {
+    sourceInput: generated.serialized.candidate,
+    canonical: phase6.serialized.canonical,
+    runtime: phase6.serialized.runtime,
+    validationReport: phase6.serialized.validation,
+    omissionReport: phase6.serialized.omission
+  };
+  for (const [key, artifact] of Object.entries(phase6.manifest.artifacts)) {
+    assert.equal(artifact.bytes, Buffer.byteLength(phase6Artifacts[key]), `phase6:${key}:bytes`);
+    assert.equal(artifact.digest, artifactDigest(phase6Artifacts[key]), `phase6:${key}:digest`);
+  }
   assert.equal(phase6.verification.counts.enemies, 5032);
   assert.equal(phase6.verification.schemas.canonical, true);
   assert.equal(phase6.validationReport.counts['hard-fail'], 0);

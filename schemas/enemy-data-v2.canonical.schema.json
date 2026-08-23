@@ -112,13 +112,13 @@
     },
     "aiAction": {
       "type": "object", "additionalProperties": false,
-      "required": ["id", "sequenceIndex", "sourceOrder", "kind", "enemyId", "slot", "probabilityPercent", "hpMinPercent", "hpMaxPercent", "maxUses", "cooldownTurns", "sourceText"],
-      "properties": { "id": { "type": "string", "minLength": 1 }, "sequenceIndex": { "type": "integer" }, "sourceOrder": { "type": "integer" }, "kind": { "type": "string" }, "enemyId": { "$ref": "#/$defs/field" }, "slot": { "$ref": "#/$defs/field" }, "probabilityPercent": { "$ref": "#/$defs/field" }, "hpMinPercent": { "$ref": "#/$defs/field" }, "hpMaxPercent": { "$ref": "#/$defs/field" }, "maxUses": { "$ref": "#/$defs/field" }, "cooldownTurns": { "$ref": "#/$defs/field" }, "sourceText": { "$ref": "#/$defs/field" } }
+      "required": ["id", "sequenceIndex", "sourceOrder", "kind", "enemyId", "slot", "probabilityPercent", "hpMinPercent", "hpMaxPercent", "maxUses", "cooldownTurns", "sourceText", "evidenceIds", "confidence"],
+      "properties": { "id": { "type": "string", "minLength": 1 }, "sequenceIndex": { "type": "integer" }, "sourceOrder": { "type": "integer" }, "kind": { "type": "string" }, "enemyId": { "$ref": "#/$defs/field" }, "slot": { "$ref": "#/$defs/field" }, "probabilityPercent": { "$ref": "#/$defs/field" }, "hpMinPercent": { "$ref": "#/$defs/field" }, "hpMaxPercent": { "$ref": "#/$defs/field" }, "maxUses": { "$ref": "#/$defs/field" }, "cooldownTurns": { "$ref": "#/$defs/field" }, "sourceText": { "$ref": "#/$defs/field" }, "evidenceIds": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }, "confidence": { "enum": ["high", "medium", "unconfirmed"] } }
     },
     "areaAttack": {
       "type": "object", "additionalProperties": false,
-      "required": ["id", "sourceEnemyId", "attackKind", "maxPerTurn", "firstTargetDamage", "additionalTargetDamage", "firstTargetMultiplier", "additionalTargetMultiplier", "targetMode", "sourceText"],
-      "properties": { "id": { "type": "string", "minLength": 1 }, "sourceEnemyId": { "$ref": "#/$defs/field" }, "attackKind": { "$ref": "#/$defs/field" }, "maxPerTurn": { "$ref": "#/$defs/field" }, "firstTargetDamage": { "$ref": "#/$defs/field" }, "additionalTargetDamage": { "$ref": "#/$defs/field" }, "firstTargetMultiplier": { "$ref": "#/$defs/field" }, "additionalTargetMultiplier": { "$ref": "#/$defs/field" }, "targetMode": { "$ref": "#/$defs/field" }, "sourceText": { "$ref": "#/$defs/field" } }
+      "required": ["id", "sourceEnemyId", "attackKind", "maxPerTurn", "firstTargetDamage", "additionalTargetDamage", "firstTargetMultiplier", "additionalTargetMultiplier", "targetMode", "sourceText", "evidenceIds", "confidence"],
+      "properties": { "id": { "type": "string", "minLength": 1 }, "sourceEnemyId": { "$ref": "#/$defs/field" }, "attackKind": { "$ref": "#/$defs/field" }, "maxPerTurn": { "$ref": "#/$defs/field" }, "firstTargetDamage": { "$ref": "#/$defs/field" }, "additionalTargetDamage": { "$ref": "#/$defs/field" }, "firstTargetMultiplier": { "$ref": "#/$defs/field" }, "additionalTargetMultiplier": { "$ref": "#/$defs/field" }, "targetMode": { "$ref": "#/$defs/field" }, "sourceText": { "$ref": "#/$defs/field" }, "evidenceIds": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }, "confidence": { "enum": ["high", "medium", "unconfirmed"] } }
     },
     "encounter": {
       "type": "object", "additionalProperties": false,

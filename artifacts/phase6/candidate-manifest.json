@@ -1,20 +1,20 @@
 {
   "artifacts": {
     "canonical": {
-      "bytes": 84735492,
-      "digest": "sha256:e6dc6f330441389651b7e36c63705b816291ad8f0671e51415425c9ce1d2e8b6",
+      "bytes": 87118325,
+      "digest": "sha256:d9b0150b78ca1f9926e0eb14903c7baa0a9679c0c7b0469fe45f78e1975fe84b",
       "path": "generated/phase6/candidate/enemy-data-v2.canonical.json",
       "schemaVersion": "2.0.0"
     },
     "omissionReport": {
       "bytes": 2394,
-      "digest": "sha256:178f1092ac0a09c5155d1ae33c07ba7d5dd8be5b7e3bea97d133f3a1d29df375",
+      "digest": "sha256:723843dabb2c657ac5dc886ade573676fe6fbb4550433763bba7461669dc4e22",
       "path": "artifacts/phase6/runtime-omission-report.json",
       "schemaVersion": "1.0.0"
     },
     "runtime": {
-      "bytes": 16691105,
-      "digest": "sha256:e06b484ad904d933569bc27d99898563f45f7062b5f0d12872b455d2848a7433",
+      "bytes": 16691030,
+      "digest": "sha256:985a7debb714a19ea285c3d208cfb18900ef91aed2f1638ae38bacf68d1b05bb",
       "path": "generated/phase6/candidate/enemy-data-runtime-v1.json",
       "schemaVersion": "1.0.0"
     },
@@ -26,7 +26,7 @@
     },
     "validationReport": {
       "bytes": 909,
-      "digest": "sha256:5471d5f2a451d92d785570c9c63a0640bcb9776fa498411bceae45f2ed87b527",
+      "digest": "sha256:2392e3360307aa7e058f1812bfdd367b002a9e74b8ebe8ac9d0d337063a0a909",
       "path": "artifacts/phase6/validation-report.json",
       "schemaVersion": "1.0.0"
     }
@@ -53,7 +53,7 @@
     "stages": 801,
     "superAttacks": 4924,
     "unavailableFields": 20340,
-    "unknownFields": 35077,
+    "unknownFields": 35152,
     "usageRules": 168
   },
   "datasetVersion": "canonical:jpnja:phase4-cache-c8c6a2468861",
@@ -86,7 +86,7 @@
     "gateVersion": "1.0.0",
     "hardFailCount": 0,
     "informationalCount": 0,
-    "reportDigest": "sha256:5471d5f2a451d92d785570c9c63a0640bcb9776fa498411bceae45f2ed87b527",
+    "reportDigest": "sha256:2392e3360307aa7e058f1812bfdd367b002a9e74b8ebe8ac9d0d337063a0a909",
     "reviewRequiredCount": 1,
     "status": "review-required"
   }

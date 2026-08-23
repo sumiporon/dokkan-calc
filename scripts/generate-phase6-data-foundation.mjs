@@ -189,6 +189,8 @@ export async function createPhase6Artifacts({
       phase4Candidate: Buffer.byteLength(candidateSerialized),
       canonical: Buffer.byteLength(canonicalJson),
       runtime: Buffer.byteLength(runtimeJson),
+      canonicalMinified: Buffer.byteLength(JSON.stringify(canonical)),
+      runtimeMinified: Buffer.byteLength(JSON.stringify(runtime)),
       runtimeVsCanonicalPercent: Math.round(Buffer.byteLength(runtimeJson) / Buffer.byteLength(canonicalJson) * 1000) / 10,
       runtimeVsPhase4Percent: Math.round(Buffer.byteLength(runtimeJson) / Buffer.byteLength(candidateSerialized) * 1000) / 10
     },
@@ -210,7 +212,7 @@ export async function createPhase6Artifacts({
       runtimeOutput: digest(runtimeJson),
       manifestOutput: digest(manifestJson)
     },
-    deviceAssessment: '実測値はperformance-report.jsonへ分離。full runtimeを一括parseする設計はスマホ向け最終形とせず、Phase 7以降にmanifest/indexとevent単位chunkを比較する。'
+    deviceAssessment: '実測値はperformance-report.jsonへ分離。runtimeはminifyで約6MBまで減るが展開後memoryとfile://互換性が残るため、Phase 7以降にfull runtimeとmanifest/index＋event単位chunkを実機比較する。'
   };
   const verificationJson = stableJson(verification);
 

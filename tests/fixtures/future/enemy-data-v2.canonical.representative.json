@@ -3100,56 +3100,78 @@
                 {
                   "additionalTargetDamage": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1702_17020095.html"
+                    ],
                     "state": "known",
                     "value": 700000
                   },
                   "additionalTargetMultiplier": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1702_17020095.html"
+                    ],
                     "state": "known",
                     "value": 0.5
                   },
                   "attackKind": {
-                    "confidence": "high",
-                    "evidenceIds": [],
-                    "state": "known",
-                    "value": "other"
+                    "confidence": "unconfirmed",
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1702_17020095.html"
+                    ],
+                    "state": "unknown",
+                    "value": null
                   },
+                  "confidence": "high",
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1702_17020095.html"
+                  ],
                   "firstTargetDamage": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1702_17020095.html"
+                    ],
                     "state": "known",
                     "value": 1400000
                   },
                   "firstTargetMultiplier": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1702_17020095.html"
+                    ],
                     "state": "known",
                     "value": 1
                   },
                   "id": "jpnja:event:1702:stage:17020095:encounter:0:area:0",
                   "maxPerTurn": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1702_17020095.html"
+                    ],
                     "state": "known",
                     "value": 3
                   },
                   "sourceEnemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1702_17020095.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1702:stage:17020095:encounter:0:enemy:3"
                   },
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1702_17020095.html"
+                    ],
                     "state": "known",
                     "value": "エリア/ターン: 3; エリアダメージ 1: 1400000; エリアダメージ 2+: 700000"
                   },
                   "targetMode": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1702_17020095.html"
+                    ],
                     "state": "known",
                     "value": "selected-and-others"
                   }
@@ -6034,27 +6056,39 @@
             {
               "aiActions": [
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:6"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6062,53 +6096,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "sourceOrder": 1,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 1: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:6"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6116,53 +6170,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "sourceOrder": 2,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 2: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:6"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6170,53 +6244,73 @@
                   "kind": "super",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "sourceOrder": 3,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 3: 必殺技 - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:6"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6224,53 +6318,73 @@
                   "kind": "super",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 0
                   },
                   "sourceOrder": 4,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 4/スロット 0: 必殺技 - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6278,53 +6392,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 1,
                   "slot": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "sourceOrder": 1,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 1: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6332,53 +6466,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 1,
                   "slot": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "sourceOrder": 2,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 2: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6386,53 +6540,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 1,
                   "slot": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "sourceOrder": 3,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 3: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6440,53 +6614,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 1,
                   "slot": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "sourceOrder": 4,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 4: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6494,53 +6688,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 1,
                   "slot": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "sourceOrder": 5,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 5: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6548,53 +6762,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 1,
                   "slot": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "sourceOrder": 6,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 6: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6602,53 +6836,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 1,
                   "slot": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "sourceOrder": 7,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 7: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6656,53 +6910,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 1,
                   "slot": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "sourceOrder": 8,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 8: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6710,53 +6984,73 @@
                   "kind": "super",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 1,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 0
                   },
                   "sourceOrder": 9,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 9/スロット 0: 必殺技 - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -6764,27 +7058,35 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 1,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": 0
                   },
                   "sourceOrder": 10,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1744_17440013.html"
+                    ],
                     "state": "known",
                     "value": "アクション 10/スロット 0: ノーマル - 100%"
                   }
@@ -16421,27 +16723,39 @@
             {
               "aiActions": [
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -16449,53 +16763,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 0
                   },
                   "sourceOrder": 1,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 1/スロット 0: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -16503,53 +16837,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 75
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 0
                   },
                   "sourceOrder": 2,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 2/スロット 0: ノーマル - 75%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -16557,53 +16911,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 1
                   },
                   "sourceOrder": 3,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 3/スロット 1: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -16611,53 +16985,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 1
                   },
                   "sourceOrder": 4,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 4/スロット 1: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -16665,53 +17059,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 75
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 1
                   },
                   "sourceOrder": 5,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 5/スロット 1: ノーマル - 75%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -16719,53 +17133,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 2
                   },
                   "sourceOrder": 6,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 6/スロット 2: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -16773,53 +17207,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 2
                   },
                   "sourceOrder": 7,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 7/スロット 2: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -16827,53 +17281,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 75
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 2
                   },
                   "sourceOrder": 8,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 8/スロット 2: ノーマル - 75%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -16881,53 +17355,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 3
                   },
                   "sourceOrder": 9,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 9/スロット 3: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -16935,53 +17429,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 3
                   },
                   "sourceOrder": 10,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 10/スロット 3: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -16989,27 +17503,35 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 75
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": 3
                   },
                   "sourceOrder": 11,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1717_17170015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 11/スロット 3: ノーマル - 75%"
                   }
@@ -17382,27 +17904,39 @@
             {
               "aiActions": [
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -17410,53 +17944,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 0
                   },
                   "sourceOrder": 1,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 1/スロット 0: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -17464,53 +18018,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 75
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 0
                   },
                   "sourceOrder": 2,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 2/スロット 0: ノーマル - 75%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -17518,53 +18092,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 1
                   },
                   "sourceOrder": 3,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 3/スロット 1: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -17572,53 +18166,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 1
                   },
                   "sourceOrder": 4,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 4/スロット 1: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -17626,53 +18240,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 75
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 1
                   },
                   "sourceOrder": 5,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 5/スロット 1: ノーマル - 75%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -17680,53 +18314,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 2
                   },
                   "sourceOrder": 6,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 6/スロット 2: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -17734,53 +18388,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 2
                   },
                   "sourceOrder": 7,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 7/スロット 2: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -17788,53 +18462,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 75
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 2
                   },
                   "sourceOrder": 8,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 8/スロット 2: ノーマル - 75%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -17842,53 +18536,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 3
                   },
                   "sourceOrder": 9,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 9/スロット 3: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -17896,53 +18610,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 3
                   },
                   "sourceOrder": 10,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 10/スロット 3: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -17950,27 +18684,35 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 75
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": 3
                   },
                   "sourceOrder": 11,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1721_17210015.html"
+                    ],
                     "state": "known",
                     "value": "アクション 11/スロット 3: ノーマル - 75%"
                   }
@@ -18346,56 +19088,78 @@
                 {
                   "additionalTargetDamage": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1722_17220033.html"
+                    ],
                     "state": "known",
                     "value": 70000
                   },
                   "additionalTargetMultiplier": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1722_17220033.html"
+                    ],
                     "state": "known",
                     "value": 0.5
                   },
                   "attackKind": {
-                    "confidence": "high",
-                    "evidenceIds": [],
-                    "state": "known",
-                    "value": "other"
+                    "confidence": "unconfirmed",
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1722_17220033.html"
+                    ],
+                    "state": "unknown",
+                    "value": null
                   },
+                  "confidence": "high",
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1722_17220033.html"
+                  ],
                   "firstTargetDamage": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1722_17220033.html"
+                    ],
                     "state": "known",
                     "value": 140000
                   },
                   "firstTargetMultiplier": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1722_17220033.html"
+                    ],
                     "state": "known",
                     "value": 1
                   },
                   "id": "jpnja:event:1722:stage:17220033:encounter:0:area:0",
                   "maxPerTurn": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1722_17220033.html"
+                    ],
                     "state": "known",
                     "value": 2
                   },
                   "sourceEnemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1722_17220033.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1722:stage:17220033:encounter:0:enemy:0"
                   },
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1722_17220033.html"
+                    ],
                     "state": "known",
                     "value": "エリア/ターン: 2; エリアダメージ 1: 140000; エリアダメージ 2+: 70000"
                   },
                   "targetMode": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1722_17220033.html"
+                    ],
                     "state": "known",
                     "value": "selected-and-others"
                   }
@@ -19006,27 +19770,39 @@
             {
               "aiActions": [
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1726:stage:17260045:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -19034,53 +19810,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": 1
                   },
                   "sourceOrder": 1,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": "アクション 1/スロット 1: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1726:stage:17260045:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -19088,53 +19884,73 @@
                   "kind": "normal",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": 1
                   },
                   "sourceOrder": 2,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": "アクション 2/スロット 1: ノーマル - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1726:stage:17260045:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -19142,53 +19958,73 @@
                   "kind": "super",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": 1
                   },
                   "sourceOrder": 3,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": "アクション 3/スロット 1: 必殺技 - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1726:stage:17260045:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -19196,53 +20032,73 @@
                   "kind": "super",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": 2
                   },
                   "sourceOrder": 4,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": "アクション 4/スロット 2: 必殺技 - 100%"
                   }
                 },
                 {
+                  "confidence": "high",
                   "cooldownTurns": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "enemyId": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": "jpnja:event:1726:stage:17260045:encounter:0:enemy:0"
                   },
+                  "evidenceIds": [
+                    "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                  ],
                   "hpMaxPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "hpMinPercent": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
@@ -19250,27 +20106,35 @@
                   "kind": "super",
                   "maxUses": {
                     "confidence": "unconfirmed",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "unknown",
                     "value": null
                   },
                   "probabilityPercent": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": 100
                   },
                   "sequenceIndex": 0,
                   "slot": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": 3
                   },
                   "sourceOrder": 5,
                   "sourceText": {
                     "confidence": "high",
-                    "evidenceIds": [],
+                    "evidenceIds": [
+                      "snapshot:jpnja:phase4-cache-c8c6a2468861-representative:evidence:scraper~2Fhtml_cache~2Fstage_1726_17260045.html"
+                    ],
                     "state": "known",
                     "value": "アクション 5/スロット 3: 必殺技 - 100%"
                   }

@@ -326,31 +326,46 @@ function mapEnemy(
   };
 }
 
-function mapAiAction(action: FutureAiAction, index: number, parentId: string, enemies: CanonicalEnemy[]): CanonicalAiAction {
+function mapAiAction(
+  action: FutureAiAction,
+  index: number,
+  parentId: string,
+  enemies: CanonicalEnemy[],
+  evidenceIds: string[]
+): CanonicalAiAction {
   const target = action.enemyOrder == null ? null : enemies.find((enemy) => enemy.orderInEncounter === action.enemyOrder)?.id ?? null;
   const noStates = new Map<string, Phase4FieldState>();
-  const noEvidence: string[] = [];
   return {
     id: `${parentId}:ai:${index}`,
     sequenceIndex: action.sequenceIndex,
     sourceOrder: action.sourceOrder,
     kind: action.kind,
-    enemyId: field(target, 'enemyId', noStates, noEvidence),
-    slot: field(action.slot, 'slot', noStates, noEvidence),
-    probabilityPercent: field(action.probabilityPercent, 'probabilityPercent', noStates, noEvidence),
-    hpMinPercent: field(action.hpMinPercent, 'hpMinPercent', noStates, noEvidence),
-    hpMaxPercent: field(action.hpMaxPercent, 'hpMaxPercent', noStates, noEvidence),
-    maxUses: field(action.maxUses, 'maxUses', noStates, noEvidence),
-    cooldownTurns: field(action.cooldownTurns, 'cooldownTurns', noStates, noEvidence),
-    sourceText: field(action.rawText, 'sourceText', noStates, noEvidence)
+    enemyId: field(target, 'enemyId', noStates, evidenceIds),
+    slot: field(action.slot, 'slot', noStates, evidenceIds),
+    probabilityPercent: field(action.probabilityPercent, 'probabilityPercent', noStates, evidenceIds),
+    hpMinPercent: field(action.hpMinPercent, 'hpMinPercent', noStates, evidenceIds),
+    hpMaxPercent: field(action.hpMaxPercent, 'hpMaxPercent', noStates, evidenceIds),
+    maxUses: field(action.maxUses, 'maxUses', noStates, evidenceIds),
+    cooldownTurns: field(action.cooldownTurns, 'cooldownTurns', noStates, evidenceIds),
+    sourceText: field(action.rawText, 'sourceText', noStates, evidenceIds),
+    evidenceIds,
+    confidence: 'high'
   };
 }
 
-function mapAreaAttack(area: FutureAreaAttack, index: number, parentId: string, enemyIdsBySource: Map<string, string>): CanonicalAreaAttack {
+function mapAreaAttack(
+  area: FutureAreaAttack,
+  index: number,
+  parentId: string,
+  snapshotId: string,
+  enemyIdsBySource: Map<string, string>
+): CanonicalAreaAttack {
   const noStates = new Map<string, Phase4FieldState>();
-  const evidenceIds: string[] = [];
+  const evidenceIds = [evidenceId(snapshotId, area.evidence)];
   const sourceEnemyId = area.sourceOccurrenceId == null ? null : enemyIdsBySource.get(area.sourceOccurrenceId) ?? null;
-  const attackKind = area.attackKind === 'normal' || area.attackKind === 'super' ? area.attackKind : 'other';
+  const attackKind = area.attackKind === 'normal' || area.attackKind === 'super' || area.attackKind === 'other'
+    ? area.attackKind
+    : null;
   const targetMode = area.targetMode === 'all' || area.targetMode === 'selected-and-others' ? area.targetMode : null;
   return {
     id: `${parentId}:area:${index}`,
@@ -362,12 +377,25 @@ function mapAreaAttack(area: FutureAreaAttack, index: number, parentId: string, 
     firstTargetMultiplier: field(area.firstTargetMultiplierDerived, 'firstTargetMultiplier', noStates, evidenceIds),
     additionalTargetMultiplier: field(area.additionalTargetMultiplierDerived, 'additionalTargetMultiplier', noStates, evidenceIds),
     targetMode: field(targetMode, 'targetMode', noStates, evidenceIds),
-    sourceText: field(area.rawText, 'sourceText', noStates, evidenceIds)
+    sourceText: field(area.rawText, 'sourceText', noStates, evidenceIds),
+    evidenceIds,
+    confidence: confidence(area.evidence.confidence)
   };
 }
 
 export function adaptPhase4OfflineCandidate(dataset: FutureDataset, context: SourceAdapterContext): SourceAdapterResult {
   const snapshotId = `snapshot:${safeId(dataset.sourceSnapshot.region)}:${safeId(dataset.datasetId)}`;
+  const canonicalEnemyIdByOccurrence = new Map<string, string>();
+  for (const event of dataset.events) {
+    const canonicalEventId = eventId(dataset.sourceSnapshot.region, event.eventId);
+    for (const stage of event.stages) {
+      const canonicalStageId = stageId(canonicalEventId, stage.stageId);
+      for (const encounter of stage.encounters) {
+        const canonicalEncounterId = encounterId(canonicalStageId, encounter.encounterIndex);
+        for (const enemy of encounter.enemies) canonicalEnemyIdByOccurrence.set(enemy.occurrenceId, enemyId(canonicalEncounterId, enemy.orderInEncounter));
+      }
+    }
+  }
   const evidence = new Map<string, CanonicalEvidence>();
   for (const event of dataset.events) {
     for (const stage of event.stages) {
@@ -423,6 +451,7 @@ export function adaptPhase4OfflineCandidate(dataset: FutureDataset, context: Sou
               const encounterCanonicalId = encounterId(stageCanonicalId, encounter.encounterIndex);
               const enemies = encounter.enemies.map((enemy) => mapEnemy(enemy, encounterCanonicalId, snapshotId, stage.sourceUrl));
               const enemyIdsBySource = new Map(encounter.enemies.map((enemy, index) => [enemy.occurrenceId, enemies[index]!.id]));
+              const encounterEvidenceIds = [...new Set(enemies.flatMap((enemy) => enemy.name.evidenceIds))];
               return {
                 id: encounterCanonicalId,
                 sourceRefs: [sourceRef(snapshotId, 'encounter', encounter.phaseId, `${event.eventId}:${stage.stageId}:${encounter.encounterIndex}`, stage.sourceUrl)],
@@ -437,8 +466,8 @@ export function adaptPhase4OfflineCandidate(dataset: FutureDataset, context: Sou
                   noEvidence
                 ),
                 enemies,
-                aiActions: encounter.aiActions.map((action, index) => mapAiAction(action, index, encounterCanonicalId, enemies)),
-                areaAttacks: encounter.areaAttacks.map((area, index) => mapAreaAttack(area, index, encounterCanonicalId, enemyIdsBySource))
+                aiActions: encounter.aiActions.map((action, index) => mapAiAction(action, index, encounterCanonicalId, enemies, encounterEvidenceIds)),
+                areaAttacks: encounter.areaAttacks.map((area, index) => mapAreaAttack(area, index, encounterCanonicalId, snapshotId, enemyIdsBySource))
               };
             })
           };
@@ -447,12 +476,16 @@ export function adaptPhase4OfflineCandidate(dataset: FutureDataset, context: Sou
     }),
     manualCorrections: dataset.manualCorrections.map((item, index) => {
       const correction = item as Record<string, unknown>;
+      const target = correction.target && typeof correction.target === 'object'
+        ? correction.target as Record<string, unknown>
+        : {};
+      const sourceOccurrenceId = String(target.occurrenceId ?? '');
       return {
-        id: typeof correction.id === 'string' ? correction.id : `correction:${index}`,
-        sourceDatasetId: dataset.datasetId,
-        sourceContentDigest: dataset.sourceSnapshot.contentDigest ?? context.inputDigest,
-        targetEntityId: String(correction.targetEntityId ?? ''),
-        fieldPath: String(correction.fieldPath ?? ''),
+        id: typeof correction.correctionId === 'string' ? correction.correctionId : `correction:${index}`,
+        sourceDatasetId: String(correction.sourceDatasetId ?? dataset.datasetId),
+        sourceContentDigest: String(correction.sourceContentDigest ?? dataset.sourceSnapshot.contentDigest ?? context.inputDigest),
+        targetEntityId: canonicalEnemyIdByOccurrence.get(sourceOccurrenceId) ?? sourceOccurrenceId,
+        fieldPath: String(target.fieldPath ?? ''),
         expectedOriginalValue: correction.expectedOriginalValue ?? null,
         replacementValue: correction.replacementValue ?? null,
         reason: String(correction.reason ?? ''),

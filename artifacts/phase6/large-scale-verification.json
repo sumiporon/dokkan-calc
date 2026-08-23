@@ -8,10 +8,12 @@
     "sourceKey": "dokkaninfo-saved-cache"
   },
   "byteSizes": {
-    "canonical": 84735492,
+    "canonical": 87118325,
+    "canonicalMinified": 43467702,
     "phase4Candidate": 35532102,
-    "runtime": 16691105,
-    "runtimeVsCanonicalPercent": 19.7,
+    "runtime": 16691030,
+    "runtimeMinified": 6048874,
+    "runtimeVsCanonicalPercent": 19.2,
     "runtimeVsPhase4Percent": 47
   },
   "classification": "offline-migration-test-material-not-production",
@@ -30,17 +32,17 @@
     "stages": 801,
     "superAttacks": 4924,
     "unavailableFields": 20340,
-    "unknownFields": 35077,
+    "unknownFields": 35152,
     "usageRules": 168
   },
   "datasetId": "canonical:jpnja:phase4-cache-c8c6a2468861",
   "deterministicGeneration": {
     "canonicalInput": "sha256:4f42c83fba42180c6960418a01980c4bd33d10102c30761322ade7289388e307",
-    "canonicalOutput": "sha256:e6dc6f330441389651b7e36c63705b816291ad8f0671e51415425c9ce1d2e8b6",
-    "manifestOutput": "sha256:18e1ee99424173d9afa657f74269686be4fc7e746a3e60afb6b1039c1a5d4a4a",
-    "runtimeOutput": "sha256:e06b484ad904d933569bc27d99898563f45f7062b5f0d12872b455d2848a7433"
+    "canonicalOutput": "sha256:d9b0150b78ca1f9926e0eb14903c7baa0a9679c0c7b0469fe45f78e1975fe84b",
+    "manifestOutput": "sha256:07c35ea41cf898dbe5ba9257b5bd39364da20faf775f98853d42d591de5b3267",
+    "runtimeOutput": "sha256:985a7debb714a19ea285c3d208cfb18900ef91aed2f1638ae38bacf68d1b05bb"
   },
-  "deviceAssessment": "実測値はperformance-report.jsonへ分離。full runtimeを一括parseする設計はスマホ向け最終形とせず、Phase 7以降にmanifest/indexとevent単位chunkを比較する。",
+  "deviceAssessment": "実測値はperformance-report.jsonへ分離。runtimeはminifyで約6MBまで減るが展開後memoryとfile://互換性が残るため、Phase 7以降にfull runtimeとmanifest/index＋event単位chunkを実機比較する。",
   "featureProof": {
     "aiActions": 1679,
     "areaAttacks": 75,

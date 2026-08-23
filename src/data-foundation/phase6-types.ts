@@ -163,6 +163,8 @@ export interface CanonicalAiAction {
   maxUses: CanonicalField<number>;
   cooldownTurns: CanonicalField<number>;
   sourceText: CanonicalField<string>;
+  evidenceIds: string[];
+  confidence: CanonicalConfidence;
 }
 
 export interface CanonicalAreaAttack {
@@ -176,6 +178,8 @@ export interface CanonicalAreaAttack {
   additionalTargetMultiplier: CanonicalField<number>;
   targetMode: CanonicalField<'all' | 'selected-and-others'>;
   sourceText: CanonicalField<string>;
+  evidenceIds: string[];
+  confidence: CanonicalConfidence;
 }
 
 export interface CanonicalEncounter {
@@ -533,4 +537,3 @@ export interface ReleaseTransitionResult {
   manifest: ReleaseManifestV1;
   reason: string;
 }
-

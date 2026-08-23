@@ -88,6 +88,29 @@ test('canonical IDは取得元名を含まず、source IDとprovenanceはsourceR
   assert.ok(canonical.evidence.length > 0);
 });
 
+test('review済みmanual correctionはsource occurrenceをcanonical targetへ対応付ける', () => {
+  const correctedSource = structuredClone(source);
+  const sourceEnemy = correctedSource.events[0].stages[0].encounters[0].enemies[0];
+  correctedSource.manualCorrections = [{
+    correctionId: 'reviewed-test-correction',
+    sourceDatasetId: correctedSource.datasetId,
+    sourceContentDigest: correctedSource.sourceSnapshot.contentDigest,
+    target: { occurrenceId: sourceEnemy.occurrenceId, fieldPath: 'stats.baseAttack' },
+    expectedOriginalValue: sourceEnemy.stats.baseAttack,
+    replacementValue: 123456,
+    reason: '架空fixtureのmapping test',
+    evidenceUrls: ['https://example.invalid/review'],
+    reviewedAt: generatedAt,
+    reviewedBy: 'fixture-reviewer'
+  }];
+  const converted = phase4OfflineAdapter.adapt(correctedSource, context()).canonical;
+  const correction = converted.manualCorrections[0];
+  assert.equal(correction.id, 'reviewed-test-correction');
+  assert.equal(correction.fieldPath, 'stats.baseAttack');
+  assert.ok(!correction.targetEntityId.includes('dokkaninfo'));
+  assert.ok(allEnemies(converted).some((enemy) => enemy.id === correction.targetEntityId));
+});
+
 test('複数必殺・usage rule・neutral・AOE・AIをcanonicalが保持する', () => {
   const encounters = allEncounters(canonical);
   const enemies = allEnemies(canonical);
@@ -96,6 +119,9 @@ test('複数必殺・usage rule・neutral・AOE・AIをcanonicalが保持する'
   assert.ok(enemies.some((enemy) => enemy.alignment.state === 'known' && enemy.alignment.value === 'neutral'));
   assert.ok(encounters.some((encounter) => encounter.areaAttacks.length > 0));
   assert.ok(encounters.some((encounter) => encounter.aiActions.length > 1));
+  assert.ok(encounters.flatMap((encounter) => encounter.areaAttacks).every((area) => area.evidenceIds.length > 0));
+  assert.ok(encounters.flatMap((encounter) => encounter.aiActions).every((action) => action.evidenceIds.length > 0));
+  assert.ok(encounters.flatMap((encounter) => encounter.areaAttacks).some((area) => area.attackKind.state === 'unknown' && area.attackKind.value === null));
 });
 
 test('known zero・unknown・unavailableをnull補完せず区別する', () => {

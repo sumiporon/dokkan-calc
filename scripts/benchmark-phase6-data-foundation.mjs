@@ -127,7 +127,11 @@ async function main() {
   const runtimeParse = timedParse(runtimeRead.text);
   const gzip = {
     canonicalBytes: gzipSync(canonicalRead.text, { level: 9 }).byteLength,
-    runtimeBytes: gzipSync(runtimeRead.text, { level: 9 }).byteLength
+    runtimeBytes: gzipSync(runtimeRead.text, { level: 9 }).byteLength,
+    canonicalMinifiedBytes: Buffer.byteLength(JSON.stringify(canonicalParse.value)),
+    runtimeMinifiedBytes: Buffer.byteLength(JSON.stringify(runtimeParse.value)),
+    canonicalMinifiedGzipBytes: gzipSync(JSON.stringify(canonicalParse.value), { level: 9 }).byteLength,
+    runtimeMinifiedGzipBytes: gzipSync(JSON.stringify(runtimeParse.value), { level: 9 }).byteLength
   };
   canonicalParse.value = null;
   runtimeParse.value = null;
@@ -163,8 +167,12 @@ async function main() {
       phase4Candidate: Buffer.byteLength(phase4Read.text),
       canonical: Buffer.byteLength(canonicalRead.text),
       runtime: Buffer.byteLength(runtimeRead.text),
+      canonicalMinified: gzip.canonicalMinifiedBytes,
+      runtimeMinified: gzip.runtimeMinifiedBytes,
       canonicalGzip: gzip.canonicalBytes,
-      runtimeGzip: gzip.runtimeBytes
+      runtimeGzip: gzip.runtimeBytes,
+      canonicalMinifiedGzip: gzip.canonicalMinifiedGzipBytes,
+      runtimeMinifiedGzip: gzip.runtimeMinifiedGzipBytes
     },
     offlineGenerationMilliseconds: {
       readPhase4: phase4Read.milliseconds,
@@ -185,7 +193,7 @@ async function main() {
     },
     assessment: {
       fullCanonicalForBrowser: '不採用。監査・CI側に保持する正本候補。',
-      fullRuntimeForMobile: '16MB超を一括配信・parseする最終設計は推奨しない。event indexと必要event単位chunkをPhase 7候補とする。',
+      fullRuntimeForMobile: 'minify時は約6MBだが、展開後object memoryと実機Safari/Androidが未検証。full版も比較対象に残しつつ、event indexと必要event単位chunkをPhase 7推奨候補とする。',
       pages: 'HTTP fetch自体は可能だが、転送量・parse・memoryを減らすchunk設計が必要。',
       fileAndOneDrive: '外部JSON fetch依存は互換性リスク。現在の単一HTML利用を変更せず、将来script chunk方式を実機比較する。'
     }

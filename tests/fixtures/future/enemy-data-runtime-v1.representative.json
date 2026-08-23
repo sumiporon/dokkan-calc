@@ -1019,8 +1019,8 @@
                     "value": 0.5
                   },
                   "attackKind": {
-                    "state": "known",
-                    "value": "other"
+                    "state": "unknown",
+                    "value": null
                   },
                   "firstTargetDamage": {
                     "state": "known",
@@ -4347,8 +4347,8 @@
                     "value": 0.5
                   },
                   "attackKind": {
-                    "state": "known",
-                    "value": "other"
+                    "state": "unknown",
+                    "value": null
                   },
                   "firstTargetDamage": {
                     "state": "known",
