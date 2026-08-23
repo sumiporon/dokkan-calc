@@ -1,0 +1,4964 @@
+{
+  "canonicalDatasetId": "canonical:jpnja:phase4-cache-c8c6a2468861-representative",
+  "datasetId": "runtime:canonical:jpnja:phase4-cache-c8c6a2468861-representative",
+  "events": [
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:701",
+      "name": {
+        "state": "known",
+        "value": "超激戦BOSSラッシュ!!"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "extreme"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 25000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:701:stage:7010013:encounter:4:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "ジャネンバ"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 50000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:701:stage:7010013:encounter:4:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "ラピッドキャノン"
+                      },
+                      "probabilityPercent": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": [
+                        {
+                          "cooldownTurns": {
+                            "state": "known",
+                            "value": 0
+                          },
+                          "hpMaxPercent": {
+                            "state": "known",
+                            "value": 100
+                          },
+                          "hpMinPercent": {
+                            "state": "known",
+                            "value": 90
+                          },
+                          "maxPerTurn": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "order": 1,
+                          "probabilityPercent": {
+                            "state": "known",
+                            "value": 100
+                          }
+                        },
+                        {
+                          "cooldownTurns": {
+                            "state": "known",
+                            "value": 2
+                          },
+                          "hpMaxPercent": {
+                            "state": "known",
+                            "value": 90
+                          },
+                          "hpMinPercent": {
+                            "state": "known",
+                            "value": 0
+                          },
+                          "maxPerTurn": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "order": 2,
+                          "probabilityPercent": {
+                            "state": "known",
+                            "value": 30
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "str"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "extreme"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 32800
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:701:stage:7010013:encounter:4:enemy:1",
+                  "name": {
+                    "state": "known",
+                    "value": "スーパージャネンバ"
+                  },
+                  "orderInEncounter": 1,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 3
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 82000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:701:stage:7010013:encounter:4:enemy:1:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "ライトニングシャワーレイン"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 17.14
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "int"
+                  }
+                }
+              ],
+              "id": "jpnja:event:701:stage:7010013:encounter:4",
+              "order": 4
+            }
+          ],
+          "id": "jpnja:event:701:stage:7010013",
+          "name": {
+            "state": "known",
+            "value": "超激戦BOSSラッシュ1"
+          }
+        },
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 20000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:701:stage:7010014:encounter:9:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "ビルス"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 2
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 50000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:701:stage:7010014:encounter:9:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "破壊神の裁き"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 25
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "teq"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 14000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:701:stage:7010014:encounter:9:enemy:1",
+                  "name": {
+                    "state": "known",
+                    "value": "ビルス慢心"
+                  },
+                  "orderInEncounter": 1,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 3
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 35000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:701:stage:7010014:encounter:9:enemy:1:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "拡散破壊玉"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 17.14
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "teq"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 28000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:701:stage:7010014:encounter:9:enemy:2",
+                  "name": {
+                    "state": "known",
+                    "value": "ビルス怒り"
+                  },
+                  "orderInEncounter": 2,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 4
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.8
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 78400
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:701:stage:7010014:encounter:9:enemy:2:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "破壊神の裁き"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 25.56
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "teq"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 7777
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:701:stage:7010014:encounter:9:enemy:3",
+                  "name": {
+                    "state": "known",
+                    "value": "ビルス(寝間着)"
+                  },
+                  "orderInEncounter": 3,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [],
+                  "type": {
+                    "state": "known",
+                    "value": "teq"
+                  }
+                }
+              ],
+              "id": "jpnja:event:701:stage:7010014:encounter:9",
+              "order": 9
+            }
+          ],
+          "id": "jpnja:event:701:stage:7010014",
+          "name": {
+            "state": "known",
+            "value": "超激戦BOSSラッシュ1"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:711",
+      "name": {
+        "state": "known",
+        "value": "DOKKANと叩け！パンチマシン！"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "neutral"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 1
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:711:stage:7110011:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "パンチマシン"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:711:stage:7110011:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "なし"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "agl"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "neutral"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 1
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:711:stage:7110011:encounter:0:enemy:1",
+                  "name": {
+                    "state": "known",
+                    "value": "パンチマシン"
+                  },
+                  "orderInEncounter": 1,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:711:stage:7110011:encounter:0:enemy:1:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "なし"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "teq"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "neutral"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 1
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:711:stage:7110011:encounter:0:enemy:2",
+                  "name": {
+                    "state": "known",
+                    "value": "パンチマシン"
+                  },
+                  "orderInEncounter": 2,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:711:stage:7110011:encounter:0:enemy:2:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "なし"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "int"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "neutral"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 1
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:711:stage:7110011:encounter:0:enemy:3",
+                  "name": {
+                    "state": "known",
+                    "value": "パンチマシン"
+                  },
+                  "orderInEncounter": 3,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:711:stage:7110011:encounter:0:enemy:3:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "なし"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "str"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "neutral"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 1
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:711:stage:7110011:encounter:0:enemy:4",
+                  "name": {
+                    "state": "known",
+                    "value": "パンチマシン"
+                  },
+                  "orderInEncounter": 4,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:711:stage:7110011:encounter:0:enemy:4:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "なし"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "phy"
+                  }
+                }
+              ],
+              "id": "jpnja:event:711:stage:7110011:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:711:stage:7110011",
+          "name": {
+            "state": "known",
+            "value": "ゼニーステージ"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1702",
+      "name": {
+        "state": "known",
+        "value": "究極のレッドゾーン 孫悟空の軌跡編"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [
+                {
+                  "additionalTargetDamage": {
+                    "state": "known",
+                    "value": 700000
+                  },
+                  "additionalTargetMultiplier": {
+                    "state": "known",
+                    "value": 0.5
+                  },
+                  "attackKind": {
+                    "state": "known",
+                    "value": "other"
+                  },
+                  "firstTargetDamage": {
+                    "state": "known",
+                    "value": 1400000
+                  },
+                  "firstTargetMultiplier": {
+                    "state": "known",
+                    "value": 1
+                  },
+                  "id": "jpnja:event:1702:stage:17020095:encounter:0:area:0",
+                  "maxPerTurn": {
+                    "state": "known",
+                    "value": 3
+                  },
+                  "sourceEnemyId": {
+                    "state": "known",
+                    "value": "jpnja:event:1702:stage:17020095:encounter:0:enemy:3"
+                  },
+                  "targetMode": {
+                    "state": "known",
+                    "value": "selected-and-others"
+                  }
+                }
+              ],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "extreme"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 420000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "ベルガモ(巨大化)"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [
+                    {
+                      "appliesTo": "enemy-stats",
+                      "bracket": "mid-battle",
+                      "cap": {
+                        "state": "known",
+                        "value": 1000
+                      },
+                      "durationTurns": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:0:passive:0",
+                      "operation": "add-percent",
+                      "target": "attack",
+                      "trigger": {
+                        "end": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMaxPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMinPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "kind": "received-hit-count",
+                        "start": {
+                          "state": "known",
+                          "value": 1
+                        }
+                      },
+                      "value": {
+                        "state": "known",
+                        "value": 3
+                      }
+                    }
+                  ],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 5
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.8
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1176000
+                      },
+                      "effects": [
+                        {
+                          "appliesTo": "subsequent-normal-attacks",
+                          "bracket": "post-super",
+                          "cap": {
+                            "state": "unknown",
+                            "value": null
+                          },
+                          "durationTurns": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:0:super:0:effect:0",
+                          "operation": "add-percent",
+                          "target": "attack",
+                          "trigger": {
+                            "end": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMaxPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMinPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "kind": "after-super",
+                            "start": {
+                              "state": "unknown",
+                              "value": null
+                            }
+                          },
+                          "value": {
+                            "state": "known",
+                            "value": 30
+                          }
+                        }
+                      ],
+                      "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "デンジャーズトライアングル"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 21.69
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "str"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 500000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:1",
+                  "name": {
+                    "state": "known",
+                    "value": "ケール(暴走)"
+                  },
+                  "orderInEncounter": 1,
+                  "passiveEffects": [
+                    {
+                      "appliesTo": "enemy-stats",
+                      "bracket": "start-of-turn",
+                      "cap": {
+                        "state": "known",
+                        "value": 100
+                      },
+                      "durationTurns": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:1:passive:0",
+                      "operation": "add-percent",
+                      "target": "attack",
+                      "trigger": {
+                        "end": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMaxPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMinPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "kind": "elapsed-turn",
+                        "start": {
+                          "state": "known",
+                          "value": 1
+                        }
+                      },
+                      "value": {
+                        "state": "known",
+                        "value": 30
+                      }
+                    }
+                  ],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 8
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.8
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1400000
+                      },
+                      "effects": [
+                        {
+                          "appliesTo": "subsequent-normal-attacks",
+                          "bracket": "post-super",
+                          "cap": {
+                            "state": "unknown",
+                            "value": null
+                          },
+                          "durationTurns": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:1:super:0:effect:0",
+                          "operation": "add-percent",
+                          "target": "attack",
+                          "trigger": {
+                            "end": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMaxPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMinPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "kind": "after-super",
+                            "start": {
+                              "state": "unknown",
+                              "value": null
+                            }
+                          },
+                          "value": {
+                            "state": "known",
+                            "value": 50
+                          }
+                        }
+                      ],
+                      "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:1:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "ギガンティックインパクト"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 18.39
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "phy"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 820000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:2",
+                  "name": {
+                    "state": "known",
+                    "value": "超サイヤ人2ケフラ"
+                  },
+                  "orderInEncounter": 2,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 10
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.8
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 2296000
+                      },
+                      "effects": [
+                        {
+                          "appliesTo": "subsequent-normal-attacks",
+                          "bracket": "post-super",
+                          "cap": {
+                            "state": "unknown",
+                            "value": null
+                          },
+                          "durationTurns": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:2:super:0:effect:0",
+                          "operation": "add-percent",
+                          "target": "attack",
+                          "trigger": {
+                            "end": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMaxPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMinPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "kind": "after-super",
+                            "start": {
+                              "state": "unknown",
+                              "value": null
+                            }
+                          },
+                          "value": {
+                            "state": "known",
+                            "value": 30
+                          }
+                        }
+                      ],
+                      "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:2:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "ギガンティックブラスト"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 15.22
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "teq"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 1400000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:3",
+                  "name": {
+                    "state": "known",
+                    "value": "ジレン"
+                  },
+                  "orderInEncounter": 3,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.8
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 3920000
+                      },
+                      "effects": [
+                        {
+                          "appliesTo": "subsequent-normal-attacks",
+                          "bracket": "post-super",
+                          "cap": {
+                            "state": "unknown",
+                            "value": null
+                          },
+                          "durationTurns": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:3:super:0:effect:0",
+                          "operation": "add-percent",
+                          "target": "attack",
+                          "trigger": {
+                            "end": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMaxPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMinPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "kind": "after-super",
+                            "start": {
+                              "state": "unknown",
+                              "value": null
+                            }
+                          },
+                          "value": {
+                            "state": "known",
+                            "value": 50
+                          }
+                        }
+                      ],
+                      "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:3:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "オーバーヒート・マグネトロン"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 100
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "int"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 1000000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:4",
+                  "name": {
+                    "state": "known",
+                    "value": "ジレン(フルパワー)"
+                  },
+                  "orderInEncounter": 4,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 8
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.2
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 2200000
+                      },
+                      "effects": [
+                        {
+                          "appliesTo": "subsequent-normal-attacks",
+                          "bracket": "post-super",
+                          "cap": {
+                            "state": "unknown",
+                            "value": null
+                          },
+                          "durationTurns": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:4:super:0:effect:0",
+                          "operation": "add-percent",
+                          "target": "attack",
+                          "trigger": {
+                            "end": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMaxPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMinPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "kind": "after-super",
+                            "start": {
+                              "state": "unknown",
+                              "value": null
+                            }
+                          },
+                          "value": {
+                            "state": "known",
+                            "value": 50
+                          }
+                        }
+                      ],
+                      "id": "jpnja:event:1702:stage:17020095:encounter:0:enemy:4:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "オメガヒート・マグネトロン"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 19.1
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "agl"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1702:stage:17020095:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1702:stage:17020095",
+          "name": {
+            "state": "known",
+            "value": "宇宙サバイバル編"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1744",
+      "name": {
+        "state": "known",
+        "value": "相手は誰だ!?ランブルクラッシュ"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 150000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "孫悟空(ミニ)(DAIMA)"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 375000
+                      },
+                      "effects": [
+                        {
+                          "appliesTo": "subsequent-normal-attacks",
+                          "bracket": "post-super",
+                          "cap": {
+                            "state": "unknown",
+                            "value": null
+                          },
+                          "durationTurns": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:0:super:0:effect:0",
+                          "operation": "add-percent",
+                          "target": "attack",
+                          "trigger": {
+                            "end": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMaxPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMinPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "kind": "after-super",
+                            "start": {
+                              "state": "unknown",
+                              "value": null
+                            }
+                          },
+                          "value": {
+                            "state": "known",
+                            "value": 30
+                          }
+                        }
+                      ],
+                      "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "伸びろ如意棒"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 50
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "phy"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 100000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:1",
+                  "name": {
+                    "state": "known",
+                    "value": "ベジータ(ミニ)(DAIMA)"
+                  },
+                  "orderInEncounter": 1,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 250000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:1:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "スラッシュアロー"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 44.44
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "int"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 100000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:2",
+                  "name": {
+                    "state": "known",
+                    "value": "界王神(ミニ)(DAIMA)"
+                  },
+                  "orderInEncounter": 2,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 250000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:2:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "打振連撃"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 44.44
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "agl"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 200000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:3",
+                  "name": {
+                    "state": "known",
+                    "value": "グロリオ"
+                  },
+                  "orderInEncounter": 3,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 500000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:3:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "スマートショット"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 100
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "agl"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 250000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:4",
+                  "name": {
+                    "state": "known",
+                    "value": "ピッコロ(ミニ)(DAIMA)"
+                  },
+                  "orderInEncounter": 4,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.8
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 700000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:4:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "魔貫光殺砲"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 100
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "int"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 150000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:5",
+                  "name": {
+                    "state": "known",
+                    "value": "タマガミ・ナンバー・ワン"
+                  },
+                  "orderInEncounter": 5,
+                  "passiveEffects": [
+                    {
+                      "appliesTo": "enemy-stats",
+                      "bracket": "start-of-turn",
+                      "cap": {
+                        "state": "known",
+                        "value": 100
+                      },
+                      "durationTurns": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:5:passive:0",
+                      "operation": "add-percent",
+                      "target": "attack",
+                      "trigger": {
+                        "end": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMaxPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMinPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "kind": "elapsed-turn",
+                        "start": {
+                          "state": "known",
+                          "value": 1
+                        }
+                      },
+                      "value": {
+                        "state": "known",
+                        "value": 25
+                      }
+                    }
+                  ],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.8
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 420000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:5:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "ルミナスブレード"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 20
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "phy"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 200000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:6",
+                  "name": {
+                    "state": "known",
+                    "value": "超サイヤ人4孫悟空(DAIMA)"
+                  },
+                  "orderInEncounter": 6,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 3.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 700000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:6:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "龍撃牙咆"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    },
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 3
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 600000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:6:super:1",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "龍撃拳"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "str"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 200000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7",
+                  "name": {
+                    "state": "known",
+                    "value": "超サイヤ人3ベジータ(DAIMA)"
+                  },
+                  "orderInEncounter": 7,
+                  "passiveEffects": [
+                    {
+                      "appliesTo": "enemy-stats",
+                      "bracket": "start-of-turn",
+                      "cap": {
+                        "state": "known",
+                        "value": 200
+                      },
+                      "durationTurns": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7:passive:0",
+                      "operation": "add-percent",
+                      "target": "attack",
+                      "trigger": {
+                        "end": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMaxPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMinPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "kind": "elapsed-turn",
+                        "start": {
+                          "state": "known",
+                          "value": 1
+                        }
+                      },
+                      "value": {
+                        "state": "known",
+                        "value": 50
+                      }
+                    }
+                  ],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 3.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 700000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "ファイナルバーストキャノン"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    },
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 3
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 600000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1744:stage:17440013:encounter:0:enemy:7:super:1",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "ライトニングバースト"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "teq"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1744:stage:17440013:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1744:stage:17440013",
+          "name": {
+            "state": "known",
+            "value": "DAIMA編"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1704",
+      "name": {
+        "state": "known",
+        "value": "歴戦の超強敵"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 700000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1704:stage:17040095:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "ビルス&ウイス"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [
+                    {
+                      "appliesTo": "enemy-stats",
+                      "bracket": "start-of-turn",
+                      "cap": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "durationTurns": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "id": "jpnja:event:1704:stage:17040095:encounter:0:enemy:0:passive:0",
+                      "operation": "add-percent",
+                      "target": "attack",
+                      "trigger": {
+                        "end": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMaxPercent": {
+                          "state": "known",
+                          "value": 40
+                        },
+                        "hpMinPercent": {
+                          "state": "known",
+                          "value": 0
+                        },
+                        "kind": "hp-range",
+                        "start": {
+                          "state": "unknown",
+                          "value": null
+                        }
+                      },
+                      "value": {
+                        "state": "known",
+                        "value": 100
+                      }
+                    }
+                  ],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.8
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1960000
+                      },
+                      "effects": [
+                        {
+                          "appliesTo": "subsequent-normal-attacks",
+                          "bracket": "post-super",
+                          "cap": {
+                            "state": "unknown",
+                            "value": null
+                          },
+                          "durationTurns": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "id": "jpnja:event:1704:stage:17040095:encounter:0:enemy:0:super:0:effect:0",
+                          "operation": "add-percent",
+                          "target": "attack",
+                          "trigger": {
+                            "end": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMaxPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMinPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "kind": "after-super",
+                            "start": {
+                              "state": "unknown",
+                              "value": null
+                            }
+                          },
+                          "value": {
+                            "state": "known",
+                            "value": 30
+                          }
+                        }
+                      ],
+                      "id": "jpnja:event:1704:stage:17040095:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "破壊神の裁き"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 15.22
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "str"
+                  }
+                },
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 1200000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1704:stage:17040095:encounter:0:enemy:1",
+                  "name": {
+                    "state": "known",
+                    "value": "ビルス"
+                  },
+                  "orderInEncounter": 1,
+                  "passiveEffects": [
+                    {
+                      "appliesTo": "enemy-stats",
+                      "bracket": "start-of-turn",
+                      "cap": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "durationTurns": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "id": "jpnja:event:1704:stage:17040095:encounter:0:enemy:1:passive:0",
+                      "operation": "add-percent",
+                      "target": "attack",
+                      "trigger": {
+                        "end": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMaxPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMinPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "kind": "appearance-turn",
+                        "start": {
+                          "state": "known",
+                          "value": 3
+                        }
+                      },
+                      "value": {
+                        "state": "known",
+                        "value": 30
+                      }
+                    },
+                    {
+                      "appliesTo": "enemy-stats",
+                      "bracket": "mid-battle",
+                      "cap": {
+                        "state": "known",
+                        "value": 64
+                      },
+                      "durationTurns": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "id": "jpnja:event:1704:stage:17040095:encounter:0:enemy:1:passive:1",
+                      "operation": "add-percent",
+                      "target": "attack",
+                      "trigger": {
+                        "end": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMaxPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMinPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "kind": "received-hit-count",
+                        "start": {
+                          "state": "known",
+                          "value": 1
+                        }
+                      },
+                      "value": {
+                        "state": "known",
+                        "value": 8
+                      }
+                    }
+                  ],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 3
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 3600000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1704:stage:17040095:encounter:0:enemy:1:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "破壊神の裁き"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 15.22
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "phy"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1704:stage:17040095:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1704:stage:17040095",
+          "name": {
+            "state": "known",
+            "value": "劇場版 その4"
+          }
+        },
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "extreme"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 1000000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "known",
+                      "value": true
+                    },
+                    "rateRules": [
+                      {
+                        "appliesTo": "enemy-stats",
+                        "bracket": "start-of-turn",
+                        "cap": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "durationTurns": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "id": "jpnja:event:1704:stage:17040025:encounter:0:enemy:0:critical:rate-rule:0",
+                        "operation": "add-percent",
+                        "target": "critical-rate",
+                        "trigger": {
+                          "end": {
+                            "state": "unknown",
+                            "value": null
+                          },
+                          "hpMaxPercent": {
+                            "state": "known",
+                            "value": 30
+                          },
+                          "hpMinPercent": {
+                            "state": "known",
+                            "value": 0
+                          },
+                          "kind": "hp-range",
+                          "start": {
+                            "state": "unknown",
+                            "value": null
+                          }
+                        },
+                        "value": {
+                          "state": "known",
+                          "value": 30
+                        }
+                      }
+                    ]
+                  },
+                  "id": "jpnja:event:1704:stage:17040025:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "桃白白"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 9
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 2500000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1704:stage:17040025:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "どどん波"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 15.56
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "teq"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1704:stage:17040025:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1704:stage:17040025",
+          "name": {
+            "state": "known",
+            "value": "劇場版 その1"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:730",
+      "name": {
+        "state": "known",
+        "value": "200%カンペキ！戦闘シミュレーション"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "neutral"
+                  },
+                  "baseAttack": {
+                    "state": "unavailable",
+                    "value": null
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:730:stage:7300011:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "超サイヤ人ゴッドSS孫悟空"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "non-combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "displayedDamage": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:730:stage:7300011:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "なし"
+                      },
+                      "probabilityPercent": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "agl"
+                  }
+                }
+              ],
+              "id": "jpnja:event:730:stage:7300011:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:730:stage:7300011",
+          "name": {
+            "state": "known",
+            "value": "【vs速】戦闘シミュレーション"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1703",
+      "name": {
+        "state": "known",
+        "value": "究極のレッドゾーン ベジータの軌跡編"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 500000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1703:stage:17030055:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "ビルス"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 10
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.8
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1400000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1703:stage:17030055:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "拡散破壊玉"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 15.22
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "agl"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1703:stage:17030055:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1703:stage:17030055",
+          "name": {
+            "state": "known",
+            "value": "破壊神ビルス編"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1705",
+      "name": {
+        "state": "known",
+        "value": "10周年！Anniversary Battle"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "extreme"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 250000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1705:stage:17050015:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "スーパージャネンバ"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [
+                    {
+                      "appliesTo": "enemy-stats",
+                      "bracket": "start-of-turn",
+                      "cap": {
+                        "state": "known",
+                        "value": 100
+                      },
+                      "durationTurns": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "id": "jpnja:event:1705:stage:17050015:encounter:0:enemy:0:passive:0",
+                      "operation": "add-percent",
+                      "target": "attack",
+                      "trigger": {
+                        "end": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMaxPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "hpMinPercent": {
+                          "state": "unknown",
+                          "value": null
+                        },
+                        "kind": "elapsed-turn",
+                        "start": {
+                          "state": "known",
+                          "value": 1
+                        }
+                      },
+                      "value": {
+                        "state": "known",
+                        "value": 10
+                      }
+                    }
+                  ],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 5
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 625000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1705:stage:17050015:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "ライトニングシャワーレイン"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 16.67
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "int"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1705:stage:17050015:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1705:stage:17050015",
+          "name": {
+            "state": "known",
+            "value": "1st anniversary"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1714",
+      "name": {
+        "state": "known",
+        "value": "ドッカン究極エキサイトバトル"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "extreme"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 600000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1714:stage:17140015:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "魔人ブウ(アルティメット悟飯吸収)"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 3
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1800000
+                      },
+                      "effects": [
+                        {
+                          "appliesTo": "subsequent-normal-attacks",
+                          "bracket": "post-super",
+                          "cap": {
+                            "state": "unknown",
+                            "value": null
+                          },
+                          "durationTurns": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "id": "jpnja:event:1714:stage:17140015:encounter:0:enemy:0:super:0:effect:0",
+                          "operation": "add-percent",
+                          "target": "attack",
+                          "trigger": {
+                            "end": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMaxPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMinPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "kind": "after-super",
+                            "start": {
+                              "state": "unknown",
+                              "value": null
+                            }
+                          },
+                          "value": {
+                            "state": "known",
+                            "value": 30
+                          }
+                        }
+                      ],
+                      "id": "jpnja:event:1714:stage:17140015:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "破壊光弾"
+                      },
+                      "probabilityPercent": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": [
+                        {
+                          "cooldownTurns": {
+                            "state": "known",
+                            "value": 0
+                          },
+                          "hpMaxPercent": {
+                            "state": "known",
+                            "value": 100
+                          },
+                          "hpMinPercent": {
+                            "state": "known",
+                            "value": 86
+                          },
+                          "maxPerTurn": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "order": 1,
+                          "probabilityPercent": {
+                            "state": "known",
+                            "value": 50.75
+                          }
+                        },
+                        {
+                          "cooldownTurns": {
+                            "state": "known",
+                            "value": 0
+                          },
+                          "hpMaxPercent": {
+                            "state": "known",
+                            "value": 85
+                          },
+                          "hpMinPercent": {
+                            "state": "known",
+                            "value": 0
+                          },
+                          "maxPerTurn": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "order": 2,
+                          "probabilityPercent": {
+                            "state": "known",
+                            "value": 34
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "cooldownTurns": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 3.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 2100000
+                      },
+                      "effects": [
+                        {
+                          "appliesTo": "subsequent-normal-attacks",
+                          "bracket": "post-super",
+                          "cap": {
+                            "state": "unknown",
+                            "value": null
+                          },
+                          "durationTurns": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "id": "jpnja:event:1714:stage:17140015:encounter:0:enemy:0:super:1:effect:0",
+                          "operation": "add-percent",
+                          "target": "attack",
+                          "trigger": {
+                            "end": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMaxPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMinPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "kind": "after-super",
+                            "start": {
+                              "state": "unknown",
+                              "value": null
+                            }
+                          },
+                          "value": {
+                            "state": "known",
+                            "value": 30
+                          }
+                        }
+                      ],
+                      "id": "jpnja:event:1714:stage:17140015:encounter:0:enemy:0:super:1",
+                      "maxPerTurn": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "アルティメットキャノン"
+                      },
+                      "probabilityPercent": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": [
+                        {
+                          "cooldownTurns": {
+                            "state": "known",
+                            "value": 0
+                          },
+                          "hpMaxPercent": {
+                            "state": "known",
+                            "value": 100
+                          },
+                          "hpMinPercent": {
+                            "state": "known",
+                            "value": 86
+                          },
+                          "maxPerTurn": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "order": 1,
+                          "probabilityPercent": {
+                            "state": "known",
+                            "value": 50.75
+                          }
+                        },
+                        {
+                          "cooldownTurns": {
+                            "state": "known",
+                            "value": 0
+                          },
+                          "hpMaxPercent": {
+                            "state": "known",
+                            "value": 85
+                          },
+                          "hpMinPercent": {
+                            "state": "known",
+                            "value": 0
+                          },
+                          "maxPerTurn": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "order": 2,
+                          "probabilityPercent": {
+                            "state": "known",
+                            "value": 34
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "phy"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1714:stage:17140015:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1714:stage:17140015",
+          "name": {
+            "state": "known",
+            "value": "ステージ1"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1715",
+      "name": {
+        "state": "known",
+        "value": "究極のレッドゾーン 少年編"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "extreme"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 500000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1715:stage:17150015:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "ピラフ一味"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1250000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1715:stage:17150015:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "ダブルバスター"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 22.22
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "phy"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1715:stage:17150015:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1715:stage:17150015",
+          "name": {
+            "state": "known",
+            "value": "VSピラフ一味"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1716",
+      "name": {
+        "state": "known",
+        "value": "本気対本気！ガチバトル"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 750000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1716:stage:17160015:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "超サイヤ人ゴッドSS孫悟空"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 3
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 2250000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1716:stage:17160015:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "かめはめ波"
+                      },
+                      "probabilityPercent": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": [
+                        {
+                          "cooldownTurns": {
+                            "state": "known",
+                            "value": 0
+                          },
+                          "hpMaxPercent": {
+                            "state": "known",
+                            "value": 100
+                          },
+                          "hpMinPercent": {
+                            "state": "known",
+                            "value": 51
+                          },
+                          "maxPerTurn": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "order": 1,
+                          "probabilityPercent": {
+                            "state": "known",
+                            "value": 100
+                          }
+                        },
+                        {
+                          "cooldownTurns": {
+                            "state": "known",
+                            "value": 0
+                          },
+                          "hpMaxPercent": {
+                            "state": "known",
+                            "value": 50
+                          },
+                          "hpMinPercent": {
+                            "state": "known",
+                            "value": 0
+                          },
+                          "maxPerTurn": {
+                            "state": "known",
+                            "value": 2
+                          },
+                          "order": 2,
+                          "probabilityPercent": {
+                            "state": "known",
+                            "value": 49.25
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "teq"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1716:stage:17160015:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1716:stage:17160015",
+          "name": {
+            "state": "known",
+            "value": "VS超サイヤ人ゴッドSS孫悟空"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1717",
+      "name": {
+        "state": "known",
+        "value": "MILLION ARENA-予選-"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 400000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "ヤムチャ"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 3
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1200000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1717:stage:17170015:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "かめはめ波"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "str"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1717:stage:17170015:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1717:stage:17170015",
+          "name": {
+            "state": "known",
+            "value": "予選"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1721",
+      "name": {
+        "state": "known",
+        "value": "MILLION ARENA-シングルマッチ-"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 400000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "ヤムチャ"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 3
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1200000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1721:stage:17210015:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "かめはめ波"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "str"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1721:stage:17210015:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1721:stage:17210015",
+          "name": {
+            "state": "known",
+            "value": "予選"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1722",
+      "name": {
+        "state": "known",
+        "value": "SPECIAL BATTLE 2025"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [
+                {
+                  "additionalTargetDamage": {
+                    "state": "known",
+                    "value": 70000
+                  },
+                  "additionalTargetMultiplier": {
+                    "state": "known",
+                    "value": 0.5
+                  },
+                  "attackKind": {
+                    "state": "known",
+                    "value": "other"
+                  },
+                  "firstTargetDamage": {
+                    "state": "known",
+                    "value": 140000
+                  },
+                  "firstTargetMultiplier": {
+                    "state": "known",
+                    "value": 1
+                  },
+                  "id": "jpnja:event:1722:stage:17220033:encounter:0:area:0",
+                  "maxPerTurn": {
+                    "state": "known",
+                    "value": 2
+                  },
+                  "sourceEnemyId": {
+                    "state": "known",
+                    "value": "jpnja:event:1722:stage:17220033:encounter:0:enemy:0"
+                  },
+                  "targetMode": {
+                    "state": "known",
+                    "value": "selected-and-others"
+                  }
+                }
+              ],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "extreme"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 140000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1722:stage:17220033:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "超一星龍"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 3
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 420000
+                      },
+                      "effects": [
+                        {
+                          "appliesTo": "subsequent-normal-attacks",
+                          "bracket": "post-super",
+                          "cap": {
+                            "state": "unknown",
+                            "value": null
+                          },
+                          "durationTurns": {
+                            "state": "known",
+                            "value": 1
+                          },
+                          "id": "jpnja:event:1722:stage:17220033:encounter:0:enemy:0:super:0:effect:0",
+                          "operation": "add-percent",
+                          "target": "attack",
+                          "trigger": {
+                            "end": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMaxPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "hpMinPercent": {
+                              "state": "unknown",
+                              "value": null
+                            },
+                            "kind": "after-super",
+                            "start": {
+                              "state": "unknown",
+                              "value": null
+                            }
+                          },
+                          "value": {
+                            "state": "known",
+                            "value": 50
+                          }
+                        }
+                      ],
+                      "id": "jpnja:event:1722:stage:17220033:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "神速龍光弾"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 100
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "phy"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1722:stage:17220033:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1722:stage:17220033",
+          "name": {
+            "state": "known",
+            "value": "ステージ3"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1726",
+      "name": {
+        "state": "known",
+        "value": "至上のバトルスペクタクル 次世代のサイヤ人編"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "super"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 2120000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1726:stage:17260045:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "孫悟飯(青年期)&孫悟天(幼年期)&トランクス(幼年期)"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 3.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 7420000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1726:stage:17260045:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "ワクワク100倍パワー"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 0
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "teq"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1726:stage:17260045:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1726:stage:17260045",
+          "name": {
+            "state": "known",
+            "value": "VS孫悟飯&孫悟天&トランクス1"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1728",
+      "name": {
+        "state": "known",
+        "value": "ユニオンマスターズ"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "extreme"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 650000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1728:stage:17280014:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "魔人ブウ(アルティメット悟飯吸収)"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 6
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 1625000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1728:stage:17280014:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "スーパーゴーストカミカゼアタック"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 17.28
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "teq"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1728:stage:17280014:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1728:stage:17280014",
+          "name": {
+            "state": "known",
+            "value": "「融合/合体戦士」3体必須"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1729",
+      "name": {
+        "state": "known",
+        "value": "究極のレッドゾーン 純粋サイヤ人編"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "extreme"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 880000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1729:stage:17290015:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "ラディッツ"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 4
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.8
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 2464000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1729:stage:17290015:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "ウィークエンド"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 25.56
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "phy"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1729:stage:17290015:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1729:stage:17290015",
+          "name": {
+            "state": "known",
+            "value": "VS ラディッツ"
+          }
+        }
+      ]
+    },
+    {
+      "category": {
+        "state": "known",
+        "value": "challenge"
+      },
+      "id": "jpnja:event:1731",
+      "name": {
+        "state": "known",
+        "value": "生か死か！弱肉強食の星"
+      },
+      "stages": [
+        {
+          "encounters": [
+            {
+              "areaAttacks": [],
+              "enemies": [
+                {
+                  "alignment": {
+                    "state": "known",
+                    "value": "extreme"
+                  },
+                  "baseAttack": {
+                    "state": "known",
+                    "value": 50000
+                  },
+                  "critical": {
+                    "attackMultiplier": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "defenseIgnorePercent": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "enabled": {
+                      "state": "unknown",
+                      "value": null
+                    },
+                    "rateRules": []
+                  },
+                  "id": "jpnja:event:1731:stage:17310013:encounter:0:enemy:0",
+                  "name": {
+                    "state": "known",
+                    "value": "大ダニ"
+                  },
+                  "orderInEncounter": 0,
+                  "passiveEffects": [],
+                  "role": {
+                    "state": "known",
+                    "value": "combat"
+                  },
+                  "superAttacks": [
+                    {
+                      "cooldownTurns": {
+                        "state": "known",
+                        "value": 2
+                      },
+                      "criticalOverride": {
+                        "state": "not-applicable",
+                        "value": null
+                      },
+                      "derivedMultiplier": {
+                        "state": "known",
+                        "value": 2.5
+                      },
+                      "displayedDamage": {
+                        "state": "known",
+                        "value": 125000
+                      },
+                      "effects": [],
+                      "id": "jpnja:event:1731:stage:17310013:encounter:0:enemy:0:super:0",
+                      "maxPerTurn": {
+                        "state": "known",
+                        "value": 1
+                      },
+                      "name": {
+                        "state": "known",
+                        "value": "ティックニードル"
+                      },
+                      "probabilityPercent": {
+                        "state": "known",
+                        "value": 25
+                      },
+                      "slot": {
+                        "state": "unavailable",
+                        "value": null
+                      },
+                      "targetMode": {
+                        "state": "unknown",
+                        "value": null
+                      },
+                      "usageRules": []
+                    }
+                  ],
+                  "type": {
+                    "state": "known",
+                    "value": "agl"
+                  }
+                }
+              ],
+              "id": "jpnja:event:1731:stage:17310013:encounter:0",
+              "order": 0
+            }
+          ],
+          "id": "jpnja:event:1731:stage:17310013",
+          "name": {
+            "state": "known",
+            "value": "サバイバル1"
+          }
+        }
+      ]
+    }
+  ],
+  "generatedAt": "2026-02-23T08:11:11.385Z",
+  "region": "jpnja",
+  "schemaVersion": "1.0.0"
+}

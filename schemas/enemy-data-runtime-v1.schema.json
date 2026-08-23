@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sumiporon.github.io/dokkan-calc/schemas/enemy-data-runtime-v1.schema.json",
+  "title": "Dokkan Calc calculation runtime projection v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "datasetId", "canonicalDatasetId", "generatedAt", "region", "events"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" }, "datasetId": { "type": "string", "minLength": 1 }, "canonicalDatasetId": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" }, "region": { "type": "string", "minLength": 1 }, "events": { "type": "array", "items": { "$ref": "#/$defs/event" } }
+  },
+  "$defs": {
+    "field": {
+      "type": "object", "additionalProperties": false, "required": ["state", "value"],
+      "properties": { "state": { "enum": ["known", "unknown", "unavailable", "not-applicable"] }, "value": true },
+      "allOf": [{ "if": { "properties": { "state": { "const": "known" } }, "required": ["state"] }, "then": { "properties": { "value": { "not": { "type": "null" } } } }, "else": { "properties": { "value": { "type": "null" } } } }]
+    },
+    "effect": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "trigger", "appliesTo", "target", "operation", "value", "cap", "durationTurns", "bracket"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "trigger": { "type": "object", "additionalProperties": false, "required": ["kind", "start", "end", "hpMinPercent", "hpMaxPercent"], "properties": { "kind": { "type": "string" }, "start": { "$ref": "#/$defs/field" }, "end": { "$ref": "#/$defs/field" }, "hpMinPercent": { "$ref": "#/$defs/field" }, "hpMaxPercent": { "$ref": "#/$defs/field" } } },
+        "appliesTo": { "type": "string" }, "target": { "type": "string" }, "operation": { "type": "string" }, "value": { "$ref": "#/$defs/field" }, "cap": { "$ref": "#/$defs/field" }, "durationTurns": { "$ref": "#/$defs/field" }, "bracket": { "type": "string" }
+      }
+    },
+    "critical": {
+      "type": "object", "additionalProperties": false, "required": ["enabled", "attackMultiplier", "defenseIgnorePercent", "rateRules"],
+      "properties": { "enabled": { "$ref": "#/$defs/field" }, "attackMultiplier": { "$ref": "#/$defs/field" }, "defenseIgnorePercent": { "$ref": "#/$defs/field" }, "rateRules": { "type": "array", "items": { "$ref": "#/$defs/effect" } } }
+    },
+    "usageRule": {
+      "type": "object", "additionalProperties": false, "required": ["order", "hpMinPercent", "hpMaxPercent", "probabilityPercent", "maxPerTurn", "cooldownTurns"],
+      "properties": { "order": { "type": "integer" }, "hpMinPercent": { "$ref": "#/$defs/field" }, "hpMaxPercent": { "$ref": "#/$defs/field" }, "probabilityPercent": { "$ref": "#/$defs/field" }, "maxPerTurn": { "$ref": "#/$defs/field" }, "cooldownTurns": { "$ref": "#/$defs/field" } }
+    },
+    "superAttack": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "name", "displayedDamage", "derivedMultiplier", "probabilityPercent", "maxPerTurn", "cooldownTurns", "slot", "usageRules", "targetMode", "effects", "criticalOverride"],
+      "properties": { "id": { "type": "string", "minLength": 1 }, "name": { "$ref": "#/$defs/field" }, "displayedDamage": { "$ref": "#/$defs/field" }, "derivedMultiplier": { "$ref": "#/$defs/field" }, "probabilityPercent": { "$ref": "#/$defs/field" }, "maxPerTurn": { "$ref": "#/$defs/field" }, "cooldownTurns": { "$ref": "#/$defs/field" }, "slot": { "$ref": "#/$defs/field" }, "usageRules": { "type": "array", "items": { "$ref": "#/$defs/usageRule" } }, "targetMode": { "$ref": "#/$defs/field" }, "effects": { "type": "array", "items": { "$ref": "#/$defs/effect" } }, "criticalOverride": { "$ref": "#/$defs/field" } }
+    },
+    "areaAttack": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "sourceEnemyId", "attackKind", "maxPerTurn", "firstTargetDamage", "additionalTargetDamage", "firstTargetMultiplier", "additionalTargetMultiplier", "targetMode"],
+      "properties": { "id": { "type": "string", "minLength": 1 }, "sourceEnemyId": { "$ref": "#/$defs/field" }, "attackKind": { "$ref": "#/$defs/field" }, "maxPerTurn": { "$ref": "#/$defs/field" }, "firstTargetDamage": { "$ref": "#/$defs/field" }, "additionalTargetDamage": { "$ref": "#/$defs/field" }, "firstTargetMultiplier": { "$ref": "#/$defs/field" }, "additionalTargetMultiplier": { "$ref": "#/$defs/field" }, "targetMode": { "$ref": "#/$defs/field" } }
+    },
+    "enemy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "orderInEncounter", "role", "name", "type", "alignment", "baseAttack", "superAttacks", "passiveEffects", "critical"],
+      "properties": { "id": { "type": "string", "minLength": 1 }, "orderInEncounter": { "type": "integer", "minimum": 0 }, "role": { "$ref": "#/$defs/field" }, "name": { "$ref": "#/$defs/field" }, "type": { "$ref": "#/$defs/field" }, "alignment": { "$ref": "#/$defs/field" }, "baseAttack": { "$ref": "#/$defs/field" }, "superAttacks": { "type": "array", "items": { "$ref": "#/$defs/superAttack" } }, "passiveEffects": { "type": "array", "items": { "$ref": "#/$defs/effect" } }, "critical": { "$ref": "#/$defs/critical" } }
+    },
+    "encounter": {
+      "type": "object", "additionalProperties": false, "required": ["id", "order", "enemies", "areaAttacks"],
+      "properties": { "id": { "type": "string", "minLength": 1 }, "order": { "type": "integer" }, "enemies": { "type": "array", "items": { "$ref": "#/$defs/enemy" } }, "areaAttacks": { "type": "array", "items": { "$ref": "#/$defs/areaAttack" } } }
+    },
+    "stage": {
+      "type": "object", "additionalProperties": false, "required": ["id", "name", "encounters"],
+      "properties": { "id": { "type": "string", "minLength": 1 }, "name": { "$ref": "#/$defs/field" }, "encounters": { "type": "array", "items": { "$ref": "#/$defs/encounter" } } }
+    },
+    "event": {
+      "type": "object", "additionalProperties": false, "required": ["id", "name", "category", "stages"],
+      "properties": { "id": { "type": "string", "minLength": 1 }, "name": { "$ref": "#/$defs/field" }, "category": { "$ref": "#/$defs/field" }, "stages": { "type": "array", "items": { "$ref": "#/$defs/stage" } } }
+    }
+  }
+}

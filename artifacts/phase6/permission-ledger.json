@@ -1,0 +1,71 @@
+{
+  "entries": [
+    {
+      "acquisitionMode": "offline-existing-copy",
+      "automaticFetch": "denied",
+      "displayName": "Saved DokkanInfo HTML cache",
+      "evidenceUrls": [],
+      "manualFetch": "unknown",
+      "notes": "既に保存済みのcacheだけをoffline fixtureとして変換可能。新規取得・本番公開の根拠にはしない。",
+      "offlineTransform": "allowed",
+      "publishDerived": "unknown",
+      "redistributeDerived": "unknown",
+      "redistributeRaw": "denied",
+      "reviewedAt": "2026-02-23T08:11:11.385Z",
+      "sourceKey": "dokkaninfo-saved-cache",
+      "validFrom": null,
+      "validUntil": null
+    },
+    {
+      "acquisitionMode": "written-permission-pending",
+      "automaticFetch": "unknown",
+      "displayName": "DokkanStats",
+      "evidenceUrls": [],
+      "manualFetch": "unknown",
+      "notes": "ownerが問い合わせる予定。明示回答を記録するまで取得・変換・公開しない。",
+      "offlineTransform": "unknown",
+      "publishDerived": "unknown",
+      "redistributeDerived": "unknown",
+      "redistributeRaw": "unknown",
+      "reviewedAt": "2026-02-23T08:11:11.385Z",
+      "sourceKey": "dokkanstats",
+      "validFrom": null,
+      "validUntil": null
+    },
+    {
+      "acquisitionMode": "prohibited",
+      "automaticFetch": "denied",
+      "displayName": "DokkanInfo live site",
+      "evidenceUrls": [],
+      "manualFetch": "unknown",
+      "notes": "技術的access可否と許可を分離。現在の自動取得方式を再開しない。",
+      "offlineTransform": "unknown",
+      "publishDerived": "unknown",
+      "redistributeDerived": "unknown",
+      "redistributeRaw": "denied",
+      "reviewedAt": "2026-02-23T08:11:11.385Z",
+      "sourceKey": "dokkaninfo-live",
+      "validFrom": null,
+      "validUntil": null
+    },
+    {
+      "acquisitionMode": "prohibited",
+      "automaticFetch": "denied",
+      "displayName": "DokkanDB live site",
+      "evidenceUrls": [],
+      "manualFetch": "unknown",
+      "notes": "Phase 5調査時点で正式feed・再配布許可が確認できていない。",
+      "offlineTransform": "unknown",
+      "publishDerived": "unknown",
+      "redistributeDerived": "unknown",
+      "redistributeRaw": "denied",
+      "reviewedAt": "2026-02-23T08:11:11.385Z",
+      "sourceKey": "dokkandb-live",
+      "validFrom": null,
+      "validUntil": null
+    }
+  ],
+  "generatedAt": "2026-02-23T08:11:11.385Z",
+  "ledgerId": "dokkan-calc-source-permissions-v1",
+  "schemaVersion": "1.0.0"
+}

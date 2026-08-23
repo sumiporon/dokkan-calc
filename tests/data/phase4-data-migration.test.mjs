@@ -5,6 +5,7 @@ import { createRequire } from 'node:module';
 import test from 'node:test';
 
 import { buildCandidateFromCache, createPhase4Artifacts } from '../../scripts/generate-phase4-enemy-candidate.mjs';
+import { createPhase6Artifacts } from '../../scripts/generate-phase6-data-foundation.mjs';
 import {
   candidateDatasetToLegacy,
   candidateEnemyToLegacy,
@@ -17,14 +18,26 @@ import { auditFutureEnemyDataset } from '../helpers/future-enemy-schema-audit.mj
 const require = createRequire(import.meta.url);
 const Ajv2020 = require('ajv/dist/2020').default;
 const addFormats = require('ajv-formats');
-const [schema, representative, selection, manifest, legacy, storedComparison, storedSummary] = await Promise.all([
+const [
+  schema, representative, selection, manifest, legacy, storedComparison, storedSummary,
+  phase6Manifest, phase6Validation, phase6Omission, phase6Verification, phase6Permission,
+  phase6SourceMaterial, phase6RepresentativeCanonical, phase6RepresentativeRuntime
+] = await Promise.all([
   readFile(new URL('../../schemas/enemy-data-v1.draft.schema.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../fixtures/future/enemy-data-v1.representative.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../../artifacts/phase4/representative-selection.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../../artifacts/phase4/candidate-manifest.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../../scraper/all_enemies.json', import.meta.url), 'utf8').then(JSON.parse),
   readFile(new URL('../../artifacts/phase4/legacy-vs-candidate.diff.json', import.meta.url), 'utf8').then(JSON.parse),
-  readFile(new URL('../../artifacts/phase4/legacy-comparison-summary.json', import.meta.url), 'utf8').then(JSON.parse)
+  readFile(new URL('../../artifacts/phase4/legacy-comparison-summary.json', import.meta.url), 'utf8').then(JSON.parse),
+  readFile(new URL('../../artifacts/phase6/candidate-manifest.json', import.meta.url), 'utf8').then(JSON.parse),
+  readFile(new URL('../../artifacts/phase6/validation-report.json', import.meta.url), 'utf8').then(JSON.parse),
+  readFile(new URL('../../artifacts/phase6/runtime-omission-report.json', import.meta.url), 'utf8').then(JSON.parse),
+  readFile(new URL('../../artifacts/phase6/large-scale-verification.json', import.meta.url), 'utf8').then(JSON.parse),
+  readFile(new URL('../../artifacts/phase6/permission-ledger.json', import.meta.url), 'utf8').then(JSON.parse),
+  readFile(new URL('../../artifacts/phase6/source-material-reference.json', import.meta.url), 'utf8').then(JSON.parse),
+  readFile(new URL('../fixtures/future/enemy-data-v2.canonical.representative.json', import.meta.url), 'utf8').then(JSON.parse),
+  readFile(new URL('../fixtures/future/enemy-data-runtime-v1.representative.json', import.meta.url), 'utf8').then(JSON.parse)
 ]);
 const ajv = new Ajv2020({ allErrors: true, allowUnionTypes: true, strict: true });
 addFormats(ajv);
@@ -348,6 +361,25 @@ test('追跡対象のPhase 4成果物とmanifest digestは現在の唯一のgene
     assert.equal(artifact.bytes, Buffer.byteLength(serialized), `${key}:bytes`);
     assert.equal(artifact.digest, artifactDigest(serialized), `${key}:digest`);
   }
+
+  // Reuse the already parsed 5,032-enemy candidate. This proves the complete
+  // Phase 6 path without paying for a second saved-HTML parse in npm test.
+  const phase6 = await createPhase6Artifacts({
+    candidateDataset: generated.dataset,
+    candidateSerialized: generated.serialized.candidate
+  });
+  assert.equal(phase6.serialized.manifest, stableJson(phase6Manifest));
+  assert.equal(phase6.serialized.validation, stableJson(phase6Validation));
+  assert.equal(phase6.serialized.omission, stableJson(phase6Omission));
+  assert.equal(phase6.serialized.verification, stableJson(phase6Verification));
+  assert.equal(phase6.serialized.permission, stableJson(phase6Permission));
+  assert.equal(phase6.serialized.sourceMaterial, stableJson(phase6SourceMaterial));
+  assert.equal(phase6.serialized.representativeCanonical, stableJson(phase6RepresentativeCanonical));
+  assert.equal(phase6.serialized.representativeRuntime, stableJson(phase6RepresentativeRuntime));
+  assert.equal(phase6.verification.counts.enemies, 5032);
+  assert.equal(phase6.verification.schemas.canonical, true);
+  assert.equal(phase6.validationReport.counts['hard-fail'], 0);
+  assert.equal(phase6.verification.safety.candidateToStableAllowed, false);
 });
 
 function buildSyntheticNeutralDataset() {

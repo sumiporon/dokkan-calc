@@ -30,6 +30,10 @@
 # manifest, summary, and representative fixture tracked instead.
 /generated/phase4/
 
+# Reproducible full-size Phase 6 canonical/runtime outputs and compiled trial
+# modules. Compact reports and representative fixtures stay tracked.
+/generated/phase6/
+
 # Scraper caches and intermediate data
 # Some of these paths are already tracked in the legacy history. Ignoring them
 # here does not delete or untrack those files; that decision is deferred.

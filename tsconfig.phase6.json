@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.phase4.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "src/data-migration/phase4-enemy-migration.ts",
+    "src/data-foundation/*.ts"
+  ]
+}

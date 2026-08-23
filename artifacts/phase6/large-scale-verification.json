@@ -1,0 +1,79 @@
+{
+  "adapter": {
+    "adapterId": "phase4-offline-saved-cache-to-canonical-v2",
+    "adapterVersion": "1.0.0",
+    "inputFormat": "phase4-enemy-data-v1",
+    "networkAccess": "forbidden",
+    "outputSchemaVersion": "2.0.0",
+    "sourceKey": "dokkaninfo-saved-cache"
+  },
+  "byteSizes": {
+    "canonical": 84735492,
+    "phase4Candidate": 35532102,
+    "runtime": 16691105,
+    "runtimeVsCanonicalPercent": 19.7,
+    "runtimeVsPhase4Percent": 47
+  },
+  "classification": "offline-migration-test-material-not-production",
+  "counts": {
+    "aiActions": 1679,
+    "areaAttacks": 75,
+    "combatEnemies": 4673,
+    "encounters": 1352,
+    "enemies": 5032,
+    "events": 88,
+    "evidence": 801,
+    "knownZeroFields": 3011,
+    "manualCorrections": 0,
+    "neutralEnemies": 443,
+    "sourceSnapshots": 1,
+    "stages": 801,
+    "superAttacks": 4924,
+    "unavailableFields": 20340,
+    "unknownFields": 35077,
+    "usageRules": 168
+  },
+  "datasetId": "canonical:jpnja:phase4-cache-c8c6a2468861",
+  "deterministicGeneration": {
+    "canonicalInput": "sha256:4f42c83fba42180c6960418a01980c4bd33d10102c30761322ade7289388e307",
+    "canonicalOutput": "sha256:e6dc6f330441389651b7e36c63705b816291ad8f0671e51415425c9ce1d2e8b6",
+    "manifestOutput": "sha256:18e1ee99424173d9afa657f74269686be4fc7e746a3e60afb6b1039c1a5d4a4a",
+    "runtimeOutput": "sha256:e06b484ad904d933569bc27d99898563f45f7062b5f0d12872b455d2848a7433"
+  },
+  "deviceAssessment": "実測値はperformance-report.jsonへ分離。full runtimeを一括parseする設計はスマホ向け最終形とせず、Phase 7以降にmanifest/indexとevent単位chunkを比較する。",
+  "featureProof": {
+    "aiActions": 1679,
+    "areaAttacks": 75,
+    "knownExplicitZeroStats": 824,
+    "multipleSuperEnemies": 79,
+    "neutralEnemies": 443,
+    "unavailableFields": 1436,
+    "unknownCriticalFields": 15091,
+    "usageRules": 168
+  },
+  "generatedAt": "2026-02-23T08:11:11.385Z",
+  "networkRequests": 0,
+  "oldFormatCompatibility": {
+    "phase4StructuredLosses": 37690,
+    "policy": "旧形式は比較・preview・一時互換に限定し、canonical v2を旧形式へ合わせて肥大化しない。runtimeからcanonicalへの逆変換もしない。"
+  },
+  "permission": {
+    "offlineTransform": "allowed",
+    "publishDerived": "unknown"
+  },
+  "productionFilesWritten": 0,
+  "reportVersion": "1.0.0",
+  "safety": {
+    "blockReason": "安全検査、review、または公開許可が未完了のためstableへ昇格できません。",
+    "candidateToStableAllowed": false,
+    "hardFailCount": 0,
+    "reviewRequiredCount": 1,
+    "status": "review-required"
+  },
+  "schemas": {
+    "canonical": true,
+    "manifest": true,
+    "permissionLedger": true,
+    "runtime": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.phase6.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "rootDir": "src",
+    "outDir": "generated/phase6/runtime",
+    "declaration": false,
+    "sourceMap": false
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "canonicalDatasetId": "canonical:jpnja:phase4-cache-c8c6a2468861",
+  "counts": {
+    "aiActions": 1679,
+    "areaAttacks": 75,
+    "combatEnemies": 4673,
+    "encounters": 1352,
+    "enemies": 5032,
+    "events": 88,
+    "evidence": 801,
+    "knownZeroFields": 3011,
+    "manualCorrections": 0,
+    "neutralEnemies": 443,
+    "sourceSnapshots": 1,
+    "stages": 801,
+    "superAttacks": 4924,
+    "unavailableFields": 20340,
+    "unknownFields": 35077,
+    "usageRules": 168
+  },
+  "omitted": [
+    {
+      "fieldFamily": "sourceSnapshots/sourceRefs/evidence/confidence",
+      "reason": "監査・再生成用で、計算時には不要。",
+      "retainedInCanonical": true,
+      "retainedInSourceMaterial": true
+    },
+    {
+      "fieldFamily": "raw provider display fields and icon paths",
+      "reason": "正規化計算に使わず、取得元固有materialで再現できる。",
+      "retainedInCanonical": false,
+      "retainedInSourceMaterial": true
+    },
+    {
+      "fieldFamily": "HP/DEF/damage reduction/max attack count",
+      "reason": "現行の被ダメージ計算入力として参照していない。将来必要ならprojectionへ追加できる。",
+      "retainedInCanonical": true,
+      "retainedInSourceMaterial": true
+    },
+    {
+      "fieldFamily": "external/card/thumb IDs and EZA link flag",
+      "reason": "現在の計算式はcanonical IDだけで識別できる。",
+      "retainedInCanonical": true,
+      "retainedInSourceMaterial": true
+    },
+    {
+      "fieldFamily": "skill rows and descriptive/source text",
+      "reason": "数値化済みeffect以外の説明文は計算エンジンが読まない。",
+      "retainedInCanonical": true,
+      "retainedInSourceMaterial": true
+    },
+    {
+      "fieldFamily": "AI action sequences",
+      "reason": "現行計算は選択した攻撃値を評価し、敵行動順の自動シミュレーションをしない。",
+      "retainedInCanonical": true,
+      "retainedInSourceMaterial": true
+    },
+    {
+      "fieldFamily": "manual correction audit records",
+      "reason": "適用済みcanonical値の監査情報であり、端末計算には不要。",
+      "retainedInCanonical": true,
+      "retainedInSourceMaterial": true
+    }
+  ],
+  "reportVersion": "1.0.0",
+  "requiredCalculationLosses": [],
+  "runtimeDatasetId": "runtime:canonical:jpnja:phase4-cache-c8c6a2468861"
+}

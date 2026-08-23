@@ -1,0 +1,37 @@
+{
+  "candidateCounts": {
+    "aiActions": 1679,
+    "areaAttacks": 75,
+    "combatEnemies": 4673,
+    "encounters": 1352,
+    "enemies": 5032,
+    "events": 88,
+    "evidence": 801,
+    "knownZeroFields": 3011,
+    "manualCorrections": 0,
+    "neutralEnemies": 443,
+    "sourceSnapshots": 1,
+    "stages": 801,
+    "superAttacks": 4924,
+    "unavailableFields": 20340,
+    "unknownFields": 35077,
+    "usageRules": 168
+  },
+  "counts": {
+    "hard-fail": 0,
+    "informational": 0,
+    "review-required": 1
+  },
+  "evaluatedAt": "2026-02-23T08:11:11.385Z",
+  "findings": [
+    {
+      "code": "NO_CANONICAL_KNOWN_GOOD_BASELINE",
+      "details": {},
+      "message": "比較可能なcanonical known-goodがまだありません。初回候補は自動昇格させません。",
+      "severity": "review-required"
+    }
+  ],
+  "gateVersion": "1.0.0",
+  "previousCounts": null,
+  "status": "review-required"
+}

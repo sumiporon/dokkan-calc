@@ -1,0 +1,93 @@
+{
+  "artifacts": {
+    "canonical": {
+      "bytes": 84735492,
+      "digest": "sha256:e6dc6f330441389651b7e36c63705b816291ad8f0671e51415425c9ce1d2e8b6",
+      "path": "generated/phase6/candidate/enemy-data-v2.canonical.json",
+      "schemaVersion": "2.0.0"
+    },
+    "omissionReport": {
+      "bytes": 2394,
+      "digest": "sha256:178f1092ac0a09c5155d1ae33c07ba7d5dd8be5b7e3bea97d133f3a1d29df375",
+      "path": "artifacts/phase6/runtime-omission-report.json",
+      "schemaVersion": "1.0.0"
+    },
+    "runtime": {
+      "bytes": 16691105,
+      "digest": "sha256:e06b484ad904d933569bc27d99898563f45f7062b5f0d12872b455d2848a7433",
+      "path": "generated/phase6/candidate/enemy-data-runtime-v1.json",
+      "schemaVersion": "1.0.0"
+    },
+    "sourceInput": {
+      "bytes": 35532102,
+      "digest": "sha256:4f42c83fba42180c6960418a01980c4bd33d10102c30761322ade7289388e307",
+      "path": "generated/phase4/candidate/enemy-data-v1.candidate.json",
+      "schemaVersion": "1"
+    },
+    "validationReport": {
+      "bytes": 909,
+      "digest": "sha256:5471d5f2a451d92d785570c9c63a0640bcb9776fa498411bceae45f2ed87b527",
+      "path": "artifacts/phase6/validation-report.json",
+      "schemaVersion": "1.0.0"
+    }
+  },
+  "canonicalSchemaVersion": "2.0.0",
+  "channel": "candidate",
+  "compatibleAppVersion": {
+    "maximum": null,
+    "minimum": "future-phase7",
+    "productionAppReadsArtifact": false
+  },
+  "counts": {
+    "aiActions": 1679,
+    "areaAttacks": 75,
+    "combatEnemies": 4673,
+    "encounters": 1352,
+    "enemies": 5032,
+    "events": 88,
+    "evidence": 801,
+    "knownZeroFields": 3011,
+    "manualCorrections": 0,
+    "neutralEnemies": 443,
+    "sourceSnapshots": 1,
+    "stages": 801,
+    "superAttacks": 4924,
+    "unavailableFields": 20340,
+    "unknownFields": 35077,
+    "usageRules": 168
+  },
+  "datasetVersion": "canonical:jpnja:phase4-cache-c8c6a2468861",
+  "generatedAt": "2026-02-23T08:11:11.385Z",
+  "manifestId": "manifest:canonical:jpnja:phase4-cache-c8c6a2468861",
+  "manifestSchemaVersion": "1.0.0",
+  "permission": {
+    "ledgerDigest": "sha256:d195d22977917a167e67694dfdbd1e54de452f8c1ff09ab91f52e14947692ac2",
+    "offlineTransformAllowed": true,
+    "productionPublishAllowed": false
+  },
+  "previousKnownGood": {
+    "artifactDigest": "sha256:f1cb27a2e5cae9627be61934aaabec79e4af0b42d3e21ad0cc7945eb6d7a0b40",
+    "datasetVersion": "legacy-production-current",
+    "kind": "legacy-production",
+    "manifestDigest": null
+  },
+  "releaseState": "candidate",
+  "runtimeSchemaVersion": "1.0.0",
+  "sourceSnapshots": [
+    {
+      "acquiredAt": "2026-02-23T08:11:11.385Z",
+      "contentDigest": "sha256:c8c6a24688619fc2335e522e66214e01263b7cb762cc954f4c129fd91df7a022",
+      "id": "snapshot:jpnja:phase4-cache-c8c6a2468861",
+      "policyStatus": "offline-existing-copy",
+      "sourceKey": "dokkaninfo-saved-cache"
+    }
+  ],
+  "validation": {
+    "gateVersion": "1.0.0",
+    "hardFailCount": 0,
+    "informationalCount": 0,
+    "reportDigest": "sha256:5471d5f2a451d92d785570c9c63a0640bcb9776fa498411bceae45f2ed87b527",
+    "reviewRequiredCount": 1,
+    "status": "review-required"
+  }
+}

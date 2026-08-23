@@ -1,0 +1,15 @@
+{
+  "inputBytes": 35532102,
+  "inputDatasetId": "phase4-cache-c8c6a2468861",
+  "inputDigest": "sha256:4f42c83fba42180c6960418a01980c4bd33d10102c30761322ade7289388e307",
+  "inputFormat": "phase4-enemy-data-v1",
+  "inputPath": "generated/phase4/candidate/enemy-data-v1.candidate.json",
+  "reproducibleBy": "npm run generate:phase6 (offline saved-cache fixture only)",
+  "retainedInformation": [
+    "provider-specific raw display fields",
+    "HTML-derived text and icon paths",
+    "Phase 4 field-state notes",
+    "source occurrence IDs and page URLs"
+  ],
+  "sourceSnapshotId": "snapshot:jpnja:phase4-cache-c8c6a2468861"
+}

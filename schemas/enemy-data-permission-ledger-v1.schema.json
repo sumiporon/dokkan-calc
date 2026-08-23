@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sumiporon.github.io/dokkan-calc/schemas/enemy-data-permission-ledger-v1.schema.json",
+  "title": "Dokkan Calc source permission ledger v1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "ledgerId", "generatedAt", "entries"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" }, "ledgerId": { "type": "string", "minLength": 1 }, "generatedAt": { "type": "string", "format": "date-time" },
+    "entries": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/entry" } }
+  },
+  "$defs": {
+    "decision": { "enum": ["allowed", "denied", "unknown"] },
+    "entry": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sourceKey", "displayName", "acquisitionMode", "automaticFetch", "manualFetch", "offlineTransform", "redistributeRaw", "redistributeDerived", "publishDerived", "validFrom", "validUntil", "reviewedAt", "evidenceUrls", "notes"],
+      "properties": {
+        "sourceKey": { "type": "string", "minLength": 1 }, "displayName": { "type": "string", "minLength": 1 }, "acquisitionMode": { "enum": ["automatic-approved", "manual-approved", "written-permission-pending", "offline-existing-copy", "prohibited"] },
+        "automaticFetch": { "$ref": "#/$defs/decision" }, "manualFetch": { "$ref": "#/$defs/decision" }, "offlineTransform": { "$ref": "#/$defs/decision" }, "redistributeRaw": { "$ref": "#/$defs/decision" }, "redistributeDerived": { "$ref": "#/$defs/decision" }, "publishDerived": { "$ref": "#/$defs/decision" },
+        "validFrom": { "type": ["string", "null"], "format": "date-time" }, "validUntil": { "type": ["string", "null"], "format": "date-time" }, "reviewedAt": { "type": "string", "format": "date-time" }, "evidenceUrls": { "type": "array", "items": { "type": "string", "format": "uri" }, "uniqueItems": true }, "notes": { "type": "string" }
+      }
+    }
+  }
+}
