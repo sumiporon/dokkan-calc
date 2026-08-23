@@ -6,6 +6,8 @@ This file defines the standing development policy for this repository. It applie
 
 - This is primarily a personal Dokkan Battle durability/damage calculator, but it is also publicly hosted on GitHub Pages.
 - The owner has very little programming or Git knowledge. Agents should make routine technical decisions autonomously and explain results in plain Japanese.
+- Internal technical choices are normally delegated to agents. Choose appropriate code structure, libraries, TypeScript boundaries, build methods, Git workflow, tests, schemas, conversion algorithms, CI, and other implementation details without asking the owner when one option is clearly safer and more maintainable.
+- User-facing product behavior is different from internal implementation. Before making a major change to what the owner sees or operates—including screens, buttons, update steps, result presentation, save/load behavior, PC/mobile usage, or the meaning of an existing feature—explain in plain Japanese what would change, the realistic options, the recommended option, and how each option would affect normal use, then obtain the owner's approval. Small reversible UI corrections do not require separate approval.
 - Ask the owner only when a product preference, game rule, irreversible public change, loss of data, or another decision only the owner can make is involved.
 - Keep the solution proportionate to a personal tool. Prefer correctness, stability, maintainability, and a design that future AI agents can understand over fashionable or excessive architecture.
 - Maintain a basic security standard because the app is public. Never expose credentials or tokens, and treat the GitHub PAT feature as sensitive legacy code.
