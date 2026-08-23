@@ -86,6 +86,15 @@ npm run generate:phase4
 - 外部サイトからの自動取得と定期更新は停止したままです。DokkanStatsへの問い合わせ草案も未送信です。
 - Viteは導入していません。第4段階のTypeScript試験は計算・データ境界の妥当性確認に限定しています。
 
+## 第5段階の取得元・正本設計
+
+- DokkanStatsは、正式API／export、書面許可、再配布範囲、履歴coverage、原則1週間以内の詳細完成を確認する**条件付き第一候補**です。まだ承認済みの主取得元ではありません。
+- DokkanDBは掲載済みstageのAI・AOE・会心表現が豊富ですが、直近4 event sampleのうち3件でstage詳細を確認できず、利用許可も未解決です。DokkanInfo liveにも無許可の自動取得は戻しません。
+- 保存済みDokkanInfo HTMLは削除せず、801 stage／5,032 enemyの照合、parser回帰、移行backupに使います。新sourceが合格した場合は本番生成の必須入力から格下げします。
+- 将来の正本は新schemaの考え方を引き継ぎますが、現在のv1 draftをそのまま本番採用しません。source-neutralなcanonical、軽量runtime projection、release manifestへ分ける案です。
+- 更新・公開の推奨案は、通常時0操作を最終目標とし、初期はアプリ内の「更新を確認」→「適用」の2操作です。普段はPages、OneDriveはoffline backupとするhybridが有力ですが、いずれも所有者承認前の提案であり未実装です。
+- DokkanStatsへの問い合わせ完成稿は作成済みですが、まだ送信していません。本番敵JSON、localStorage、Pages、OneDriveの使い方、workflow、update UIは変更していません。
+
 ## 重要な安全上の注意
 
 - DokkanInfoへの自動取得は停止中です。規約・許可の問題が解決するまで再開しません。
@@ -107,4 +116,6 @@ npm run generate:phase4
 - [将来構成と敵データ設計](docs/phase3-architecture-and-data-design.md)
 - [第4段階の完了報告](docs/phase4-completion-report.md)
 - [第4段階の更新・公開方式比較](docs/phase4-update-hosting-strategy.md)
-- [DokkanStatsへの問い合わせ草案（未送信）](docs/phase4-dokkanstats-inquiry-draft.md)
+- [第5段階の敵データ正本・継続更新方式の評価](docs/phase5-data-source-and-canonical-design.md)
+- [DokkanStatsへの問い合わせ完成稿（未送信）](docs/phase5-dokkanstats-inquiry-ready.md)
+- [第4段階のDokkanStats問い合わせ草案（履歴・未送信）](docs/phase4-dokkanstats-inquiry-draft.md)
