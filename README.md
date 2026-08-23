@@ -195,3 +195,5 @@ npm run benchmark:phase8
 - [第8段階のOneDrive known-good設計](docs/phase8-onedrive-known-good-design.md)
 - [第8段階のPC・Android・iPhone実機確認](docs/phase8-device-preview-checklist.md)
 - [第8段階の完了報告](docs/phase8-completion-report.md)
+- [第8段階のPC実機フィードバック修正・機能差監査](docs/phase8-pc-feedback-fix-report.md)
+- [第8段階修正版のPC再確認手順](docs/phase8-pc-recheck-checklist.md)
