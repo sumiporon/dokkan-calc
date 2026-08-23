@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0.0",
+  "reviewedOn": "2026-08-24",
+  "sourceKey": "dokkanstats",
+  "contactStatus": "owner-sent-awaiting-reply",
+  "ownerSentOn": "2026-08-24",
+  "codexContactedOperator": false,
+  "operations": {
+    "manualAccess": "unknown",
+    "automatedAccess": "unknown",
+    "offlineTransform": "unknown",
+    "publishDerived": "unknown",
+    "redistributeDerived": "unknown",
+    "productionUse": "unknown"
+  },
+  "constraints": [
+    "Do not resend or follow up without a new owner instruction.",
+    "Do not interpret silence as permission.",
+    "Do not access DokkanStats data until the owner supplies a reply and it is reviewed operation by operation."
+  ],
+  "phase8Effect": "No live adapter or external-source request was implemented. Phase 8 uses fictional public fixtures and existing offline data only for local validation."
+}

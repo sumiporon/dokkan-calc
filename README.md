@@ -26,6 +26,7 @@ http://127.0.0.1:8765/dokkan_calc_final.html
 
 ```powershell
 npm ci
+npx playwright install webkit
 ```
 
 全テストを実行します。
@@ -43,12 +44,13 @@ npm run test:data
 npm run test:phase4
 npm run test:phase6
 npm run test:phase7
+npm run test:phase8
 npm run test:cached-source
 npm run test:browser
 npm run audit:data
 ```
 
-`npm test`には、第4段階の候補データ変換と全件再現、第6段階のcanonical/runtime、第7段階のfull/chunk/file-compatible生成、1操作更新・rollback、保存データ移行、HTTP/`file://` prototype browser操作も含まれます。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
+`npm test`には、第4段階の候補データ変換と全件再現、第6段階のcanonical/runtime、第7段階のprototypeに加え、第8段階のrelease candidate、前回event、1操作更新・rollback、保存データ移行、Chromium/WebKit、HTTP/`file://` browser操作も含まれます。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
 
 ブラウザテストは独立した一時ブラウザを使います。普段使用しているブラウザの保存データやlocalStorageは読み書きしません。
 
@@ -81,6 +83,8 @@ npm run benchmark:phase6
 ```powershell
 npm run generate:phase7
 npm run benchmark:phase7
+npm run generate:phase8
+npm run benchmark:phase8
 ```
 
 ## 主なファイル
@@ -102,6 +106,9 @@ npm run benchmark:phase7
 - `src/prototype/`：第7段階の更新・rollbackと保存データ移行のpure prototype
 - `scripts/generate-phase7-runtime-delivery.mjs`：full、event index/chunk、file-compatible dataの決定的generator
 - `artifacts/phase7/`：第7段階のcompact全件summaryと複数回performance実測
+- `release-candidate/phase8/`：第8段階の本番分離Pages候補、架空公開preview、単一HTML fallback
+- `src/release-candidate/`：第8段階のmanifest、chunk client、IndexedDB known-good、前回event
+- `artifacts/phase8/`：第8段階の性能とpermission状態
 - `schemas/`：将来形式の設計案（現行アプリはまだ読み込まない）
 - `docs/`：安全記録、データ形式、計算上の既知差、移行時の注意
 
@@ -111,7 +118,7 @@ npm run benchmark:phase7
 - 新形式は安定ID、取得元ID、evidence、信頼度、nullと0の区別、複数必殺、usage rule、AI sequence、AOEなどを保持します。
 - 新形式から現行形式へ変換すると重要情報が失われるため、production gateは現在`false`です。重大な`loss`が0件にならない限り本番昇格できません。
 - 現行の`scraper/all_enemies.json`、localStorage形式、GitHub Pages、OneDriveからHTMLを直接開く使い方は変更していません。
-- 外部サイトからの自動取得と定期更新は停止したままです。DokkanStatsへの問い合わせ草案も未送信です。
+- 外部サイトからの自動取得と定期更新は停止したままです。DokkanStats問い合わせはownerが2026-08-24に送信済みで、現在は返信待ちです。
 - Viteは導入していません。第4段階のTypeScript試験は計算・データ境界の妥当性確認に限定しています。
 
 ## 第5段階の取得元・正本設計
@@ -122,7 +129,7 @@ npm run benchmark:phase7
 - 将来の正本は新schemaの考え方を引き継ぎますが、現在のv1 draftをそのまま本番採用しません。source-neutralなcanonical、軽量runtime projection、release manifestへ分ける案です。
 - 第5段階時点の2操作案は、その後のowner判断で変更されました。初期更新は`敵データを更新`の1操作で内部検査後に正常なら適用、異常時だけ停止し、将来0操作を目標とします。本番UIは未実装です。
 - Pages＋OneDrive hybridは将来の実機比較候補としてだけ承認され、採用は決定していません。現在のOneDrive/local利用を維持しています。
-- DokkanStatsへの問い合わせ完成稿は作成済みですが、まだ送信していません。本番敵JSON、localStorage、Pages、OneDriveの使い方、workflow、update UIは変更していません。
+- DokkanStatsへの問い合わせ完成稿はownerが送信済みですが、返信はまだありません。本番敵JSON、localStorage、Pages、OneDriveの使い方、workflowは変更していません。
 
 ## 第6段階のofflineデータ基盤
 
@@ -139,8 +146,17 @@ npm run benchmark:phase7
 - PCではfullも十分速い一方、mobile参考条件ではchunkが初期転送と初期memoryを明確に削減しました。将来の普段使い候補はPagesのevent chunk、内部release検証は単純なfullも利用する案です。
 - 1操作更新はmanifest、version、digest、構造、件数急減、app互換性を確認し、途中失敗・health check失敗時にknown-goodへ戻りました。0操作更新はまだ無効です。
 - 架空保存データはWindows `file://`からPages相当別originへ1回で移行でき、PATは除外されました。本番localStorageは変更していません。Android/iPhone実機確認はPhase 8仕様承認後の別test URLで必要です。
-- Pages primary＋現在のOneDrive known-good backupを推奨候補としていますが、owner承認前なので公開方式・普段の導線は変更していません。
+- Pages primary＋現在のOneDrive known-good backupはPhase 8 release candidate仕様としてowner承認済みです。ただしproduction移行は未承認で、公開方式・普段の導線は変更していません。
 - plain HTML/JSとgeneratorで必要な比較が成立したため、Viteは引き続き導入していません。
+
+## 第8段階のrelease candidate
+
+- 本番と分離したPages向け起動経路にevent index/chunk、前回event、設定・データ内の1操作更新、digest cache、2世代known-good、rollbackを統合しました。
+- 保存データ移行はallowlist、checksum、移行前後validation、途中失敗rollbackを持ち、Windows `file://`からHTTPへ1 buttonで移ることを確認しました。PATと未知keyは移しません。
+- Chromium/WebKitのdesktop/mobile/touch/390pxと、両browserの単一HTML `file://`直開きを通常testへ追加しました。iPhone/Android実機確認は別途必要です。
+- 公開可能なpreviewは架空3 eventだけです。実data由来5,032敵の全量releaseはローカル性能検証専用で、Git追跡・公開・production activationを禁止しています。
+- 正式Pages root、main、現在のOneDrive、本番敵data/localStorage/workflowは変更していません。0操作更新と外部source接続も無効です。
+- DokkanStatsはowner送信済み・返信待ちで、permissionは引き続きunknown/pendingです。
 
 ## 重要な安全上の注意
 
@@ -173,5 +189,9 @@ npm run benchmark:phase7
 - [第6段階の完了報告](docs/phase6-completion-report.md)
 - [第7段階のruntime配信・更新・利用方式比較](docs/phase7-runtime-delivery-comparison.md)
 - [第7段階のPC・Android・iPhone実機確認計画](docs/phase7-real-device-checklist.md)
-- [DokkanStats問い合わせコピー用（未送信）](docs/phase7-dokkanstats-inquiry-copy.md)
+- [DokkanStats問い合わせコピー用（owner送信済み・返信待ち）](docs/phase7-dokkanstats-inquiry-copy.md)
 - [第7段階の完了報告](docs/phase7-completion-report.md)
+- [第8段階のrelease candidate設計](docs/phase8-release-candidate-design.md)
+- [第8段階のOneDrive known-good設計](docs/phase8-onedrive-known-good-design.md)
+- [第8段階のPC・Android・iPhone実機確認](docs/phase8-device-preview-checklist.md)
+- [第8段階の完了報告](docs/phase8-completion-report.md)

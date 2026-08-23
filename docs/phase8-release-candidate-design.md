@@ -1,0 +1,71 @@
+# 第8段階 release candidate設計
+
+作成日: 2026-08-24（JST）
+
+## 結論
+
+Phase 7の実験を`release-candidate/phase8/`へ統合した。将来のPages向け通常経路はevent index＋選択event chunk、更新検査はfull runtime、保存はIndexedDB、artifact cacheはdigest照合付きCache Storageである。Vite、React、backend、browser PATは不要だった。
+
+これは本番と分離したrelease candidateである。`dokkan_calc_final.*`、`index.html`、`scraper/all_enemies.json`、production localStorage、Pages root、OneDrive、workflowは読み替えていない。
+
+## 公開境界
+
+manifestはdata分類と許可を明記する。
+
+| 分類 | 利用範囲 | 公開 |
+| --- | --- | --- |
+| `synthetic-public-fixture` | Phase 8の端末preview、browser test | 可 |
+| `existing-data-internal-only` | 5,032敵のローカル性能・全量検証 | 不可 |
+
+追跡する`release-candidate/phase8/data/`は完全な架空3 eventだけである。実データ由来の88 event／5,032 enemyは`generated/phase8/`へ生成し、`.gitignore`対象のまま公開しない。どちらも`productionActivated: false`、`productionActivateAllowed: false`、`liveSourceAccessAllowed: false`である。
+
+## 起動とevent chunk
+
+1. release manifestを取得して境界、version、artifact descriptorを確認する。
+2. IndexedDBのactive／known-goodを検査し、壊れていれば直前の保持release、最後に同梱seedの順で復旧する。
+3. digest付きevent indexだけを読み、初回はevent未選択で表示する。
+4. 前回event IDが現indexに残る場合だけ、そのevent chunkを読み復元する。
+5. event IDが削除・変更された、保存値が壊れた、古い保存形式だった場合は安全な未選択へ戻す。
+
+通常画面にchunk、manifest、candidateという内部用語は出さない。未使用eventは読まず、最近使った3 eventだけをmemoryに保持する。
+
+## 1操作更新
+
+設定・データ欄の「敵データを更新」1回で次を行う。
+
+1. manifest取得・validation gate
+2. version／app compatibility
+3. full candidate取得
+4. byte size／SHA-256 digest
+5. runtime schema／ID重複
+6. event・stage・enemy件数急減safety gate
+7. memory上のcandidate commit
+8. event indexを実際に読むhealth check
+9. IndexedDBへactive／known-good pointerとreleaseを同一transactionで保存
+10. 成功時だけ画面を新indexへ切替
+
+失敗時はactive、known-good、memory release一覧を更新前へ戻す。永続releaseは最大2世代を残し、active/known-good欠損や破損時は直前の保持版へ戻る。browser cacheもdescriptor digestを再計算し、壊れていれば削除して再取得する。
+
+正常表示は「敵データを更新しました」「すでに最新です」だけにした。異常時は「更新しなかった」「現在の敵データはそのまま安全に使える」を先に示し、取得破損、件数異常、非互換、health/適用失敗だけを平易に補足する。
+
+0操作更新は存在せず、更新履歴は秘密を含まない時刻、status、code、version、所要時間だけを最大50件記録する。
+
+## 保存データ移行
+
+許可listは現行の`dokkan_calc_data_v22`と`dokkan_crit_overrides`だけである。これに保存キャラクター、保存scenario、手動敵、耐久line、theme、未保存scenario、crit override、legacy snapshotが含まれる。GitHub PATと未知keyはpackage作成時点で除外する。
+
+現在版側で1回押すとnonce付きPages targetを開き、`opener`、nonce、source originを照合してmemory内の`postMessage`で渡す。`file://`では`location.origin`とmessage originの表現が異なるため、期待値を仕様上の`null`へ正規化した。URL、query、serverへ保存dataを載せない。
+
+Pages側はdigest、JSON構造、allowlistを移行前後に検査し、RC専用prefixへbackup付きで書く。途中writeまたは事後validationに失敗したら全keyとmarkerを元へ戻す。元画面の値は削除しない。同一packageの再実行は`unchanged`となる。
+
+Phase 8ではproduction current appへbuttonを挿入していないため、本物のowner保存値を移す本番導線はまだ有効ではない。release candidateの実通信はWindows `file://`→HTTPで自動検証し、端末previewでは架空packageだけを1 buttonで確認する。本番buttonの組込みはPhase 9以降の別承認対象である。
+
+## Pagesと一時preview
+
+正式Pages rootは変更していない。実機確認はcompletion tag上の架空fixtureをraw.githackの固定URLで表示する。これはGitHubのraw fileへ正しいContent-Typeを付ける第三者preview proxyであり、最初に転送先確認画面が出る場合がある。正式運用先ではなく、Phase 8の一時的な端末確認だけに使う。
+
+第三者previewが開けない場合は、架空data、CSS、計算core、RC clientを内蔵した`device-preview.html`を1 fileで開く。Chromium/WebKitの`file://`直開きを自動検証済みである。現行OneDrive版の置換物ではない。
+
+## Vite再評価
+
+plain HTML/CSS、native module、決定的generatorでversion path、digest、chunk、単一HTML、browser testが成立した。Viteを追加しても今回の利用者操作や安全性は改善せず、移行面積だけが増えるため導入しない。asset graphや開発serverが具体的な保守問題を解く時だけ再評価する。
