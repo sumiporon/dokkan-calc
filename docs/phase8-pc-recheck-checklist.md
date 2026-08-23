@@ -8,11 +8,13 @@ Android／iPhone確認はまだ行わない。まずPCだけで次を確認し�
 
 通常画面:
 
-`https://rawcdn.githack.com/sumiporon/dokkan-calc/phase8-pc-recheck-ready-2026-08-24/release-candidate/phase8/index.html`
+`https://raw.githack.com/sumiporon/dokkan-calc/phase8-pc-recheck-ready-v2-2026-08-24/release-candidate/phase8/index.html`
 
 架空保存データ移行:
 
-`https://rawcdn.githack.com/sumiporon/dokkan-calc/phase8-pc-recheck-ready-2026-08-24/release-candidate/phase8/migration-device-check.html`
+`https://raw.githack.com/sumiporon/dokkan-calc/phase8-pc-recheck-ready-v2-2026-08-24/release-candidate/phase8/migration-device-check.html`
+
+初回だけgithackの確認画面が出た場合は、URLが上記と一致することを確認して `Open the page` を押す。
 
 正式Pagesではなく、tag上の架空3 event／3 enemyだけを表示する一時previewである。現在のOneDrive版と保存データは変更しない。
 
