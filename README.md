@@ -37,12 +37,16 @@ npm test
 種類別に実行する場合は次を使います。
 
 ```powershell
+npm run typecheck
 npm run test:unit
 npm run test:data
+npm run test:phase4
 npm run test:cached-source
 npm run test:browser
 npm run audit:data
 ```
+
+`npm test`には、第4段階のTypeScript型検査、候補データ変換、schema、互換性、成果物digestの検査も含まれます。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
 
 ブラウザテストは独立した一時ブラウザを使います。普段使用しているブラウザの保存データやlocalStorageは読み書きしません。
 
@@ -50,6 +54,12 @@ npm run audit:data
 
 ```powershell
 npm run analyze:cached-source
+```
+
+第4段階の非本番candidate一式を保存HTMLから再生成する正式コマンドは次です。外部通信は行わず、現行敵JSONも上書きしません。801ステージを再解析するため、完了まで数分かかることがあります。
+
+```powershell
+npm run generate:phase4
 ```
 
 ## 主なファイル
@@ -62,8 +72,19 @@ npm run analyze:cached-source
 - `tests/`：計算、敵データ、localStorage、画面操作のテスト
 - `scripts/audit-enemy-data.mjs`：敵データの監査レポート
 - `scripts/analyze-cached-enemy-source.mjs`：保存HTML専用の読取・比較レポート
+- `scripts/generate-phase4-enemy-candidate.mjs`：第4段階の非本番candidate・fixture・diff・manifestの唯一の生成元
+- `src/data-migration/phase4-enemy-migration.ts`：第4段階だけで試験導入した型付き変換・互換loss判定
 - `schemas/`：将来形式の設計案（現行アプリはまだ読み込まない）
 - `docs/`：安全記録、データ形式、計算上の既知差、移行時の注意
+
+## 第4段階candidateの位置づけ
+
+- candidateは`2026-02-23T08:11:11.385Z`に保存されたDokkanInfo HTMLキャッシュの再解析結果で、現在の最新ステージを取得する仕組みではありません。
+- 新形式は安定ID、取得元ID、evidence、信頼度、nullと0の区別、複数必殺、usage rule、AI sequence、AOEなどを保持します。
+- 新形式から現行形式へ変換すると重要情報が失われるため、production gateは現在`false`です。重大な`loss`が0件にならない限り本番昇格できません。
+- 現行の`scraper/all_enemies.json`、localStorage形式、GitHub Pages、OneDriveからHTMLを直接開く使い方は変更していません。
+- 外部サイトからの自動取得と定期更新は停止したままです。DokkanStatsへの問い合わせ草案も未送信です。
+- Viteは導入していません。第4段階のTypeScript試験は計算・データ境界の妥当性確認に限定しています。
 
 ## 重要な安全上の注意
 
@@ -84,3 +105,6 @@ npm run analyze:cached-source
 - [第3段階の敵データ取得元再評価](docs/phase3-data-source-evaluation.md)
 - [保存HTMLの再解析結果](docs/phase3-cached-source-analysis.md)
 - [将来構成と敵データ設計](docs/phase3-architecture-and-data-design.md)
+- [第4段階の完了報告](docs/phase4-completion-report.md)
+- [第4段階の更新・公開方式比較](docs/phase4-update-hosting-strategy.md)
+- [DokkanStatsへの問い合わせ草案（未送信）](docs/phase4-dokkanstats-inquiry-draft.md)
