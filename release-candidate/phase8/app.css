@@ -88,6 +88,8 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .scenario-header { align-items: end; padding-bottom: .75rem; border-bottom: 1px solid var(--border); }
 .scenario-title-label { flex: 1; max-width: 32rem; }
 .compact-buttons button { min-height: 2.45rem; }
+.collapsible-card > summary { margin: -.3rem 0 .25rem; }
+.collapsible-content { padding-top: .35rem; border-top: 1px solid var(--border); }
 .final-defense-banner { margin: .8rem 0; padding: .65rem .8rem; border-radius: .65rem; background: var(--accent-soft); }
 .final-defense-banner strong { margin-left: .5rem; font-size: 1.25rem; }
 .affinity-section { margin-top: .75rem; border-top: 1px solid var(--border); }
@@ -95,6 +97,8 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .checkbox-label { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; align-self: end; min-height: 2.75rem; }
 .checkbox-label input { width: 1.3rem; height: 1.3rem; min-height: auto; flex: 0 0 auto; }
 .result-panel, .damage-panel { margin-top: 1rem; padding-top: .2rem; border-top: 2px solid var(--border); }
+.durability-affinity-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
+.compact-help { font-size: .78rem; }
 .durability-table { width: 100%; border-collapse: collapse; }
 .durability-table th, .durability-table td { padding: .55rem; border-bottom: 1px solid var(--border); text-align: left; }
 .durability-table td { text-align: right; font-size: 1.05rem; font-weight: 800; }
@@ -121,31 +125,70 @@ dialog::backdrop { background: #0008; }
 .preview-item h3 { margin: 0 0 .45rem; }
 
 @media (max-width: 700px) {
-  main { width: min(100% - .65rem, 1040px); margin-top: .35rem; }
-  .card { margin: .65rem 0; padding: .7rem; border-radius: .7rem; }
-  .app-header, .section-heading { gap: .5rem; }
-  .input-grid, .selector-grid, .condition-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .45rem; }
-  .management-grid, .settings-content { grid-template-columns: 1fr; gap: .55rem; }
+  :root { line-height: 1.25; }
+  main { width: min(100% - .3rem, 1040px); margin: .15rem auto 1rem; }
+  .app-header { gap: .3rem; align-items: center; }
+  h1 { margin: .12rem 0 .3rem; font-size: 1.32rem; line-height: 1.05; }
+  h2 { margin-bottom: .3rem; font-size: 1rem; }
+  h3 { margin: .45rem 0 .2rem; font-size: .88rem; }
+  p { margin: .2rem 0 .35rem; }
+  .rc-badge { padding: .15rem .4rem; font-size: .68rem; }
+  .preview-notice { margin: 0 0 .35rem; font-size: .72rem; }
+  .status { min-height: 0; padding: .38rem .48rem; border-radius: .45rem; font-size: .78rem; }
+  .card { margin: .35rem 0; padding: .45rem; border-radius: .5rem; }
+  .mode-card { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: .35rem; }
+  .mode-card h2 { margin: 0; font-size: .82rem; }
+  .mode-selector { flex-wrap: nowrap; gap: .25rem; }
+  .mode-option { flex: 1; justify-content: center; gap: .2rem; padding: .25rem .3rem; font-size: .76rem; }
+  .mode-option input { width: 1rem; height: 1rem; }
+  .input-grid, .selector-grid, .condition-controls, .durability-affinity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem; }
+  .management-grid { grid-template-columns: minmax(0, 1fr) auto; gap: .3rem; }
+  .management-grid > label:first-child, .management-grid > .button-row { grid-column: 1 / -1; }
+  .management-grid .button-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .2rem; }
+  .settings-content { grid-template-columns: 1fr; gap: .3rem; }
   .affinity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .results { grid-template-columns: 1fr; gap: .45rem; }
-  .scenario-header { gap: .5rem; }
+  .results { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem; margin-top: .35rem; }
+  .results > div { gap: .12rem; padding: .35rem; border-radius: .4rem; }
+  .results span { font-size: .68rem; }
+  .results strong { font-size: .9rem; }
+  .section-heading { margin: .5rem 0 .25rem; align-items: center; gap: .3rem; }
+  .section-heading p { display: none; }
+  .section-heading .primary-button { flex: 0 0 auto; width: auto; }
+  .scenario-header { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: .25rem; padding-bottom: .35rem; }
   .scenario-title-label { max-width: none; }
-  .compact-buttons { justify-content: flex-end; }
-  label { font-size: .78rem; gap: .15rem; }
-  select, input, button, .button-link { min-height: 2.7rem; padding: .4rem .48rem; }
-  h3 { margin: .75rem 0 .4rem; }
-  .final-defense-banner { margin: .6rem 0; padding: .5rem .6rem; }
-  .section-heading { align-items: stretch; flex-direction: column; }
-  .section-heading .primary-button { width: 100%; }
+  .compact-buttons { flex-wrap: nowrap; justify-content: flex-end; gap: .18rem; }
+  .compact-buttons button { min-height: 2.25rem; padding-inline: .35rem; }
+  label { font-size: .7rem; gap: .08rem; }
+  select, input { min-height: 2.5rem; padding: .22rem .35rem; font-size: 16px; }
+  button, .button-link { min-height: 2.35rem; padding: .25rem .38rem; font-size: .76rem; }
+  .icon-button { min-width: 2.4rem; }
+  .checkbox-label { min-height: 2.5rem; font-size: .72rem; }
+  .checkbox-label input { width: 1.05rem; height: 1.05rem; }
+  .final-defense-banner { margin: .35rem 0; padding: .35rem .45rem; font-size: .78rem; }
+  .final-defense-banner strong { margin-left: .25rem; font-size: 1rem; }
+  .affinity-section { margin-top: .35rem; }
+  .result-panel, .damage-panel { margin-top: .45rem; padding-top: .1rem; }
+  .compact-help, .section-help { font-size: .69rem; }
+  .durability-table th, .durability-table td { padding: .3rem; font-size: .78rem; }
+  .durability-table td { font-size: .9rem; }
+  .condition-controls { margin-top: .3rem; }
+  .enemy-summary { gap: .12rem; margin-top: .35rem; padding: .4rem; border-radius: .4rem; font-size: .76rem; }
+  .attack-summary-row { gap: .3rem; padding-top: .15rem; }
+  summary { min-height: 2.35rem; font-size: .8rem; }
+  .collapsible-card > summary { margin: -.2rem 0 .1rem; }
+  .collapsible-content { padding-top: .25rem; }
+  .inline-form { gap: .25rem; }
+  .inline-form label { flex-basis: 150px; }
+  .line-list { gap: .25rem; }
+  .line-badge { padding: .12rem .2rem .12rem .4rem; font-size: .75rem; }
+  .line-badge button { min-height: 1.8rem; width: 1.8rem; }
+  .inline-status { min-height: 0; padding: .2rem; font-size: .72rem; }
 }
 
 @media (max-width: 380px) {
-  .scenario-header { align-items: stretch; flex-direction: column; }
-  .compact-buttons { justify-content: stretch; }
-  .compact-buttons button { flex: 1; }
   .attack-summary-row { display: grid; gap: .05rem; }
 }
 
 @media (pointer: coarse) {
-  select, input, button, .button-link, summary { min-height: 2.75rem; }
+  select, input, button, .button-link, summary { min-height: 2.5rem; }
 }

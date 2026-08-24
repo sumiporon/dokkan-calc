@@ -18,6 +18,10 @@ const SYSTEM_CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const TEST_TIMEOUT = 90_000;
 const LAST_EVENT_KEY = 'dokkan_phase8_rc_last_event_v1';
 const RC_STORAGE_KEY = 'dokkan_phase8_rc_imported_dokkan_calc_data_v22';
+const PREVIOUS_MOBILE_LAYOUT = {
+  360: { pageHeight: 2640, scenarioCardHeight: 1210, scenarioInputsHeight: 991 },
+  390: { pageHeight: 2486, scenarioCardHeight: 1163, scenarioInputsHeight: 944 }
+};
 
 let chromiumBrowser;
 let webkitBrowser;
@@ -97,7 +101,8 @@ async function selectAndCalculate(page, eventId = 'preview:event:sky') {
   await page.locator('#char-def').fill('500000');
   await page.waitForFunction(() => document.querySelector('#damage-result')?.textContent !== '敵を選択してください');
   assert.match(await page.locator('#damage-result').innerText(), /〜|0/);
-  assert.match(await page.locator('#perfect-defense').innerText(), /\d/);
+  assert.equal(await page.locator('[data-role="perfect-defense"]').count(), 0);
+  assert.equal(await page.locator('[data-role="calculate-button"]').count(), 0);
 }
 
 test.before(async () => {
@@ -133,7 +138,7 @@ for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['
         await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
         assert.equal(await run.page.locator('#event-select').inputValue(), 'preview:event:sky');
         assert.equal(await run.page.locator('body').evaluate(() => document.body.scrollWidth <= innerWidth), true);
-        assert.ok(await run.page.locator('#char-def').evaluate((element) => element.getBoundingClientRect().height >= 44));
+        assert.ok(await run.page.locator('#char-def').evaluate((element) => element.getBoundingClientRect().height >= 40));
       } finally {
         await run.close();
       }
@@ -141,7 +146,7 @@ for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['
   });
 }
 
-test('PC feedback: 自動再計算、先頭0、日本語属性、敵未選択、0ダメージDEFが整合する', { timeout: TEST_TIMEOUT }, async () => {
+test('PC feedback: 自動再計算、先頭0、日本語属性、敵未選択を維持し不要な2表示を出さない', { timeout: TEST_TIMEOUT }, async () => {
   const run = await openChecked(chromiumBrowser, rcUrl('pc-feedback-calculation'));
   try {
     await run.goto();
@@ -170,12 +175,11 @@ test('PC feedback: 自動再計算、先頭0、日本語属性、敵未選択、
     assert.doesNotMatch(await run.page.locator('.scenario-card').first().innerText(), /基礎ATK|\bsuper\b|\bagl\b/);
     assert.match(await run.page.locator('[data-role="result-types"]').first().innerText(), /自分：超技\s*敵：超速/);
 
-    const required = Number((await run.page.locator('#perfect-defense').innerText()).replaceAll(',', ''));
-    assert.ok(required > 0);
-    await run.page.locator('#char-def').fill(String(required));
-    assert.equal(Number((await run.page.locator('#final-defense').innerText()).replaceAll(',', '')), required);
+    assert.equal(await run.page.getByText('被ダメージ0に必要なDEF', { exact: true }).count(), 0);
+    assert.equal(await run.page.getByRole('button', { name: '今すぐ再計算' }).count(), 0);
+    await run.page.locator('#char-def').fill('1000000');
     assert.match(await run.page.locator('#damage-result').innerText(), /：0$/);
-    await run.page.locator('#char-def').fill(String(required - 1));
+    await run.page.locator('#char-def').fill('0');
     assert.doesNotMatch(await run.page.locator('#damage-result').innerText(), /：0$/);
 
     await run.page.locator('#enemy-select').selectOption('');
@@ -183,8 +187,128 @@ test('PC feedback: 自動再計算、先頭0、日本語属性、敵未選択、
     await run.page.locator('[data-role="manual-enemy-attack"]').first().fill('100');
     await run.page.locator('[data-role="manual-enemy-class"]').first().selectOption('extreme');
     await run.page.locator('[data-role="manual-enemy-type"]').first().selectOption('str');
-    assert.match(await run.page.locator('#damage-result').innerText(), /^手動ATK：/);
+    assert.equal(await run.page.locator('#attack-select').inputValue(), 'custom');
+    assert.match(await run.page.locator('#damage-result').innerText(), /^カスタム攻撃：/);
     assert.match(await run.page.locator('[data-role="result-types"]').first().innerText(), /敵：極力/);
+  } finally {
+    await run.close();
+  }
+});
+
+test('追加feedback: 保存敵を選んだままカスタム攻撃を候補へ追加し、そのATKで自動計算する', { timeout: TEST_TIMEOUT }, async () => {
+  const run = await openChecked(chromiumBrowser, rcUrl('additional-feedback-custom-attack'));
+  try {
+    await run.goto();
+    await run.page.locator('#mode-damage').check();
+    await run.page.locator('#event-select').selectOption('preview:event:sky');
+    await run.page.waitForFunction(() => globalThis.Phase8RC.state.event?.id === 'preview:event:sky');
+    await run.page.locator('#enemy-select').selectOption('preview:enemy:blue');
+    await run.page.locator('.manual-attack-settings').first().evaluate((element) => { element.open = true; });
+    await run.page.locator('[data-role="manual-enemy-attack"]').first().fill('123.45');
+    assert.equal(await run.page.locator('#attack-select option[value="custom"]').innerText(), 'カスタム攻撃 1,234,500');
+    await run.page.locator('[data-role="manual-enemy-class"]').first().selectOption('extreme');
+    await run.page.locator('[data-role="manual-enemy-type"]').first().selectOption('str');
+    await run.page.locator('#attack-select').selectOption('custom');
+    const firstResult = await run.page.locator('#damage-result').innerText();
+    assert.match(firstResult, /^カスタム攻撃：/);
+    assert.match(await run.page.locator('[data-role="result-types"]').first().innerText(), /敵：極力/);
+
+    await run.page.locator('[data-role="manual-enemy-attack"]').first().fill('200');
+    assert.equal(await run.page.locator('#attack-select').inputValue(), 'custom');
+    assert.equal(await run.page.locator('#attack-select option[value="custom"]').innerText(), 'カスタム攻撃 2,000,000');
+    assert.notEqual(await run.page.locator('#damage-result').innerText(), firstResult);
+  } finally {
+    await run.close();
+  }
+});
+
+test('追加feedback: 耐久ライン直近の日本語属性を同期・独立変更し、自動再計算して保存する', { timeout: TEST_TIMEOUT }, async () => {
+  const run = await openChecked(chromiumBrowser, rcUrl('additional-feedback-durability-affinity'));
+  try {
+    await run.goto();
+    assert.equal(await run.page.locator('#durability-own-affinity').inputValue(), 'super:teq');
+    assert.equal(await run.page.locator('#durability-enemy-affinity').inputValue(), 'super:teq');
+    assert.equal(await run.page.locator('#durability-own-affinity option:checked').innerText(), '超技');
+    assert.equal(await run.page.locator('#durability-enemy-affinity option:checked').innerText(), '超技');
+    const initialLine = await run.page.locator('[data-role="durability-table"]').first().innerText();
+
+    await run.page.locator('#durability-enemy-affinity').selectOption('extreme:int');
+    assert.equal(await run.page.locator('#durability-enemy-affinity option:checked').innerText(), '極知');
+    const enemyChangedLine = await run.page.locator('[data-role="durability-table"]').first().innerText();
+    assert.notEqual(enemyChangedLine, initialLine);
+
+    await run.page.locator('#durability-own-affinity').selectOption('super:agl');
+    assert.equal(await run.page.locator('#own-class').inputValue(), 'super');
+    assert.equal(await run.page.locator('#own-type').inputValue(), 'agl');
+    assert.equal(await run.page.locator('#durability-own-affinity option:checked').innerText(), '超速');
+    assert.notEqual(await run.page.locator('[data-role="durability-table"]').first().innerText(), enemyChangedLine);
+
+    await run.page.locator('#own-class').selectOption('extreme');
+    await run.page.locator('#own-type').selectOption('phy');
+    assert.equal(await run.page.locator('#durability-own-affinity').inputValue(), 'extreme:phy');
+    const stored = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
+    assert.equal(stored.phase8UiSchemaVersion, 2);
+    assert.equal(stored.currentScenarios[0].own_class, 'extreme');
+    assert.equal(stored.currentScenarios[0].own_type, 'phy');
+    assert.equal(stored.currentScenarios[0].phase8_durability_enemy_affinity, 'extreme:int');
+  } finally {
+    await run.close();
+  }
+});
+
+test('追加feedback: 旧RC保存をversion 2へ互換移行し、従来の同属性耐久ラインを維持する', { timeout: TEST_TIMEOUT }, async () => {
+  const run = await openChecked(chromiumBrowser, rcUrl('additional-feedback-storage-migration'));
+  try {
+    await run.goto();
+    await run.page.evaluate((key) => {
+      localStorage.setItem(key, JSON.stringify({
+        durabilityLines: [{ name: '完封', value: 0 }],
+        savedCharacters: [{ name: '旧RCキャラ', scenarios: [{ scenario_title: '保存状況', own_class: 'extreme', own_type: 'agl' }] }],
+        savedEnemies: [],
+        currentScenarios: [{ scenario_title: '作業中', own_class: 'extreme', own_type: 'agl', char_def: '123456' }],
+        theme: 'light'
+      }));
+    }, RC_STORAGE_KEY);
+    await run.page.reload({ waitUntil: 'domcontentloaded' });
+    await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
+    assert.equal(await run.page.locator('#durability-own-affinity').inputValue(), 'extreme:agl');
+    assert.equal(await run.page.locator('#durability-enemy-affinity').inputValue(), 'extreme:agl');
+    assert.equal(await run.page.locator('#char-def').inputValue(), '123456');
+    const migrated = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
+    assert.equal(migrated.phase8UiSchemaVersion, 2);
+    assert.equal(migrated.savedCharacters[0].scenarios[0].phase8_durability_enemy_affinity, 'extreme:agl');
+    assert.equal(migrated.currentScenarios[0].phase8_durability_enemy_affinity, 'extreme:agl');
+  } finally {
+    await run.close();
+  }
+});
+
+test('追加feedback: カードを閉じても計算値と保存内容は変わらない', { timeout: TEST_TIMEOUT }, async () => {
+  const run = await openChecked(chromiumBrowser, rcUrl('additional-feedback-collapse'));
+  try {
+    await run.goto();
+    await run.page.locator('#char-def').fill('123456');
+    await run.page.locator('[data-role="scenario-title"]').first().fill('折りたたみ確認');
+    const before = await run.page.locator('#final-defense').textContent();
+    await run.page.locator('[data-action="toggle-collapse"]').first().click();
+    assert.equal(await run.page.locator('[data-role="scenario-body"]').first().isHidden(), true);
+    assert.equal(await run.page.locator('[data-action="toggle-collapse"]').first().getAttribute('aria-expanded'), 'false');
+    assert.equal(await run.page.locator('#final-defense').textContent(), before);
+
+    await run.page.locator('#character-name').fill('折りたたみ保存');
+    await run.page.locator('#save-character-button').click();
+    await run.page.locator('#character-management > summary').click();
+    assert.equal(await run.page.locator('#character-management').evaluate((element) => element.open), false);
+    const stored = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
+    assert.equal(stored.currentScenarios[0].char_def, '123456');
+    assert.equal(stored.savedCharacters[0].scenarios[0].scenario_title, '折りたたみ確認');
+    assert.equal(stored.savedCharacters[0].scenarios[0].char_def, '123456');
+
+    await run.page.reload({ waitUntil: 'domcontentloaded' });
+    await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
+    assert.equal(await run.page.locator('#char-def').inputValue(), '123456');
+    assert.equal(await run.page.locator('#final-defense').textContent(), before);
+    assert.equal(await run.page.locator('[data-role="scenario-body"]').first().isVisible(), true);
   } finally {
     await run.close();
   }
@@ -242,29 +366,45 @@ test('PC feedback: 複数状況カードを保存し、新規作成後に同じv
   }
 });
 
-test('PC feedback: 360pxでも重大な横overflowがなく主要入力は2列でタップ可能', { timeout: TEST_TIMEOUT }, async () => {
-  const run = await openChecked(chromiumBrowser, rcUrl('pc-feedback-mobile-360'), {
-    viewport: { width: 360, height: 800 },
-    context: { isMobile: true, hasTouch: true }
-  });
-  try {
-    await run.goto();
-    const layout = await run.page.evaluate(() => {
-      const first = document.querySelector('#char-def').getBoundingClientRect();
-      const second = document.querySelector('#leader').getBoundingClientRect();
-      return {
-        noOverflow: document.body.scrollWidth <= innerWidth,
-        sameRow: Math.abs(first.top - second.top) < 2,
-        inputHeight: first.height,
-        cardWidth: document.querySelector('.scenario-card').getBoundingClientRect().width
-      };
+test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の主要縦寸法を前版から短縮する', { timeout: TEST_TIMEOUT }, async () => {
+  for (const width of [360, 390]) {
+    const run = await openChecked(chromiumBrowser, rcUrl(`additional-feedback-mobile-${width}`), {
+      viewport: { width, height: 900 },
+      context: { isMobile: true, hasTouch: true }
     });
-    assert.equal(layout.noOverflow, true);
-    assert.equal(layout.sameRow, true);
-    assert.ok(layout.inputHeight >= 44);
-    assert.ok(layout.cardWidth <= 360);
-  } finally {
-    await run.close();
+    try {
+      await run.goto();
+      const layout = await run.page.evaluate(() => {
+        const first = document.querySelector('#char-def').getBoundingClientRect();
+        const second = document.querySelector('#leader').getBoundingClientRect();
+        const card = document.querySelector('.scenario-card').getBoundingClientRect();
+        const affinity = document.querySelector('.affinity-section').getBoundingClientRect();
+        return {
+          noOverflow: document.documentElement.scrollWidth <= innerWidth,
+          sameRow: Math.abs(first.top - second.top) < 2,
+          inputHeight: first.height,
+          pageHeight: document.documentElement.scrollHeight,
+          scenarioCardHeight: card.height,
+          scenarioInputsHeight: affinity.bottom - card.top,
+          cardWidth: card.width
+        };
+      });
+      const previous = PREVIOUS_MOBILE_LAYOUT[width];
+      assert.equal(layout.noOverflow, true);
+      assert.equal(layout.sameRow, true);
+      assert.ok(layout.inputHeight >= 40);
+      assert.ok(layout.cardWidth <= width);
+      assert.ok(layout.pageHeight <= previous.pageHeight * 0.75);
+      assert.ok(layout.scenarioCardHeight <= previous.scenarioCardHeight * 0.85);
+      assert.ok(layout.scenarioInputsHeight <= previous.scenarioInputsHeight * 0.82);
+
+      await run.page.locator('[data-action="toggle-collapse"]').first().click();
+      const collapsed = await run.page.locator('.scenario-card').first().evaluate((element) => element.getBoundingClientRect().height);
+      assert.ok(collapsed < 100);
+      assert.equal(await run.page.locator('body').evaluate(() => document.body.scrollWidth <= innerWidth), true);
+    } finally {
+      await run.close();
+    }
   }
 });
 

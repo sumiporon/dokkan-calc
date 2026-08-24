@@ -12,7 +12,7 @@
   <main>
     <header class="app-header">
       <div>
-        <span class="rc-badge">Phase 8 PC再確認版</span>
+        <span class="rc-badge">Phase 8 追加確認版</span>
         <h1>ドッカンバトル<br>耐久計算ツール</h1>
       </div>
       <button id="theme-button" class="icon-button" type="button" aria-label="配色を切り替える">🌙</button>
@@ -39,21 +39,23 @@
       </div>
     </section>
 
-    <section class="card" id="character-management" aria-labelledby="character-title">
-      <h2 id="character-title">キャラクター管理</h2>
-      <div class="management-grid">
-        <label>保存済みキャラクター<select id="characters-list"><option value="">保存済みキャラクターはいません</option></select></label>
-        <div class="button-row">
-          <button id="load-character-button" type="button">読み込み</button>
-          <button id="new-character-button" type="button">新規作成</button>
-          <button id="preview-button" type="button">一覧プレビュー</button>
-          <button id="delete-character-button" class="danger-button" type="button">削除</button>
+    <details class="card collapsible-card" id="character-management" open>
+      <summary><span id="character-title">キャラクター管理</span></summary>
+      <div class="collapsible-content">
+        <div class="management-grid">
+          <label>保存済みキャラクター<select id="characters-list"><option value="">保存済みキャラクターはいません</option></select></label>
+          <div class="button-row">
+            <button id="load-character-button" type="button">読み込み</button>
+            <button id="new-character-button" type="button">新規作成</button>
+            <button id="preview-button" type="button">一覧プレビュー</button>
+            <button id="delete-character-button" class="danger-button" type="button">削除</button>
+          </div>
+          <label>キャラクター名<input id="character-name" type="text" placeholder="名前を入力"></label>
+          <button id="save-character-button" class="primary-button" type="button">現在の状況を保存</button>
         </div>
-        <label>キャラクター名<input id="character-name" type="text" placeholder="名前を入力"></label>
-        <button id="save-character-button" class="primary-button" type="button">現在の状況を保存</button>
+        <p id="character-status" class="inline-status" role="status" aria-live="polite"></p>
       </div>
-      <p id="character-status" class="inline-status" role="status" aria-live="polite"></p>
-    </section>
+    </details>
 
     <section id="scenario-area" aria-labelledby="scenario-area-title">
       <div class="section-heading">
@@ -61,7 +63,7 @@
           <h2 id="scenario-area-title">計算する状況</h2>
           <p>複数の状況カードを追加して比較できます。入力変更は自動で再計算・保存されます。</p>
         </div>
-        <button id="add-scenario-button" class="primary-button" type="button">＋ 状況カードを追加</button>
+        <button id="add-scenario-button" class="primary-button" type="button">＋ 状況を追加</button>
       </div>
       <div id="scenario-cards-container"></div>
     </section>
@@ -71,78 +73,83 @@
         <header class="scenario-header">
           <label class="scenario-title-label">状況名<input data-role="scenario-title" data-input="scenario_title" type="text"></label>
           <div class="button-row compact-buttons">
+            <button data-action="toggle-collapse" type="button" aria-expanded="true">閉じる</button>
             <button data-action="duplicate" type="button">複製</button>
             <button data-action="delete" class="danger-button" type="button">削除</button>
           </div>
         </header>
 
-        <div class="final-defense-banner">最終DEF <strong data-role="final-defense">—</strong></div>
+        <div data-role="scenario-body">
+          <div class="final-defense-banner">最終DEF <strong data-role="final-defense">—</strong></div>
 
-        <section aria-label="基本DEF設定">
-          <h3>DEF設定</h3>
-          <div class="input-grid">
-            <label>キャラクターDEF<input data-role="char-def" data-input="char_def" type="number" value="0" min="0" inputmode="numeric"></label>
-            <label>リーダースキル (%)<input data-role="leader" data-input="leader" type="number" value="0" inputmode="decimal"></label>
-            <label>足し算パッシブ (%)<input data-role="passive" data-input="passive" type="number" value="0" inputmode="decimal"></label>
-            <label>掛け算パッシブ (%)<input data-role="multi-passive" data-input="multi_passive" type="number" value="0" inputmode="decimal"></label>
-            <label>ダメージ軽減率 (%)<input data-role="damage-reduction" data-input="dr_input" type="number" value="0" inputmode="decimal"></label>
-            <label>メモリー (%)<input data-role="memory" data-input="memory" type="number" value="0" inputmode="decimal"></label>
-            <label>リンクスキル (%)<input data-role="link" data-input="link" type="number" value="0" inputmode="decimal"></label>
-            <label>必殺技効果 (%)<input data-role="super-attack" data-input="super_attack" type="number" value="0" inputmode="decimal"></label>
-            <label>フィールド (%)<input data-role="field" data-input="field" type="number" value="0" inputmode="decimal"></label>
-            <label>アクティブ (%)<input data-role="active" data-input="active" type="number" value="0" inputmode="decimal"></label>
-            <label>サポートアイテム (%)<input data-role="support-item" data-input="support_item" type="number" value="0" inputmode="decimal"></label>
-          </div>
-        </section>
-
-        <section class="affinity-section" aria-label="属性と防御設定">
-          <h3>属性・防御設定</h3>
-          <div class="input-grid affinity-grid">
-            <label>自分のクラス<select data-role="own-class" data-input="own_class"><option value="super">超</option><option value="extreme">極</option></select></label>
-            <label>自分の属性<select data-role="own-type" data-input="own_type"><option value="teq">技</option><option value="agl">速</option><option value="str">力</option><option value="phy">体</option><option value="int">知</option></select></label>
-            <label>属性防御Lv<input data-role="attribute-defense" data-input="attr_def_up" type="number" value="0" min="0" inputmode="numeric"></label>
-            <label class="checkbox-label"><input data-role="guard" data-input="is_guard" type="checkbox">全属性ガード</label>
-            <label class="checkbox-label"><input data-role="is-critical" data-input="is_critical" type="checkbox">敵の会心を想定</label>
-            <label>会心時ATK補正 (%)<input data-role="critical-attack" data-input="crit_atk_up" type="number" value="0" inputmode="decimal"></label>
-            <label>会心時DEF低下 (%)<input data-role="critical-defense" data-input="crit_def_down" type="number" value="0" inputmode="decimal"></label>
-          </div>
-        </section>
-
-        <section data-role="durability-result" class="result-panel" aria-label="耐久ライン結果">
-          <h3>耐久ライン（敵ATK）</h3>
-          <p class="section-help">敵を選ばず、自分と同じ属性・同じクラスの相性で計算します。</p>
-          <div data-role="durability-table"></div>
-        </section>
-
-        <section data-role="damage-panel" class="damage-panel" aria-label="敵と被ダメージ計算" hidden>
-          <h3>敵を選択</h3>
-          <div class="selector-grid">
-            <label>イベント<select data-role="event-select" disabled><option value="">イベントを選択してください</option></select></label>
-            <label>ステージ<select data-role="stage-select" disabled><option value="">—</option></select></label>
-            <label>敵<select data-role="enemy-select" disabled><option value="">敵を選択してください</option></select></label>
-            <label>計算する攻撃<select data-role="attack-select" disabled><option value="">—</option></select></label>
-          </div>
-          <div data-role="condition-controls" class="condition-controls"></div>
-          <details class="manual-attack-settings">
-            <summary>保存敵にない攻撃を手動入力</summary>
-            <div class="input-grid affinity-grid">
-              <label>敵ATK（万）<input data-role="manual-enemy-attack" data-input="enemy_atk" type="number" value="" min="0" inputmode="decimal" placeholder="例: 300"></label>
-              <label>敵のクラス<select data-role="manual-enemy-class" data-input="enemy_class"><option value="super">超</option><option value="extreme">極</option></select></label>
-              <label>敵の属性<select data-role="manual-enemy-type" data-input="enemy_type"><option value="teq">技</option><option value="agl">速</option><option value="str">力</option><option value="phy">体</option><option value="int">知</option></select></label>
+          <section aria-label="基本DEF設定">
+            <h3>DEF設定</h3>
+            <div class="input-grid">
+              <label>キャラクターDEF<input data-role="char-def" data-input="char_def" type="number" value="0" min="0" inputmode="numeric"></label>
+              <label>リーダースキル (%)<input data-role="leader" data-input="leader" type="number" value="0" inputmode="decimal"></label>
+              <label>足し算パッシブ (%)<input data-role="passive" data-input="passive" type="number" value="0" inputmode="decimal"></label>
+              <label>掛け算パッシブ (%)<input data-role="multi-passive" data-input="multi_passive" type="number" value="0" inputmode="decimal"></label>
+              <label>ダメージ軽減率 (%)<input data-role="damage-reduction" data-input="dr_input" type="number" value="0" inputmode="decimal"></label>
+              <label>メモリー (%)<input data-role="memory" data-input="memory" type="number" value="0" inputmode="decimal"></label>
+              <label>リンクスキル (%)<input data-role="link" data-input="link" type="number" value="0" inputmode="decimal"></label>
+              <label>必殺技効果 (%)<input data-role="super-attack" data-input="super_attack" type="number" value="0" inputmode="decimal"></label>
+              <label>フィールド (%)<input data-role="field" data-input="field" type="number" value="0" inputmode="decimal"></label>
+              <label>アクティブ (%)<input data-role="active" data-input="active" type="number" value="0" inputmode="decimal"></label>
+              <label>サポートアイテム (%)<input data-role="support-item" data-input="support_item" type="number" value="0" inputmode="decimal"></label>
             </div>
-          </details>
-          <div class="enemy-summary" aria-live="polite">
-            <strong data-role="enemy-name">敵を選択してください</strong>
-            <span data-role="enemy-type">敵属性：未選択</span>
-            <div data-role="enemy-attack-summary" class="attack-summary">敵を選ぶと通常攻撃・必殺攻撃を表示します。</div>
-          </div>
-          <button data-role="calculate-button" class="secondary-button" type="button" disabled>今すぐ再計算</button>
-          <div class="results damage-results" aria-live="polite">
-            <div><span>被ダメージ（1.00〜1.03）</span><strong data-role="damage-result">敵を選択してください</strong></div>
-            <div><span>被ダメージ0に必要なDEF</span><strong data-role="perfect-defense">—</strong></div>
-            <div><span>属性</span><strong data-role="result-types">自分：超技<br>敵：未選択</strong></div>
-          </div>
-        </section>
+          </section>
+
+          <section class="affinity-section" aria-label="属性と防御設定">
+            <h3>属性・防御設定</h3>
+            <div class="input-grid affinity-grid">
+              <label>自分のクラス<select data-role="own-class" data-input="own_class"><option value="super">超</option><option value="extreme">極</option></select></label>
+              <label>自分の属性<select data-role="own-type" data-input="own_type"><option value="teq">技</option><option value="agl">速</option><option value="str">力</option><option value="phy">体</option><option value="int">知</option></select></label>
+              <label>属性防御Lv<input data-role="attribute-defense" data-input="attr_def_up" type="number" value="0" min="0" inputmode="numeric"></label>
+              <label class="checkbox-label"><input data-role="guard" data-input="is_guard" type="checkbox">全属性ガード</label>
+              <label class="checkbox-label"><input data-role="is-critical" data-input="is_critical" type="checkbox">敵の会心を想定</label>
+              <label>会心時ATK補正 (%)<input data-role="critical-attack" data-input="crit_atk_up" type="number" value="0" inputmode="decimal"></label>
+              <label>会心時DEF低下 (%)<input data-role="critical-defense" data-input="crit_def_down" type="number" value="0" inputmode="decimal"></label>
+            </div>
+          </section>
+
+          <section data-role="durability-result" class="result-panel" aria-label="耐久ライン結果">
+            <h3>耐久ライン（敵ATK）</h3>
+            <div class="durability-affinity-grid">
+              <label>自分の属性（本体と同期）<select data-role="durability-own-affinity"></select></label>
+              <label>敵の属性（耐久ライン専用）<select data-role="durability-enemy-affinity" data-input="phase8_durability_enemy_affinity"></select></label>
+            </div>
+            <p class="section-help compact-help">自分の属性は上の設定と同じ値です。敵の属性は被ダメージモードの手動敵設定を変更しません。</p>
+            <div data-role="durability-table"></div>
+          </section>
+
+          <section data-role="damage-panel" class="damage-panel" aria-label="敵と被ダメージ計算" hidden>
+            <h3>敵を選択</h3>
+            <div class="selector-grid">
+              <label>イベント<select data-role="event-select" disabled><option value="">イベントを選択してください</option></select></label>
+              <label>ステージ<select data-role="stage-select" disabled><option value="">—</option></select></label>
+              <label>敵<select data-role="enemy-select" disabled><option value="">敵を選択してください</option></select></label>
+              <label>計算する攻撃<select data-role="attack-select" disabled><option value="">—</option></select></label>
+            </div>
+            <div data-role="condition-controls" class="condition-controls"></div>
+            <details class="manual-attack-settings">
+              <summary>カスタム攻撃を手入力</summary>
+              <div class="input-grid affinity-grid">
+                <label>敵ATK（万）<input data-role="manual-enemy-attack" data-input="enemy_atk" type="number" value="" min="0" inputmode="decimal" placeholder="例: 300"></label>
+                <label>敵のクラス<select data-role="manual-enemy-class" data-input="enemy_class"><option value="super">超</option><option value="extreme">極</option></select></label>
+                <label>敵の属性<select data-role="manual-enemy-type" data-input="enemy_type"><option value="teq">技</option><option value="agl">速</option><option value="str">力</option><option value="phy">体</option><option value="int">知</option></select></label>
+              </div>
+            </details>
+            <div class="enemy-summary" aria-live="polite">
+              <strong data-role="enemy-name">敵を選択してください</strong>
+              <span data-role="enemy-type">敵属性：未選択</span>
+              <div data-role="enemy-attack-summary" class="attack-summary">敵を選ぶと通常攻撃・必殺攻撃を表示します。</div>
+            </div>
+            <div class="results damage-results" aria-live="polite">
+              <div><span>被ダメージ（1.00〜1.03）</span><strong data-role="damage-result">敵を選択してください</strong></div>
+              <div><span>属性</span><strong data-role="result-types">自分：超技<br>敵：未選択</strong></div>
+            </div>
+          </section>
+        </div>
       </article>
     </template>
 

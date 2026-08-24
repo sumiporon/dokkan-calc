@@ -18,6 +18,7 @@ const params = new URLSearchParams(location.search);
 const dataRoot = params.get('dataRoot') || './data';
 const storagePrefix = 'dokkan_phase8_rc_imported_';
 const storageKey = storagePrefix + 'dokkan_calc_data_v22';
+const phase8UiSchemaVersion = 2;
 const core = globalThis.DokkanCalcCore;
 const elements = Object.fromEntries([...document.querySelectorAll('[id]')].map((element) => [element.id, element]));
 const store = new Phase8ReleaseStore({ dbName: params.get('dbName') || 'dokkan-phase8-rc-releases-v1' });
@@ -60,11 +61,15 @@ const firstCardIds = Object.freeze({
   'support-item': 'support-item',
   'attribute-defense': 'attribute-defense',
   guard: 'guard',
-  'calculate-button': 'calculate-button',
+  'durability-own-affinity': 'durability-own-affinity',
+  'durability-enemy-affinity': 'durability-enemy-affinity',
   'final-defense': 'final-defense',
-  'damage-result': 'damage-result',
-  'perfect-defense': 'perfect-defense'
+  'damage-result': 'damage-result'
 });
+
+const affinityOptions = ['super', 'extreme'].flatMap((alignment) =>
+  ['agl', 'teq', 'int', 'str', 'phy'].map((type) => ({ value: `${alignment}:${type}`, label: japaneseType(alignment, type) }))
+);
 
 function setStatus(message, error = false) {
   elements['app-status'].textContent = message;
@@ -87,7 +92,8 @@ function defaultScenario(index = 0) {
     super_attack: '0', field: '0', active: '0', support_item: '0', dr_input: '0',
     own_class: 'super', own_type: 'teq', attr_def_up: '0', is_guard: false,
     is_critical: false, crit_atk_up: '0', crit_def_down: '0',
-    enemy_atk: '', enemy_class: 'super', enemy_type: 'teq'
+    enemy_atk: '', enemy_class: 'super', enemy_type: 'teq',
+    phase8_durability_enemy_affinity: 'super:teq'
   };
 }
 
@@ -115,6 +121,7 @@ function persistState() {
   if (state.initializing) return;
   const next = {
     ...state.savedRoot,
+    phase8UiSchemaVersion,
     durabilityLines: state.durabilityLines,
     savedCharacters: state.savedCharacters,
     savedEnemies: state.savedEnemies,
@@ -129,12 +136,33 @@ function persistState() {
   }
 }
 
+function migrateSavedState(saved) {
+  if (Number(saved.phase8UiSchemaVersion || 1) >= phase8UiSchemaVersion) return saved;
+  const migrateScenario = (scenario = {}) => ({
+    ...scenario,
+    phase8_durability_enemy_affinity: scenario.phase8_durability_enemy_affinity
+      || `${scenario.own_class || 'super'}:${scenario.own_type || 'teq'}`
+  });
+  return {
+    ...saved,
+    phase8UiSchemaVersion,
+    currentScenarios: Array.isArray(saved.currentScenarios) ? saved.currentScenarios.map(migrateScenario) : saved.currentScenarios,
+    savedCharacters: Array.isArray(saved.savedCharacters)
+      ? saved.savedCharacters.map((character) => ({
+        ...character,
+        scenarios: Array.isArray(character.scenarios) ? character.scenarios.map(migrateScenario) : character.scenarios
+      }))
+      : saved.savedCharacters
+  };
+}
+
 function readSavedState() {
   try {
     const raw = localStorage.getItem(storageKey);
     if (!raw) return null;
-    const saved = JSON.parse(raw);
-    if (!saved || typeof saved !== 'object') return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return null;
+    const saved = migrateSavedState(parsed);
     state.savedRoot = saved;
     state.durabilityLines = Array.isArray(saved.durabilityLines) ? saved.durabilityLines : [];
     state.savedCharacters = Array.isArray(saved.savedCharacters) ? saved.savedCharacters : [];
@@ -356,13 +384,31 @@ function currentEnemyContext(context) {
   return allEnemies(currentStage(context)).find((item) => item.enemy.id === role(context, 'enemy-select').value) ?? null;
 }
 
+function customAttackValue(context) {
+  return Number(role(context, 'manual-enemy-attack').value || 0) * 10_000;
+}
+
+function customAttackOption(context) {
+  const value = customAttackValue(context);
+  return value > 0 ? { value: 'custom', label: `カスタム攻撃 ${value.toLocaleString()}` } : null;
+}
+
 function clearEnemyResult(context, message = '敵を選択してください') {
-  replaceOptions(role(context, 'attack-select'), [], '—');
+  const custom = customAttackOption(context);
+  replaceOptions(role(context, 'attack-select'), custom ? [custom] : [], '攻撃を選択');
+  if (custom) role(context, 'attack-select').value = custom.value;
   role(context, 'condition-controls').replaceChildren();
-  role(context, 'enemy-name').textContent = message;
-  role(context, 'enemy-type').textContent = '敵属性：未選択';
-  role(context, 'enemy-attack-summary').textContent = '敵を選ぶと通常攻撃・必殺攻撃を表示します。';
-  role(context, 'calculate-button').disabled = true;
+  if (custom) {
+    const alignment = role(context, 'manual-enemy-class').value;
+    const type = role(context, 'manual-enemy-type').value;
+    role(context, 'enemy-name').textContent = '保存敵なし（カスタム攻撃）';
+    role(context, 'enemy-type').textContent = `敵属性：${japaneseType(alignment, type)}`;
+    role(context, 'enemy-attack-summary').textContent = custom.label;
+  } else {
+    role(context, 'enemy-name').textContent = message;
+    role(context, 'enemy-type').textContent = '敵属性：未選択';
+    role(context, 'enemy-attack-summary').textContent = '敵を選ぶと通常攻撃・必殺攻撃を表示します。';
+  }
   renderCard(context);
 }
 
@@ -465,8 +511,11 @@ function renderAttackOptions(context, { initial = {} } = {}) {
       options.push({ value: `area:${area.id}:additional`, label: `全体攻撃（2体目以降） ${Number(known(area.additionalTargetDamage, 0)).toLocaleString()}` });
     }
   }
+  const custom = customAttackOption(context);
+  if (custom) options.push(custom);
+  const current = role(context, 'attack-select').value;
   replaceOptions(role(context, 'attack-select'), options, '攻撃を選択');
-  const wanted = initial.phase8_attack_id || context.pendingAttackId;
+  const wanted = initial.phase8_attack_id || context.pendingAttackId || current;
   role(context, 'attack-select').value = options.some((option) => option.value === wanted) ? wanted : 'normal';
   context.pendingAttackId = null;
   const alignment = known(item.enemy.alignment, 'neutral');
@@ -474,7 +523,6 @@ function renderAttackOptions(context, { initial = {} } = {}) {
   role(context, 'enemy-name').textContent = String(known(item.enemy.name, item.enemy.id));
   role(context, 'enemy-type').textContent = `敵属性：${japaneseType(alignment, type)}`;
   renderEnemyAttackSummary(context, item);
-  role(context, 'calculate-button').disabled = false;
   renderCard(context);
 }
 
@@ -555,14 +603,36 @@ function populateEventSelect(context) {
   replaceOptions(role(context, 'event-select'), client.index.events.map((entry) => ({ value: entry.id, label: entry.name })), 'イベントを選択してください');
 }
 
+function populateAffinitySelects(context) {
+  for (const name of ['durability-own-affinity', 'durability-enemy-affinity']) {
+    const select = role(context, name);
+    select.replaceChildren(...affinityOptions.map((option) => new Option(option.label, option.value)));
+  }
+}
+
+function syncDurabilityOwnAffinity(context) {
+  role(context, 'durability-own-affinity').value = `${role(context, 'own-class').value}:${role(context, 'own-type').value}`;
+}
+
+function applyDurabilityOwnAffinity(context) {
+  const [alignment, type] = role(context, 'durability-own-affinity').value.split(':');
+  if (!['super', 'extreme'].includes(alignment) || !['agl', 'teq', 'int', 'str', 'phy'].includes(type)) return;
+  role(context, 'own-class').value = alignment;
+  role(context, 'own-type').value = type;
+}
+
 function applyScenarioInputs(context, data) {
   const merged = { ...defaultScenario(state.cards.length), ...data };
+  if (!data.phase8_durability_enemy_affinity) {
+    merged.phase8_durability_enemy_affinity = `${merged.own_class || 'super'}:${merged.own_type || 'teq'}`;
+  }
   for (const input of context.element.querySelectorAll('[data-input]')) {
     const value = merged[input.dataset.input];
     if (value === undefined || value === null) continue;
     if (input.type === 'checkbox') input.checked = value === true || String(value) === 'true';
     else input.value = String(value);
   }
+  syncDurabilityOwnAffinity(context);
 }
 
 function assignCardIds(context, isFirst) {
@@ -579,6 +649,7 @@ async function addScenarioCard(data = defaultScenario(state.cards.length), { ins
   const insertIndex = insertAfter ? state.cards.indexOf(insertAfter) + 1 : state.cards.length;
   state.cards.splice(insertIndex, 0, context);
   assignCardIds(context, state.cards.length === 1);
+  populateAffinitySelects(context);
   applyScenarioInputs(context, data);
   if (insertAfter) insertAfter.element.insertAdjacentElement('afterend', element);
   else elements['scenario-cards-container'].append(element);
@@ -613,16 +684,22 @@ async function recreateScenarioCards(scenarios = []) {
 function calculationInput(context, enemy, durabilityMode = false) {
   const ownClass = role(context, 'own-class').value;
   const ownType = role(context, 'own-type').value;
-  const alignment = durabilityMode ? ownClass : known(enemy?.alignment, ownClass);
+  const [durabilityEnemyClass, durabilityEnemyType] = role(context, 'durability-enemy-affinity').value.split(':');
+  const alignment = durabilityMode ? durabilityEnemyClass : known(enemy?.alignment, ownClass);
   const enemyClass = alignment === 'neutral' ? ownClass : alignment;
-  const enemyType = durabilityMode ? ownType : known(enemy?.type, ownType);
+  const enemyType = durabilityMode ? durabilityEnemyType : known(enemy?.type, ownType);
   const values = Object.fromEntries([...context.element.querySelectorAll('[data-input]')].map((input) => [input.dataset.input, inputValue(input)]));
   return { ...values, own_class: ownClass, own_type: ownType, enemy_class: enemyClass, enemy_type: enemyType };
 }
 
 function selectedAttack(context, item) {
-  const condition = enemyAttackState(item.enemy, currentCondition(context), core);
   const value = role(context, 'attack-select').value;
+  if (value === 'custom') {
+    const attackValue = customAttackValue(context);
+    return attackValue > 0 ? { name: 'カスタム攻撃', value: attackValue } : null;
+  }
+  if (!item) return null;
+  const condition = enemyAttackState(item.enemy, currentCondition(context), core);
   if (value === 'normal') return { name: '通常攻撃', value: condition.normalValues[0] };
   if (value.startsWith('post-super:')) {
     const index = Number.parseInt(value.split(':')[1], 10);
@@ -671,11 +748,9 @@ function renderDurabilityResult(context, calculation) {
 function renderDamageResult(context) {
   const ownLabel = japaneseType(role(context, 'own-class').value, role(context, 'own-type').value);
   const item = currentEnemyContext(context);
-  const manualAttack = Number(role(context, 'manual-enemy-attack').value || 0) * 10_000;
-  const usesManualAttack = (!item || !role(context, 'enemy-select').value) && manualAttack > 0;
-  if ((!item || !role(context, 'enemy-select').value) && !usesManualAttack) {
+  const usesCustomAttack = role(context, 'attack-select').value === 'custom' && customAttackValue(context) > 0;
+  if ((!item || !role(context, 'enemy-select').value) && !usesCustomAttack) {
     role(context, 'damage-result').textContent = '敵を選択してください';
-    role(context, 'perfect-defense').textContent = '—';
     role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：未選択`;
     return;
   }
@@ -685,26 +760,23 @@ function renderDamageResult(context) {
     && Number(role(context, 'critical-defense').value || 0) === 0
   ) {
     role(context, 'damage-result').textContent = '会心補正を設定してください';
-    role(context, 'perfect-defense').textContent = '—';
     return;
   }
-  const manualEnemy = usesManualAttack ? {
+  const manualEnemy = usesCustomAttack ? {
     alignment: runtimeField(role(context, 'manual-enemy-class').value),
     type: runtimeField(role(context, 'manual-enemy-type').value)
   } : null;
   const enemy = item?.enemy ?? manualEnemy;
-  const attack = usesManualAttack ? { name: '手動ATK', value: manualAttack } : selectedAttack(context, item);
+  const calculationEnemy = usesCustomAttack ? manualEnemy : enemy;
+  const attack = selectedAttack(context, item);
   if (!attack || !Number.isFinite(Number(attack.value))) {
     role(context, 'damage-result').textContent = '攻撃を選択してください';
-    role(context, 'perfect-defense').textContent = '—';
     return;
   }
-  const calculation = core.calculateDurability(calculationInput(context, enemy, false));
+  const calculation = core.calculateDurability(calculationInput(context, calculationEnemy, false));
   const range = core.calculateDamageRange(attack.value, calculation);
-  const required = core.calculateRequiredDefenseForZeroDamage(attack.value, calculation);
-  const enemyLabel = japaneseType(known(enemy.alignment, 'neutral'), known(enemy.type, null));
+  const enemyLabel = japaneseType(known(calculationEnemy.alignment, 'neutral'), known(calculationEnemy.type, null));
   role(context, 'damage-result').textContent = `${attack.name}：${core.formatDamageRange(range)}`;
-  role(context, 'perfect-defense').textContent = Number.isFinite(required) ? Math.ceil(required).toLocaleString() : '—';
   role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：${enemyLabel}`;
 }
 
@@ -827,7 +899,8 @@ elements['scenario-cards-container'].addEventListener('input', (event) => {
     const normalized = normalizeNumericInputValue(event.target.value);
     if (normalized !== event.target.value) event.target.value = normalized;
   }
-  renderCard(context);
+  if (event.target.matches('[data-role="manual-enemy-attack"]')) renderAttackOptions(context);
+  else renderCard(context);
   persistState();
 });
 
@@ -847,6 +920,14 @@ elements['scenario-cards-container'].addEventListener('change', async (event) =>
     } else clearEnemyResult(context);
   } else if (event.target.matches('[data-condition]')) {
     renderAttackOptions(context);
+  } else if (event.target.matches('[data-role="durability-own-affinity"]')) {
+    applyDurabilityOwnAffinity(context);
+    renderCard(context);
+  } else if (event.target.matches('[data-role="own-class"], [data-role="own-type"]')) {
+    syncDurabilityOwnAffinity(context);
+    renderCard(context);
+  } else if (event.target.matches('[data-role="manual-enemy-class"], [data-role="manual-enemy-type"]') && !currentEnemyContext(context)) {
+    clearEnemyResult(context);
   } else {
     renderCard(context);
   }
@@ -856,7 +937,12 @@ elements['scenario-cards-container'].addEventListener('change', async (event) =>
 elements['scenario-cards-container'].addEventListener('click', async (event) => {
   const context = cardContext(event.target);
   if (!context) return;
-  if (event.target.matches('[data-role="calculate-button"]')) renderCard(context);
+  if (event.target.matches('[data-action="toggle-collapse"]')) {
+    const body = role(context, 'scenario-body');
+    body.hidden = !body.hidden;
+    event.target.setAttribute('aria-expanded', String(!body.hidden));
+    event.target.textContent = body.hidden ? '開く' : '閉じる';
+  }
   if (event.target.matches('[data-action="duplicate"]')) await addScenarioCard(scenarioData(context), { insertAfter: context });
   if (event.target.matches('[data-action="delete"]')) {
     if (state.cards.length === 1) {
