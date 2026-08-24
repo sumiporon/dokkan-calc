@@ -36,7 +36,6 @@ const state = {
   savedCharacters: [],
   savedEnemies: [],
   savedRoot: {},
-  selectedCharacterIndex: -1,
   initializing: true
 };
 const metrics = globalThis.__phase8Metrics = { startedAt: performance.now(), readyMs: null, lastEventMs: null };
@@ -206,7 +205,7 @@ function renderDurabilityLines() {
 
 function addDurabilityLine() {
   if (state.durabilityLines.length >= 4) {
-    elements['character-status'].textContent = '耐久ラインは4件までです。';
+    setStatus('耐久ラインは4件までです。');
     return;
   }
   const raw = Number.parseInt(elements['new-line-input'].value, 10);
@@ -219,80 +218,6 @@ function addDurabilityLine() {
   elements['new-line-input'].value = '';
   renderDurabilityLines();
   persistState();
-}
-
-function renderCharacterList() {
-  const selected = state.selectedCharacterIndex;
-  elements['characters-list'].replaceChildren();
-  if (state.savedCharacters.length === 0) {
-    elements['characters-list'].append(new Option('保存済みキャラクターはいません', ''));
-    return;
-  }
-  state.savedCharacters.forEach((character, index) => elements['characters-list'].append(new Option(character.name, String(index))));
-  if (selected >= 0 && state.savedCharacters[selected]) elements['characters-list'].value = String(selected);
-}
-
-function saveCharacter() {
-  const name = elements['character-name'].value.trim();
-  if (!name) {
-    elements['character-status'].textContent = 'キャラクター名を入力してください。';
-    elements['character-status'].classList.add('error');
-    return;
-  }
-  const character = { name, scenarios: allScenarioData() };
-  const byName = state.savedCharacters.findIndex((item) => item.name === name);
-  if (state.selectedCharacterIndex >= 0) {
-    state.savedCharacters[state.selectedCharacterIndex] = character;
-  } else if (byName >= 0) {
-    state.savedCharacters[byName] = character;
-    state.selectedCharacterIndex = byName;
-  } else {
-    state.savedCharacters.push(character);
-    state.selectedCharacterIndex = state.savedCharacters.length - 1;
-  }
-  renderCharacterList();
-  persistState();
-  elements['character-status'].textContent = `「${name}」を保存しました（状況 ${character.scenarios.length}件）。`;
-  elements['character-status'].classList.remove('error');
-  renderSavedDataSummary();
-}
-
-async function loadCharacter() {
-  const index = Number.parseInt(elements['characters-list'].value, 10);
-  if (!Number.isInteger(index) || !state.savedCharacters[index]) {
-    elements['character-status'].textContent = '読み込むキャラクターを選択してください。';
-    return;
-  }
-  if (!confirm('現在の作業中の状況を置き換えて、選択したキャラクターを読み込みますか？')) return;
-  const character = state.savedCharacters[index];
-  state.selectedCharacterIndex = index;
-  elements['character-name'].value = character.name;
-  await recreateScenarioCards(character.scenarios);
-  persistState();
-  elements['character-status'].textContent = `「${character.name}」を読み込みました。`;
-}
-
-async function startNewCharacter() {
-  if (!confirm('現在の作業中の状況を新しいキャラクター用に入れ替えますか？')) return;
-  state.selectedCharacterIndex = -1;
-  elements['character-name'].value = '';
-  renderCharacterList();
-  await recreateScenarioCards([defaultScenario(0)]);
-  persistState();
-  elements['character-status'].textContent = '新しいキャラクターを作成できます。';
-}
-
-function deleteCharacter() {
-  const index = Number.parseInt(elements['characters-list'].value, 10);
-  if (!Number.isInteger(index) || !state.savedCharacters[index]) return;
-  const name = state.savedCharacters[index].name;
-  if (!confirm(`「${name}」を保存一覧から削除しますか？`)) return;
-  state.savedCharacters.splice(index, 1);
-  state.selectedCharacterIndex = -1;
-  renderCharacterList();
-  persistState();
-  renderSavedDataSummary();
-  elements['character-status'].textContent = `「${name}」を削除しました。作業中のカードは残しています。`;
 }
 
 function renderPreview() {
@@ -801,6 +726,18 @@ function updateMode() {
   updateAllCards();
 }
 
+function setScenarioCollapsed(context, collapsed) {
+  const body = role(context, 'scenario-body');
+  const button = context.element.querySelector('[data-action="toggle-collapse"]');
+  body.hidden = collapsed;
+  button.setAttribute('aria-expanded', String(!collapsed));
+  button.textContent = collapsed ? '開く' : '閉じる';
+}
+
+function setAllScenariosCollapsed(collapsed) {
+  state.cards.forEach((context) => setScenarioCollapsed(context, collapsed));
+}
+
 function renderSavedDataSummary() {
   const container = elements['saved-data-summary'];
   container.replaceChildren();
@@ -811,7 +748,13 @@ function renderSavedDataSummary() {
   }
   try {
     const saved = JSON.parse(raw);
-    const summary = describeImportedStorage(saved);
+    let criticalOverrides = {};
+    try {
+      criticalOverrides = JSON.parse(localStorage.getItem(`${storagePrefix}dokkan_crit_overrides`) || '{}');
+    } catch {
+      criticalOverrides = {};
+    }
+    const summary = describeImportedStorage(saved, criticalOverrides);
     const intro = document.createElement('p');
     intro.textContent = '移行済みの内容：';
     const list = document.createElement('ul');
@@ -822,6 +765,7 @@ function renderSavedDataSummary() {
       `作業中の状況：${summary.currentScenarios}件`,
       `手動保存した敵：${summary.manualEnemies}件`,
       `設定：${summary.settings}分類（耐久ライン・配色）`,
+      `会心補正：${summary.criticalOverrides}件`,
       'GitHub PAT：移行していません',
       'イベント・ステージ・配布敵データ：増えません'
     ];
@@ -831,7 +775,7 @@ function renderSavedDataSummary() {
       list.append(item);
     });
     const guide = document.createElement('p');
-    guide.textContent = '上の「キャラクター管理」で名前を選び「読み込み」を押すと、移行した内容を確認できます。';
+    guide.textContent = `上の「計算する状況」に、移行した作業中の状況${summary.currentScenarios}件を直接表示しています。状況名と入力値を確認してください。以前の保存キャラクターと保存済み状況も互換性のため内部に残しています（通常画面には表示しません）。`;
     container.append(intro, list, guide);
   } catch {
     container.textContent = '移行済みデータを確認できませんでした。元の保存データは変更していません。';
@@ -938,15 +882,12 @@ elements['scenario-cards-container'].addEventListener('click', async (event) => 
   const context = cardContext(event.target);
   if (!context) return;
   if (event.target.matches('[data-action="toggle-collapse"]')) {
-    const body = role(context, 'scenario-body');
-    body.hidden = !body.hidden;
-    event.target.setAttribute('aria-expanded', String(!body.hidden));
-    event.target.textContent = body.hidden ? '開く' : '閉じる';
+    setScenarioCollapsed(context, !role(context, 'scenario-body').hidden);
   }
   if (event.target.matches('[data-action="duplicate"]')) await addScenarioCard(scenarioData(context), { insertAfter: context });
   if (event.target.matches('[data-action="delete"]')) {
     if (state.cards.length === 1) {
-      elements['character-status'].textContent = '状況カードは最低1件必要です。';
+      setStatus('状況カードは最低1件必要です。');
       return;
     }
     state.cards.splice(state.cards.indexOf(context), 1);
@@ -971,10 +912,8 @@ elements['durability-lines-list'].addEventListener('click', (event) => {
   persistState();
 });
 elements['add-scenario-button'].addEventListener('click', () => addScenarioCard(defaultScenario(state.cards.length)));
-elements['save-character-button'].addEventListener('click', saveCharacter);
-elements['load-character-button'].addEventListener('click', loadCharacter);
-elements['new-character-button'].addEventListener('click', startNewCharacter);
-elements['delete-character-button'].addEventListener('click', deleteCharacter);
+elements['expand-all-scenarios'].addEventListener('click', () => setAllScenariosCollapsed(false));
+elements['collapse-all-scenarios'].addEventListener('click', () => setAllScenariosCollapsed(true));
 elements['preview-button'].addEventListener('click', renderPreview);
 elements['close-preview-button'].addEventListener('click', () => elements['preview-dialog'].close());
 elements['update-button'].addEventListener('click', updateData);
@@ -994,7 +933,6 @@ async function initialize() {
     const recovery = await client.initialize();
     elements['data-version'].textContent = 'データ版: ' + client.store.active.datasetVersion;
     renderDurabilityLines();
-    renderCharacterList();
     await recreateScenarioCards(saved?.currentScenarios ?? []);
     renderSavedDataSummary();
     state.initializing = false;

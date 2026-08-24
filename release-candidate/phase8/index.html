@@ -39,31 +39,18 @@
       </div>
     </section>
 
-    <details class="card collapsible-card" id="character-management" open>
-      <summary><span id="character-title">キャラクター管理</span></summary>
-      <div class="collapsible-content">
-        <div class="management-grid">
-          <label>保存済みキャラクター<select id="characters-list"><option value="">保存済みキャラクターはいません</option></select></label>
-          <div class="button-row">
-            <button id="load-character-button" type="button">読み込み</button>
-            <button id="new-character-button" type="button">新規作成</button>
-            <button id="preview-button" type="button">一覧プレビュー</button>
-            <button id="delete-character-button" class="danger-button" type="button">削除</button>
-          </div>
-          <label>キャラクター名<input id="character-name" type="text" placeholder="名前を入力"></label>
-          <button id="save-character-button" class="primary-button" type="button">現在の状況を保存</button>
-        </div>
-        <p id="character-status" class="inline-status" role="status" aria-live="polite"></p>
-      </div>
-    </details>
-
     <section id="scenario-area" aria-labelledby="scenario-area-title">
       <div class="section-heading">
         <div>
           <h2 id="scenario-area-title">計算する状況</h2>
           <p>複数の状況カードを追加して比較できます。入力変更は自動で再計算・保存されます。</p>
         </div>
-        <button id="add-scenario-button" class="primary-button" type="button">＋ 状況を追加</button>
+        <div class="scenario-actions" aria-label="状況カードの一括操作">
+          <button id="expand-all-scenarios" type="button">すべて開く</button>
+          <button id="collapse-all-scenarios" type="button">すべて閉じる</button>
+          <button id="preview-button" type="button">一覧</button>
+          <button id="add-scenario-button" class="primary-button" type="button" aria-label="状況カードを追加">＋追加</button>
+        </div>
       </div>
       <div id="scenario-cards-container"></div>
     </section>

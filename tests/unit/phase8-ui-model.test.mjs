@@ -101,12 +101,13 @@ test('Phase 8 UI: migration summary reports exact compatible content, not events
     ],
     currentScenarios: [{}],
     savedEnemies: [{ series: [{ stages: [{ bosses: [{}, {}] }] }] }]
-  }), {
+  }, { enemyA: { critAtkUp: 200 } }), {
     characters: 2,
     characterNames: ['架空キャラA', '架空キャラB'],
     savedScenarios: 3,
     currentScenarios: 1,
     manualEnemies: 2,
-    settings: 2
+    settings: 2,
+    criticalOverrides: 1
   });
 });

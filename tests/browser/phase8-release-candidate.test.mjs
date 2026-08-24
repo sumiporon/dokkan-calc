@@ -22,6 +22,10 @@ const PREVIOUS_MOBILE_LAYOUT = {
   360: { pageHeight: 2640, scenarioCardHeight: 1210, scenarioInputsHeight: 991 },
   390: { pageHeight: 2486, scenarioCardHeight: 1163, scenarioInputsHeight: 944 }
 };
+const BEFORE_MANAGEMENT_REMOVAL_LAYOUT = {
+  360: { pageHeight: 1713 },
+  390: { pageHeight: 1713 }
+};
 
 let chromiumBrowser;
 let webkitBrowser;
@@ -283,32 +287,74 @@ test('追加feedback: 旧RC保存をversion 2へ互換移行し、従来の同�
   }
 });
 
-test('追加feedback: カードを閉じても計算値と保存内容は変わらない', { timeout: TEST_TIMEOUT }, async () => {
+test('追加feedback: 個別に閉じても計算・入力・legacy保存内容は変わらない', { timeout: TEST_TIMEOUT }, async () => {
   const run = await openChecked(chromiumBrowser, rcUrl('additional-feedback-collapse'));
   try {
     await run.goto();
+    await run.page.evaluate((key) => {
+      const saved = JSON.parse(localStorage.getItem(key));
+      saved.savedCharacters = [{ name: 'legacy保持確認', scenarios: [{ scenario_title: '旧保存状況', char_def: '98765' }] }];
+      localStorage.setItem(key, JSON.stringify(saved));
+    }, RC_STORAGE_KEY);
+    await run.page.reload({ waitUntil: 'domcontentloaded' });
+    await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
     await run.page.locator('#char-def').fill('123456');
     await run.page.locator('[data-role="scenario-title"]').first().fill('折りたたみ確認');
     const before = await run.page.locator('#final-defense').textContent();
+    const beforeStorage = await run.page.evaluate((key) => localStorage.getItem(key), RC_STORAGE_KEY);
     await run.page.locator('[data-action="toggle-collapse"]').first().click();
     assert.equal(await run.page.locator('[data-role="scenario-body"]').first().isHidden(), true);
     assert.equal(await run.page.locator('[data-action="toggle-collapse"]').first().getAttribute('aria-expanded'), 'false');
     assert.equal(await run.page.locator('#final-defense').textContent(), before);
-
-    await run.page.locator('#character-name').fill('折りたたみ保存');
-    await run.page.locator('#save-character-button').click();
-    await run.page.locator('#character-management > summary').click();
-    assert.equal(await run.page.locator('#character-management').evaluate((element) => element.open), false);
+    assert.equal(await run.page.locator('#char-def').inputValue(), '123456');
+    assert.equal(await run.page.evaluate((key) => localStorage.getItem(key), RC_STORAGE_KEY), beforeStorage);
     const stored = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
     assert.equal(stored.currentScenarios[0].char_def, '123456');
-    assert.equal(stored.savedCharacters[0].scenarios[0].scenario_title, '折りたたみ確認');
-    assert.equal(stored.savedCharacters[0].scenarios[0].char_def, '123456');
+    assert.equal(stored.savedCharacters[0].name, 'legacy保持確認');
+    assert.equal(stored.savedCharacters[0].scenarios[0].char_def, '98765');
 
     await run.page.reload({ waitUntil: 'domcontentloaded' });
     await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
     assert.equal(await run.page.locator('#char-def').inputValue(), '123456');
     assert.equal(await run.page.locator('#final-defense').textContent(), before);
     assert.equal(await run.page.locator('[data-role="scenario-body"]').first().isVisible(), true);
+  } finally {
+    await run.close();
+  }
+});
+
+test('追加feedback: すべて開く・閉じるは表示だけを変え、全カードの計算・入力・保存を維持する', { timeout: TEST_TIMEOUT }, async () => {
+  const run = await openChecked(chromiumBrowser, rcUrl('additional-feedback-collapse-all'));
+  try {
+    await run.goto();
+    await run.page.locator('#add-scenario-button').click();
+    await run.page.locator('#add-scenario-button').click();
+    await run.page.waitForFunction(() => document.querySelectorAll('.scenario-card').length === 3);
+    for (const [index, value] of ['111111', '222222', '333333'].entries()) {
+      await run.page.locator('[data-role="char-def"]').nth(index).fill(value);
+      await run.page.locator('[data-role="scenario-title"]').nth(index).fill(`一括確認${index + 1}`);
+    }
+    const before = {
+      results: await run.page.locator('[data-role="final-defense"]').allTextContents(),
+      inputs: await run.page.locator('[data-role="char-def"]').evaluateAll((inputs) => inputs.map((input) => input.value)),
+      storage: await run.page.evaluate((key) => localStorage.getItem(key), RC_STORAGE_KEY)
+    };
+
+    await run.page.locator('#collapse-all-scenarios').click();
+    assert.deepEqual(await run.page.locator('[data-role="scenario-body"]').evaluateAll((bodies) => bodies.map((body) => body.hidden)), [true, true, true]);
+    assert.deepEqual(await run.page.locator('[data-action="toggle-collapse"]').evaluateAll((buttons) => buttons.map((button) => button.getAttribute('aria-expanded'))), ['false', 'false', 'false']);
+    assert.deepEqual(await run.page.locator('[data-role="final-defense"]').allTextContents(), before.results);
+    assert.deepEqual(await run.page.locator('[data-role="char-def"]').evaluateAll((inputs) => inputs.map((input) => input.value)), before.inputs);
+    assert.equal(await run.page.evaluate((key) => localStorage.getItem(key), RC_STORAGE_KEY), before.storage);
+
+    await run.page.locator('[data-action="toggle-collapse"]').nth(1).click();
+    assert.deepEqual(await run.page.locator('[data-role="scenario-body"]').evaluateAll((bodies) => bodies.map((body) => body.hidden)), [true, false, true]);
+    await run.page.locator('#expand-all-scenarios').click();
+    assert.deepEqual(await run.page.locator('[data-role="scenario-body"]').evaluateAll((bodies) => bodies.map((body) => body.hidden)), [false, false, false]);
+    assert.deepEqual(await run.page.locator('[data-action="toggle-collapse"]').evaluateAll((buttons) => buttons.map((button) => button.getAttribute('aria-expanded'))), ['true', 'true', 'true']);
+    assert.deepEqual(await run.page.locator('[data-role="final-defense"]').allTextContents(), before.results);
+    assert.deepEqual(await run.page.locator('[data-role="char-def"]').evaluateAll((inputs) => inputs.map((input) => input.value)), before.inputs);
+    assert.equal(await run.page.evaluate((key) => localStorage.getItem(key), RC_STORAGE_KEY), before.storage);
   } finally {
     await run.close();
   }
@@ -336,31 +382,39 @@ test('PC feedback: 有効な敵状態だけから通常・複数必殺・全体�
   }
 });
 
-test('PC feedback: 複数状況カードを保存し、新規作成後に同じv22形式から読み込める', { timeout: TEST_TIMEOUT }, async () => {
+test('追加feedback: 管理UIなしでも複数計算カードと自動保存を使え、legacy保存を保持する', { timeout: TEST_TIMEOUT }, async () => {
   const run = await openChecked(chromiumBrowser, rcUrl('pc-feedback-characters'));
   try {
     await run.goto();
-    await run.page.locator('[data-role="scenario-title"]').first().fill('基準状況');
-    await run.page.locator('#add-scenario-button').click();
-    await run.page.locator('[data-role="scenario-title"]').nth(1).fill('アイテム使用後');
-    await run.page.locator('#character-name').fill('回帰テストキャラ');
-    await run.page.locator('#save-character-button').click();
+    await run.page.evaluate((key) => {
+      const saved = JSON.parse(localStorage.getItem(key));
+      saved.savedCharacters = [{ name: '移行済みlegacyキャラ', scenarios: [{ scenario_title: 'legacy状況', char_def: '77777' }] }];
+      saved.currentScenarios = [
+        { scenario_title: '基準状況', char_def: '100000', own_class: 'super', own_type: 'teq' },
+        { scenario_title: 'アイテム使用後', char_def: '200000', own_class: 'extreme', own_type: 'agl' }
+      ];
+      localStorage.setItem(key, JSON.stringify(saved));
+    }, RC_STORAGE_KEY);
+    await run.page.reload({ waitUntil: 'domcontentloaded' });
+    await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
+    assert.equal(await run.page.locator('#character-management').count(), 0);
+    assert.equal(await run.page.getByText('キャラクター管理', { exact: true }).count(), 0);
+    assert.equal(await run.page.locator('#save-character-button, #load-character-button, #new-character-button, #delete-character-button').count(), 0);
     assert.equal(await run.page.locator('.scenario-card').count(), 2);
-    assert.match(await run.page.locator('#character-status').innerText(), /状況 2件/);
-    const stored = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
-    assert.deepEqual(stored.savedCharacters.map((character) => [character.name, character.scenarios.length]), [['回帰テストキャラ', 2]]);
-
-    run.page.once('dialog', (dialog) => dialog.accept());
-    await run.page.locator('#new-character-button').click();
-    assert.equal(await run.page.locator('.scenario-card').count(), 1);
-    await run.page.locator('#characters-list').selectOption('0');
-    run.page.once('dialog', (dialog) => dialog.accept());
-    await run.page.locator('#load-character-button').click();
-    await run.page.waitForFunction(() => document.querySelectorAll('.scenario-card').length === 2);
     assert.deepEqual(
       await run.page.locator('[data-role="scenario-title"]').evaluateAll((inputs) => inputs.map((input) => input.value)),
       ['基準状況', 'アイテム使用後']
     );
+
+    await run.page.locator('#add-scenario-button').click();
+    await run.page.waitForFunction(() => document.querySelectorAll('.scenario-card').length === 3);
+    await run.page.locator('[data-action="duplicate"]').first().click();
+    await run.page.waitForFunction(() => document.querySelectorAll('.scenario-card').length === 4);
+    await run.page.locator('[data-action="delete"]').last().click();
+    await run.page.waitForFunction(() => document.querySelectorAll('.scenario-card').length === 3);
+    const stored = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
+    assert.equal(stored.currentScenarios.length, 3);
+    assert.deepEqual(stored.savedCharacters, [{ name: '移行済みlegacyキャラ', scenarios: [{ scenario_title: 'legacy状況', char_def: '77777' }] }]);
   } finally {
     await run.close();
   }
@@ -386,7 +440,9 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
           pageHeight: document.documentElement.scrollHeight,
           scenarioCardHeight: card.height,
           scenarioInputsHeight: affinity.bottom - card.top,
-          cardWidth: card.width
+          cardWidth: card.width,
+          actionButtonsSameRow: new Set([...document.querySelectorAll('.scenario-actions button')].map((button) => Math.round(button.getBoundingClientRect().top))).size === 1,
+          actionsWithinViewport: document.querySelector('.scenario-actions').getBoundingClientRect().right <= innerWidth
         };
       });
       const previous = PREVIOUS_MOBILE_LAYOUT[width];
@@ -395,8 +451,13 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
       assert.ok(layout.inputHeight >= 40);
       assert.ok(layout.cardWidth <= width);
       assert.ok(layout.pageHeight <= previous.pageHeight * 0.75);
+      assert.ok(layout.pageHeight < BEFORE_MANAGEMENT_REMOVAL_LAYOUT[width].pageHeight);
       assert.ok(layout.scenarioCardHeight <= previous.scenarioCardHeight * 0.85);
       assert.ok(layout.scenarioInputsHeight <= previous.scenarioInputsHeight * 0.82);
+      assert.equal(layout.actionButtonsSameRow, true);
+      assert.equal(layout.actionsWithinViewport, true);
+      assert.equal(await run.page.locator('#expand-all-scenarios').isVisible(), true);
+      assert.equal(await run.page.locator('#collapse-all-scenarios').isVisible(), true);
 
       await run.page.locator('[data-action="toggle-collapse"]').first().click();
       const collapsed = await run.page.locator('.scenario-card').first().evaluate((element) => element.getBoundingClientRect().height);
@@ -416,6 +477,9 @@ for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['
     try {
       await run.goto();
       assert.equal(await run.page.locator('#event-select option').count(), 4);
+      assert.equal(await run.page.locator('#character-management').count(), 0);
+      assert.equal(await run.page.locator('#expand-all-scenarios').isVisible(), true);
+      assert.equal(await run.page.locator('#collapse-all-scenarios').isVisible(), true);
       await selectAndCalculate(run.page, 'preview:event:void');
       assert.match(await run.page.locator('.preview-notice').innerText(), /単一HTML/);
       assert.equal(await run.page.locator('body').evaluate(() => document.body.scrollWidth <= innerWidth), true);
@@ -536,8 +600,20 @@ test('実機確認用の架空移行も1ボタンで完了する', { timeout: TE
     assert.equal(parsed.currentScenarios.length, 1);
     assert.equal(parsed.savedEnemies[0].series[0].stages[0].bosses.length, 1);
     assert.equal(saved.pat, null);
-    assert.match(await popup.locator('#target-details').innerText(), /保存キャラクター 2件.*保存済み状況 2件.*手動敵 1件.*GitHub PATは0件.*イベント・ステージ・配布敵データは増えていません/);
-    assert.match(await run.page.locator('#migration-result-details').innerText(), /保存キャラクター2件.*イベント・ステージ・配布敵データは増えていません/);
+    assert.match(await popup.locator('#target-details').innerText(), /保存キャラクター 2件.*保存済み状況 2件.*作業中の状況 1件.*手動敵 1件.*会心補正 1件.*GitHub PATは0件.*イベント・ステージ・配布敵データは増えていません.*「計算する状況」/);
+    assert.match(await run.page.locator('#migration-result-details').innerText(), /保存キャラクター2件.*作業中の状況1件.*会心補正1件.*GitHub PATは移行していません.*「計算する状況」/);
+    await popup.getByRole('link', { name: '確認版を開いて作業中の状況を見る' }).click();
+    await popup.waitForFunction(() => globalThis.__phase8Ready === true);
+    assert.equal(await popup.locator('#character-management').count(), 0);
+    assert.equal(await popup.locator('.scenario-card').count(), 1);
+    assert.equal(await popup.locator('[data-role="scenario-title"]').inputValue(), '架空の作業中状況');
+    assert.equal(await popup.locator('#char-def').inputValue(), '150000');
+    assert.equal(await popup.locator('#damage-reduction').inputValue(), '30');
+    assert.equal(await popup.locator('#durability-own-affinity').inputValue(), 'super:phy');
+    assert.equal(await popup.locator('html').getAttribute('data-theme'), 'dark');
+    assert.match(await popup.locator('#durability-settings').innerText(), /架空50万/);
+    await popup.locator('#data-settings').evaluate((element) => { element.open = true; });
+    assert.match(await popup.locator('#saved-data-summary').innerText(), /保存キャラクター：2件[\s\S]*作業中の状況：1件[\s\S]*手動保存した敵：1件[\s\S]*会心補正：1件[\s\S]*GitHub PAT：移行していません[\s\S]*「計算する状況」/);
     await popup.close();
   } finally {
     await run.close();

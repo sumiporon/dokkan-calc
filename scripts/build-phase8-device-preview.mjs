@@ -6,7 +6,7 @@ const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..
 const RC_ROOT = path.join(REPO_ROOT, 'release-candidate', 'phase8');
 const DATA_ROOT = path.join(RC_ROOT, 'data');
 const OUTPUT = path.join(RC_ROOT, 'device-preview.html');
-const MIGRATION_PREVIEW_URL = 'https://raw.githack.com/sumiporon/dokkan-calc/phase8-additional-feedback-ready-2026-08-24/release-candidate/phase8/migration-device-check.html';
+const MIGRATION_PREVIEW_URL = 'https://raw.githack.com/sumiporon/dokkan-calc/phase8-management-removal-ready-2026-08-24/release-candidate/phase8/migration-device-check.html';
 
 const modulePaths = [
   'src/prototype/phase7-update-engine.mjs',

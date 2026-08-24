@@ -60,7 +60,7 @@
         const details = document.querySelector('#migration-result-details');
         if (accepted && details && event.data.summary) {
           const summary = event.data.summary;
-          details.textContent = `移行結果：保存キャラクター${summary.characters}件、保存済み状況${summary.savedScenarios}件、作業中の状況${summary.currentScenarios}件、手動敵${summary.manualEnemies}件、設定${summary.settings}分類。イベント・ステージ・配布敵データは増えていません。開いた確認版の「キャラクター管理」で確認してください。`;
+          details.textContent = `移行結果：保存キャラクター${summary.characters}件、保存済み状況${summary.savedScenarios}件、作業中の状況${summary.currentScenarios}件、手動敵${summary.manualEnemies}件、設定${summary.settings}分類、会心補正${summary.criticalOverrides}件。GitHub PATは移行していません。イベント・ステージ・配布敵データは増えていません。開いた確認版の「計算する状況」で作業中カードを確認してください。`;
         }
         root.__phase8MigrationResult = event.data;
         root.removeEventListener('message', listener);
