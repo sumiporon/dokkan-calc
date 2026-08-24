@@ -189,9 +189,9 @@ test('PC feedback: 自動再計算、先頭0、日本語属性、敵未選択を
     assert.equal(await run.page.getByText('被ダメージ0に必要なDEF', { exact: true }).count(), 0);
     assert.equal(await run.page.getByRole('button', { name: '今すぐ再計算' }).count(), 0);
     await run.page.locator('#char-def').fill('1000000');
-    assert.match(await run.page.locator('#damage-result').innerText(), /：0$/);
+    assert.match(await run.page.locator('#damage-result').textContent(), /：0$/);
     await run.page.locator('#char-def').fill('0');
-    assert.doesNotMatch(await run.page.locator('#damage-result').innerText(), /：0$/);
+    assert.doesNotMatch(await run.page.locator('#damage-result').textContent(), /：0$/);
 
     await run.page.locator('#enemy-select').selectOption('');
     await run.page.locator('.manual-attack-settings').first().evaluate((element) => { element.open = true; });
@@ -987,9 +987,14 @@ for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['
           const rangeRect = range.getBoundingClientRect();
           const valueStyle = getComputedStyle(value);
           const cardStyle = getComputedStyle(card);
+          const contentStyle = getComputedStyle(contentBlock);
+          const rangeText = document.createRange();
+          rangeText.selectNodeContents(range);
           const lineHeight = parseFloat(valueStyle.lineHeight);
           return {
             sameLine: Math.abs(labelRect.top - rangeRect.top) < lineHeight * 0.6,
+            labelRangeTopDelta: rangeRect.top - labelRect.top,
+            labelRangeBottomDelta: rangeRect.bottom - labelRect.bottom,
             headingValueGap: Math.min(labelRect.top, rangeRect.top) - headingRect.bottom,
             bottomInset: cardRect.bottom - Math.max(labelRect.bottom, rangeRect.bottom),
             valueAreaHeight: valueRect.height,
@@ -1000,18 +1005,27 @@ for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['
             lineHeightRatio: lineHeight / parseFloat(valueStyle.fontSize),
             valueDisplay: valueStyle.display,
             valueAlignContent: valueStyle.alignContent,
+            contentDisplay: contentStyle.display,
+            contentFlexWrap: contentStyle.flexWrap,
+            contentAlignItems: contentStyle.alignItems,
+            rangeLineCount: rangeText.getClientRects().length,
             cardRows: cardStyle.gridTemplateRows,
             wrapperIsOnlyChild: value.childElementCount === 1 && value.firstElementChild === contentBlock,
-            wrapperContainsRangeParts: contentBlock.querySelector(':scope > .damage-result-label + wbr + .damage-range-value') !== null,
+            wrapperContainsRangeParts: contentBlock.querySelector(':scope > .damage-result-label + .damage-range-value') !== null,
             pageOverflow: document.documentElement.scrollWidth > innerWidth
           };
         }, { labelText, rangeText });
         const exactOneLineRhythm = await measureRhythm('架空必殺A：', '171.9万〜177.2万');
         const oneLineRhythm = await measureRhythm('技：', '171.9万〜177.2万');
-        const twoLineRhythm = await measureRhythm('非常に長い攻撃名：', '171.9万〜177.2万');
+        const twoLineRhythm = await measureRhythm('非常に長い必殺技名：', '171.9万〜177.2万');
         if (width === 390) assert.equal(exactOneLineRhythm.sameLine, true, JSON.stringify({ width, browserName, exactOneLineRhythm }));
         assert.equal(oneLineRhythm.sameLine, true, JSON.stringify({ width, browserName, oneLineRhythm }));
         assert.equal(twoLineRhythm.sameLine, false, JSON.stringify({ width, browserName, twoLineRhythm }));
+        for (const rhythm of [exactOneLineRhythm, oneLineRhythm].filter((item) => item.sameLine)) {
+          assert.ok(Math.abs(rhythm.labelRangeTopDelta) <= 0.5, JSON.stringify({ width, browserName, rhythm }));
+          assert.ok(Math.abs(rhythm.labelRangeBottomDelta) <= 0.5, JSON.stringify({ width, browserName, rhythm }));
+        }
+        assert.ok(twoLineRhythm.labelRangeTopDelta > 1, JSON.stringify({ width, browserName, twoLineRhythm }));
         for (const rhythm of [exactOneLineRhythm, oneLineRhythm, twoLineRhythm]) {
           assert.ok(rhythm.headingValueGap >= 5, JSON.stringify({ width, browserName, rhythm }));
           assert.ok(rhythm.bottomInset >= 5, JSON.stringify({ width, browserName, rhythm }));
@@ -1022,6 +1036,10 @@ for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['
           assert.ok(rhythm.lineHeightRatio >= 1.25 && rhythm.lineHeightRatio <= 1.4, JSON.stringify({ width, browserName, rhythm }));
           assert.equal(rhythm.valueDisplay, 'grid', JSON.stringify({ width, browserName, rhythm }));
           assert.equal(rhythm.valueAlignContent, 'center', JSON.stringify({ width, browserName, rhythm }));
+          assert.equal(rhythm.contentDisplay, 'flex', JSON.stringify({ width, browserName, rhythm }));
+          assert.equal(rhythm.contentFlexWrap, 'wrap', JSON.stringify({ width, browserName, rhythm }));
+          assert.equal(rhythm.contentAlignItems, 'baseline', JSON.stringify({ width, browserName, rhythm }));
+          assert.equal(rhythm.rangeLineCount, 1, JSON.stringify({ width, browserName, rhythm }));
           assert.match(rhythm.cardRows, /50px/, JSON.stringify({ width, browserName, rhythm }));
           assert.equal(rhythm.wrapperIsOnlyChild, true, JSON.stringify({ width, browserName, rhythm }));
           assert.equal(rhythm.wrapperContainsRangeParts, true, JSON.stringify({ width, browserName, rhythm }));

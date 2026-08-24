@@ -164,6 +164,7 @@ npm run benchmark:phase8
 - 追加のスマホ実機フィードバックにより、低頻度の「敵の会心」は初期状態で閉じる表示専用の折りたたみにしました。ダメージ軽減率は基本DEF設定の最終項目へ置き直し、Androidのrange末尾表示とWebKitの長いselect幅を修正し、被ダメージ／属性結果を約62:38へ調整しました。
 - Phase 8の結果・select調整では、敵選択系selectのfocusを外側outlineではなく内側2px borderで描き、長い選択肢を収める親枠に四辺・四隅を切られないようにしました。最初の被ダメージ値padding調整は実機で不十分と判明したため、後の構造修正で置き換えています。
 - 被ダメージ結果の再修正では、見出しと値を別grid rowへ分け、スマホでは高さ50pxの値領域内で1行／2行の値ブロック全体を上下中央へ配置しました。値文字へのpadding追加ではなく、余白を上下へ同量に配る構造です。
+- その後の実機確認で、`overflow: hidden`付きinline-blockだったrangeだけが攻撃名より上に見えるbaseline差を確認しました。攻撃名とrangeを折り返し可能なflex行の別itemとし、1行時は同一baseline、2行時はrange全体を次行へ送る構造へ修正しています。
 
 ## 重要な安全上の注意
 
@@ -190,6 +191,8 @@ npm run benchmark:phase8
 - [Phase 8結果位置・select枠修正版 PC・スマホ再確認手順](docs/phase8-result-focus-feedback-recheck-checklist.md)
 - [Phase 8被ダメージ結果 縦位置再修正報告](docs/phase8-damage-result-alignment-report.md)
 - [Phase 8被ダメージ結果再修正版 PC・スマホ再確認手順](docs/phase8-damage-result-alignment-recheck-checklist.md)
+- [Phase 8被ダメージ結果 baseline修正報告](docs/phase8-damage-baseline-report.md)
+- [Phase 8被ダメージ結果 baseline修正版 PC・スマホ再確認手順](docs/phase8-damage-baseline-recheck-checklist.md)
 - [保存HTMLの再解析結果](docs/phase3-cached-source-analysis.md)
 - [将来構成と敵データ設計](docs/phase3-architecture-and-data-design.md)
 - [第4段階の完了報告](docs/phase4-completion-report.md)

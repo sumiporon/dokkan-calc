@@ -143,10 +143,11 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .damage-result-card { grid-template-rows: auto 1fr; }
 .damage-result-value { display: grid; align-self: stretch; align-content: center; }
 .results .damage-result-content, .results .damage-result-label, .results .damage-range-value { color: inherit; font-size: inherit; }
-.damage-result-content { display: block; }
-.damage-result-label { min-width: 0; overflow-wrap: anywhere; }
+.damage-result-content { display: flex; flex-wrap: wrap; align-items: baseline; }
+.damage-result-label { flex: 0 1 auto; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
 .damage-range-value {
-  display: inline-block;
+  display: block;
+  flex: 0 0 auto;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2340,7 +2341,7 @@ function renderDamageResult(context) {
   value.textContent = core.formatDamageRange(range);
   const content = document.createElement('span');
   content.className = 'damage-result-content';
-  content.append(label, document.createElement('wbr'), value);
+  content.append(label, value);
   result.classList.add('damage-result-value');
   result.replaceChildren(content);
   role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：${enemyLabel}`;

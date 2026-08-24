@@ -121,6 +121,8 @@ async function measure(width) {
       const rangeRect = range.getBoundingClientRect();
       return {
         sameLine: Math.abs(labelRect.top - rangeRect.top) < parseFloat(damageValueStyle.lineHeight) * 0.6,
+        labelRangeTopDelta: Number((rangeRect.top - labelRect.top).toFixed(2)),
+        labelRangeBottomDelta: Number((rangeRect.bottom - labelRect.bottom).toFixed(2)),
         headingValueGap: Number((Math.min(labelRect.top, rangeRect.top) - damageHeading.bottom).toFixed(2)),
         valueAreaHeight: Number(valueRect.height.toFixed(2)),
         valueTopInset: Number((contentRect.top - valueRect.top).toFixed(2)),
@@ -128,9 +130,10 @@ async function measure(width) {
       };
     };
     const oneLineRhythm = measureRhythm('架空必殺A：', '171.9万〜177.2万');
-    const twoLineRhythm = measureRhythm('非常に長い攻撃名：', '171.9万〜177.2万');
+    const twoLineRhythm = measureRhythm('非常に長い必殺技名：', '171.9万〜177.2万');
     const textRange = document.createRange();
     textRange.selectNodeContents(range);
+    const damageContentStyle = getComputedStyle(damageContent);
     return {
       damageResultWidthRatio: Number((cards[0].getBoundingClientRect().width / cards[1].getBoundingClientRect().width).toFixed(3)),
       damageRangeSingleLine: textRange.getClientRects().length === 1,
@@ -140,6 +143,9 @@ async function measure(width) {
       damageValueLineHeight: damageValueStyle.lineHeight,
       damageValueDisplay: damageValueStyle.display,
       damageValueAlignContent: damageValueStyle.alignContent,
+      damageContentDisplay: damageContentStyle.display,
+      damageContentFlexWrap: damageContentStyle.flexWrap,
+      damageContentAlignItems: damageContentStyle.alignItems,
       damageOneLineRhythm: oneLineRhythm,
       damageTwoLineRhythm: twoLineRhythm,
       damageResultHorizontalOverflow: document.documentElement.scrollWidth > innerWidth

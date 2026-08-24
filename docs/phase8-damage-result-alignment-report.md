@@ -1,5 +1,7 @@
 # Phase 8 被ダメージ結果 縦位置再修正報告
 
+> この文書の見出し行／値行分離と値ブロック全体の中央配置は現行仕様である。ただし、同一行内でrangeだけが攻撃名より上に見える問題が残ったため、後続の[baseline修正](phase8-damage-baseline-report.md)で値ブロック内部をflex baseline整列へ変更した。
+
 ## 対象
 
 ownerの再確認で未解決だった被ダメージ結果カードの縦位置だけを修正した。確認済みのselect強調枠を含む他のUI、計算、保存、更新処理には変更を加えていない。Phase 9、`main`、本番Pages、OneDrive本番版、production敵データ／workflow、外部取得、0操作自動更新も変更していない。

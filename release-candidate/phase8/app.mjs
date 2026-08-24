@@ -611,7 +611,7 @@ function renderDamageResult(context) {
   value.textContent = core.formatDamageRange(range);
   const content = document.createElement('span');
   content.className = 'damage-result-content';
-  content.append(label, document.createElement('wbr'), value);
+  content.append(label, value);
   result.classList.add('damage-result-value');
   result.replaceChildren(content);
   role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：${enemyLabel}`;
