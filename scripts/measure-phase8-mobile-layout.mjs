@@ -74,6 +74,20 @@ async function measure(width) {
   await page.locator('#event-select').selectOption('preview:event:forest');
   await page.waitForFunction(() => globalThis.Phase8RC.state.event?.id === 'preview:event:forest');
   await page.locator('#enemy-select').selectOption('preview:enemy:green');
+  result.enemySelectFocus = [];
+  for (const selector of ['#event-select', '#stage-select', '#enemy-select', '#attack-select', '[data-condition="turn"]', '[data-condition="hp"]']) {
+    const control = page.locator(selector).first();
+    await control.focus();
+    result.enemySelectFocus.push(await control.evaluate((element, currentSelector) => {
+      const style = getComputedStyle(element);
+      return {
+        selector: currentSelector,
+        borderWidths: [style.borderTopWidth, style.borderRightWidth, style.borderBottomWidth, style.borderLeftWidth],
+        outlineStyle: style.outlineStyle,
+        noHorizontalOverflow: document.documentElement.scrollWidth <= innerWidth
+      };
+    }, selector));
+  }
   Object.assign(result, await page.evaluate(() => {
     const ranges = [...document.querySelectorAll('.attack-range-value')];
     const rangeLines = ranges.map((element) => {
@@ -92,13 +106,22 @@ async function measure(width) {
   await page.locator('#attack-select').selectOption('normal');
   Object.assign(result, await page.evaluate(() => {
     const cards = document.querySelectorAll('.damage-results > div');
+    const damageHeading = cards[0].querySelector(':scope > span').getBoundingClientRect();
+    const damageValue = document.querySelector('[data-role="damage-result"]');
+    const damageValueStyle = getComputedStyle(damageValue);
+    const damageLabel = damageValue.querySelector('.damage-result-label').getBoundingClientRect();
     const range = document.querySelector('.damage-range-value');
+    const rangeRect = range.getBoundingClientRect();
     const textRange = document.createRange();
     textRange.selectNodeContents(range);
     return {
       damageResultWidthRatio: Number((cards[0].getBoundingClientRect().width / cards[1].getBoundingClientRect().width).toFixed(3)),
       damageRangeSingleLine: textRange.getClientRects().length === 1,
       damageRangeOverflow: range.scrollWidth - range.clientWidth,
+      damageHeadingValueGap: Number((Math.min(damageLabel.top, rangeRect.top) - damageHeading.bottom).toFixed(2)),
+      damageValuePaddingTop: damageValueStyle.paddingTop,
+      damageValuePaddingBottom: damageValueStyle.paddingBottom,
+      damageValueLineHeight: damageValueStyle.lineHeight,
       damageResultHorizontalOverflow: document.documentElement.scrollWidth > innerWidth
     };
   }));

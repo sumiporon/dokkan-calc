@@ -866,7 +866,7 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
 });
 
 for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['WebKit', () => webkitBrowser]]) {
-  test(`${browserName}: 360px・390pxで短い/長い攻撃名と被ダメージrangeを実描画する`, { timeout: TEST_TIMEOUT }, async () => {
+  test(`${browserName}: 360px・390pxでrange・結果縦位置・select focus枠を実描画する`, { timeout: TEST_TIMEOUT }, async () => {
     for (const width of [360, 390]) {
       const run = await openChecked(getBrowser(), rcUrl(`range-render-${browserName}-${width}`), {
         viewport: { width, height: 900 },
@@ -878,6 +878,42 @@ for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['
         await run.page.locator('#event-select').selectOption('preview:event:forest');
         await run.page.waitForFunction(() => globalThis.Phase8RC.state.event?.id === 'preview:event:forest');
         await run.page.locator('#enemy-select').selectOption('preview:enemy:green');
+
+        const enemySelects = [
+          '#event-select',
+          '#stage-select',
+          '#enemy-select',
+          '#attack-select',
+          '[data-condition="turn"]',
+          '[data-condition="hp"]'
+        ];
+        for (const selector of enemySelects) {
+          const control = run.page.locator(selector).first();
+          assert.equal(await control.count(), 1, `${browserName} ${width}px: ${selector} must exist`);
+          await control.focus();
+          const focusRing = await control.evaluate((element) => {
+            const style = getComputedStyle(element);
+            const controlRect = element.getBoundingClientRect();
+            const labelRect = element.closest('label')?.getBoundingClientRect();
+            return {
+              focused: element.matches(':focus'),
+              outlineStyle: style.outlineStyle,
+              borderWidths: [style.borderTopWidth, style.borderRightWidth, style.borderBottomWidth, style.borderLeftWidth],
+              ringInsideLabel: !labelRect || (
+                controlRect.left >= labelRect.left - 1
+                && controlRect.top >= labelRect.top - 1
+                && controlRect.right <= labelRect.right + 1
+                && controlRect.bottom <= labelRect.bottom + 1
+              ),
+              pageOverflow: document.documentElement.scrollWidth > innerWidth
+            };
+          });
+          assert.equal(focusRing.focused, true, JSON.stringify({ selector, focusRing }));
+          assert.equal(focusRing.outlineStyle, 'none', JSON.stringify({ selector, focusRing }));
+          assert.ok(focusRing.borderWidths.every((value) => parseFloat(value) >= 2), JSON.stringify({ selector, focusRing }));
+          assert.equal(focusRing.ringInsideLabel, true, JSON.stringify({ selector, focusRing }));
+          assert.equal(focusRing.pageOverflow, false, JSON.stringify({ selector, focusRing }));
+        }
 
         const shortRange = await run.page.locator('.attack-summary-row').first().evaluate((row) => {
           const value = row.querySelector('.attack-range-value');
@@ -934,6 +970,42 @@ for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['
         assert.match(damageLayout.text, /〜/);
         assert.match(damageLayout.types, /自分：超技\s*敵：極技/);
         assert.equal(damageLayout.overflow, false, JSON.stringify({ width, browserName, ...damageLayout }));
+
+        const actualRangeText = await run.page.locator('.damage-range-value').innerText();
+        const measureRhythm = (labelText, rangeText) => run.page.locator('#damage-result').evaluate((value, content) => {
+          const card = value.closest('.damage-results > div');
+          const heading = card.querySelector(':scope > span');
+          const label = value.querySelector('.damage-result-label');
+          const range = value.querySelector('.damage-range-value');
+          label.textContent = content.labelText;
+          range.textContent = content.rangeText;
+          const cardRect = card.getBoundingClientRect();
+          const headingRect = heading.getBoundingClientRect();
+          const labelRect = label.getBoundingClientRect();
+          const rangeRect = range.getBoundingClientRect();
+          const valueStyle = getComputedStyle(value);
+          const lineHeight = parseFloat(valueStyle.lineHeight);
+          return {
+            sameLine: Math.abs(labelRect.top - rangeRect.top) < lineHeight * 0.6,
+            headingValueGap: Math.min(labelRect.top, rangeRect.top) - headingRect.bottom,
+            bottomInset: cardRect.bottom - Math.max(labelRect.bottom, rangeRect.bottom),
+            paddingTop: parseFloat(valueStyle.paddingTop),
+            paddingBottom: parseFloat(valueStyle.paddingBottom),
+            lineHeightRatio: lineHeight / parseFloat(valueStyle.fontSize),
+            pageOverflow: document.documentElement.scrollWidth > innerWidth
+          };
+        }, { labelText, rangeText });
+        const oneLineRhythm = await measureRhythm('技：', '1万〜2万');
+        const twoLineRhythm = await measureRhythm('架空必殺Aの追加攻撃：', actualRangeText);
+        assert.equal(oneLineRhythm.sameLine, true, JSON.stringify({ width, browserName, oneLineRhythm }));
+        assert.equal(twoLineRhythm.sameLine, false, JSON.stringify({ width, browserName, twoLineRhythm }));
+        for (const rhythm of [oneLineRhythm, twoLineRhythm]) {
+          assert.ok(rhythm.headingValueGap >= 3 && rhythm.headingValueGap <= 8, JSON.stringify({ width, browserName, rhythm }));
+          assert.ok(rhythm.bottomInset >= 5, JSON.stringify({ width, browserName, rhythm }));
+          assert.ok(rhythm.paddingTop >= 2 && rhythm.paddingBottom >= 1, JSON.stringify({ width, browserName, rhythm }));
+          assert.ok(rhythm.lineHeightRatio >= 1.25 && rhythm.lineHeightRatio <= 1.4, JSON.stringify({ width, browserName, rhythm }));
+          assert.equal(rhythm.pageOverflow, false, JSON.stringify({ width, browserName, rhythm }));
+        }
       } finally {
         await run.close();
       }

@@ -81,6 +81,11 @@ select, input, button {
 }
 select, input { width: 100%; max-width: 100%; }
 select { text-overflow: ellipsis; }
+select:focus:enabled, select:active:enabled {
+  outline: none;
+  border-width: 2px;
+  border-color: var(--text);
+}
 button { cursor: pointer; font-weight: 800; }
 button:disabled { cursor: not-allowed; opacity: .55; }
 .primary-button { border-color: var(--accent); background: var(--accent); color: var(--accent-text); }
@@ -190,6 +195,7 @@ dialog::backdrop { background: #0008; }
   .results span { font-size: .68rem; }
   .results strong { font-size: .9rem; }
   .damage-results { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
+  .damage-result-value { padding-block: .14rem .08rem; line-height: 1.3; }
   .section-heading { margin: .5rem 0 .25rem; align-items: center; gap: .3rem; }
   .section-heading p { display: none; }
   .section-heading .primary-button { flex: 0 0 auto; width: auto; }
