@@ -212,14 +212,25 @@ test('追加feedback: 両モードの結果直近に最終DEF・軽減率・ガ�
     await run.goto();
     const reductionPosition = await run.page.locator('#damage-reduction').evaluate((input) => {
       const label = input.closest('label');
-      const grid = input.closest('.affinity-grid');
+      const section = input.closest('section');
+      const grid = input.closest('.input-grid');
+      const affinity = document.querySelector('.affinity-section');
+      const critical = document.querySelector('.critical-settings');
       return {
-        inAffinitySettings: Boolean(grid),
+        inBasicSettings: section?.getAttribute('aria-label') === '基本DEF設定',
         isLastSetting: grid?.lastElementChild === label,
-        baseSettingsContainReduction: Boolean(document.querySelector('section[aria-label="基本DEF設定"] #damage-reduction'))
+        followedByAffinityThenCritical: section?.nextElementSibling === affinity && affinity?.nextElementSibling === critical,
+        affinityContainsReduction: Boolean(affinity?.querySelector('#damage-reduction')),
+        criticalContainsReduction: Boolean(critical?.querySelector('#damage-reduction'))
       };
     });
-    assert.deepEqual(reductionPosition, { inAffinitySettings: true, isLastSetting: true, baseSettingsContainReduction: false });
+    assert.deepEqual(reductionPosition, {
+      inBasicSettings: true,
+      isLastSetting: true,
+      followedByAffinityThenCritical: true,
+      affinityContainsReduction: false,
+      criticalContainsReduction: false
+    });
     await run.page.locator('#char-def').fill('420000');
     await run.page.locator('#damage-reduction').fill('30');
     await run.page.locator('#guard').check();
@@ -252,6 +263,46 @@ test('追加feedback: 両モードの結果直近に最終DEF・軽減率・ガ�
     assert.equal(await run.page.locator('[data-role="damage-condition-summary"]').first().isVisible(), true);
     assert.equal(await run.page.getByText('複数の必殺技は、情報をまとめず技ごとに表示しています。', { exact: true }).count(), 0);
     assert.equal(await run.page.getByText('自分の属性は上の設定と同じ値です。敵の属性は被ダメージモードの手動敵設定を変更しません。', { exact: true }).count(), 0);
+  } finally {
+    await run.close();
+  }
+});
+
+test('追加実機feedback: 敵の会心は初期状態で閉じ、開閉しても計算値・入力値・保存値を変えない', { timeout: TEST_TIMEOUT }, async () => {
+  const run = await openChecked(chromiumBrowser, rcUrl('critical-settings-collapse'));
+  try {
+    await run.goto();
+    const details = run.page.locator('.critical-settings').first();
+    const summary = details.locator('summary');
+    assert.equal(await details.getAttribute('open'), null);
+    assert.equal(await details.getByText('敵の会心', { exact: true }).count(), 1);
+    assert.equal(await details.locator('[data-role="is-critical"]').isHidden(), true);
+
+    await summary.click();
+    assert.notEqual(await details.getAttribute('open'), null);
+    await details.locator('[data-role="is-critical"]').check();
+    await details.locator('[data-role="critical-attack"]').fill('150');
+    await details.locator('[data-role="critical-defense"]').fill('50');
+    const resultBeforeClose = await run.page.locator('[data-role="durability-table"]').first().innerText();
+    const storedBeforeClose = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
+
+    await summary.click();
+    assert.equal(await details.getAttribute('open'), null);
+    assert.equal(await details.locator('[data-role="is-critical"]').isChecked(), true);
+    assert.equal(await details.locator('[data-role="critical-attack"]').inputValue(), '150');
+    assert.equal(await details.locator('[data-role="critical-defense"]').inputValue(), '50');
+    assert.equal(await run.page.locator('[data-role="durability-table"]').first().innerText(), resultBeforeClose);
+    assert.deepEqual(await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY), storedBeforeClose);
+
+    await summary.click();
+    assert.equal(await details.locator('[data-role="critical-attack"]').isVisible(), true);
+    await run.page.reload({ waitUntil: 'domcontentloaded' });
+    await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
+    assert.equal(await run.page.locator('.critical-settings').first().getAttribute('open'), null);
+    assert.equal(await run.page.locator('[data-role="is-critical"]').first().isChecked(), true);
+    assert.equal(await run.page.locator('[data-role="critical-attack"]').first().inputValue(), '150');
+    assert.equal(await run.page.locator('[data-role="critical-defense"]').first().inputValue(), '50');
+    assert.equal(await run.page.locator('[data-role="durability-table"]').first().innerText(), resultBeforeClose);
   } finally {
     await run.close();
   }
@@ -352,6 +403,7 @@ test('追加feedback: Pagesは旧版・旧移行先・PATを読まず新規開�
     await run.page.locator('#char-def').fill('123456');
     await run.page.locator('#damage-reduction').fill('35');
     await run.page.locator('#guard').check();
+    await run.page.locator('.critical-settings summary').first().click();
     await run.page.locator('[data-role="is-critical"]').first().check();
     await run.page.locator('[data-role="critical-attack"]').first().fill('200');
     await run.page.locator('[data-role="critical-defense"]').first().fill('100');
@@ -558,6 +610,7 @@ test('最終実機feedback: colonを含む全体攻撃IDでも対象別ATKを選
     await run.page.locator('#damage-reduction').fill('17');
     await run.page.locator('#guard').check();
     await run.page.locator('#attribute-defense').fill('5');
+    await run.page.locator('.critical-settings summary').first().click();
     await run.page.locator('[data-role="is-critical"]').first().check();
     await run.page.locator('[data-role="critical-attack"]').first().fill('150');
     await run.page.locator('[data-role="critical-defense"]').first().fill('50');
@@ -650,15 +703,13 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
         const first = document.querySelector('#char-def').getBoundingClientRect();
         const second = document.querySelector('#leader').getBoundingClientRect();
         const card = document.querySelector('.scenario-card').getBoundingClientRect();
+        const basic = document.querySelector('section[aria-label="基本DEF設定"]');
         const affinity = document.querySelector('.affinity-section').getBoundingClientRect();
-        const affinityGrid = rect('.affinity-section .affinity-grid');
+        const critical = document.querySelector('.critical-settings');
         const ownClass = rect('#own-class');
         const ownType = rect('#own-type');
         const attributeDefense = rect('#attribute-defense');
         const guardLabel = document.querySelector('#guard').closest('label').getBoundingClientRect();
-        const criticalToggle = rect('.critical-toggle');
-        const criticalAttack = rect('[data-role="critical-attack"]');
-        const criticalDefense = rect('[data-role="critical-defense"]');
         const damageReduction = rect('#damage-reduction');
         const conditionSummary = document.querySelector('[data-role="durability-condition-summary"]');
         const conditionCells = [...document.querySelectorAll('[data-role="durability-condition-summary"] > span')].map((element) => element.getBoundingClientRect());
@@ -673,13 +724,13 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
           actionButtonsSameRow: new Set([...document.querySelectorAll('.scenario-actions button')].map((button) => Math.round(button.getBoundingClientRect().top))).size === 1,
           actionsWithinViewport: document.querySelector('.scenario-actions').getBoundingClientRect().right <= innerWidth,
           defenseRowAligned: Math.abs(attributeDefense.top - guardLabel.top) < 2,
-          criticalInputsAligned: Math.abs(criticalAttack.top - criticalDefense.top) < 2 && Math.abs(criticalAttack.height - criticalDefense.height) < 2,
-          damageReductionIsLast: document.querySelector('.affinity-section .affinity-grid').lastElementChild?.contains(document.querySelector('#damage-reduction')) === true,
-          damageReductionBelowCritical: damageReduction.top >= criticalDefense.bottom - 1,
-          leftColumnAligned: Math.abs(ownClass.left - attributeDefense.left) < 2 && Math.abs(ownClass.left - criticalAttack.left) < 2,
-          rightColumnAligned: Math.abs(ownType.left - criticalDefense.left) < 2,
-          criticalToggleFullWidth: Math.abs(criticalToggle.left - affinityGrid.left) < 2 && Math.abs(criticalToggle.right - affinityGrid.right) < 2,
-          criticalToggleHeight: criticalToggle.height,
+          damageReductionIsBasicLast: basic.querySelector('.input-grid').lastElementChild?.contains(document.querySelector('#damage-reduction')) === true,
+          sectionOrder: basic.nextElementSibling === document.querySelector('.affinity-section') && basic.nextElementSibling.nextElementSibling === critical,
+          reductionBeforeAffinity: damageReduction.bottom <= affinity.top,
+          criticalClosed: critical.open === false,
+          criticalSummaryHeight: critical.querySelector('summary').getBoundingClientRect().height,
+          leftColumnAligned: Math.abs(ownClass.left - attributeDefense.left) < 2,
+          rightColumnAligned: Math.abs(ownType.left - guardLabel.left) < 2,
           summarySameRow: new Set(conditionCells.map((cell) => Math.round(cell.top))).size === 1,
           summaryOverflow: conditionSummary.scrollWidth - conditionSummary.clientWidth
         };
@@ -700,15 +751,37 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
       assert.equal(layout.actionButtonsSameRow, true);
       assert.equal(layout.actionsWithinViewport, true);
       assert.equal(layout.defenseRowAligned, true);
-      assert.equal(layout.criticalInputsAligned, true);
-      assert.equal(layout.damageReductionIsLast, true);
-      assert.equal(layout.damageReductionBelowCritical, true);
+      assert.equal(layout.damageReductionIsBasicLast, true);
+      assert.equal(layout.sectionOrder, true);
+      assert.equal(layout.reductionBeforeAffinity, true);
+      assert.equal(layout.criticalClosed, true);
+      assert.ok(layout.criticalSummaryHeight >= 40);
       assert.equal(layout.leftColumnAligned, true);
       assert.equal(layout.rightColumnAligned, true);
-      assert.equal(layout.criticalToggleFullWidth, true);
-      assert.ok(layout.criticalToggleHeight >= 40);
       assert.equal(layout.summarySameRow, true);
       assert.ok(layout.summaryOverflow <= 1, JSON.stringify(layout));
+
+      await run.page.locator('.critical-settings summary').first().click();
+      const openCritical = await run.page.evaluate(() => {
+        const details = document.querySelector('.critical-settings');
+        const grid = details.querySelector('.critical-grid').getBoundingClientRect();
+        const toggle = details.querySelector('.critical-toggle').getBoundingClientRect();
+        const attack = details.querySelector('[data-role="critical-attack"]').getBoundingClientRect();
+        const defense = details.querySelector('[data-role="critical-defense"]').getBoundingClientRect();
+        return {
+          open: details.open,
+          inputsAligned: Math.abs(attack.top - defense.top) < 2 && Math.abs(attack.height - defense.height) < 2,
+          toggleFullWidth: Math.abs(toggle.left - grid.left) < 2 && Math.abs(toggle.right - grid.right) < 2,
+          toggleHeight: toggle.height,
+          noOverflow: document.documentElement.scrollWidth <= innerWidth
+        };
+      });
+      assert.equal(openCritical.open, true);
+      assert.equal(openCritical.inputsAligned, true);
+      assert.equal(openCritical.toggleFullWidth, true);
+      assert.equal(openCritical.noOverflow, true);
+      assert.ok(openCritical.toggleHeight >= 40);
+      await run.page.locator('.critical-settings summary').first().click();
 
       await run.page.locator('#mode-damage').check();
       await run.page.locator('#event-select').selectOption('preview:event:forest');
@@ -722,14 +795,60 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
           text: element.textContent,
           textLineCount: textRange.getClientRects().length,
           whiteSpace: style.whiteSpace,
+          overflowX: style.overflowX,
+          caretColor: style.caretColor,
           scrollOverflow: element.scrollWidth - element.clientWidth,
-          labelFallback: getComputedStyle(element.previousElementSibling).overflowWrap
+          labelFallback: getComputedStyle(element.previousElementSibling).overflowWrap,
+          elementChildren: element.childElementCount,
+          beforeContent: getComputedStyle(element, '::before').content,
+          afterContent: getComputedStyle(element, '::after').content
         };
       }));
       assert.ok(rangeLayout.some((entry) => entry.text === '1,500,000～2,500,000'));
       assert.ok(rangeLayout.every((entry) => entry.textLineCount === 1 && entry.whiteSpace === 'nowrap'), JSON.stringify(rangeLayout));
+      assert.ok(rangeLayout.every((entry) => entry.overflowX === 'hidden' && entry.caretColor === 'rgba(0, 0, 0, 0)'), JSON.stringify(rangeLayout));
       assert.ok(rangeLayout.every((entry) => entry.scrollOverflow <= 1), JSON.stringify(rangeLayout));
       assert.ok(rangeLayout.every((entry) => entry.labelFallback === 'anywhere'));
+      assert.ok(rangeLayout.every((entry) => entry.elementChildren === 0 && entry.beforeContent === 'none' && entry.afterContent === 'none'));
+
+      await run.page.locator('.attack-summary-row > span').first().evaluate((element) => { element.textContent = '非常に長い名前の必殺攻撃'; });
+      const longLabelLayout = await run.page.locator('.attack-summary-row').first().evaluate((row) => {
+        const value = row.querySelector('.attack-range-value');
+        const textRange = document.createRange();
+        textRange.selectNodeContents(value);
+        return { valueLines: textRange.getClientRects().length, pageOverflow: document.documentElement.scrollWidth > innerWidth };
+      });
+      assert.deepEqual(longLabelLayout, { valueLines: 1, pageOverflow: false });
+
+      await run.page.locator('#attack-select').selectOption('normal');
+      const resultLayout = await run.page.evaluate(() => {
+        const cards = document.querySelectorAll('.damage-results > div');
+        const damage = cards[0].getBoundingClientRect();
+        const types = cards[1].getBoundingClientRect();
+        const value = document.querySelector('.damage-range-value');
+        const textRange = document.createRange();
+        textRange.selectNodeContents(value);
+        return {
+          widthRatio: damage.width / types.width,
+          resultText: document.querySelector('#damage-result').textContent,
+          rangeText: value.textContent,
+          rangeLines: textRange.getClientRects().length,
+          rangeWhiteSpace: getComputedStyle(value).whiteSpace,
+          rangeOverflow: value.scrollWidth - value.clientWidth,
+          typeText: document.querySelector('[data-role="result-types"]').innerText,
+          typeOverflow: cards[1].scrollWidth - cards[1].clientWidth,
+          pageOverflow: document.documentElement.scrollWidth > innerWidth
+        };
+      });
+      assert.ok(resultLayout.widthRatio >= 1.55, JSON.stringify(resultLayout));
+      assert.match(resultLayout.resultText, /^通常攻撃：/);
+      assert.match(resultLayout.rangeText, /〜/);
+      assert.equal(resultLayout.rangeLines, 1);
+      assert.equal(resultLayout.rangeWhiteSpace, 'nowrap');
+      assert.ok(resultLayout.rangeOverflow <= 1, JSON.stringify(resultLayout));
+      assert.match(resultLayout.typeText, /自分：超技\s*敵：極技/);
+      assert.ok(resultLayout.typeOverflow <= 1, JSON.stringify(resultLayout));
+      assert.equal(resultLayout.pageOverflow, false);
       assert.equal(await run.page.locator('body').evaluate(() => document.body.scrollWidth <= innerWidth), true);
 
       await run.page.locator('#mode-durability').check();
@@ -745,6 +864,82 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
     }
   }
 });
+
+for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['WebKit', () => webkitBrowser]]) {
+  test(`${browserName}: 360px・390pxで短い/長い攻撃名と被ダメージrangeを実描画する`, { timeout: TEST_TIMEOUT }, async () => {
+    for (const width of [360, 390]) {
+      const run = await openChecked(getBrowser(), rcUrl(`range-render-${browserName}-${width}`), {
+        viewport: { width, height: 900 },
+        context: { isMobile: true, hasTouch: true }
+      });
+      try {
+        await run.goto();
+        await run.page.locator('#mode-damage').check();
+        await run.page.locator('#event-select').selectOption('preview:event:forest');
+        await run.page.waitForFunction(() => globalThis.Phase8RC.state.event?.id === 'preview:event:forest');
+        await run.page.locator('#enemy-select').selectOption('preview:enemy:green');
+
+        const shortRange = await run.page.locator('.attack-summary-row').first().evaluate((row) => {
+          const value = row.querySelector('.attack-range-value');
+          const range = document.createRange();
+          range.selectNodeContents(value);
+          return { label: row.querySelector('span').textContent, lines: range.getClientRects().length };
+        });
+        assert.deepEqual(shortRange, { label: '通常攻撃', lines: 1 });
+
+        await run.page.locator('.attack-summary-row > span').nth(1).evaluate((element) => { element.textContent = '非常に長い名前の必殺攻撃'; });
+        const renderedRanges = await run.page.locator('.attack-range-value').evaluateAll((elements) => elements.map((element) => {
+          const range = document.createRange();
+          range.selectNodeContents(element);
+          const style = getComputedStyle(element);
+          return {
+            lines: range.getClientRects().length,
+            overflowX: style.overflowX,
+            whiteSpace: style.whiteSpace,
+            children: element.childElementCount,
+            before: getComputedStyle(element, '::before').content,
+            after: getComputedStyle(element, '::after').content
+          };
+        }));
+        assert.ok(renderedRanges.every((item) => item.lines === 1 && item.overflowX === 'hidden' && item.whiteSpace === 'nowrap'), JSON.stringify(renderedRanges));
+        assert.ok(renderedRanges.every((item) => item.children === 0 && item.before === 'none' && item.after === 'none'));
+
+        await run.page.locator('#attack-select').selectOption('normal');
+        const damageLayout = await run.page.evaluate(() => {
+          const cards = document.querySelectorAll('.damage-results > div');
+          const range = document.querySelector('.damage-range-value');
+          const textRange = document.createRange();
+          textRange.selectNodeContents(range);
+          return {
+            ratio: cards[0].getBoundingClientRect().width / cards[1].getBoundingClientRect().width,
+            lines: textRange.getClientRects().length,
+            text: range.textContent,
+            types: document.querySelector('[data-role="result-types"]').innerText,
+            overflow: document.documentElement.scrollWidth > innerWidth,
+            documentScrollWidth: document.documentElement.scrollWidth,
+            documentClientWidth: document.documentElement.clientWidth,
+            bodyScrollWidth: document.body.scrollWidth,
+            bodyClientWidth: document.body.clientWidth,
+            innerWidth,
+            overflowElements: [...document.querySelectorAll('body *')]
+              .filter((element) => element.getBoundingClientRect().right > document.documentElement.clientWidth + 1)
+              .map((element) => `${element.tagName.toLowerCase()}.${element.className}`),
+            internalOverflowElements: [...document.querySelectorAll('body *')]
+              .filter((element) => element.scrollWidth > element.clientWidth + 1)
+              .map((element) => `${element.tagName.toLowerCase()}.${element.className}:${element.clientWidth}/${element.scrollWidth}`)
+          };
+        });
+        assert.ok(damageLayout.ratio >= 1.55, JSON.stringify(damageLayout));
+        assert.equal(damageLayout.lines, 1);
+        assert.match(damageLayout.text, /〜/);
+        assert.match(damageLayout.types, /自分：超技\s*敵：極技/);
+        assert.equal(damageLayout.overflow, false, JSON.stringify({ width, browserName, ...damageLayout }));
+      } finally {
+        await run.close();
+      }
+    }
+  });
+}
 
 for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['WebKit', () => webkitBrowser]]) {
   test(`${browserName}: 単一HTML確認版をfile/OneDrive相当で直接開ける`, { timeout: TEST_TIMEOUT }, async () => {

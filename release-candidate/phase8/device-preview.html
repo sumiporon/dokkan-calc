@@ -66,6 +66,7 @@ p { margin: .35rem 0 .7rem; }
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: .7rem;
 }
+.selector-grid > label { overflow: hidden; }
 .input-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 label { display: grid; gap: .25rem; min-width: 0; color: var(--muted); font-size: .86rem; font-weight: 700; }
 select, input, button {
@@ -78,6 +79,8 @@ select, input, button {
   padding: .48rem .65rem;
   font: inherit;
 }
+select, input { width: 100%; max-width: 100%; }
+select { text-overflow: ellipsis; }
 button { cursor: pointer; font-weight: 800; }
 button:disabled { cursor: not-allowed; opacity: .55; }
 .primary-button { border-color: var(--accent); background: var(--accent); color: var(--accent-text); }
@@ -99,6 +102,9 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .final-defense-banner strong { margin-left: .5rem; font-size: 1.25rem; }
 .affinity-section { margin-top: .75rem; border-top: 1px solid var(--border); }
 .affinity-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.critical-settings { margin-top: .75rem; border-top: 1px solid var(--border); }
+.critical-settings[open] > summary { margin-bottom: .45rem; }
+.critical-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .checkbox-label { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; align-self: end; min-height: 2.75rem; }
 .checkbox-label input { width: 1.3rem; height: 1.3rem; min-height: auto; flex: 0 0 auto; }
 .result-panel, .damage-panel { margin-top: 1rem; padding-top: .2rem; border-top: 2px solid var(--border); }
@@ -118,8 +124,10 @@ button:disabled { cursor: not-allowed; opacity: .55; }
   display: block;
   min-width: 0;
   max-width: 100%;
-  overflow-x: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+  caret-color: transparent;
   font-variant-numeric: tabular-nums;
 }
 .condition-controls { margin-top: .7rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -127,6 +135,18 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .results > div { display: grid; align-content: start; gap: .25rem; min-width: 0; padding: .7rem; border: 1px solid var(--border); border-radius: .6rem; }
 .results span { color: var(--muted); font-size: .8rem; }
 .results strong { overflow-wrap: anywhere; font-size: 1.08rem; }
+.damage-result-value { display: block; }
+.results .damage-result-label, .results .damage-range-value { color: inherit; font-size: inherit; }
+.damage-result-label { min-width: 0; overflow-wrap: anywhere; }
+.damage-range-value {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  caret-color: transparent;
+  font-variant-numeric: tabular-nums;
+}
 .settings-card, .help-card { padding-top: .3rem; }
 summary { cursor: pointer; min-height: 2.7rem; display: flex; align-items: center; font-weight: 800; }
 .settings-content, .help-content { margin-top: .7rem; }
@@ -160,7 +180,8 @@ dialog::backdrop { background: #0008; }
   .input-grid, .selector-grid, .condition-controls, .durability-affinity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem; }
   .settings-content { grid-template-columns: 1fr; gap: .3rem; }
   .affinity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .affinity-grid .critical-toggle { grid-column: 1 / -1; min-height: 2.5rem; }
+  .critical-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .critical-grid .critical-toggle { grid-column: 1 / -1; min-height: 2.5rem; }
   .result-condition-summary { gap: .18rem; margin-top: .3rem; }
   .result-condition-summary > span { gap: .05rem; padding: .24rem .28rem; border-radius: .35rem; font-size: .66rem; overflow-wrap: anywhere; }
   .result-condition-summary strong { font-size: .84rem; }
@@ -168,6 +189,7 @@ dialog::backdrop { background: #0008; }
   .results > div { gap: .12rem; padding: .35rem; border-radius: .4rem; }
   .results span { font-size: .68rem; }
   .results strong { font-size: .9rem; }
+  .damage-results { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
   .section-heading { margin: .5rem 0 .25rem; align-items: center; gap: .3rem; }
   .section-heading p { display: none; }
   .section-heading .primary-button { flex: 0 0 auto; width: auto; }
@@ -186,6 +208,8 @@ dialog::backdrop { background: #0008; }
   .final-defense-banner { margin: .35rem 0; padding: .35rem .45rem; font-size: .78rem; }
   .final-defense-banner strong { margin-left: .25rem; font-size: 1rem; }
   .affinity-section { margin-top: .35rem; }
+  .critical-settings { margin-top: .35rem; }
+  .critical-settings[open] > summary { margin-bottom: .2rem; }
   .result-panel, .damage-panel { margin-top: .45rem; padding-top: .1rem; }
   .section-help { font-size: .69rem; }
   .durability-table th, .durability-table td { padding: .3rem; font-size: .78rem; }
@@ -285,6 +309,7 @@ dialog::backdrop { background: #0008; }
               <label>フィールド (%)<input data-role="field" data-input="field" type="number" value="0" inputmode="decimal"></label>
               <label>アクティブ (%)<input data-role="active" data-input="active" type="number" value="0" inputmode="decimal"></label>
               <label>サポートアイテム (%)<input data-role="support-item" data-input="support_item" type="number" value="0" inputmode="decimal"></label>
+              <label class="damage-reduction-field">ダメージ軽減率 (%)<input data-role="damage-reduction" data-input="dr_input" type="number" value="0" inputmode="decimal"></label>
             </div>
           </section>
 
@@ -295,12 +320,17 @@ dialog::backdrop { background: #0008; }
               <label>自分の属性<select data-role="own-type" data-input="own_type"><option value="teq">技</option><option value="agl">速</option><option value="str">力</option><option value="phy">体</option><option value="int">知</option></select></label>
               <label>属性防御Lv<input data-role="attribute-defense" data-input="attr_def_up" type="number" value="0" min="0" inputmode="numeric"></label>
               <label class="checkbox-label"><input data-role="guard" data-input="is_guard" type="checkbox">全属性ガード</label>
+            </div>
+          </section>
+
+          <details class="critical-settings">
+            <summary>敵の会心</summary>
+            <div class="input-grid critical-grid">
               <label class="checkbox-label critical-toggle"><input data-role="is-critical" data-input="is_critical" type="checkbox">敵の会心を想定</label>
               <label>会心時ATK補正 (%)<input data-role="critical-attack" data-input="crit_atk_up" type="number" value="0" inputmode="decimal"></label>
               <label>会心時DEF低下 (%)<input data-role="critical-defense" data-input="crit_def_down" type="number" value="0" inputmode="decimal"></label>
-              <label class="damage-reduction-field">ダメージ軽減率 (%)<input data-role="damage-reduction" data-input="dr_input" type="number" value="0" inputmode="decimal"></label>
             </div>
-          </section>
+          </details>
 
           <section data-role="durability-result" class="result-panel" aria-label="耐久ライン結果">
             <h3>耐久ライン（敵ATK）</h3>
@@ -2264,8 +2294,10 @@ function renderDamageResult(context) {
   const ownLabel = japaneseType(role(context, 'own-class').value, role(context, 'own-type').value);
   const item = currentEnemyContext(context);
   const usesCustomAttack = role(context, 'attack-select').value === 'custom' && customAttackValue(context) > 0;
+  const result = role(context, 'damage-result');
+  result.classList.remove('damage-result-value');
   if ((!item || !role(context, 'enemy-select').value) && !usesCustomAttack) {
-    role(context, 'damage-result').textContent = '敵を選択してください';
+    result.textContent = '敵を選択してください';
     role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：未選択`;
     return;
   }
@@ -2274,7 +2306,7 @@ function renderDamageResult(context) {
     && Number(role(context, 'critical-attack').value || 0) === 0
     && Number(role(context, 'critical-defense').value || 0) === 0
   ) {
-    role(context, 'damage-result').textContent = '会心補正を設定してください';
+    result.textContent = '会心補正を設定してください';
     return;
   }
   const manualEnemy = usesCustomAttack ? {
@@ -2285,13 +2317,20 @@ function renderDamageResult(context) {
   const calculationEnemy = usesCustomAttack ? manualEnemy : enemy;
   const attack = selectedAttack(context, item);
   if (!attack || !Number.isFinite(Number(attack.value))) {
-    role(context, 'damage-result').textContent = '攻撃を選択してください';
+    result.textContent = '攻撃を選択してください';
     return;
   }
   const calculation = core.calculateDurability(calculationInput(context, calculationEnemy, false));
   const range = core.calculateDamageRange(attack.value, calculation);
   const enemyLabel = japaneseType(known(calculationEnemy.alignment, 'neutral'), known(calculationEnemy.type, null));
-  role(context, 'damage-result').textContent = `${attack.name}：${core.formatDamageRange(range)}`;
+  const label = document.createElement('span');
+  label.className = 'damage-result-label';
+  label.textContent = `${attack.name}：`;
+  const value = document.createElement('span');
+  value.className = 'damage-range-value';
+  value.textContent = core.formatDamageRange(range);
+  result.classList.add('damage-result-value');
+  result.replaceChildren(label, document.createElement('wbr'), value);
   role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：${enemyLabel}`;
 }
 

@@ -574,8 +574,10 @@ function renderDamageResult(context) {
   const ownLabel = japaneseType(role(context, 'own-class').value, role(context, 'own-type').value);
   const item = currentEnemyContext(context);
   const usesCustomAttack = role(context, 'attack-select').value === 'custom' && customAttackValue(context) > 0;
+  const result = role(context, 'damage-result');
+  result.classList.remove('damage-result-value');
   if ((!item || !role(context, 'enemy-select').value) && !usesCustomAttack) {
-    role(context, 'damage-result').textContent = '敵を選択してください';
+    result.textContent = '敵を選択してください';
     role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：未選択`;
     return;
   }
@@ -584,7 +586,7 @@ function renderDamageResult(context) {
     && Number(role(context, 'critical-attack').value || 0) === 0
     && Number(role(context, 'critical-defense').value || 0) === 0
   ) {
-    role(context, 'damage-result').textContent = '会心補正を設定してください';
+    result.textContent = '会心補正を設定してください';
     return;
   }
   const manualEnemy = usesCustomAttack ? {
@@ -595,13 +597,20 @@ function renderDamageResult(context) {
   const calculationEnemy = usesCustomAttack ? manualEnemy : enemy;
   const attack = selectedAttack(context, item);
   if (!attack || !Number.isFinite(Number(attack.value))) {
-    role(context, 'damage-result').textContent = '攻撃を選択してください';
+    result.textContent = '攻撃を選択してください';
     return;
   }
   const calculation = core.calculateDurability(calculationInput(context, calculationEnemy, false));
   const range = core.calculateDamageRange(attack.value, calculation);
   const enemyLabel = japaneseType(known(calculationEnemy.alignment, 'neutral'), known(calculationEnemy.type, null));
-  role(context, 'damage-result').textContent = `${attack.name}：${core.formatDamageRange(range)}`;
+  const label = document.createElement('span');
+  label.className = 'damage-result-label';
+  label.textContent = `${attack.name}：`;
+  const value = document.createElement('span');
+  value.className = 'damage-range-value';
+  value.textContent = core.formatDamageRange(range);
+  result.classList.add('damage-result-value');
+  result.replaceChildren(label, document.createElement('wbr'), value);
   role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：${enemyLabel}`;
 }
 

@@ -82,6 +82,7 @@
               <label>フィールド (%)<input data-role="field" data-input="field" type="number" value="0" inputmode="decimal"></label>
               <label>アクティブ (%)<input data-role="active" data-input="active" type="number" value="0" inputmode="decimal"></label>
               <label>サポートアイテム (%)<input data-role="support-item" data-input="support_item" type="number" value="0" inputmode="decimal"></label>
+              <label class="damage-reduction-field">ダメージ軽減率 (%)<input data-role="damage-reduction" data-input="dr_input" type="number" value="0" inputmode="decimal"></label>
             </div>
           </section>
 
@@ -92,12 +93,17 @@
               <label>自分の属性<select data-role="own-type" data-input="own_type"><option value="teq">技</option><option value="agl">速</option><option value="str">力</option><option value="phy">体</option><option value="int">知</option></select></label>
               <label>属性防御Lv<input data-role="attribute-defense" data-input="attr_def_up" type="number" value="0" min="0" inputmode="numeric"></label>
               <label class="checkbox-label"><input data-role="guard" data-input="is_guard" type="checkbox">全属性ガード</label>
+            </div>
+          </section>
+
+          <details class="critical-settings">
+            <summary>敵の会心</summary>
+            <div class="input-grid critical-grid">
               <label class="checkbox-label critical-toggle"><input data-role="is-critical" data-input="is_critical" type="checkbox">敵の会心を想定</label>
               <label>会心時ATK補正 (%)<input data-role="critical-attack" data-input="crit_atk_up" type="number" value="0" inputmode="decimal"></label>
               <label>会心時DEF低下 (%)<input data-role="critical-defense" data-input="crit_def_down" type="number" value="0" inputmode="decimal"></label>
-              <label class="damage-reduction-field">ダメージ軽減率 (%)<input data-role="damage-reduction" data-input="dr_input" type="number" value="0" inputmode="decimal"></label>
             </div>
-          </section>
+          </details>
 
           <section data-role="durability-result" class="result-panel" aria-label="耐久ライン結果">
             <h3>耐久ライン（敵ATK）</h3>

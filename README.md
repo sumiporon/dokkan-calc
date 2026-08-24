@@ -161,6 +161,7 @@ npm run benchmark:phase8
 - 「計算する状況」には個別の開閉に加えて「すべて開く」「すべて閉じる」を追加しました。開閉は表示だけを変え、計算・入力・保存内容を変更しません。
 - 最新の追加実機フィードバックでは、属性・防御設定のスマホ整列、両結果直近の最終DEF／軽減率／全属性ガード表示、不要説明の削除、OneDrive→Pages移行機能の完全撤去を行いました。PagesとOneDriveは保存状態を同期しません。
 - Phase 8最終実機フィードバックでは、ダメージ軽減率をDEF設定の末尾へ移し、IDに区切り文字を含む全体攻撃も対象別ATKで選択・自動計算できるよう修正しました。スマホの攻撃力範囲は数値部分を途中改行せず、360px／390pxでも横overflowを起こしません。
+- 追加のスマホ実機フィードバックにより、低頻度の「敵の会心」は初期状態で閉じる表示専用の折りたたみにしました。ダメージ軽減率は基本DEF設定の最終項目へ置き直し、Androidのrange末尾表示とWebKitの長いselect幅を修正し、被ダメージ／属性結果を約62:38へ調整しました。
 
 ## 重要な安全上の注意
 
@@ -181,6 +182,8 @@ npm run benchmark:phase8
 - [第3段階の敵データ取得元再評価](docs/phase3-data-source-evaluation.md)
 - [Phase 8最終実機フィードバック修正報告](docs/phase8-final-device-feedback-report.md)
 - [Phase 8最終修正版 PC・スマホ再確認手順](docs/phase8-final-device-feedback-recheck-checklist.md)
+- [Phase 8スマホ描画追加フィードバック修正報告](docs/phase8-mobile-render-feedback-report.md)
+- [Phase 8スマホ描画修正版 PC・スマホ再確認手順](docs/phase8-mobile-render-feedback-recheck-checklist.md)
 - [保存HTMLの再解析結果](docs/phase3-cached-source-analysis.md)
 - [将来構成と敵データ設計](docs/phase3-architecture-and-data-design.md)
 - [第4段階の完了報告](docs/phase4-completion-report.md)
