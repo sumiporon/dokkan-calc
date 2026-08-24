@@ -147,29 +147,3 @@ test('一操作更新画面はfull/chunk成功と各失敗時known-good維持を
     await run.close();
   }
 });
-
-test('file直開きからPages相当originへ1回移行しPATを移さない', { timeout: TEST_TIMEOUT }, async () => {
-  const target = new URL('/prototypes/phase7-runtime-delivery/migration-target.html', staticServer.origin);
-  const source = new URL('../../prototypes/phase7-runtime-delivery/migration-source.html', import.meta.url);
-  source.searchParams.set('target', target.href);
-  const run = await openChecked(source.href);
-  try {
-    const popupPromise = run.context.waitForEvent('page');
-    await run.page.locator('#migration-button').click();
-    const popup = await popupPromise;
-    await popup.waitForLoadState('domcontentloaded');
-    await run.page.waitForFunction(() => globalThis.__phase7MigrationResult?.status === 'imported');
-    assert.equal((await run.page.evaluate(() => globalThis.__phase7MigrationResult.patPresent)), false);
-    const targetValues = await popup.evaluate(() => ({
-      state: localStorage.getItem('phase7_prototype_imported_dokkan_calc_data_v22'),
-      critical: localStorage.getItem('phase7_prototype_imported_dokkan_crit_overrides'),
-      pat: localStorage.getItem('phase7_prototype_imported_dokkan_github_pat')
-    }));
-    assert.ok(targetValues.state);
-    assert.ok(targetValues.critical);
-    assert.equal(targetValues.pat, null);
-    await popup.close();
-  } finally {
-    await run.close();
-  }
-});

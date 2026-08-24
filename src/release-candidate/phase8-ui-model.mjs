@@ -203,29 +203,3 @@ export function formatAttackRange(range) {
   const maximum = Math.floor(range.maximum).toLocaleString();
   return range.minimum === range.maximum ? minimum : `${minimum}～${maximum}`;
 }
-
-export function describeImportedStorage(saved = {}, criticalOverrides = {}) {
-  const characters = Array.isArray(saved.savedCharacters) ? saved.savedCharacters : [];
-  const currentScenarios = Array.isArray(saved.currentScenarios) ? saved.currentScenarios : [];
-  const manualEnemies = Array.isArray(saved.savedEnemies)
-    ? saved.savedEnemies.reduce((total, eventType) => total + (eventType.series ?? []).reduce(
-      (seriesTotal, series) => seriesTotal + (series.stages ?? []).reduce(
-        (stageTotal, stage) => stageTotal + (stage.bosses?.length ?? 0), 0
-      ), 0
-    ), 0)
-    : 0;
-  const savedScenarios = characters.reduce((total, character) => total + (character.scenarios?.length ?? 0), 0);
-  const settings = [Array.isArray(saved.durabilityLines), typeof saved.theme === 'string'].filter(Boolean).length;
-  const criticalOverrideCount = criticalOverrides && typeof criticalOverrides === 'object' && !Array.isArray(criticalOverrides)
-    ? Object.keys(criticalOverrides).length
-    : 0;
-  return {
-    characters: characters.length,
-    characterNames: characters.map((character) => character.name).filter(Boolean),
-    savedScenarios,
-    currentScenarios: currentScenarios.length,
-    manualEnemies,
-    settings,
-    criticalOverrides: criticalOverrideCount
-  };
-}

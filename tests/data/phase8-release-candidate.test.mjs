@@ -4,7 +4,6 @@ import { createRequire } from 'node:module';
 import test from 'node:test';
 
 import { createPhase8ReleaseArtifacts } from '../../scripts/generate-phase8-release-candidate.mjs';
-import { MemoryStorage, createSavedDataMigrationPackage, importSavedDataMigrationPackage } from '../../src/prototype/phase7-saved-data-migration.mjs';
 import { MemoryReleaseStore, performOneOperationUpdate } from '../../src/prototype/phase7-update-engine.mjs';
 import { validatePhase8Index, validatePhase8Manifest, validatePhase8Runtime } from '../../src/release-candidate/phase8-manifest.mjs';
 import { LAST_EVENT_KEY, readLastEvent, saveLastEvent } from '../../src/release-candidate/phase8-selection-state.mjs';
@@ -59,14 +58,22 @@ function newerRuntime() {
   return value;
 }
 
-function validState(name = '移行対象') {
-  return JSON.stringify({
-    durabilityLines: [{ name: '完封', value: 0 }],
-    savedCharacters: [{ name, scenarios: [] }],
-    savedEnemies: [{ groupName: '旧2階層', enemies: [] }],
-    currentScenarios: [{ scenario_title: '未保存作業' }],
-    theme: 'dark'
-  });
+class MemoryStorage {
+  constructor(initial = {}) {
+    this.values = new Map(Object.entries(initial));
+  }
+
+  getItem(key) {
+    return this.values.has(key) ? this.values.get(key) : null;
+  }
+
+  setItem(key, value) {
+    this.values.set(key, String(value));
+  }
+
+  removeItem(key) {
+    this.values.delete(key);
+  }
 }
 
 test('synthetic runtimeとPhase 8 manifestは正式schemaを通りproduction activationを拒否する', () => {
@@ -169,34 +176,4 @@ test('digest・schema・大量削除・互換性・health・適用途中失敗�
     assert.equal(store.active, previous);
     assert.equal(store.knownGood, previous);
   }
-});
-
-test('保存データはallowlistだけをRC namespaceへ移しPAT・未知keyを残す', async () => {
-  const source = new MemoryStorage({
-    dokkan_calc_data_v22: validState(),
-    dokkan_crit_overrides: '{"enemy":{"critAtkUp":200}}',
-    dokkan_github_pat: 'must-stay-at-source',
-    unknown_key: 'unknown'
-  });
-  const packageValue = await createSavedDataMigrationPackage(source);
-  const target = new MemoryStorage();
-  const result = await importSavedDataMigrationPackage(target, packageValue, { targetPrefix: 'dokkan_phase8_rc_imported_', markerKey: 'marker', backupPrefix: 'backup_' });
-  assert.equal(result.status, 'imported');
-  assert.equal(target.getItem('dokkan_phase8_rc_imported_dokkan_calc_data_v22'), source.getItem('dokkan_calc_data_v22'));
-  assert.equal(target.getItem('dokkan_phase8_rc_imported_dokkan_crit_overrides'), source.getItem('dokkan_crit_overrides'));
-  assert.equal(target.getItem('dokkan_phase8_rc_imported_dokkan_github_pat'), null);
-  assert.equal(target.getItem('dokkan_phase8_rc_imported_unknown_key'), null);
-  assert.equal(source.getItem('dokkan_github_pat'), 'must-stay-at-source');
-});
-
-test('RC namespace移行は書込失敗・移行後validation失敗時に完全rollbackする', async () => {
-  const source = new MemoryStorage({ dokkan_calc_data_v22: validState('新'), dokkan_crit_overrides: '{}' });
-  const packageValue = await createSavedDataMigrationPackage(source);
-  const old = validState('旧');
-  const target = new MemoryStorage({ dokkan_phase8_rc_imported_dokkan_calc_data_v22: old });
-  target.failAfterWrites = 1;
-  const result = await importSavedDataMigrationPackage(target, packageValue, { targetPrefix: 'dokkan_phase8_rc_imported_', markerKey: 'marker', backupPrefix: 'backup_' });
-  assert.equal(result.status, 'rolled-back');
-  assert.equal(target.getItem('dokkan_phase8_rc_imported_dokkan_calc_data_v22'), old);
-  assert.equal(target.getItem('dokkan_phase8_rc_imported_marker'), null);
 });

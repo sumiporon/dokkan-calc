@@ -3,7 +3,6 @@ import test from 'node:test';
 
 import calculationCore from '../../src/calculation-core.js';
 import {
-  describeImportedStorage,
   enemyAttackRanges,
   enumerateValidEnemyStates,
   formatAttackRange,
@@ -89,25 +88,4 @@ test('Phase 8 UI: each Super range obeys its own HP usage rules', () => {
   ]);
   assert.equal(superAttackAvailableInState(usageEnemy.superAttacks[0], { hp: 50 }), false);
   assert.equal(superAttackAvailableInState(usageEnemy.superAttacks[1], { hp: 50 }), true);
-});
-
-test('Phase 8 UI: migration summary reports exact compatible content, not events added', () => {
-  assert.deepEqual(describeImportedStorage({
-    durabilityLines: [{ name: '完封', value: 0 }],
-    theme: 'dark',
-    savedCharacters: [
-      { name: '架空キャラA', scenarios: [{}, {}] },
-      { name: '架空キャラB', scenarios: [{}] }
-    ],
-    currentScenarios: [{}],
-    savedEnemies: [{ series: [{ stages: [{ bosses: [{}, {}] }] }] }]
-  }, { enemyA: { critAtkUp: 200 } }), {
-    characters: 2,
-    characterNames: ['架空キャラA', '架空キャラB'],
-    savedScenarios: 3,
-    currentScenarios: 1,
-    manualEnemies: 2,
-    settings: 2,
-    criticalOverrides: 1
-  });
 });

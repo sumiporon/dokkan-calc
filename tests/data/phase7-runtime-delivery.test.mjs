@@ -14,12 +14,6 @@ import {
   MemoryReleaseStore,
   performOneOperationUpdate
 } from '../../src/prototype/phase7-update-engine.mjs';
-import {
-  createSavedDataMigrationPackage,
-  importSavedDataMigrationPackage,
-  MemoryStorage,
-  validateSavedDataMigrationPackage
-} from '../../src/prototype/phase7-saved-data-migration.mjs';
 
 const require = createRequire(import.meta.url);
 const Ajv2020 = require('ajv/dist/2020').default;
@@ -67,10 +61,6 @@ function oldRelease(sourceRuntime = runtime, overrides = {}) {
     payload: { mode: 'full' },
     ...overrides
   };
-}
-
-function validSavedState(name) {
-  return JSON.stringify({ durabilityLines: [], savedCharacters: [{ name, scenarios: [] }], savedEnemies: [], currentScenarios: [], theme: 'dark' });
 }
 
 test('manifest・full runtimeはschemaを通りproduction publicationを拒否する', () => {
@@ -242,52 +232,4 @@ test('0操作更新はpermission・pilot・成功率・rollback・owner承認が
     ownerApproval: true
   });
   assert.equal(ready.ready, true);
-});
-
-test('保存データpackageはallowlistだけを含みPAT・未知keyを除外する', async () => {
-  const storage = new MemoryStorage({
-    dokkan_calc_data_v22: validSavedState('移行元'),
-    dokkan_crit_overrides: JSON.stringify({ enemy: { critAtkUp: 200 } }),
-    dokkan_github_pat: 'ghp_never_export',
-    unknown_setting: 'do-not-copy'
-  });
-  const packageValue = await createSavedDataMigrationPackage(storage, { exportedAt: '2026-08-24T00:00:00.000Z' });
-  assert.deepEqual(Object.keys(packageValue.payload).sort(), ['dokkan_calc_data_v22', 'dokkan_crit_overrides']);
-  assert.ok(!JSON.stringify(packageValue).includes('ghp_never_export'));
-  assert.deepEqual(await validateSavedDataMigrationPackage(packageValue), []);
-});
-
-test('保存データ一回移行は重複をbackup後置換し同じpackage再実行は冪等', async () => {
-  const source = new MemoryStorage({ dokkan_calc_data_v22: validSavedState('新') });
-  const packageValue = await createSavedDataMigrationPackage(source);
-  const old = validSavedState('旧');
-  const target = new MemoryStorage({ dokkan_calc_data_v22: old, dokkan_github_pat: 'keep-local-only' });
-  const first = await importSavedDataMigrationPackage(target, packageValue);
-  assert.equal(first.status, 'imported');
-  assert.deepEqual(first.duplicates, ['dokkan_calc_data_v22']);
-  assert.equal(target.getItem('phase7_prototype_backup_dokkan_calc_data_v22'), old);
-  assert.equal(target.getItem('dokkan_github_pat'), 'keep-local-only');
-  const second = await importSavedDataMigrationPackage(target, packageValue);
-  assert.equal(second.status, 'unchanged');
-});
-
-test('保存データのdigest破損・PAT混入を拒否し書込中断時は完全rollbackする', async () => {
-  const source = new MemoryStorage({ dokkan_calc_data_v22: validSavedState('新'), dokkan_crit_overrides: '{}' });
-  const packageValue = await createSavedDataMigrationPackage(source);
-  const corrupted = structuredClone(packageValue);
-  corrupted.payload.dokkan_calc_data_v22 = validSavedState('改ざん');
-  assert.match((await validateSavedDataMigrationPackage(corrupted)).join(' '), /digest/);
-  const withPat = structuredClone(packageValue);
-  withPat.payload.dokkan_github_pat = 'secret';
-  assert.match((await validateSavedDataMigrationPackage(withPat)).join(' '), /PAT|allowlisted/);
-
-  const oldState = validSavedState('旧');
-  const target = new MemoryStorage({ dokkan_calc_data_v22: oldState, dokkan_crit_overrides: '{"old":true}' });
-  target.failAfterWrites = 1;
-  const update = await importSavedDataMigrationPackage(target, packageValue);
-  assert.equal(update.status, 'rolled-back');
-  assert.equal(target.getItem('dokkan_calc_data_v22'), oldState);
-  assert.equal(target.getItem('dokkan_crit_overrides'), '{"old":true}');
-  assert.equal(target.getItem('phase7_prototype_backup_dokkan_calc_data_v22'), null);
-  assert.equal(target.getItem('phase7_prototype_migration_marker'), null);
 });

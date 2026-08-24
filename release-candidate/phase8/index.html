@@ -93,7 +93,7 @@
               <label>自分の属性<select data-role="own-type" data-input="own_type"><option value="teq">技</option><option value="agl">速</option><option value="str">力</option><option value="phy">体</option><option value="int">知</option></select></label>
               <label>属性防御Lv<input data-role="attribute-defense" data-input="attr_def_up" type="number" value="0" min="0" inputmode="numeric"></label>
               <label class="checkbox-label"><input data-role="guard" data-input="is_guard" type="checkbox">全属性ガード</label>
-              <label class="checkbox-label"><input data-role="is-critical" data-input="is_critical" type="checkbox">敵の会心を想定</label>
+              <label class="checkbox-label critical-toggle"><input data-role="is-critical" data-input="is_critical" type="checkbox">敵の会心を想定</label>
               <label>会心時ATK補正 (%)<input data-role="critical-attack" data-input="crit_atk_up" type="number" value="0" inputmode="decimal"></label>
               <label>会心時DEF低下 (%)<input data-role="critical-defense" data-input="crit_def_down" type="number" value="0" inputmode="decimal"></label>
             </div>
@@ -105,7 +105,11 @@
               <label>自分の属性（本体と同期）<select data-role="durability-own-affinity"></select></label>
               <label>敵の属性（耐久ライン専用）<select data-role="durability-enemy-affinity" data-input="phase8_durability_enemy_affinity"></select></label>
             </div>
-            <p class="section-help compact-help">自分の属性は上の設定と同じ値です。敵の属性は被ダメージモードの手動敵設定を変更しません。</p>
+            <div class="result-condition-summary" data-role="durability-condition-summary" aria-label="耐久ラインの現在の計算条件">
+              <span>最終DEF<strong data-role="durability-summary-final-defense">—</strong></span>
+              <span>軽減率<strong data-role="durability-summary-reduction">0%</strong></span>
+              <span>全属性ガード<strong data-role="durability-summary-guard">なし</strong></span>
+            </div>
             <div data-role="durability-table"></div>
           </section>
 
@@ -131,6 +135,11 @@
               <span data-role="enemy-type">敵属性：未選択</span>
               <div data-role="enemy-attack-summary" class="attack-summary">敵を選ぶと通常攻撃・必殺攻撃を表示します。</div>
             </div>
+            <div class="result-condition-summary" data-role="damage-condition-summary" aria-label="被ダメージの現在の計算条件">
+              <span>最終DEF<strong data-role="damage-summary-final-defense">—</strong></span>
+              <span>軽減率<strong data-role="damage-summary-reduction">0%</strong></span>
+              <span>全属性ガード<strong data-role="damage-summary-guard">なし</strong></span>
+            </div>
             <div class="results damage-results" aria-live="polite">
               <div><span>被ダメージ（1.00〜1.03）</span><strong data-role="damage-result">敵を選択してください</strong></div>
               <div><span>属性</span><strong data-role="result-types">自分：超技<br>敵：未選択</strong></div>
@@ -149,12 +158,6 @@
           <button id="update-button" type="button">敵データを更新</button>
           <p id="update-status" class="inline-status" role="status" aria-live="polite"></p>
         </div>
-        <div>
-          <h2>保存データ移行</h2>
-          <div id="saved-data-summary">この確認版に移行された保存データはありません。</div>
-          <p class="section-help">保存データ移行ではイベント・ステージ・敵データ本体は増えません。</p>
-          <a class="button-link" id="migration-link" href="migration-device-check.html">架空保存データの移行を確認する</a>
-        </div>
       </div>
     </details>
 
@@ -163,7 +166,7 @@
       <div class="help-content">
         <p>普段使いは将来のGitHub Pagesを予定しています。更新に失敗しても、直前の敵データはそのまま使えます。</p>
         <h2>OneDrive backup</h2>
-        <p>通信できない時やPagesに問題がある時だけ、OneDriveに残したknown-good版のHTMLを開きます。現在使っているOneDrive版はまだ変更していません。</p>
+        <p>Pagesは新しい状態から使い始め、設定や状況カードをPages内だけに保存します。通信できない時やPagesに問題がある時だけ、独立した旧known-good backupとしてOneDrive版を開きます。両者の保存内容は移行・同期しません。</p>
         <p>この確認版は0操作の自動更新を行いません。敵データ更新は「敵データを更新」を押した時だけです。計算結果は入力のたびに自動更新します。</p>
       </div>
     </details>

@@ -2,7 +2,6 @@ import { Phase8ReleaseStore } from '../../src/release-candidate/phase8-release-s
 import { Phase8RuntimeClient } from '../../src/release-candidate/phase8-runtime-client.mjs';
 import { readLastEvent, saveLastEvent } from '../../src/release-candidate/phase8-selection-state.mjs';
 import {
-  describeImportedStorage,
   enemyAttackRanges,
   enemyAttackState,
   enemyConditionDimensions,
@@ -16,9 +15,8 @@ import {
 
 const params = new URLSearchParams(location.search);
 const dataRoot = params.get('dataRoot') || './data';
-const storagePrefix = 'dokkan_phase8_rc_imported_';
-const storageKey = storagePrefix + 'dokkan_calc_data_v22';
-const phase8UiSchemaVersion = 2;
+const storageKey = 'dokkan_phase8_rc_pages_state_v1';
+const phase8PagesStateVersion = 1;
 const core = globalThis.DokkanCalcCore;
 const elements = Object.fromEntries([...document.querySelectorAll('[id]')].map((element) => [element.id, element]));
 const store = new Phase8ReleaseStore({ dbName: params.get('dbName') || 'dokkan-phase8-rc-releases-v1' });
@@ -33,9 +31,6 @@ const state = {
   cards: [],
   cardCounter: 0,
   durabilityLines: [],
-  savedCharacters: [],
-  savedEnemies: [],
-  savedRoot: {},
   initializing: true
 };
 const metrics = globalThis.__phase8Metrics = { startedAt: performance.now(), readyMs: null, lastEventMs: null };
@@ -108,7 +103,6 @@ function scenarioData(context) {
   data.phase8_enemy_id = role(context, 'enemy-select').value;
   data.phase8_attack_id = role(context, 'attack-select').value;
   for (const select of context.element.querySelectorAll('[data-condition]')) data[`phase8_condition_${select.dataset.condition}`] = select.value;
-  if (context.legacyEnemy) data.loadedEnemy = context.legacyEnemy;
   return data;
 }
 
@@ -119,15 +113,11 @@ function allScenarioData() {
 function persistState() {
   if (state.initializing) return;
   const next = {
-    ...state.savedRoot,
-    phase8UiSchemaVersion,
+    phase8PagesStateVersion,
     durabilityLines: state.durabilityLines,
-    savedCharacters: state.savedCharacters,
-    savedEnemies: state.savedEnemies,
     currentScenarios: allScenarioData(),
     theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
   };
-  state.savedRoot = next;
   try {
     localStorage.setItem(storageKey, JSON.stringify(next));
   } catch (error) {
@@ -135,40 +125,24 @@ function persistState() {
   }
 }
 
-function migrateSavedState(saved) {
-  if (Number(saved.phase8UiSchemaVersion || 1) >= phase8UiSchemaVersion) return saved;
-  const migrateScenario = (scenario = {}) => ({
-    ...scenario,
-    phase8_durability_enemy_affinity: scenario.phase8_durability_enemy_affinity
-      || `${scenario.own_class || 'super'}:${scenario.own_type || 'teq'}`
-  });
-  return {
-    ...saved,
-    phase8UiSchemaVersion,
-    currentScenarios: Array.isArray(saved.currentScenarios) ? saved.currentScenarios.map(migrateScenario) : saved.currentScenarios,
-    savedCharacters: Array.isArray(saved.savedCharacters)
-      ? saved.savedCharacters.map((character) => ({
-        ...character,
-        scenarios: Array.isArray(character.scenarios) ? character.scenarios.map(migrateScenario) : character.scenarios
-      }))
-      : saved.savedCharacters
-  };
-}
-
 function readSavedState() {
   try {
     const raw = localStorage.getItem(storageKey);
     if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed !== 'object') return null;
-    const saved = migrateSavedState(parsed);
-    state.savedRoot = saved;
-    state.durabilityLines = Array.isArray(saved.durabilityLines) ? saved.durabilityLines : [];
-    state.savedCharacters = Array.isArray(saved.savedCharacters) ? saved.savedCharacters : [];
-    state.savedEnemies = Array.isArray(saved.savedEnemies) ? saved.savedEnemies : [];
+    const saved = JSON.parse(raw);
+    const validScenarios = Array.isArray(saved?.currentScenarios)
+      && saved.currentScenarios.every((scenario) => scenario && typeof scenario === 'object' && !Array.isArray(scenario));
+    const validLines = Array.isArray(saved?.durabilityLines)
+      && saved.durabilityLines.every((line) => line && typeof line === 'object' && !Array.isArray(line)
+        && typeof line.name === 'string' && Number.isFinite(Number(line.value)) && Number(line.value) >= 0);
+    const validTheme = saved?.theme === 'light' || saved?.theme === 'dark';
+    if (!saved || typeof saved !== 'object'
+      || Number(saved.phase8PagesStateVersion) !== phase8PagesStateVersion
+      || !validScenarios || !validLines || !validTheme) return null;
+    state.durabilityLines = saved.durabilityLines;
     return saved;
-  } catch {
-    elements['saved-data-summary'].textContent = '移行済みデータを確認できませんでした。元の保存データは変更していません。';
+  } catch (error) {
+    console.warn('Failed to read Phase 8 Pages-local state', error);
     return null;
   }
 }
@@ -176,7 +150,6 @@ function readSavedState() {
 function setTheme(theme, { persist = true } = {}) {
   document.documentElement.dataset.theme = theme;
   elements['theme-button'].textContent = theme === 'dark' ? '☀️' : '🌙';
-  localStorage.setItem('dokkan_phase8_rc_theme', theme);
   if (persist) persistState();
 }
 
@@ -247,55 +220,6 @@ function runtimeField(value, stateName = 'known') {
   return value == null ? { state: 'unknown', value: null } : { state: stateName, value };
 }
 
-function legacyEffect(id, kind, value, { start = null, hpMax = null, cap = null, bracket = 'start-of-turn' } = {}) {
-  return {
-    id,
-    trigger: {
-      kind,
-      start: runtimeField(start),
-      end: runtimeField(null),
-      hpMinPercent: kind === 'hp-range' ? runtimeField(0) : runtimeField(null),
-      hpMaxPercent: runtimeField(hpMax)
-    },
-    appliesTo: 'enemy-stats', target: 'attack', operation: 'add-percent',
-    value: runtimeField(value), cap: runtimeField(cap), durationTurns: runtimeField(null), bracket
-  };
-}
-
-function legacyEnemyToRuntime(enemy) {
-  const baseAttack = Number(enemy.baseAtk) || Number(enemy.attacks?.find((attack) => attack.name === '通常')?.value) || 0;
-  const passiveEffects = [];
-  if (Number(enemy.turnAtkUp) > 0) passiveEffects.push(legacyEffect('legacy-turn', 'elapsed-turn', Number(enemy.turnAtkUp), { start: Number(enemy.turnAtkUpStartTurn) || 1, cap: Number(enemy.turnAtkMax) || null }));
-  if (Number(enemy.hitAtkUp) > 0) passiveEffects.push(legacyEffect('legacy-hit', 'received-hit-count', Number(enemy.hitAtkUp), { start: 1, cap: Number(enemy.hitAtkMax) || null, bracket: 'mid-battle' }));
-  if (Number(enemy.hpAtkUp) > 0) passiveEffects.push(legacyEffect('legacy-hp', 'hp-range', Number(enemy.hpAtkUp), { hpMax: Number(enemy.hpAtkThreshold) || 100 }));
-  let previousAppearance = 0;
-  for (const [index, entry] of (enemy.appearEntries ?? []).entries()) {
-    const cumulative = Number(entry.cumulativeAtkUp) || 0;
-    passiveEffects.push(legacyEffect(`legacy-appearance-${index}`, 'appearance-turn', cumulative - previousAppearance, { start: Number(entry.turn) || 1 }));
-    previousAppearance = cumulative;
-  }
-  const superRows = (enemy.attacks ?? []).filter((attack) => String(attack.name).includes('必殺'));
-  if (superRows.length === 0 && Number(enemy.saMulti) > 0) {
-    superRows.push({ name: '必殺', value: Math.floor(baseAttack * (Number(enemy.saMulti) + Number(enemy.saBuffMod || 0))) });
-  }
-  const postSuperEffect = Number(enemy.saBuffMod) > 0 ? [{
-    id: 'legacy-post-super', trigger: { kind: 'after-super', start: runtimeField(null), end: runtimeField(null), hpMinPercent: runtimeField(null), hpMaxPercent: runtimeField(null) },
-    appliesTo: 'subsequent-normal-attacks', target: 'attack', operation: 'add-percent', value: runtimeField(Number(enemy.saBuffMod) * 100),
-    cap: runtimeField(null), durationTurns: runtimeField(1), bracket: 'post-super'
-  }] : [];
-  return {
-    id: `legacy:${enemy.name || 'enemy'}`,
-    name: runtimeField(enemy.name || '移行済み保存敵'),
-    type: runtimeField(enemy.type || 'teq'),
-    alignment: runtimeField(enemy.class || 'neutral'),
-    baseAttack: runtimeField(baseAttack),
-    passiveEffects,
-    superAttacks: superRows.map((attack, index) => ({
-      id: `legacy-super-${index}`, name: runtimeField(attack.name || `必殺${index + 1}`), displayedDamage: runtimeField(Number(attack.value) || 0), effects: index === 0 ? postSuperEffect : []
-    }))
-  };
-}
-
 function allEnemies(stage) {
   return stage?.encounters.flatMap((encounter) => encounter.enemies.map((enemy) => ({ enemy, encounter }))) ?? [];
 }
@@ -305,7 +229,6 @@ function currentStage(context) {
 }
 
 function currentEnemyContext(context) {
-  if (context.legacyEnemy) return { enemy: context.runtimeLegacyEnemy, encounter: { areaAttacks: [] } };
   return allEnemies(currentStage(context)).find((item) => item.enemy.id === role(context, 'enemy-select').value) ?? null;
 }
 
@@ -408,11 +331,6 @@ function renderEnemyAttackSummary(context, item) {
     row.append(label, strong);
     container.append(row);
   }
-  if (ranges.supers.length > 1) {
-    const note = document.createElement('small');
-    note.textContent = '複数の必殺技は、情報をまとめず技ごとに表示しています。';
-    container.append(note);
-  }
 }
 
 function renderAttackOptions(context, { initial = {} } = {}) {
@@ -452,8 +370,6 @@ function renderAttackOptions(context, { initial = {} } = {}) {
 }
 
 function renderEnemies(context, { selectedEnemyId = '', initial = {} } = {}) {
-  context.legacyEnemy = null;
-  context.runtimeLegacyEnemy = null;
   const enemies = allEnemies(currentStage(context));
   replaceOptions(role(context, 'enemy-select'), enemies.map(({ enemy }) => ({ value: enemy.id, label: String(known(enemy.name, enemy.id)) })), '敵を選択してください');
   if (selectedEnemyId && enemies.some(({ enemy }) => enemy.id === selectedEnemyId)) {
@@ -474,8 +390,6 @@ function renderStages(context, { selectedStageId = '', selectedEnemyId = '', ini
 
 async function selectEventForCard(context, eventId, { persist = true, selectedStageId = '', selectedEnemyId = '', initial = {} } = {}) {
   const started = performance.now();
-  context.legacyEnemy = null;
-  context.runtimeLegacyEnemy = null;
   if (!eventId) {
     context.event = null;
     replaceOptions(role(context, 'stage-select'), [], '—');
@@ -506,22 +420,6 @@ async function selectEventForCard(context, eventId, { persist = true, selectedSt
     setStatus('イベントを読み込めませんでした。現在のデータは変更されていません。', true);
     return false;
   }
-}
-
-function configureLegacyEnemy(context, data) {
-  context.legacyEnemy = data.loadedEnemy;
-  context.runtimeLegacyEnemy = legacyEnemyToRuntime(data.loadedEnemy);
-  const eventSelect = role(context, 'event-select');
-  eventSelect.append(new Option('移行済みの保存敵', '__legacy__'));
-  eventSelect.disabled = false;
-  eventSelect.value = '__legacy__';
-  replaceOptions(role(context, 'stage-select'), [{ value: '__legacy__', label: '保存データ' }], '—');
-  role(context, 'stage-select').value = '__legacy__';
-  replaceOptions(role(context, 'enemy-select'), [{ value: context.runtimeLegacyEnemy.id, label: String(known(context.runtimeLegacyEnemy.name, '保存敵')) }], '敵を選択してください');
-  role(context, 'enemy-select').value = context.runtimeLegacyEnemy.id;
-  renderConditionControls(context, context.runtimeLegacyEnemy, data);
-  context.pendingAttackId = data.phase8_attack_id;
-  renderAttackOptions(context, { initial: data });
 }
 
 function populateEventSelect(context) {
@@ -570,7 +468,7 @@ function assignCardIds(context, isFirst) {
 async function addScenarioCard(data = defaultScenario(state.cards.length), { insertAfter = null, restoreLastEvent = false } = {}) {
   state.cardCounter += 1;
   const element = elements['scenario-card-template'].content.firstElementChild.cloneNode(true);
-  const context = { id: `scenario-${state.cardCounter}`, element, event: null, legacyEnemy: null, runtimeLegacyEnemy: null, pendingAttackId: null };
+  const context = { id: `scenario-${state.cardCounter}`, element, event: null, pendingAttackId: null };
   const insertIndex = insertAfter ? state.cards.indexOf(insertAfter) + 1 : state.cards.length;
   state.cards.splice(insertIndex, 0, context);
   assignCardIds(context, state.cards.length === 1);
@@ -579,19 +477,15 @@ async function addScenarioCard(data = defaultScenario(state.cards.length), { ins
   if (insertAfter) insertAfter.element.insertAdjacentElement('afterend', element);
   else elements['scenario-cards-container'].append(element);
   populateEventSelect(context);
-  if (data.loadedEnemy && typeof data.loadedEnemy === 'object') {
-    configureLegacyEnemy(context, data);
-  } else {
-    let eventId = data.phase8_event_id || '';
-    if (!eventId && restoreLastEvent) eventId = readLastEvent(localStorage, new Set(client.index.events.map((entry) => entry.id))).eventId || '';
-    if (eventId) await selectEventForCard(context, eventId, {
-      persist: false,
-      selectedStageId: data.phase8_stage_id || '',
-      selectedEnemyId: data.phase8_enemy_id || '',
-      initial: data
-    });
-    else clearEnemyResult(context, '敵を選択してください');
-  }
+  let eventId = data.phase8_event_id || '';
+  if (!eventId && restoreLastEvent) eventId = readLastEvent(localStorage, new Set(client.index.events.map((entry) => entry.id))).eventId || '';
+  if (eventId) await selectEventForCard(context, eventId, {
+    persist: false,
+    selectedStageId: data.phase8_stage_id || '',
+    selectedEnemyId: data.phase8_enemy_id || '',
+    initial: data
+  });
+  else clearEnemyResult(context, '敵を選択してください');
   updateMode();
   renderCard(context);
   persistState();
@@ -603,7 +497,7 @@ async function recreateScenarioCards(scenarios = []) {
   state.cardCounter = 0;
   elements['scenario-cards-container'].replaceChildren();
   const values = scenarios.length > 0 ? scenarios : [defaultScenario(0)];
-  for (const [index, data] of values.entries()) await addScenarioCard(data, { restoreLastEvent: index === 0 && !data.loadedEnemy && !data.phase8_event_id });
+  for (const [index, data] of values.entries()) await addScenarioCard(data, { restoreLastEvent: index === 0 && !data.phase8_event_id });
 }
 
 function calculationInput(context, enemy, durabilityMode = false) {
@@ -705,9 +599,22 @@ function renderDamageResult(context) {
   role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：${enemyLabel}`;
 }
 
+function renderConditionSummaries(context, calculation) {
+  const finalDefense = Math.round(calculation.final_def).toLocaleString();
+  const reduction = Number(role(context, 'damage-reduction').value || 0);
+  const reductionText = `${Number.isFinite(reduction) ? reduction : 0}%`;
+  const guardText = role(context, 'guard').checked ? 'あり' : 'なし';
+  for (const prefix of ['durability', 'damage']) {
+    role(context, `${prefix}-summary-final-defense`).textContent = finalDefense;
+    role(context, `${prefix}-summary-reduction`).textContent = reductionText;
+    role(context, `${prefix}-summary-guard`).textContent = guardText;
+  }
+}
+
 function renderCard(context) {
   const durabilityCalculation = core.calculateDurability(calculationInput(context, null, true));
   role(context, 'final-defense').textContent = Math.round(durabilityCalculation.final_def).toLocaleString();
+  renderConditionSummaries(context, durabilityCalculation);
   renderDurabilityResult(context, durabilityCalculation);
   renderDamageResult(context);
 }
@@ -738,50 +645,6 @@ function setAllScenariosCollapsed(collapsed) {
   state.cards.forEach((context) => setScenarioCollapsed(context, collapsed));
 }
 
-function renderSavedDataSummary() {
-  const container = elements['saved-data-summary'];
-  container.replaceChildren();
-  const raw = localStorage.getItem(storageKey);
-  if (!raw) {
-    container.textContent = 'この確認版に移行された保存データはありません。';
-    return;
-  }
-  try {
-    const saved = JSON.parse(raw);
-    let criticalOverrides = {};
-    try {
-      criticalOverrides = JSON.parse(localStorage.getItem(`${storagePrefix}dokkan_crit_overrides`) || '{}');
-    } catch {
-      criticalOverrides = {};
-    }
-    const summary = describeImportedStorage(saved, criticalOverrides);
-    const intro = document.createElement('p');
-    intro.textContent = '移行済みの内容：';
-    const list = document.createElement('ul');
-    list.className = 'migration-summary-list';
-    const entries = [
-      `保存キャラクター：${summary.characters}件${summary.characterNames.length ? `（${summary.characterNames.join('、')}）` : ''}`,
-      `保存済み状況：${summary.savedScenarios}件`,
-      `作業中の状況：${summary.currentScenarios}件`,
-      `手動保存した敵：${summary.manualEnemies}件`,
-      `設定：${summary.settings}分類（耐久ライン・配色）`,
-      `会心補正：${summary.criticalOverrides}件`,
-      'GitHub PAT：移行していません',
-      'イベント・ステージ・配布敵データ：増えません'
-    ];
-    entries.forEach((text) => {
-      const item = document.createElement('li');
-      item.textContent = text;
-      list.append(item);
-    });
-    const guide = document.createElement('p');
-    guide.textContent = `上の「計算する状況」に、移行した作業中の状況${summary.currentScenarios}件を直接表示しています。状況名と入力値を確認してください。以前の保存キャラクターと保存済み状況も互換性のため内部に残しています（通常画面には表示しません）。`;
-    container.append(intro, list, guide);
-  } catch {
-    container.textContent = '移行済みデータを確認できませんでした。元の保存データは変更していません。';
-  }
-}
-
 function updateMessage(result) {
   if (result.status === 'applied') return { text: '敵データを更新しました。', error: false };
   if (result.status === 'unchanged') return { text: 'すでに最新です。', error: false };
@@ -807,18 +670,17 @@ async function updateData() {
     const selections = state.cards.map((context) => ({ context, data: scenarioData(context) }));
     const result = await client.update();
     const message = updateMessage(result);
-    elements['update-status'].textContent = message.text;
-    elements['update-status'].classList.toggle('error', message.error);
     elements['data-version'].textContent = 'データ版: ' + client.store.active.datasetVersion;
     if (result.status === 'applied') {
       for (const { context, data } of selections) {
         populateEventSelect(context);
-        if (data.loadedEnemy) configureLegacyEnemy(context, data);
-        else if (data.phase8_event_id && client.index.events.some((entry) => entry.id === data.phase8_event_id)) {
+        if (data.phase8_event_id && client.index.events.some((entry) => entry.id === data.phase8_event_id)) {
           await selectEventForCard(context, data.phase8_event_id, { persist: false, selectedStageId: data.phase8_stage_id, selectedEnemyId: data.phase8_enemy_id, initial: data });
         } else clearEnemyResult(context);
       }
     }
+    elements['update-status'].textContent = message.text;
+    elements['update-status'].classList.toggle('error', message.error);
   } catch {
     elements['update-status'].textContent = '更新しませんでした。現在の敵データはそのまま安全に使えます。';
     elements['update-status'].classList.add('error');
@@ -852,8 +714,7 @@ elements['scenario-cards-container'].addEventListener('change', async (event) =>
   const context = cardContext(event.target);
   if (!context) return;
   if (event.target.matches('[data-role="event-select"]')) {
-    if (event.target.value === '__legacy__' && context.legacyEnemy) configureLegacyEnemy(context, scenarioData(context));
-    else await selectEventForCard(context, event.target.value);
+    await selectEventForCard(context, event.target.value);
   } else if (event.target.matches('[data-role="stage-select"]')) {
     renderEnemies(context);
   } else if (event.target.matches('[data-role="enemy-select"]')) {
@@ -922,19 +783,16 @@ elements['theme-button'].addEventListener('click', () => setTheme(document.docum
 async function initialize() {
   if (!core) throw new Error('計算コアを読み込めませんでした。');
   const saved = readSavedState();
-  const savedTheme = saved?.theme === 'dark' || localStorage.getItem('dokkan_phase8_rc_theme') === 'dark' ? 'dark' : 'light';
+  const savedTheme = saved?.theme === 'dark' ? 'dark' : 'light';
   setTheme(savedTheme, { persist: false });
   if (!saved) {
     state.durabilityLines = [{ name: '完封', value: 0 }, { name: '70万', value: 700_000 }];
-    state.savedCharacters = [];
-    state.savedEnemies = [];
   }
   try {
     const recovery = await client.initialize();
     elements['data-version'].textContent = 'データ版: ' + client.store.active.datasetVersion;
     renderDurabilityLines();
     await recreateScenarioCards(saved?.currentScenarios ?? []);
-    renderSavedDataSummary();
     state.initializing = false;
     persistState();
     const restoredEvent = role(state.cards[0], 'event-select').value;

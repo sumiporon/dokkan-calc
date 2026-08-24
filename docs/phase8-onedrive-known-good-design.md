@@ -4,18 +4,18 @@
 
 ## 役割
 
-将来の普段使いはPages、OneDriveはPages障害または通信不能時だけ開くknown-good/offline backupとする。通常起動のたびにPagesとOneDriveを選ばせず、Pages helpにbackupの場所とfile名を載せる。
+将来の普段使いはPages、OneDriveはPages障害または通信不能時だけ開く独立した旧known-good/offline backupとする。ここでいうbackupはPagesの保存カードや設定を同期したcopyではなく、以前から動いていた旧appと承認済み敵dataの退避経路である。通常起動のたびにPagesとOneDriveを選ばせず、Pages helpにbackupの場所とfile名を載せる。
 
 Phase 8では現在使っているOneDrive HTMLを変更しない。`release-candidate/phase8/device-preview.html`は架空dataによる単一file互換確認であり、現行backupの後継へ昇格していない。
 
 ## 将来残す版
 
-正式移行が別途承認された場合、OneDriveには次の2 fileを残す。
+Pages本番採用とbackup更新が別途承認された場合、OneDriveには次の2 fileを残す。
 
 - `dokkan-calc-known-good.html`: ownerが端末確認まで終えた最新known-good
 - `dokkan-calc-known-good-previous.html`: その直前のknown-good
 
-file内にapp、計算core、承認済み敵runtime、version/digestを同梱し、offline起動時に外部dataを取得しない。候補版や自動取得直後の版を直接このfileへ反映しない。
+file内にapp、計算core、承認済み敵runtime、version/digestを同梱し、offline起動時に外部dataを取得しない。候補版や自動取得直後の版を直接このfileへ反映しない。PagesのlocalStorageをfileへ同梱・複製・同期しない。
 
 ## 更新してよい条件
 
@@ -44,5 +44,7 @@ Pagesのmanifest更新、candidate生成、scheduled jobだけではOneDrive bac
 2. それも開けない場合だけ`dokkan-calc-known-good-previous.html`を開く。
 3. 通常計算を続け、失敗したPagesの更新を繰り返さない。
 4. Codexへ「Pages」「known-good」「previous」のどれが開けたかだけ伝える。
+
+OneDriveで計算・保存した内容をPagesへ戻す仕組みは作らない。PagesとOneDriveは別々の状態を保持し、Pagesは初回だけ新規状態、その後はPages内の保存状態を通常どおり復元する。
 
 terminal、JSON編集、GitHub管理、source site訪問は求めない。backupの更新はroutine敵data更新ではなく、承認済みapp release時だけの保守作業とする。

@@ -50,7 +50,7 @@ npm run test:browser
 npm run audit:data
 ```
 
-`npm test`には、第4段階の候補データ変換と全件再現、第6段階のcanonical/runtime、第7段階のprototypeに加え、第8段階のrelease candidate、前回event、1操作更新・rollback、保存データ移行、Chromium/WebKit、HTTP/`file://` browser操作も含まれます。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
+`npm test`には、第4段階の候補データ変換と全件再現、第6段階のcanonical/runtime、第7段階の配信・更新prototypeに加え、第8段階のrelease candidate、前回event、1操作更新・rollback、Pages内の通常保存、Chromium/WebKit、HTTP/`file://` browser操作も含まれます。OneDrive→Pages保存データ移行は不採用となり、専用testも削除しました。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
 
 ブラウザテストは独立した一時ブラウザを使います。普段使用しているブラウザの保存データやlocalStorageは読み書きしません。
 
@@ -102,15 +102,15 @@ npm run benchmark:phase8
 - `src/data-foundation/`：第6段階のcanonical/runtime、manifest、安全・permission gate、adapter contract
 - `scripts/generate-phase6-data-foundation.mjs`：第6段階のoffline全件成果物の唯一の生成元
 - `artifacts/phase6/`：追跡可能なmanifest、検証、permission、性能、omission報告
-- `prototypes/phase7-runtime-delivery/`：第7段階の本番分離full/chunk、1操作更新、架空保存データ移行画面
-- `src/prototype/`：第7段階の更新・rollbackと保存データ移行のpure prototype
+- `prototypes/phase7-runtime-delivery/`：第7段階の本番分離full/chunkと1操作更新prototype
+- `src/prototype/`：第7段階の更新・rollback用pure prototype
 - `scripts/generate-phase7-runtime-delivery.mjs`：full、event index/chunk、file-compatible dataの決定的generator
 - `artifacts/phase7/`：第7段階のcompact全件summaryと複数回performance実測
 - `release-candidate/phase8/`：第8段階の本番分離Pages候補、架空公開preview、単一HTML fallback
 - `src/release-candidate/`：第8段階のmanifest、chunk client、IndexedDB known-good、前回event
 - `artifacts/phase8/`：第8段階の性能とpermission状態
 - `schemas/`：将来形式の設計案（現行アプリはまだ読み込まない）
-- `docs/`：安全記録、データ形式、計算上の既知差、移行時の注意
+- `docs/`：安全記録、データ形式、計算上の既知差、更新・公開方針
 
 ## 第4段階candidateの位置づけ
 
@@ -128,7 +128,7 @@ npm run benchmark:phase8
 - 保存済みDokkanInfo HTMLは削除せず、801 stage／5,032 enemyの照合、parser回帰、移行backupに使います。新sourceが合格した場合は本番生成の必須入力から格下げします。
 - 将来の正本は新schemaの考え方を引き継ぎますが、現在のv1 draftをそのまま本番採用しません。source-neutralなcanonical、軽量runtime projection、release manifestへ分ける案です。
 - 第5段階時点の2操作案は、その後のowner判断で変更されました。初期更新は`敵データを更新`の1操作で内部検査後に正常なら適用、異常時だけ停止し、将来0操作を目標とします。本番UIは未実装です。
-- Pages＋OneDrive hybridは将来の実機比較候補としてだけ承認され、採用は決定していません。現在のOneDrive/local利用を維持しています。
+- 将来の役割はPagesを普段使い、OneDrive旧版を独立したknown-good backupとする方針に決まりました。ただしproduction切替は未承認で、現在のOneDrive/local利用を維持しています。
 - DokkanStatsへの問い合わせ完成稿はownerが送信済みですが、返信はまだありません。本番敵JSON、localStorage、Pages、OneDriveの使い方、workflowは変更していません。
 
 ## 第6段階のofflineデータ基盤
@@ -145,21 +145,21 @@ npm run benchmark:phase8
 - productionと分離したprototypeで、6.05MB full runtimeと約47KB index＋88 event chunkをHTTP JSON、generated JS、Windows `file://`で比較しました。
 - PCではfullも十分速い一方、mobile参考条件ではchunkが初期転送と初期memoryを明確に削減しました。将来の普段使い候補はPagesのevent chunk、内部release検証は単純なfullも利用する案です。
 - 1操作更新はmanifest、version、digest、構造、件数急減、app互換性を確認し、途中失敗・health check失敗時にknown-goodへ戻りました。0操作更新はまだ無効です。
-- 架空保存データはWindows `file://`からPages相当別originへ1回で移行でき、PATは除外されました。本番localStorageは変更していません。Android/iPhone実機確認はPhase 8仕様承認後の別test URLで必要です。
+- 架空保存データの別origin転送は技術prototypeとして検証しましたが、owner判断で製品不採用となり、実行可能なprototypeとtestは後に削除しました。本番localStorageは変更していません。
 - Pages primary＋現在のOneDrive known-good backupはPhase 8 release candidate仕様としてowner承認済みです。ただしproduction移行は未承認で、公開方式・普段の導線は変更していません。
 - plain HTML/JSとgeneratorで必要な比較が成立したため、Viteは引き続き導入していません。
 
 ## 第8段階のrelease candidate
 
 - 本番と分離したPages向け起動経路にevent index/chunk、前回event、設定・データ内の1操作更新、digest cache、2世代known-good、rollbackを統合しました。
-- 保存データ移行はallowlist、checksum、移行前後validation、途中失敗rollbackを持ち、Windows `file://`からHTTPへ1 buttonで移ることを確認しました。PATと未知keyは移しません。
+- Pages候補は独立したversion付き保存keyから新規開始し、旧OneDrive key、旧移行先key、PAT、未知keyを読みません。初回後はPages自身の複数カード、作業中入力、カスタム攻撃・手動敵属性、会心設定、耐久ライン、themeを通常どおり自動保存・復元します。
 - Chromium/WebKitのdesktop/mobile/touch/390pxと、両browserの単一HTML `file://`直開きを通常testへ追加しました。iPhone/Android実機確認は別途必要です。
 - 公開可能なpreviewは架空3 eventだけです。実data由来5,032敵の全量releaseはローカル性能検証専用で、Git追跡・公開・production activationを禁止しています。
 - 正式Pages root、main、現在のOneDrive、本番敵data/localStorage/workflowは変更していません。0操作更新と外部source接続も無効です。
 - DokkanStatsはowner送信済み・返信待ちで、permissionは引き続きunknown/pendingです。
-- 追加実機フィードバックにより、通常画面から未使用の「キャラクター管理」UIを削除しました。複数の計算用状況カード、追加・複製・削除、作業中状態の自動保存、旧`savedCharacters`データの互換保持は残しています。
-- 「計算する状況」には個別の開閉に加えて「すべて開く」「すべて閉じる」を追加しました。開閉は表示だけを変え、計算・入力・保存内容を変更しません。保存データ移行後は、通常計算画面へ復元された作業中カードと「設定・データ」の件数表示で成功を確認します。
-- 360px／390pxの初期画面全高は直前版の1,713pxから1,470pxへ短縮し、横overflowなしを確認しました。最終`npm test`は177件成功、failed 0、skipped 0です。
+- 追加実機フィードバックにより、通常画面から未使用の「キャラクター管理」UIを削除しました。複数の計算用状況カード、追加・複製・削除、Pages内の作業中状態の自動保存は残しています。
+- 「計算する状況」には個別の開閉に加えて「すべて開く」「すべて閉じる」を追加しました。開閉は表示だけを変え、計算・入力・保存内容を変更しません。
+- 最新の追加実機フィードバックでは、属性・防御設定のスマホ整列、両結果直近の最終DEF／軽減率／全属性ガード表示、不要説明の削除、OneDrive→Pages移行機能の完全撤去を行いました。PagesとOneDriveは保存状態を同期しません。
 
 ## 重要な安全上の注意
 
@@ -186,7 +186,7 @@ npm run benchmark:phase8
 - [DokkanStatsへの問い合わせ完成稿（未送信）](docs/phase5-dokkanstats-inquiry-ready.md)
 - [第4段階のDokkanStats問い合わせ草案（履歴・未送信）](docs/phase4-dokkanstats-inquiry-draft.md)
 - [第6段階のsource-neutral敵データ基盤](docs/phase6-canonical-data-foundation.md)
-- [第6段階の保存データ移行設計](docs/phase6-saved-data-migration-design.md)
+- [第6段階の保存データ移行設計（履歴・後に不採用）](docs/phase6-saved-data-migration-design.md)
 - [第6段階のhybrid実機比較設計](docs/phase6-hybrid-hosting-comparison-design.md)
 - [DokkanStatsへの最終問い合わせ文（未送信）](docs/phase6-dokkanstats-inquiry-final.md)
 - [第6段階の完了報告](docs/phase6-completion-report.md)
@@ -204,3 +204,5 @@ npm run benchmark:phase8
 - [第8段階追加修正版のPC・スマホ再確認手順](docs/phase8-additional-recheck-checklist.md)
 - [第8段階のキャラクター管理UI削除・一括開閉修正報告](docs/phase8-management-removal-report.md)
 - [第8段階管理UI削除版のPC・スマホ再確認手順](docs/phase8-management-removal-recheck-checklist.md)
+- [第8段階の結果条件表示・保存移行撤去修正報告](docs/phase8-result-summary-no-migration-report.md)
+- [第8段階結果条件表示・保存移行撤去版のPC・スマホ再確認手順](docs/phase8-result-summary-no-migration-recheck-checklist.md)

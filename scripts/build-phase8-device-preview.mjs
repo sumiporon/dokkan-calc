@@ -6,7 +6,6 @@ const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..
 const RC_ROOT = path.join(REPO_ROOT, 'release-candidate', 'phase8');
 const DATA_ROOT = path.join(RC_ROOT, 'data');
 const OUTPUT = path.join(RC_ROOT, 'device-preview.html');
-const MIGRATION_PREVIEW_URL = 'https://raw.githack.com/sumiporon/dokkan-calc/phase8-management-removal-ready-2026-08-24/release-candidate/phase8/migration-device-check.html';
 
 const modulePaths = [
   'src/prototype/phase7-update-engine.mjs',
@@ -61,7 +60,6 @@ export async function buildPhase8DevicePreview({ outputPath = OUTPUT } = {}) {
   const bundle = [embeddedFetchSource(files), core, ...modules.map(moduleToClassic)].join('\n\n').replaceAll('</script', '<\\/script');
   const document = html
     .replace('<link rel="stylesheet" href="app.css">', `<style>${css}</style>`)
-    .replace('<a class="button-link" id="migration-link" href="migration-device-check.html">', `<a class="button-link" id="migration-link" href="${MIGRATION_PREVIEW_URL}">`)
     .replace(/\s*<script src="\.\.\/\.\.\/src\/calculation-core\.js"><\/script>\s*/, '\n')
     .replace(/\s*<script type="module" src="app\.mjs"><\/script>\s*/, `\n<script>${bundle}</script>\n`)
     .replace('Phase 8 確認版</title>', 'Phase 8 単一HTML確認版</title>')

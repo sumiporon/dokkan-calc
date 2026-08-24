@@ -1,5 +1,7 @@
 # 第7段階 PC・Android・iPhone実機確認計画
 
+> 保存データ移行に関する部分は当時の設計・検証履歴です。ownerは後にOneDrive／local旧版→Pages移行を撤回しました。現在のRCはPagesを新規状態で開始し、OneDriveと保存データを移行・同期しません。この文書の移行手順は実装・実機確認に使わないでください。最新仕様は[Phase 8 結果条件表示・保存移行撤去 修正報告](phase8-result-summary-no-migration-report.md)を参照してください。
+
 作成日: 2026-08-24（JST）
 
 Phase 7では本物のAndroid/iPhoneをCodexから操作できず、公開Pagesも変更していない。よって現在成功したのはWindows Chromium、Windows `file://`、390×844 viewport＋CPU 4倍slowdownまでである。Playwright WebKit browser binaryは追加downloadせず確認した環境にはなく、Safari相当確認も未実施である。
@@ -46,4 +48,3 @@ Phase 8の仕様をownerが承認し、Codexが**本番と別の安全なtest UR
 - test URLで失敗しても現在のOneDrive版と公開版には影響しない。
 
 実機で不合格なら本番移行せず、Pages、移行方式、chunk初期選択、cacheのどこが原因かをprototypeへ戻って直す。
-

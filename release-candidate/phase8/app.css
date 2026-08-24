@@ -60,7 +60,7 @@ p { margin: .35rem 0 .7rem; }
 }
 .input-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 label { display: grid; gap: .25rem; min-width: 0; color: var(--muted); font-size: .86rem; font-weight: 700; }
-select, input, button, .button-link {
+select, input, button {
   min-width: 0;
   min-height: 2.75rem;
   border: 1px solid var(--border);
@@ -70,12 +70,11 @@ select, input, button, .button-link {
   padding: .48rem .65rem;
   font: inherit;
 }
-button, .button-link { cursor: pointer; font-weight: 800; }
+button { cursor: pointer; font-weight: 800; }
 button:disabled { cursor: not-allowed; opacity: .55; }
 .primary-button { border-color: var(--accent); background: var(--accent); color: var(--accent-text); }
 .secondary-button { width: 100%; margin-top: .75rem; border-color: var(--accent); color: var(--accent); }
 .danger-button { color: var(--error); }
-.button-link { display: inline-flex; align-items: center; text-decoration: none; }
 .inline-form label { flex: 1 1 230px; }
 .line-badge { display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px; padding: .25rem .35rem .25rem .65rem; background: var(--accent-soft); font-weight: 800; }
 .line-badge button { min-height: 2rem; width: 2rem; padding: 0; border-radius: 999px; }
@@ -96,7 +95,9 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .checkbox-label input { width: 1.3rem; height: 1.3rem; min-height: auto; flex: 0 0 auto; }
 .result-panel, .damage-panel { margin-top: 1rem; padding-top: .2rem; border-top: 2px solid var(--border); }
 .durability-affinity-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
-.compact-help { font-size: .78rem; }
+.result-condition-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .35rem; margin-top: .7rem; }
+.result-condition-summary > span { display: grid; min-width: 0; gap: .12rem; padding: .45rem .55rem; border-radius: .5rem; background: var(--accent-soft); color: var(--muted); font-size: .76rem; }
+.result-condition-summary strong { color: var(--text); font-size: .95rem; overflow-wrap: anywhere; }
 .durability-table { width: 100%; border-collapse: collapse; }
 .durability-table th, .durability-table td { padding: .55rem; border-bottom: 1px solid var(--border); text-align: left; }
 .durability-table td { text-align: right; font-size: 1.05rem; font-weight: 800; }
@@ -105,17 +106,17 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .attack-summary { display: grid; gap: .18rem; }
 .attack-summary-row { display: flex; justify-content: space-between; gap: .7rem; border-top: 1px solid var(--border); padding-top: .25rem; }
 .condition-controls { margin-top: .7rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.results { grid-template-columns: repeat(3, 1fr); margin-top: .75rem; }
+.results { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: .75rem; }
 .results > div { display: grid; align-content: start; gap: .25rem; min-width: 0; padding: .7rem; border: 1px solid var(--border); border-radius: .6rem; }
 .results span { color: var(--muted); font-size: .8rem; }
 .results strong { overflow-wrap: anywhere; font-size: 1.08rem; }
 .settings-card, .help-card { padding-top: .3rem; }
 summary { cursor: pointer; min-height: 2.7rem; display: flex; align-items: center; font-weight: 800; }
 .settings-content, .help-content { margin-top: .7rem; }
+.settings-content { grid-template-columns: 1fr; }
 .settings-content > div { padding: .8rem; border-top: 1px solid var(--border); }
 .inline-status { min-height: 1.5rem; padding: .35rem; border-radius: .4rem; }
 .help-content h2 { margin-top: 1.2rem; }
-.migration-summary-list { margin: .45rem 0; padding-left: 1.3rem; }
 dialog { width: min(780px, calc(100% - 1rem)); max-height: calc(100dvh - 1rem); overflow: auto; border: 1px solid var(--border); border-radius: .8rem; background: var(--surface); color: var(--text); }
 dialog::backdrop { background: #0008; }
 .dialog-heading { align-items: center; }
@@ -142,6 +143,10 @@ dialog::backdrop { background: #0008; }
   .input-grid, .selector-grid, .condition-controls, .durability-affinity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem; }
   .settings-content { grid-template-columns: 1fr; gap: .3rem; }
   .affinity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .affinity-grid .critical-toggle { grid-column: 1 / -1; min-height: 2.5rem; }
+  .result-condition-summary { gap: .18rem; margin-top: .3rem; }
+  .result-condition-summary > span { gap: .05rem; padding: .24rem .28rem; border-radius: .35rem; font-size: .66rem; overflow-wrap: anywhere; }
+  .result-condition-summary strong { font-size: .84rem; }
   .results { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem; margin-top: .35rem; }
   .results > div { gap: .12rem; padding: .35rem; border-radius: .4rem; }
   .results span { font-size: .68rem; }
@@ -157,7 +162,7 @@ dialog::backdrop { background: #0008; }
   .compact-buttons button { min-height: 2.25rem; padding-inline: .35rem; }
   label { font-size: .7rem; gap: .08rem; }
   select, input { min-height: 2.5rem; padding: .22rem .35rem; font-size: 16px; }
-  button, .button-link { min-height: 2.35rem; padding: .25rem .38rem; font-size: .76rem; }
+  button { min-height: 2.35rem; padding: .25rem .38rem; font-size: .76rem; }
   .icon-button { min-width: 2.4rem; }
   .checkbox-label { min-height: 2.5rem; font-size: .72rem; }
   .checkbox-label input { width: 1.05rem; height: 1.05rem; }
@@ -165,7 +170,7 @@ dialog::backdrop { background: #0008; }
   .final-defense-banner strong { margin-left: .25rem; font-size: 1rem; }
   .affinity-section { margin-top: .35rem; }
   .result-panel, .damage-panel { margin-top: .45rem; padding-top: .1rem; }
-  .compact-help, .section-help { font-size: .69rem; }
+  .section-help { font-size: .69rem; }
   .durability-table th, .durability-table td { padding: .3rem; font-size: .78rem; }
   .durability-table td { font-size: .9rem; }
   .condition-controls { margin-top: .3rem; }
@@ -185,5 +190,5 @@ dialog::backdrop { background: #0008; }
 }
 
 @media (pointer: coarse) {
-  select, input, button, .button-link, summary { min-height: 2.5rem; }
+  select, input, button, summary { min-height: 2.5rem; }
 }

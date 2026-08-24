@@ -1,6 +1,6 @@
 # Phase 8 追加実機フィードバック修正報告
 
-> この文書は当時の修正履歴です。その後ownerが「キャラクター管理」UIの削除を決定しました。現在の仕様と再確認先は[キャラクター管理UI削除・一括開閉 修正報告](phase8-management-removal-report.md)を参照してください。
+> 保存データ移行に関する部分は当時の設計・検証履歴です。ownerは後にOneDrive／local旧版→Pages移行を撤回しました。現在のRCはPagesを新規状態で開始し、OneDriveと保存データを移行・同期しません。この文書の移行手順は実装・実機確認に使わないでください。最新仕様は[Phase 8 結果条件表示・保存移行撤去 修正報告](phase8-result-summary-no-migration-report.md)を参照してください。
 
 作成日: 2026-08-24（JST）
 

@@ -4,7 +4,7 @@
 
 ## 結論
 
-Phase 7の実験を`release-candidate/phase8/`へ統合した。将来のPages向け通常経路はevent index＋選択event chunk、更新検査はfull runtime、保存はIndexedDB、artifact cacheはdigest照合付きCache Storageである。Vite、React、backend、browser PATは不要だった。
+Phase 7の実験を`release-candidate/phase8/`へ統合した。将来のPages向け通常経路はevent index＋選択event chunk、更新検査はfull runtime、敵release保存はIndexedDB、利用者のPages内状態は専用localStorage、artifact cacheはdigest照合付きCache Storageである。Vite、React、backend、browser PATは不要だった。
 
 これは本番と分離したrelease candidateである。`dokkan_calc_final.*`、`index.html`、`scraper/all_enemies.json`、production localStorage、Pages root、OneDrive、workflowは読み替えていない。
 
@@ -50,15 +50,20 @@ manifestはdata分類と許可を明記する。
 
 0操作更新は存在せず、更新履歴は秘密を含まない時刻、status、code、version、所要時間だけを最大50件記録する。
 
-## 保存データ移行
+## Pages内の通常保存とOneDriveからの独立
 
-許可listは現行の`dokkan_calc_data_v22`と`dokkan_crit_overrides`だけである。これに保存キャラクター、保存scenario、手動敵、耐久line、theme、未保存scenario、crit override、legacy snapshotが含まれる。GitHub PATと未知keyはpackage作成時点で除外する。
+ownerの追加決定により、OneDrive／local旧版からPagesへの保存データ移行・同期・逆同期は行わない。以前の`postMessage` bridge、import/export画面、移行件数表示、専用preview、専用testはrelease candidateとPhase 7 prototypeから削除した。過去文書は技術検証の履歴としてだけ残す。
 
-現在版側で1回押すとnonce付きPages targetを開き、`opener`、nonce、source originを照合してmemory内の`postMessage`で渡す。`file://`では`location.origin`とmessage originの表現が異なるため、期待値を仕様上の`null`へ正規化した。URL、query、serverへ保存dataを載せない。
+Pagesは初回だけ新しい状態から始め、RCでは`dokkan_phase8_rc_pages_state_v1`へ次を保存する。
 
-Pages側はdigest、JSON構造、allowlistを移行前後に検査し、RC専用prefixへbackup付きで書く。途中writeまたは事後validationに失敗したら全keyとmarkerを元へ戻す。元画面の値は削除しない。同一packageの再実行は`unchanged`となる。
+- 複数の作業中Scenarioと状況名
+- DEF、軽減、属性、ガード、会心、カスタム攻撃・手動敵属性などScenario内の入力
+- 耐久ライン
+- theme
 
-Phase 8ではproduction current appへbuttonを挿入していないため、本物のowner保存値を移す本番導線はまだ有効ではない。release candidateの実通信はWindows `file://`→HTTPで自動検証し、端末previewでは架空packageだけを1 buttonで確認する。本番buttonの組込みはPhase 9以降の別承認対象である。
+Pagesはproduction旧版の`dokkan_calc_data_v22`、廃止した`dokkan_phase8_rc_imported_*`、旧theme／会心key、PAT、未知keyへfallbackしない。これらを読まず、変更も削除もしない。Pagesの初回が新規状態というだけで、毎回初期化するわけではなく、2回目以降はPages自身の保存状態を復元する。
+
+OneDriveは独立した旧known-goodアプリであり、Pages利用者データの同期backupではない。Pages通常利用と敵データ更新は引き続きPAT不要である。同じPages app内で将来保存schemaを変える場合だけ、version付き互換処理とtestを別途用意する。
 
 ## Pagesと一時preview
 

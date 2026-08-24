@@ -40,12 +40,21 @@ async function measure(width) {
     const affinity = rect('.affinity-section');
     const durability = rect('[data-role="durability-result"]');
     const firstInput = rect('[data-role="char-def"]');
+    const criticalAttack = rect('[data-role="critical-attack"]');
+    const criticalDefense = rect('[data-role="critical-defense"]');
+    const criticalToggle = rect('.critical-toggle');
+    const summary = document.querySelector('[data-role="durability-condition-summary"]');
+    const summaryCells = [...summary.children].map((element) => element.getBoundingClientRect());
     return {
       pageHeight: document.documentElement.scrollHeight,
       scenarioCardHeight: Math.round(card?.height ?? 0),
       scenarioInputsHeight: Math.round((affinity?.bottom ?? 0) - (card?.top ?? 0)),
       durabilityBottom: Math.round((durability?.bottom ?? 0) - (card?.top ?? 0)),
       inputHeight: Math.round(firstInput?.height ?? 0),
+      criticalInputsSameRow: Math.abs((criticalAttack?.top ?? 0) - (criticalDefense?.top ?? 0)) < 2,
+      criticalToggleHeight: Math.round(criticalToggle?.height ?? 0),
+      resultSummarySameRow: new Set(summaryCells.map((cell) => Math.round(cell.top))).size === 1,
+      resultSummaryOverflow: summary.scrollWidth - summary.clientWidth,
       noHorizontalOverflow: document.documentElement.scrollWidth <= innerWidth,
       viewportWidth: innerWidth
     };

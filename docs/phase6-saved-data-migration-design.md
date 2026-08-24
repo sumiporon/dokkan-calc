@@ -1,5 +1,7 @@
 # 第6段階 Pages移行時の保存データ移行設計
 
+> 保存データ移行に関する部分は当時の設計・検証履歴です。ownerは後にOneDrive／local旧版→Pages移行を撤回しました。現在のRCはPagesを新規状態で開始し、OneDriveと保存データを移行・同期しません。この文書の移行手順は実装・実機確認に使わないでください。最新仕様は[Phase 8 結果条件表示・保存移行撤去 修正報告](phase8-result-summary-no-migration-report.md)を参照してください。
+
 作成日: 2026-08-23（JST）
 
 状態: 設計・test案のみ。localStorage形式、UI、Pages、OneDriveは未変更。実装前にownerの承認が必要。

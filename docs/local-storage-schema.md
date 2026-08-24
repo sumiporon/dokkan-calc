@@ -2,13 +2,13 @@
 
 この文書は、第2段階時点のブラウザ保存形式を記録したものです。保存形式そのものは変更していません。実ユーザーのブラウザデータも読み取り・消去していません。
 
-## 使用中のキー
+## production OneDrive／local旧版で使用中のキー
 
-| キー | 内容 | 移行方針 |
+| キー | 内容 | 同じ旧app内での互換方針 |
 |---|---|---|
 | `dokkan_calc_data_v22` | 計算状態、保存キャラクター、敵、現在の状況、テーマ | 必ず互換性を保つ |
 | `dokkan_crit_overrides` | 敵会心の手動補正 | 名前衝突を考慮して維持する |
-| `dokkan_github_pat` | GitHub認証情報を平文保存する既存機能 | 現在は変更しない。fixture・一般データ移行・エクスポートには含めない |
+| `dokkan_github_pat` | GitHub認証情報を平文保存する既存機能 | production旧版では現在変更しない。Pagesはこのkeyを読まず、PATを要求しない |
 
 ## `dokkan_calc_data_v22`
 
@@ -34,7 +34,7 @@
 
 プリセット敵、ユーザーが手動追加した敵、ユーザーが編集した敵が同じ配列に混在します。どれが手動データかを示す項目はありません。
 
-そのため、将来の移行でプリセットへ単純置換するとユーザーの敵を失います。現行データ全体をまず保持し、IDが利用可能になった後も未対応データをスナップショットとして残してください。
+そのため、同じ旧app内の将来形式変更でプリセットへ単純置換するとユーザーの敵を失います。現行データ全体をまず保持し、IDが利用可能になった後も未対応データをスナップショットとして残してください。これはOneDriveからPagesへ転送するという意味ではありません。
 
 ### `currentScenarios`とScenario
 
@@ -85,7 +85,7 @@ loadedEnemy
 - 2階層：`groupName -> enemies`
 - 3階層：`categoryName -> events -> bosses`
 
-この互換処理は旧ユーザーデータを守るため、移行テストなしで削除してはいけません。対応fixtureは`tests/fixtures/storage/legacy-two-tier.json`と`legacy-three-tier.json`です。
+この互換処理はproduction旧版内のユーザーデータを守るため、同一app内の互換テストなしで削除してはいけません。対応fixtureは`tests/fixtures/storage/legacy-two-tier.json`と`legacy-three-tier.json`です。Pages RCはこれらOneDrive旧版keyを読みません。
 
 ## 既知の危険箇所
 
@@ -109,7 +109,7 @@ loadedEnemy
 
 すべて架空データです。認証情報は含めず、テストは秘密情報らしいキー・値がfixtureへ混入していないことも確認します。
 
-## 将来の移行で必ず維持するもの
+## production旧版内の将来schema変更で必ず維持するもの
 
 - ユーザー設定の耐久ライン
 - 保存キャラクター名と全シナリオ
@@ -120,10 +120,31 @@ loadedEnemy
 - `loadedEnemy`の値または互換スナップショット
 - 旧2階層・3階層からの読み込み能力
 
-GitHub認証情報は一般データと同じ移行・バックアップ・エクスポート経路へ含めません。扱いを変更する場合は、セキュリティ方針を説明してから実施します。
+GitHub認証情報は一般データの保存・backup・export経路へ含めません。Pagesは旧PAT keyを読みません。production旧版の扱いを変更する場合は、セキュリティ方針を説明してから実施します。
 
-## Phase 8 RCだけの互換拡張
+## Phase 8 RCの独立したPages内保存
 
-Phase 8確認版はproductionの`dokkan_calc_data_v22`を直接書き換えず、別keyの`dokkan_phase8_rc_imported_dokkan_calc_data_v22`へ保存する。追加実機フィードバック版では、このRC保存に`phase8UiSchemaVersion: 2`を付け、Scenarioへ任意fieldの`phase8_durability_enemy_affinity`（例: `extreme:int`）を追加した。
+ownerの確定方針により、PagesはOneDrive／local旧版から保存内容を移さず、新規状態から開始する。Phase 8 RCは、計算カードとUI設定の主状態を専用key `dokkan_phase8_rc_pages_state_v1`だけへ読み書きする。
 
-version 1またはversion表記なしのRC保存を読むときは、自分の`own_class`／`own_type`を耐久ラインの敵属性初期値としてversion 2へ移す。これにより旧仕様の「同クラス・同属性」を保つ。保存キャラクター、作業中状況、未知fieldは保持し、production key、PAT、手動敵属性は変更しない。カードの開閉状態は表示専用で保存しない。
+```text
+{
+  phase8PagesStateVersion: 1,
+  durabilityLines,
+  currentScenarios,
+  theme
+}
+```
+
+`currentScenarios`には各カードのDEF、軽減、属性、ガード、会心、カスタム攻撃ATK／敵属性、event・stage・enemy・attack選択、耐久ライン専用敵属性などを保存する。複数カードも同じ配列へ保存する。カードの開閉状態は表示専用で保存しない。
+
+Pages内で生成する補助状態は別にあり、前回選択eventを`dokkan_phase8_rc_last_event_v1`、更新結果の監査履歴を`dokkan_phase8_rc_update_history_v1`へ保存する。enemy releaseのactive／known-good／rollback情報はIndexedDB、取得artifactはbrowser cacheを使う。これらもPages自身の選択・更新機能のための状態であり、OneDrive旧版からの保存データ移行ではない。
+
+RCは次をfallback読込しない。
+
+- production旧版の`dokkan_calc_data_v22`
+- 廃止した移行先`dokkan_phase8_rc_imported_*`
+- 旧`dokkan_crit_overrides`／theme key
+- `dokkan_github_pat`
+- 未知key
+
+これらの旧keyを削除・変更もしない。Pagesは初回だけ空で始まり、その後は`dokkan_phase8_rc_pages_state_v1`からPages自身の状態を復元する。将来このPages内schemaを変える場合は、同じPages namespace内だけでversion付き互換処理とtestを用意する。OneDrive→Pages import、export、同期、逆同期を再導入してはいけない。

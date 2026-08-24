@@ -17,7 +17,10 @@ const DEVICE_PREVIEW_URL = pathToFileURL(path.join(REPO_ROOT, 'release-candidate
 const SYSTEM_CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const TEST_TIMEOUT = 90_000;
 const LAST_EVENT_KEY = 'dokkan_phase8_rc_last_event_v1';
-const RC_STORAGE_KEY = 'dokkan_phase8_rc_imported_dokkan_calc_data_v22';
+const RC_STORAGE_KEY = 'dokkan_phase8_rc_pages_state_v1';
+const ONEDRIVE_STORAGE_KEY = 'dokkan_calc_data_v22';
+const RETIRED_IMPORTED_STORAGE_KEY = 'dokkan_phase8_rc_imported_dokkan_calc_data_v22';
+const PAT_STORAGE_KEY = 'dokkan_github_pat';
 const PREVIOUS_MOBILE_LAYOUT = {
   360: { pageHeight: 2640, scenarioCardHeight: 1210, scenarioInputsHeight: 991 },
   390: { pageHeight: 2486, scenarioCardHeight: 1163, scenarioInputsHeight: 944 }
@@ -25,6 +28,10 @@ const PREVIOUS_MOBILE_LAYOUT = {
 const BEFORE_MANAGEMENT_REMOVAL_LAYOUT = {
   360: { pageHeight: 1713 },
   390: { pageHeight: 1713 }
+};
+const IMMEDIATE_PREVIOUS_MOBILE_LAYOUT = {
+  360: { pageHeight: 1470, scenarioCardHeight: 952, scenarioInputsHeight: 755 },
+  390: { pageHeight: 1470, scenarioCardHeight: 952, scenarioInputsHeight: 755 }
 };
 
 let chromiumBrowser;
@@ -199,6 +206,38 @@ test('PC feedback: 自動再計算、先頭0、日本語属性、敵未選択を
   }
 });
 
+test('追加feedback: 両モードの結果直近に最終DEF・軽減率・ガードを表示し入力ごとに自動更新する', { timeout: TEST_TIMEOUT }, async () => {
+  const run = await openChecked(chromiumBrowser, rcUrl('result-condition-summaries'));
+  try {
+    await run.goto();
+    await run.page.locator('#char-def').fill('420000');
+    await run.page.locator('#damage-reduction').fill('30');
+    await run.page.locator('#guard').check();
+
+    const summary = async (prefix) => ({
+      finalDefense: await run.page.locator(`[data-role="${prefix}-summary-final-defense"]`).first().innerText(),
+      reduction: await run.page.locator(`[data-role="${prefix}-summary-reduction"]`).first().innerText(),
+      guard: await run.page.locator(`[data-role="${prefix}-summary-guard"]`).first().innerText()
+    });
+    assert.deepEqual(await summary('durability'), { finalDefense: '420,000', reduction: '30%', guard: 'あり' });
+    assert.deepEqual(await summary('damage'), { finalDefense: '420,000', reduction: '30%', guard: 'あり' });
+    assert.equal(await run.page.locator('[data-role="durability-condition-summary"]').first().isVisible(), true);
+
+    await run.page.locator('#passive').fill('10');
+    await run.page.locator('#damage-reduction').fill('45');
+    await run.page.locator('#guard').uncheck();
+    assert.deepEqual(await summary('durability'), { finalDefense: '462,000', reduction: '45%', guard: 'なし' });
+    assert.deepEqual(await summary('damage'), { finalDefense: '462,000', reduction: '45%', guard: 'なし' });
+
+    await run.page.locator('#mode-damage').check();
+    assert.equal(await run.page.locator('[data-role="damage-condition-summary"]').first().isVisible(), true);
+    assert.equal(await run.page.getByText('複数の必殺技は、情報をまとめず技ごとに表示しています。', { exact: true }).count(), 0);
+    assert.equal(await run.page.getByText('自分の属性は上の設定と同じ値です。敵の属性は被ダメージモードの手動敵設定を変更しません。', { exact: true }).count(), 0);
+  } finally {
+    await run.close();
+  }
+});
+
 test('追加feedback: 保存敵を選んだままカスタム攻撃を候補へ追加し、そのATKで自動計算する', { timeout: TEST_TIMEOUT }, async () => {
   const run = await openChecked(chromiumBrowser, rcUrl('additional-feedback-custom-attack'));
   try {
@@ -251,7 +290,7 @@ test('追加feedback: 耐久ライン直近の日本語属性を同期・独立�
     await run.page.locator('#own-type').selectOption('phy');
     assert.equal(await run.page.locator('#durability-own-affinity').inputValue(), 'extreme:phy');
     const stored = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
-    assert.equal(stored.phase8UiSchemaVersion, 2);
+    assert.equal(stored.phase8PagesStateVersion, 1);
     assert.equal(stored.currentScenarios[0].own_class, 'extreme');
     assert.equal(stored.currentScenarios[0].own_type, 'phy');
     assert.equal(stored.currentScenarios[0].phase8_durability_enemy_affinity, 'extreme:int');
@@ -260,44 +299,140 @@ test('追加feedback: 耐久ライン直近の日本語属性を同期・独立�
   }
 });
 
-test('追加feedback: 旧RC保存をversion 2へ互換移行し、従来の同属性耐久ラインを維持する', { timeout: TEST_TIMEOUT }, async () => {
-  const run = await openChecked(chromiumBrowser, rcUrl('additional-feedback-storage-migration'));
+test('追加feedback: Pagesは旧版・旧移行先・PATを読まず新規開始し、Pages内の通常状態だけを保存・復元する', { timeout: TEST_TIMEOUT }, async () => {
+  const run = await openChecked(chromiumBrowser, rcUrl('pages-local-storage'));
   try {
     await run.goto();
-    await run.page.evaluate((key) => {
-      localStorage.setItem(key, JSON.stringify({
-        durabilityLines: [{ name: '完封', value: 0 }],
-        savedCharacters: [{ name: '旧RCキャラ', scenarios: [{ scenario_title: '保存状況', own_class: 'extreme', own_type: 'agl' }] }],
-        savedEnemies: [],
-        currentScenarios: [{ scenario_title: '作業中', own_class: 'extreme', own_type: 'agl', char_def: '123456' }],
-        theme: 'light'
-      }));
-    }, RC_STORAGE_KEY);
+    const seeded = {
+      onedrive: JSON.stringify({ currentScenarios: [{ scenario_title: 'OneDriveの状況', char_def: '999999' }], theme: 'dark' }),
+      imported: JSON.stringify({ currentScenarios: [{ scenario_title: '旧移行先の状況', char_def: '888888' }], theme: 'dark' }),
+      pat: 'owner-pat-must-remain-untouched',
+      unknown: 'unknown-must-remain-untouched'
+    };
+    await run.page.evaluate(({ pagesKey, onedriveKey, importedKey, patKey, seeded }) => {
+      localStorage.removeItem(pagesKey);
+      localStorage.setItem(onedriveKey, seeded.onedrive);
+      localStorage.setItem(importedKey, seeded.imported);
+      localStorage.setItem(patKey, seeded.pat);
+      localStorage.setItem('owner_unknown_key', seeded.unknown);
+    }, {
+      pagesKey: RC_STORAGE_KEY,
+      onedriveKey: ONEDRIVE_STORAGE_KEY,
+      importedKey: RETIRED_IMPORTED_STORAGE_KEY,
+      patKey: PAT_STORAGE_KEY,
+      seeded
+    });
     await run.page.reload({ waitUntil: 'domcontentloaded' });
     await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
-    assert.equal(await run.page.locator('#durability-own-affinity').inputValue(), 'extreme:agl');
-    assert.equal(await run.page.locator('#durability-enemy-affinity').inputValue(), 'extreme:agl');
+    assert.equal(await run.page.locator('.scenario-card').count(), 1);
+    assert.equal(await run.page.locator('[data-role="scenario-title"]').first().inputValue(), '状況 1');
+    assert.equal(await run.page.locator('#char-def').inputValue(), '0');
+    assert.equal(await run.page.locator('html').getAttribute('data-theme'), 'light');
+
+    await run.page.locator('[data-role="scenario-title"]').first().fill('Pages作業中');
+    await run.page.locator('#char-def').fill('123456');
+    await run.page.locator('#damage-reduction').fill('35');
+    await run.page.locator('#guard').check();
+    await run.page.locator('[data-role="is-critical"]').first().check();
+    await run.page.locator('[data-role="critical-attack"]').first().fill('200');
+    await run.page.locator('[data-role="critical-defense"]').first().fill('100');
+    await run.page.locator('#durability-enemy-affinity').selectOption('extreme:phy');
+    await run.page.locator('#mode-damage').check();
+    await run.page.locator('.manual-attack-settings').first().evaluate((element) => { element.open = true; });
+    await run.page.locator('[data-role="manual-enemy-attack"]').first().fill('321');
+    await run.page.locator('[data-role="manual-enemy-class"]').first().selectOption('extreme');
+    await run.page.locator('[data-role="manual-enemy-type"]').first().selectOption('int');
+    await run.page.locator('#add-scenario-button').click();
+    await run.page.locator('[data-role="scenario-title"]').nth(1).fill('Pages比較用');
+    await run.page.locator('#theme-button').click();
+
+    const stored = await run.page.evaluate(({ pagesKey, onedriveKey, importedKey, patKey }) => ({
+      pages: JSON.parse(localStorage.getItem(pagesKey)),
+      onedrive: localStorage.getItem(onedriveKey),
+      imported: localStorage.getItem(importedKey),
+      pat: localStorage.getItem(patKey),
+      unknown: localStorage.getItem('owner_unknown_key')
+    }), {
+      pagesKey: RC_STORAGE_KEY,
+      onedriveKey: ONEDRIVE_STORAGE_KEY,
+      importedKey: RETIRED_IMPORTED_STORAGE_KEY,
+      patKey: PAT_STORAGE_KEY
+    });
+    assert.deepEqual(Object.keys(stored.pages).sort(), ['currentScenarios', 'durabilityLines', 'phase8PagesStateVersion', 'theme']);
+    assert.equal(stored.pages.phase8PagesStateVersion, 1);
+    assert.equal(stored.pages.currentScenarios.length, 2);
+    assert.equal(stored.pages.currentScenarios[0].enemy_atk, '321');
+    assert.equal(stored.pages.currentScenarios[0].enemy_class, 'extreme');
+    assert.equal(stored.pages.currentScenarios[0].enemy_type, 'int');
+    assert.equal(stored.pages.currentScenarios[0].is_critical, true);
+    assert.equal(stored.pages.currentScenarios[0].phase8_durability_enemy_affinity, 'extreme:phy');
+    assert.equal(stored.pages.theme, 'dark');
+    assert.deepEqual({ onedrive: stored.onedrive, imported: stored.imported, pat: stored.pat, unknown: stored.unknown }, seeded);
+
+    await run.page.reload({ waitUntil: 'domcontentloaded' });
+    await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
+    assert.equal(await run.page.locator('.scenario-card').count(), 2);
+    assert.deepEqual(await run.page.locator('[data-role="scenario-title"]').evaluateAll((inputs) => inputs.map((input) => input.value)), ['Pages作業中', 'Pages比較用']);
     assert.equal(await run.page.locator('#char-def').inputValue(), '123456');
-    const migrated = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
-    assert.equal(migrated.phase8UiSchemaVersion, 2);
-    assert.equal(migrated.savedCharacters[0].scenarios[0].phase8_durability_enemy_affinity, 'extreme:agl');
-    assert.equal(migrated.currentScenarios[0].phase8_durability_enemy_affinity, 'extreme:agl');
+    assert.equal(await run.page.locator('[data-role="manual-enemy-attack"]').first().inputValue(), '321');
+    assert.equal(await run.page.locator('[data-role="is-critical"]').first().isChecked(), true);
+    assert.equal(await run.page.locator('html').getAttribute('data-theme'), 'dark');
   } finally {
     await run.close();
   }
 });
 
-test('追加feedback: 個別に閉じても計算・入力・legacy保存内容は変わらない', { timeout: TEST_TIMEOUT }, async () => {
-  const run = await openChecked(chromiumBrowser, rcUrl('additional-feedback-collapse'));
+test('追加feedback: 壊れたPages内保存は初期状態へ安全に戻し、旧loadedEnemyを移行しない', { timeout: TEST_TIMEOUT }, async () => {
+  const run = await openChecked(chromiumBrowser, rcUrl('pages-local-storage-recovery'));
   try {
     await run.goto();
     await run.page.evaluate((key) => {
-      const saved = JSON.parse(localStorage.getItem(key));
-      saved.savedCharacters = [{ name: 'legacy保持確認', scenarios: [{ scenario_title: '旧保存状況', char_def: '98765' }] }];
-      localStorage.setItem(key, JSON.stringify(saved));
+      localStorage.setItem(key, JSON.stringify({
+        phase8PagesStateVersion: 1,
+        durabilityLines: [],
+        currentScenarios: { broken: true },
+        theme: 'dark'
+      }));
     }, RC_STORAGE_KEY);
     await run.page.reload({ waitUntil: 'domcontentloaded' });
     await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
+    assert.equal(await run.page.locator('.scenario-card').count(), 1);
+    assert.equal(await run.page.locator('[data-role="scenario-title"]').first().inputValue(), '状況 1');
+    assert.equal(await run.page.locator('html').getAttribute('data-theme'), 'light');
+    const recovered = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
+    assert.equal(Array.isArray(recovered.currentScenarios), true);
+    assert.equal(recovered.currentScenarios.length, 1);
+    assert.deepEqual(recovered.durabilityLines, [{ name: '完封', value: 0 }, { name: '70万', value: 700000 }]);
+
+    await run.page.evaluate((key) => {
+      localStorage.setItem(key, JSON.stringify({
+        phase8PagesStateVersion: 1,
+        durabilityLines: [{ name: '完封', value: 0 }],
+        currentScenarios: [{
+          scenario_title: 'Pages内の状況',
+          char_def: '246810',
+          loadedEnemy: { name: '旧版保存敵', baseAtk: 999999, class: 'extreme', type: 'str' }
+        }],
+        theme: 'light'
+      }));
+    }, RC_STORAGE_KEY);
+    await run.page.reload({ waitUntil: 'domcontentloaded' });
+    await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
+    assert.equal(await run.page.locator('[data-role="scenario-title"]').first().inputValue(), 'Pages内の状況');
+    assert.equal(await run.page.locator('#char-def').inputValue(), '246810');
+    assert.equal(await run.page.locator('#event-select').inputValue(), '');
+    assert.equal(await run.page.locator('#event-select option[value="__legacy__"]').count(), 0);
+    const cleaned = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
+    assert.equal('loadedEnemy' in cleaned.currentScenarios[0], false);
+  } finally {
+    await run.close();
+  }
+});
+
+test('追加feedback: 個別に閉じても計算・入力・Pages内保存内容は変わらない', { timeout: TEST_TIMEOUT }, async () => {
+  const run = await openChecked(chromiumBrowser, rcUrl('additional-feedback-collapse'));
+  try {
+    await run.goto();
     await run.page.locator('#char-def').fill('123456');
     await run.page.locator('[data-role="scenario-title"]').first().fill('折りたたみ確認');
     const before = await run.page.locator('#final-defense').textContent();
@@ -310,8 +445,7 @@ test('追加feedback: 個別に閉じても計算・入力・legacy保存内容�
     assert.equal(await run.page.evaluate((key) => localStorage.getItem(key), RC_STORAGE_KEY), beforeStorage);
     const stored = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
     assert.equal(stored.currentScenarios[0].char_def, '123456');
-    assert.equal(stored.savedCharacters[0].name, 'legacy保持確認');
-    assert.equal(stored.savedCharacters[0].scenarios[0].char_def, '98765');
+    assert.equal('savedCharacters' in stored, false);
 
     await run.page.reload({ waitUntil: 'domcontentloaded' });
     await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
@@ -373,7 +507,7 @@ test('PC feedback: 有効な敵状態だけから通常・複数必殺・全体�
     assert.match(summary, /架空必殺A\s*1,500,000～2,500,000/);
     assert.match(summary, /架空必殺B\s*2,800,000～3,500,000/);
     assert.match(summary, /全体攻撃\s*720,000～1,200,000/);
-    assert.match(summary, /複数の必殺技/);
+    assert.doesNotMatch(summary, /複数の必殺技/);
     assert.equal(await run.page.locator('[data-condition="turn"]').count(), 1);
     assert.equal(await run.page.locator('[data-condition="hp"]').count(), 1);
     assert.ok(await run.page.locator('#attack-select option').count() >= 6);
@@ -382,39 +516,26 @@ test('PC feedback: 有効な敵状態だけから通常・複数必殺・全体�
   }
 });
 
-test('追加feedback: 管理UIなしでも複数計算カードと自動保存を使え、legacy保存を保持する', { timeout: TEST_TIMEOUT }, async () => {
+test('追加feedback: 管理UIなしでも複数計算カードとPages内自動保存を使える', { timeout: TEST_TIMEOUT }, async () => {
   const run = await openChecked(chromiumBrowser, rcUrl('pc-feedback-characters'));
   try {
     await run.goto();
-    await run.page.evaluate((key) => {
-      const saved = JSON.parse(localStorage.getItem(key));
-      saved.savedCharacters = [{ name: '移行済みlegacyキャラ', scenarios: [{ scenario_title: 'legacy状況', char_def: '77777' }] }];
-      saved.currentScenarios = [
-        { scenario_title: '基準状況', char_def: '100000', own_class: 'super', own_type: 'teq' },
-        { scenario_title: 'アイテム使用後', char_def: '200000', own_class: 'extreme', own_type: 'agl' }
-      ];
-      localStorage.setItem(key, JSON.stringify(saved));
-    }, RC_STORAGE_KEY);
-    await run.page.reload({ waitUntil: 'domcontentloaded' });
-    await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
     assert.equal(await run.page.locator('#character-management').count(), 0);
     assert.equal(await run.page.getByText('キャラクター管理', { exact: true }).count(), 0);
     assert.equal(await run.page.locator('#save-character-button, #load-character-button, #new-character-button, #delete-character-button').count(), 0);
-    assert.equal(await run.page.locator('.scenario-card').count(), 2);
-    assert.deepEqual(
-      await run.page.locator('[data-role="scenario-title"]').evaluateAll((inputs) => inputs.map((input) => input.value)),
-      ['基準状況', 'アイテム使用後']
-    );
-
+    assert.equal(await run.page.locator('.scenario-card').count(), 1);
+    await run.page.locator('[data-role="scenario-title"]').first().fill('基準状況');
     await run.page.locator('#add-scenario-button').click();
-    await run.page.waitForFunction(() => document.querySelectorAll('.scenario-card').length === 3);
+    await run.page.waitForFunction(() => document.querySelectorAll('.scenario-card').length === 2);
+    await run.page.locator('[data-role="scenario-title"]').nth(1).fill('アイテム使用後');
     await run.page.locator('[data-action="duplicate"]').first().click();
-    await run.page.waitForFunction(() => document.querySelectorAll('.scenario-card').length === 4);
-    await run.page.locator('[data-action="delete"]').last().click();
     await run.page.waitForFunction(() => document.querySelectorAll('.scenario-card').length === 3);
+    await run.page.locator('[data-action="delete"]').nth(1).click();
+    await run.page.waitForFunction(() => document.querySelectorAll('.scenario-card').length === 2);
     const stored = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
-    assert.equal(stored.currentScenarios.length, 3);
-    assert.deepEqual(stored.savedCharacters, [{ name: '移行済みlegacyキャラ', scenarios: [{ scenario_title: 'legacy状況', char_def: '77777' }] }]);
+    assert.equal(stored.currentScenarios.length, 2);
+    assert.deepEqual(stored.currentScenarios.map((scenario) => scenario.scenario_title), ['基準状況', 'アイテム使用後']);
+    assert.equal('savedCharacters' in stored, false);
   } finally {
     await run.close();
   }
@@ -429,10 +550,21 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
     try {
       await run.goto();
       const layout = await run.page.evaluate(() => {
+        const rect = (selector) => document.querySelector(selector).getBoundingClientRect();
         const first = document.querySelector('#char-def').getBoundingClientRect();
         const second = document.querySelector('#leader').getBoundingClientRect();
         const card = document.querySelector('.scenario-card').getBoundingClientRect();
         const affinity = document.querySelector('.affinity-section').getBoundingClientRect();
+        const affinityGrid = rect('.affinity-section .affinity-grid');
+        const ownClass = rect('#own-class');
+        const ownType = rect('#own-type');
+        const attributeDefense = rect('#attribute-defense');
+        const guardLabel = document.querySelector('#guard').closest('label').getBoundingClientRect();
+        const criticalToggle = rect('.critical-toggle');
+        const criticalAttack = rect('[data-role="critical-attack"]');
+        const criticalDefense = rect('[data-role="critical-defense"]');
+        const conditionSummary = document.querySelector('[data-role="durability-condition-summary"]');
+        const conditionCells = [...document.querySelectorAll('[data-role="durability-condition-summary"] > span')].map((element) => element.getBoundingClientRect());
         return {
           noOverflow: document.documentElement.scrollWidth <= innerWidth,
           sameRow: Math.abs(first.top - second.top) < 2,
@@ -442,10 +574,19 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
           scenarioInputsHeight: affinity.bottom - card.top,
           cardWidth: card.width,
           actionButtonsSameRow: new Set([...document.querySelectorAll('.scenario-actions button')].map((button) => Math.round(button.getBoundingClientRect().top))).size === 1,
-          actionsWithinViewport: document.querySelector('.scenario-actions').getBoundingClientRect().right <= innerWidth
+          actionsWithinViewport: document.querySelector('.scenario-actions').getBoundingClientRect().right <= innerWidth,
+          defenseRowAligned: Math.abs(attributeDefense.top - guardLabel.top) < 2,
+          criticalInputsAligned: Math.abs(criticalAttack.top - criticalDefense.top) < 2 && Math.abs(criticalAttack.height - criticalDefense.height) < 2,
+          leftColumnAligned: Math.abs(ownClass.left - attributeDefense.left) < 2 && Math.abs(ownClass.left - criticalAttack.left) < 2,
+          rightColumnAligned: Math.abs(ownType.left - criticalDefense.left) < 2,
+          criticalToggleFullWidth: Math.abs(criticalToggle.left - affinityGrid.left) < 2 && Math.abs(criticalToggle.right - affinityGrid.right) < 2,
+          criticalToggleHeight: criticalToggle.height,
+          summarySameRow: new Set(conditionCells.map((cell) => Math.round(cell.top))).size === 1,
+          summaryOverflow: conditionSummary.scrollWidth - conditionSummary.clientWidth
         };
       });
       const previous = PREVIOUS_MOBILE_LAYOUT[width];
+      const immediatePrevious = IMMEDIATE_PREVIOUS_MOBILE_LAYOUT[width];
       assert.equal(layout.noOverflow, true);
       assert.equal(layout.sameRow, true);
       assert.ok(layout.inputHeight >= 40);
@@ -454,8 +595,19 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
       assert.ok(layout.pageHeight < BEFORE_MANAGEMENT_REMOVAL_LAYOUT[width].pageHeight);
       assert.ok(layout.scenarioCardHeight <= previous.scenarioCardHeight * 0.85);
       assert.ok(layout.scenarioInputsHeight <= previous.scenarioInputsHeight * 0.82);
+      assert.ok(layout.pageHeight <= immediatePrevious.pageHeight, JSON.stringify(layout));
+      assert.ok(layout.scenarioCardHeight <= immediatePrevious.scenarioCardHeight, JSON.stringify(layout));
+      assert.ok(layout.scenarioInputsHeight <= immediatePrevious.scenarioInputsHeight, JSON.stringify(layout));
       assert.equal(layout.actionButtonsSameRow, true);
       assert.equal(layout.actionsWithinViewport, true);
+      assert.equal(layout.defenseRowAligned, true);
+      assert.equal(layout.criticalInputsAligned, true);
+      assert.equal(layout.leftColumnAligned, true);
+      assert.equal(layout.rightColumnAligned, true);
+      assert.equal(layout.criticalToggleFullWidth, true);
+      assert.ok(layout.criticalToggleHeight >= 40);
+      assert.equal(layout.summarySameRow, true);
+      assert.ok(layout.summaryOverflow <= 1, JSON.stringify(layout));
       assert.equal(await run.page.locator('#expand-all-scenarios').isVisible(), true);
       assert.equal(await run.page.locator('#collapse-all-scenarios').isVisible(), true);
 
@@ -579,42 +731,40 @@ test('1操作更新は全検査後だけ永続known-good化し、reload後も新
   }
 });
 
-test('実機確認用の架空移行も1ボタンで完了する', { timeout: TEST_TIMEOUT }, async () => {
-  const source = new URL('/release-candidate/phase8/migration-device-check.html', staticServer.origin);
-  const run = await openChecked(chromiumBrowser, source.href);
+test('追加feedback: 保存移行UI・通常導線・専用entry・PAT要求がrelease candidateに存在しない', { timeout: TEST_TIMEOUT }, async () => {
+  const run = await openChecked(chromiumBrowser, rcUrl('no-saved-data-migration'));
   try {
-    await run.page.goto(source.href, { waitUntil: 'domcontentloaded' });
-    const popupPromise = run.context.waitForEvent('page');
-    await run.page.locator('#migration-button').click();
-    const popup = await popupPromise;
-    await popup.waitForLoadState('domcontentloaded');
-    await run.page.waitForFunction(() => ['imported', 'unchanged'].includes(globalThis.__phase8MigrationResult?.status));
-    const saved = await popup.evaluate(() => ({
-      state: localStorage.getItem('dokkan_phase8_rc_imported_dokkan_calc_data_v22'),
-      pat: localStorage.getItem('dokkan_phase8_rc_imported_dokkan_github_pat')
-    }));
-    assert.match(saved.state, /架空の保存キャラクター/);
-    const parsed = JSON.parse(saved.state);
-    assert.equal(parsed.savedCharacters.length, 2);
-    assert.equal(parsed.savedCharacters.reduce((total, character) => total + character.scenarios.length, 0), 2);
-    assert.equal(parsed.currentScenarios.length, 1);
-    assert.equal(parsed.savedEnemies[0].series[0].stages[0].bosses.length, 1);
-    assert.equal(saved.pat, null);
-    assert.match(await popup.locator('#target-details').innerText(), /保存キャラクター 2件.*保存済み状況 2件.*作業中の状況 1件.*手動敵 1件.*会心補正 1件.*GitHub PATは0件.*イベント・ステージ・配布敵データは増えていません.*「計算する状況」/);
-    assert.match(await run.page.locator('#migration-result-details').innerText(), /保存キャラクター2件.*作業中の状況1件.*会心補正1件.*GitHub PATは移行していません.*「計算する状況」/);
-    await popup.getByRole('link', { name: '確認版を開いて作業中の状況を見る' }).click();
-    await popup.waitForFunction(() => globalThis.__phase8Ready === true);
-    assert.equal(await popup.locator('#character-management').count(), 0);
-    assert.equal(await popup.locator('.scenario-card').count(), 1);
-    assert.equal(await popup.locator('[data-role="scenario-title"]').inputValue(), '架空の作業中状況');
-    assert.equal(await popup.locator('#char-def').inputValue(), '150000');
-    assert.equal(await popup.locator('#damage-reduction').inputValue(), '30');
-    assert.equal(await popup.locator('#durability-own-affinity').inputValue(), 'super:phy');
-    assert.equal(await popup.locator('html').getAttribute('data-theme'), 'dark');
-    assert.match(await popup.locator('#durability-settings').innerText(), /架空50万/);
-    await popup.locator('#data-settings').evaluate((element) => { element.open = true; });
-    assert.match(await popup.locator('#saved-data-summary').innerText(), /保存キャラクター：2件[\s\S]*作業中の状況：1件[\s\S]*手動保存した敵：1件[\s\S]*会心補正：1件[\s\S]*GitHub PAT：移行していません[\s\S]*「計算する状況」/);
-    await popup.close();
+    await run.goto();
+    assert.equal(await run.page.getByText('保存データ移行', { exact: true }).count(), 0);
+    assert.equal(await run.page.locator('#migration-link, #migration-button, #saved-data-summary, a[href*="migration"]').count(), 0);
+    assert.equal(await run.page.locator('input[name*="pat" i], input[id*="pat" i], input[placeholder*="PAT" i]').count(), 0);
+    assert.equal(await run.page.locator('body').innerText().then((text) => /Pagesへ保存データを移す/.test(text)), false);
+    for (const relativePath of [
+      'migration-device-check.html',
+      'migration-from-current.html',
+      'migration-target.html',
+      'migration-bridge.js',
+      'migration-target.mjs'
+    ]) {
+      assert.equal(existsSync(path.join(REPO_ROOT, 'release-candidate', 'phase8', relativePath)), false);
+    }
+    const [appSource, devicePreview] = await Promise.all([
+      readFile(path.join(REPO_ROOT, 'release-candidate', 'phase8', 'app.mjs'), 'utf8'),
+      readFile(path.join(REPO_ROOT, 'release-candidate', 'phase8', 'device-preview.html'), 'utf8')
+    ]);
+    for (const text of [appSource, devicePreview]) {
+      for (const migrationOnlyToken of [
+        'legacyEnemyToRuntime',
+        'configureLegacyEnemy',
+        'loadedEnemy',
+        'dokkan_phase8_rc_imported_',
+        'migration-device-check.html',
+        'migration-from-current.html',
+        'migration-target.html'
+      ]) {
+        assert.doesNotMatch(text, new RegExp(migrationOnlyToken.replaceAll('.', '\\.')));
+      }
+    }
   } finally {
     await run.close();
   }
@@ -684,49 +834,6 @@ test('壊れたbrowser cacheはdigestで破棄し、同じartifactを再取得�
     assert.equal(metrics.corruptCacheEntries, 1);
     assert.ok(metrics.networkLoads >= 1);
     assert.equal(await run.page.locator('#event-select option').count(), 4);
-  } finally {
-    await run.close();
-  }
-});
-
-test('file移行元からPages相当へ1回移し、PAT・未知key・元データを変更しない', { timeout: TEST_TIMEOUT }, async () => {
-  const target = new URL('/release-candidate/phase8/migration-target.html', staticServer.origin);
-  const source = new URL('../../release-candidate/phase8/migration-from-current.html', import.meta.url);
-  source.searchParams.set('target', target.href);
-  const run = await openChecked(chromiumBrowser, source.href);
-  try {
-    await run.page.goto(source.href, { waitUntil: 'domcontentloaded' });
-    const state = JSON.stringify({ durabilityLines: [], savedCharacters: [{ name: '移行確認' }], savedEnemies: [], currentScenarios: [], theme: 'dark' });
-    await run.page.evaluate(({ state }) => {
-      localStorage.setItem('dokkan_calc_data_v22', state);
-      localStorage.setItem('dokkan_crit_overrides', '{"preview":true}');
-      localStorage.setItem('dokkan_github_pat', 'must-not-migrate');
-      localStorage.setItem('unknown-key', 'must-not-migrate');
-    }, { state });
-    const popupPromise = run.context.waitForEvent('page');
-    await run.page.locator('#migration-button').click();
-    const popup = await popupPromise;
-    await popup.waitForLoadState('domcontentloaded');
-    await run.page.waitForFunction(() => ['imported', 'unchanged'].includes(globalThis.__phase8MigrationResult?.status));
-    const migrated = await popup.evaluate(() => ({
-      state: localStorage.getItem('dokkan_phase8_rc_imported_dokkan_calc_data_v22'),
-      critical: localStorage.getItem('dokkan_phase8_rc_imported_dokkan_crit_overrides'),
-      pat: localStorage.getItem('dokkan_phase8_rc_imported_dokkan_github_pat'),
-      unknown: localStorage.getItem('dokkan_phase8_rc_imported_unknown-key')
-    }));
-    assert.equal(migrated.state, state);
-    assert.equal(migrated.critical, '{"preview":true}');
-    assert.equal(migrated.pat, null);
-    assert.equal(migrated.unknown, null);
-    const sourceValues = await run.page.evaluate(() => ({
-      state: localStorage.getItem('dokkan_calc_data_v22'),
-      pat: localStorage.getItem('dokkan_github_pat'),
-      unknown: localStorage.getItem('unknown-key')
-    }));
-    assert.equal(sourceValues.state, state);
-    assert.equal(sourceValues.pat, 'must-not-migrate');
-    assert.equal(sourceValues.unknown, 'must-not-migrate');
-    await popup.close();
   } finally {
     await run.close();
   }

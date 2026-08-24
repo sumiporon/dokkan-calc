@@ -1,5 +1,7 @@
 # Phase 8修正版 PC再確認手順
 
+> 保存データ移行に関する部分は当時の設計・検証履歴です。ownerは後にOneDrive／local旧版→Pages移行を撤回しました。現在のRCはPagesを新規状態で開始し、OneDriveと保存データを移行・同期しません。この文書の移行手順は実装・実機確認に使わないでください。最新仕様は[Phase 8 結果条件表示・保存移行撤去 修正報告](phase8-result-summary-no-migration-report.md)を参照してください。
+
 作成日: 2026-08-24（JST）
 
 Android／iPhone確認はまだ行わない。まずPCだけで次を確認し、大きな問題がなければownerが次の確認順を指示する。
