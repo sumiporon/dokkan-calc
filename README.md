@@ -162,7 +162,8 @@ npm run benchmark:phase8
 - 最新の追加実機フィードバックでは、属性・防御設定のスマホ整列、両結果直近の最終DEF／軽減率／全属性ガード表示、不要説明の削除、OneDrive→Pages移行機能の完全撤去を行いました。PagesとOneDriveは保存状態を同期しません。
 - Phase 8最終実機フィードバックでは、ダメージ軽減率をDEF設定の末尾へ移し、IDに区切り文字を含む全体攻撃も対象別ATKで選択・自動計算できるよう修正しました。スマホの攻撃力範囲は数値部分を途中改行せず、360px／390pxでも横overflowを起こしません。
 - 追加のスマホ実機フィードバックにより、低頻度の「敵の会心」は初期状態で閉じる表示専用の折りたたみにしました。ダメージ軽減率は基本DEF設定の最終項目へ置き直し、Androidのrange末尾表示とWebKitの長いselect幅を修正し、被ダメージ／属性結果を約62:38へ調整しました。
-- Phase 8の結果・select最終調整では、被ダメージ値に小さな上余白と安定した行間を付け、1行／2行とも上寄りに見えない配置へ整えました。敵選択系selectのfocusは外側outlineではなく内側2px borderで描き、長い選択肢を収める親枠に四辺・四隅を切られないようにしています。
+- Phase 8の結果・select調整では、敵選択系selectのfocusを外側outlineではなく内側2px borderで描き、長い選択肢を収める親枠に四辺・四隅を切られないようにしました。最初の被ダメージ値padding調整は実機で不十分と判明したため、後の構造修正で置き換えています。
+- 被ダメージ結果の再修正では、見出しと値を別grid rowへ分け、スマホでは高さ50pxの値領域内で1行／2行の値ブロック全体を上下中央へ配置しました。値文字へのpadding追加ではなく、余白を上下へ同量に配る構造です。
 
 ## 重要な安全上の注意
 
@@ -187,6 +188,8 @@ npm run benchmark:phase8
 - [Phase 8スマホ描画修正版 PC・スマホ再確認手順](docs/phase8-mobile-render-feedback-recheck-checklist.md)
 - [Phase 8結果位置・select枠 最終フィードバック修正報告](docs/phase8-result-focus-feedback-report.md)
 - [Phase 8結果位置・select枠修正版 PC・スマホ再確認手順](docs/phase8-result-focus-feedback-recheck-checklist.md)
+- [Phase 8被ダメージ結果 縦位置再修正報告](docs/phase8-damage-result-alignment-report.md)
+- [Phase 8被ダメージ結果再修正版 PC・スマホ再確認手順](docs/phase8-damage-result-alignment-recheck-checklist.md)
 - [保存HTMLの再解析結果](docs/phase3-cached-source-analysis.md)
 - [将来構成と敵データ設計](docs/phase3-architecture-and-data-design.md)
 - [第4段階の完了報告](docs/phase4-completion-report.md)

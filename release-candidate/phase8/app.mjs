@@ -609,8 +609,11 @@ function renderDamageResult(context) {
   const value = document.createElement('span');
   value.className = 'damage-range-value';
   value.textContent = core.formatDamageRange(range);
+  const content = document.createElement('span');
+  content.className = 'damage-result-content';
+  content.append(label, document.createElement('wbr'), value);
   result.classList.add('damage-result-value');
-  result.replaceChildren(label, document.createElement('wbr'), value);
+  result.replaceChildren(content);
   role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：${enemyLabel}`;
 }
 

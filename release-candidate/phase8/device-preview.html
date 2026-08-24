@@ -140,8 +140,10 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .results > div { display: grid; align-content: start; gap: .25rem; min-width: 0; padding: .7rem; border: 1px solid var(--border); border-radius: .6rem; }
 .results span { color: var(--muted); font-size: .8rem; }
 .results strong { overflow-wrap: anywhere; font-size: 1.08rem; }
-.damage-result-value { display: block; }
-.results .damage-result-label, .results .damage-range-value { color: inherit; font-size: inherit; }
+.damage-result-card { grid-template-rows: auto 1fr; }
+.damage-result-value { display: grid; align-self: stretch; align-content: center; }
+.results .damage-result-content, .results .damage-result-label, .results .damage-range-value { color: inherit; font-size: inherit; }
+.damage-result-content { display: block; }
 .damage-result-label { min-width: 0; overflow-wrap: anywhere; }
 .damage-range-value {
   display: inline-block;
@@ -195,7 +197,8 @@ dialog::backdrop { background: #0008; }
   .results span { font-size: .68rem; }
   .results strong { font-size: .9rem; }
   .damage-results { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
-  .damage-result-value { padding-block: .14rem .08rem; line-height: 1.3; }
+  .damage-result-card { grid-template-rows: auto minmax(3.125rem, 1fr); }
+  .damage-result-value { padding: 0; line-height: 1.3; }
   .section-heading { margin: .5rem 0 .25rem; align-items: center; gap: .3rem; }
   .section-heading p { display: none; }
   .section-heading .primary-button { flex: 0 0 auto; width: auto; }
@@ -380,7 +383,7 @@ dialog::backdrop { background: #0008; }
               <span>全属性ガード<strong data-role="damage-summary-guard">なし</strong></span>
             </div>
             <div class="results damage-results" aria-live="polite">
-              <div><span>被ダメージ（1.00〜1.03）</span><strong data-role="damage-result">敵を選択してください</strong></div>
+              <div class="damage-result-card"><span>被ダメージ（1.00〜1.03）</span><strong data-role="damage-result">敵を選択してください</strong></div>
               <div><span>属性</span><strong data-role="result-types">自分：超技<br>敵：未選択</strong></div>
             </div>
           </section>
@@ -2335,8 +2338,11 @@ function renderDamageResult(context) {
   const value = document.createElement('span');
   value.className = 'damage-range-value';
   value.textContent = core.formatDamageRange(range);
+  const content = document.createElement('span');
+  content.className = 'damage-result-content';
+  content.append(label, document.createElement('wbr'), value);
   result.classList.add('damage-result-value');
-  result.replaceChildren(label, document.createElement('wbr'), value);
+  result.replaceChildren(content);
   role(context, 'result-types').innerHTML = `自分：${ownLabel}<br>敵：${enemyLabel}`;
 }
 

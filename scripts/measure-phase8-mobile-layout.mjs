@@ -109,19 +109,39 @@ async function measure(width) {
     const damageHeading = cards[0].querySelector(':scope > span').getBoundingClientRect();
     const damageValue = document.querySelector('[data-role="damage-result"]');
     const damageValueStyle = getComputedStyle(damageValue);
-    const damageLabel = damageValue.querySelector('.damage-result-label').getBoundingClientRect();
+    const damageContent = damageValue.querySelector('.damage-result-content');
+    const damageLabelElement = damageValue.querySelector('.damage-result-label');
     const range = document.querySelector('.damage-range-value');
-    const rangeRect = range.getBoundingClientRect();
+    const measureRhythm = (labelText, rangeText) => {
+      damageLabelElement.textContent = labelText;
+      range.textContent = rangeText;
+      const valueRect = damageValue.getBoundingClientRect();
+      const contentRect = damageContent.getBoundingClientRect();
+      const labelRect = damageLabelElement.getBoundingClientRect();
+      const rangeRect = range.getBoundingClientRect();
+      return {
+        sameLine: Math.abs(labelRect.top - rangeRect.top) < parseFloat(damageValueStyle.lineHeight) * 0.6,
+        headingValueGap: Number((Math.min(labelRect.top, rangeRect.top) - damageHeading.bottom).toFixed(2)),
+        valueAreaHeight: Number(valueRect.height.toFixed(2)),
+        valueTopInset: Number((contentRect.top - valueRect.top).toFixed(2)),
+        valueBottomInset: Number((valueRect.bottom - contentRect.bottom).toFixed(2))
+      };
+    };
+    const oneLineRhythm = measureRhythm('架空必殺A：', '171.9万〜177.2万');
+    const twoLineRhythm = measureRhythm('非常に長い攻撃名：', '171.9万〜177.2万');
     const textRange = document.createRange();
     textRange.selectNodeContents(range);
     return {
       damageResultWidthRatio: Number((cards[0].getBoundingClientRect().width / cards[1].getBoundingClientRect().width).toFixed(3)),
       damageRangeSingleLine: textRange.getClientRects().length === 1,
       damageRangeOverflow: range.scrollWidth - range.clientWidth,
-      damageHeadingValueGap: Number((Math.min(damageLabel.top, rangeRect.top) - damageHeading.bottom).toFixed(2)),
       damageValuePaddingTop: damageValueStyle.paddingTop,
       damageValuePaddingBottom: damageValueStyle.paddingBottom,
       damageValueLineHeight: damageValueStyle.lineHeight,
+      damageValueDisplay: damageValueStyle.display,
+      damageValueAlignContent: damageValueStyle.alignContent,
+      damageOneLineRhythm: oneLineRhythm,
+      damageTwoLineRhythm: twoLineRhythm,
       damageResultHorizontalOverflow: document.documentElement.scrollWidth > innerWidth
     };
   }));

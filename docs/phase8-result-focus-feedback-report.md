@@ -1,5 +1,7 @@
 # Phase 8 結果位置・select枠 最終フィードバック修正報告
 
+> この文書のselect強調枠修正は現行仕様である。一方、被ダメージ値へpaddingを加えた縦位置調整は実機で不十分と判明し、[被ダメージ結果 縦位置再修正](phase8-damage-result-alignment-report.md)の見出し行／値行を分ける構造へ置き換えた。
+
 ## 対象と安全境界
 
 ownerのスマートフォン実機フィードバック2点だけを修正した。Phase 9には進んでいない。`main`、`origin/main`、本番Pages、現在のOneDrive本番版、production敵データ／workflow、外部自動取得、0操作自動更新は変更していない。
