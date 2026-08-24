@@ -113,6 +113,15 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .enemy-summary > span { color: var(--muted); }
 .attack-summary { display: grid; gap: .18rem; }
 .attack-summary-row { display: flex; justify-content: space-between; gap: .7rem; border-top: 1px solid var(--border); padding-top: .25rem; }
+.attack-summary-row > span { min-width: 0; overflow-wrap: anywhere; }
+.attack-range-value {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
 .condition-controls { margin-top: .7rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .results { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: .75rem; }
 .results > div { display: grid; align-content: start; gap: .25rem; min-width: 0; padding: .7rem; border: 1px solid var(--border); border-radius: .6rem; }
@@ -270,7 +279,6 @@ dialog::backdrop { background: #0008; }
               <label>リーダースキル (%)<input data-role="leader" data-input="leader" type="number" value="0" inputmode="decimal"></label>
               <label>足し算パッシブ (%)<input data-role="passive" data-input="passive" type="number" value="0" inputmode="decimal"></label>
               <label>掛け算パッシブ (%)<input data-role="multi-passive" data-input="multi_passive" type="number" value="0" inputmode="decimal"></label>
-              <label>ダメージ軽減率 (%)<input data-role="damage-reduction" data-input="dr_input" type="number" value="0" inputmode="decimal"></label>
               <label>メモリー (%)<input data-role="memory" data-input="memory" type="number" value="0" inputmode="decimal"></label>
               <label>リンクスキル (%)<input data-role="link" data-input="link" type="number" value="0" inputmode="decimal"></label>
               <label>必殺技効果 (%)<input data-role="super-attack" data-input="super_attack" type="number" value="0" inputmode="decimal"></label>
@@ -290,6 +298,7 @@ dialog::backdrop { background: #0008; }
               <label class="checkbox-label critical-toggle"><input data-role="is-critical" data-input="is_critical" type="checkbox">敵の会心を想定</label>
               <label>会心時ATK補正 (%)<input data-role="critical-attack" data-input="crit_atk_up" type="number" value="0" inputmode="decimal"></label>
               <label>会心時DEF低下 (%)<input data-role="critical-defense" data-input="crit_def_down" type="number" value="0" inputmode="decimal"></label>
+              <label class="damage-reduction-field">ダメージ軽減率 (%)<input data-role="damage-reduction" data-input="dr_input" type="number" value="0" inputmode="decimal"></label>
             </div>
           </section>
 
@@ -1683,6 +1692,17 @@ function formatAttackRange(range) {
   return range.minimum === range.maximum ? minimum : `${minimum}～${maximum}`;
 }
 
+function createAreaAttackSelection(areaAttackId, target = 'first') {
+  if (!['first', 'additional'].includes(target)) throw new TypeError(`Unsupported area-attack target: ${target}`);
+  return `area:${areaAttackId}:${target}`;
+}
+
+function parseAreaAttackSelection(value) {
+  if (typeof value !== 'string') return null;
+  const match = /^area:(.+):(first|additional)$/.exec(value);
+  return match ? { id: match[1], target: match[2] } : null;
+}
+
 
 
 const params = new URLSearchParams(location.search);
@@ -1999,6 +2019,7 @@ function renderEnemyAttackSummary(context, item) {
     const label = document.createElement('span');
     label.textContent = name;
     const strong = document.createElement('strong');
+    strong.className = 'attack-range-value';
     strong.textContent = value;
     row.append(label, strong);
     container.append(row);
@@ -2021,9 +2042,9 @@ function renderAttackOptions(context, { initial = {} } = {}) {
     if (superAttackAvailableInState(source, selectedState)) options.push({ value: `super:${attack.id}`, label: `${attack.name} ${formatAttackRange(attack.range)}` });
   });
   for (const area of areaAttacksFor(item)) {
-    options.push({ value: `area:${area.id}:first`, label: `全体攻撃 ${Number(known(area.firstTargetDamage, 0)).toLocaleString()}` });
+    options.push({ value: createAreaAttackSelection(area.id, 'first'), label: `全体攻撃 ${Number(known(area.firstTargetDamage, 0)).toLocaleString()}` });
     if (known(area.additionalTargetDamage, null) != null && known(area.additionalTargetDamage, null) !== known(area.firstTargetDamage, null)) {
-      options.push({ value: `area:${area.id}:additional`, label: `全体攻撃（2体目以降） ${Number(known(area.additionalTargetDamage, 0)).toLocaleString()}` });
+      options.push({ value: createAreaAttackSelection(area.id, 'additional'), label: `全体攻撃（2体目以降） ${Number(known(area.additionalTargetDamage, 0)).toLocaleString()}` });
     }
   }
   const custom = customAttackOption(context);
@@ -2201,10 +2222,13 @@ function selectedAttack(context, item) {
     const attack = condition.supers.find((candidate) => candidate.id === id);
     return attack ? { name: attack.name, value: attack.value } : null;
   }
-  if (value.startsWith('area:')) {
-    const [, id, target] = value.split(':');
-    const attack = areaAttacksFor(item).find((candidate) => candidate.id === id);
-    return attack ? { name: target === 'additional' ? '全体攻撃（2体目以降）' : '全体攻撃', value: areaAttackValue(attack, condition, target) } : null;
+  const areaSelection = parseAreaAttackSelection(value);
+  if (areaSelection) {
+    const attack = areaAttacksFor(item).find((candidate) => candidate.id === areaSelection.id);
+    return attack ? {
+      name: areaSelection.target === 'additional' ? '全体攻撃（2体目以降）' : '全体攻撃',
+      value: areaAttackValue(attack, condition, areaSelection.target)
+    } : null;
   }
   return null;
 }

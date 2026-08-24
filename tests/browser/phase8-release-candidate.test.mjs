@@ -30,8 +30,8 @@ const BEFORE_MANAGEMENT_REMOVAL_LAYOUT = {
   390: { pageHeight: 1713 }
 };
 const IMMEDIATE_PREVIOUS_MOBILE_LAYOUT = {
-  360: { pageHeight: 1470, scenarioCardHeight: 952, scenarioInputsHeight: 755 },
-  390: { pageHeight: 1470, scenarioCardHeight: 952, scenarioInputsHeight: 755 }
+  360: { pageHeight: 1462, scenarioCardHeight: 943, scenarioInputsHeight: 740 },
+  390: { pageHeight: 1462, scenarioCardHeight: 943, scenarioInputsHeight: 740 }
 };
 
 let chromiumBrowser;
@@ -210,6 +210,16 @@ test('追加feedback: 両モードの結果直近に最終DEF・軽減率・ガ�
   const run = await openChecked(chromiumBrowser, rcUrl('result-condition-summaries'));
   try {
     await run.goto();
+    const reductionPosition = await run.page.locator('#damage-reduction').evaluate((input) => {
+      const label = input.closest('label');
+      const grid = input.closest('.affinity-grid');
+      return {
+        inAffinitySettings: Boolean(grid),
+        isLastSetting: grid?.lastElementChild === label,
+        baseSettingsContainReduction: Boolean(document.querySelector('section[aria-label="基本DEF設定"] #damage-reduction'))
+      };
+    });
+    assert.deepEqual(reductionPosition, { inAffinitySettings: true, isLastSetting: true, baseSettingsContainReduction: false });
     await run.page.locator('#char-def').fill('420000');
     await run.page.locator('#damage-reduction').fill('30');
     await run.page.locator('#guard').check();
@@ -228,6 +238,15 @@ test('追加feedback: 両モードの結果直近に最終DEF・軽減率・ガ�
     await run.page.locator('#guard').uncheck();
     assert.deepEqual(await summary('durability'), { finalDefense: '462,000', reduction: '45%', guard: 'なし' });
     assert.deepEqual(await summary('damage'), { finalDefense: '462,000', reduction: '45%', guard: 'なし' });
+    const durabilityBeforeReload = await run.page.locator('[data-role="durability-table"]').first().innerText();
+    const storedBeforeReload = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
+    assert.equal(storedBeforeReload.currentScenarios[0].dr_input, '45');
+
+    await run.page.reload({ waitUntil: 'domcontentloaded' });
+    await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
+    assert.equal(await run.page.locator('#damage-reduction').inputValue(), '45');
+    assert.equal(await run.page.locator('[data-role="durability-table"]').first().innerText(), durabilityBeforeReload);
+    assert.deepEqual(await summary('durability'), { finalDefense: '462,000', reduction: '45%', guard: 'なし' });
 
     await run.page.locator('#mode-damage').check();
     assert.equal(await run.page.locator('[data-role="damage-condition-summary"]').first().isVisible(), true);
@@ -516,6 +535,83 @@ test('PC feedback: 有効な敵状態だけから通常・複数必殺・全体�
   }
 });
 
+test('最終実機feedback: colonを含む全体攻撃IDでも対象別ATKを選択・計算・保存できる', { timeout: TEST_TIMEOUT }, async () => {
+  const run = await openChecked(chromiumBrowser, rcUrl('final-feedback-area-attack'));
+  try {
+    await run.goto();
+    await run.page.locator('#mode-damage').check();
+    await run.page.locator('#event-select').selectOption('preview:event:forest');
+    await run.page.waitForFunction(() => globalThis.Phase8RC.state.event?.id === 'preview:event:forest');
+    await run.page.locator('#enemy-select').selectOption('preview:enemy:green');
+
+    const damageResult = run.page.locator('#damage-result');
+    await run.page.locator('#attack-select').selectOption('normal');
+    assert.match(await damageResult.innerText(), /^通常攻撃：(?!.*攻撃を選択してください)/);
+    await run.page.locator('#attack-select').selectOption('super:preview:attack:green:1');
+    assert.match(await damageResult.innerText(), /^架空必殺A：/);
+    await run.page.locator('[data-condition="hp"]').selectOption('50');
+    await run.page.locator('#attack-select').selectOption('super:preview:attack:green:2');
+    assert.match(await damageResult.innerText(), /^架空必殺B：/);
+    await run.page.locator('[data-condition="hp"]').selectOption('100');
+
+    await run.page.locator('#char-def').fill('100000');
+    await run.page.locator('#damage-reduction').fill('17');
+    await run.page.locator('#guard').check();
+    await run.page.locator('#attribute-defense').fill('5');
+    await run.page.locator('[data-role="is-critical"]').first().check();
+    await run.page.locator('[data-role="critical-attack"]').first().fill('150');
+    await run.page.locator('[data-role="critical-defense"]').first().fill('50');
+
+    const firstSelection = 'area:preview:area:green:1:first';
+    const additionalSelection = 'area:preview:area:green:1:additional';
+    await run.page.locator('#attack-select').selectOption(firstSelection);
+    assert.equal(await run.page.locator('#attack-select').inputValue(), firstSelection);
+    const firstTargetResult = await damageResult.innerText();
+    assert.match(firstTargetResult, /^全体攻撃：/);
+    assert.doesNotMatch(firstTargetResult, /攻撃を選択してください/);
+
+    await run.page.locator('.manual-attack-settings').first().evaluate((element) => { element.open = true; });
+    await run.page.locator('[data-role="manual-enemy-attack"]').first().fill('72');
+    await run.page.locator('[data-role="manual-enemy-class"]').first().selectOption('extreme');
+    await run.page.locator('[data-role="manual-enemy-type"]').first().selectOption('teq');
+    await run.page.locator('#attack-select').selectOption('custom');
+    assert.equal(
+      (await damageResult.innerText()).replace(/^[^：]+：/, ''),
+      firstTargetResult.replace(/^[^：]+：/, ''),
+      'first target must use 600,000 × 1.20 = 720,000 ATK'
+    );
+
+    await run.page.locator('#attack-select').selectOption(additionalSelection);
+    assert.equal(await run.page.locator('#attack-select').inputValue(), additionalSelection);
+    const additionalTargetResult = await damageResult.innerText();
+    assert.match(additionalTargetResult, /^全体攻撃（2体目以降）：/);
+    assert.doesNotMatch(additionalTargetResult, /攻撃を選択してください/);
+    await run.page.locator('[data-role="manual-enemy-attack"]').first().fill('54');
+    await run.page.locator('#attack-select').selectOption('custom');
+    assert.equal(
+      (await damageResult.innerText()).replace(/^[^：]+：/, ''),
+      additionalTargetResult.replace(/^[^：]+：/, ''),
+      'additional target must use 450,000 × 1.20 = 540,000 ATK'
+    );
+
+    await run.page.locator('#attack-select').selectOption(firstSelection);
+    const stored = await run.page.evaluate((key) => JSON.parse(localStorage.getItem(key)), RC_STORAGE_KEY);
+    assert.equal(stored.currentScenarios[0].phase8_attack_id, firstSelection);
+    await run.page.reload({ waitUntil: 'domcontentloaded' });
+    await run.page.waitForFunction(() => globalThis.__phase8Ready === true);
+    await run.page.locator('#mode-damage').check();
+    assert.equal(await run.page.locator('#attack-select').inputValue(), firstSelection);
+    assert.equal(await damageResult.innerText(), firstTargetResult);
+    assert.deepEqual({
+      finalDefense: await run.page.locator('[data-role="damage-summary-final-defense"]').first().innerText(),
+      reduction: await run.page.locator('[data-role="damage-summary-reduction"]').first().innerText(),
+      guard: await run.page.locator('[data-role="damage-summary-guard"]').first().innerText()
+    }, { finalDefense: '100,000', reduction: '17%', guard: 'あり' });
+  } finally {
+    await run.close();
+  }
+});
+
 test('追加feedback: 管理UIなしでも複数計算カードとPages内自動保存を使える', { timeout: TEST_TIMEOUT }, async () => {
   const run = await openChecked(chromiumBrowser, rcUrl('pc-feedback-characters'));
   try {
@@ -563,6 +659,7 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
         const criticalToggle = rect('.critical-toggle');
         const criticalAttack = rect('[data-role="critical-attack"]');
         const criticalDefense = rect('[data-role="critical-defense"]');
+        const damageReduction = rect('#damage-reduction');
         const conditionSummary = document.querySelector('[data-role="durability-condition-summary"]');
         const conditionCells = [...document.querySelectorAll('[data-role="durability-condition-summary"] > span')].map((element) => element.getBoundingClientRect());
         return {
@@ -577,6 +674,8 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
           actionsWithinViewport: document.querySelector('.scenario-actions').getBoundingClientRect().right <= innerWidth,
           defenseRowAligned: Math.abs(attributeDefense.top - guardLabel.top) < 2,
           criticalInputsAligned: Math.abs(criticalAttack.top - criticalDefense.top) < 2 && Math.abs(criticalAttack.height - criticalDefense.height) < 2,
+          damageReductionIsLast: document.querySelector('.affinity-section .affinity-grid').lastElementChild?.contains(document.querySelector('#damage-reduction')) === true,
+          damageReductionBelowCritical: damageReduction.top >= criticalDefense.bottom - 1,
           leftColumnAligned: Math.abs(ownClass.left - attributeDefense.left) < 2 && Math.abs(ownClass.left - criticalAttack.left) < 2,
           rightColumnAligned: Math.abs(ownType.left - criticalDefense.left) < 2,
           criticalToggleFullWidth: Math.abs(criticalToggle.left - affinityGrid.left) < 2 && Math.abs(criticalToggle.right - affinityGrid.right) < 2,
@@ -596,18 +695,44 @@ test('追加feedback: 360px・390pxでoverflowなしを維持し、展開時の�
       assert.ok(layout.scenarioCardHeight <= previous.scenarioCardHeight * 0.85);
       assert.ok(layout.scenarioInputsHeight <= previous.scenarioInputsHeight * 0.82);
       assert.ok(layout.pageHeight <= immediatePrevious.pageHeight, JSON.stringify(layout));
-      assert.ok(layout.scenarioCardHeight <= immediatePrevious.scenarioCardHeight, JSON.stringify(layout));
-      assert.ok(layout.scenarioInputsHeight <= immediatePrevious.scenarioInputsHeight, JSON.stringify(layout));
+      assert.ok(Math.round(layout.scenarioCardHeight) <= immediatePrevious.scenarioCardHeight, JSON.stringify(layout));
+      assert.ok(Math.round(layout.scenarioInputsHeight) <= immediatePrevious.scenarioInputsHeight, JSON.stringify(layout));
       assert.equal(layout.actionButtonsSameRow, true);
       assert.equal(layout.actionsWithinViewport, true);
       assert.equal(layout.defenseRowAligned, true);
       assert.equal(layout.criticalInputsAligned, true);
+      assert.equal(layout.damageReductionIsLast, true);
+      assert.equal(layout.damageReductionBelowCritical, true);
       assert.equal(layout.leftColumnAligned, true);
       assert.equal(layout.rightColumnAligned, true);
       assert.equal(layout.criticalToggleFullWidth, true);
       assert.ok(layout.criticalToggleHeight >= 40);
       assert.equal(layout.summarySameRow, true);
       assert.ok(layout.summaryOverflow <= 1, JSON.stringify(layout));
+
+      await run.page.locator('#mode-damage').check();
+      await run.page.locator('#event-select').selectOption('preview:event:forest');
+      await run.page.waitForFunction(() => globalThis.Phase8RC.state.event?.id === 'preview:event:forest');
+      await run.page.locator('#enemy-select').selectOption('preview:enemy:green');
+      const rangeLayout = await run.page.locator('.attack-range-value').evaluateAll((elements) => elements.map((element) => {
+        const textRange = document.createRange();
+        textRange.selectNodeContents(element);
+        const style = getComputedStyle(element);
+        return {
+          text: element.textContent,
+          textLineCount: textRange.getClientRects().length,
+          whiteSpace: style.whiteSpace,
+          scrollOverflow: element.scrollWidth - element.clientWidth,
+          labelFallback: getComputedStyle(element.previousElementSibling).overflowWrap
+        };
+      }));
+      assert.ok(rangeLayout.some((entry) => entry.text === '1,500,000～2,500,000'));
+      assert.ok(rangeLayout.every((entry) => entry.textLineCount === 1 && entry.whiteSpace === 'nowrap'), JSON.stringify(rangeLayout));
+      assert.ok(rangeLayout.every((entry) => entry.scrollOverflow <= 1), JSON.stringify(rangeLayout));
+      assert.ok(rangeLayout.every((entry) => entry.labelFallback === 'anywhere'));
+      assert.equal(await run.page.locator('body').evaluate(() => document.body.scrollWidth <= innerWidth), true);
+
+      await run.page.locator('#mode-durability').check();
       assert.equal(await run.page.locator('#expand-all-scenarios').isVisible(), true);
       assert.equal(await run.page.locator('#collapse-all-scenarios').isVisible(), true);
 

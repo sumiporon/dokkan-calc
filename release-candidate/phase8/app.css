@@ -105,6 +105,15 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .enemy-summary > span { color: var(--muted); }
 .attack-summary { display: grid; gap: .18rem; }
 .attack-summary-row { display: flex; justify-content: space-between; gap: .7rem; border-top: 1px solid var(--border); padding-top: .25rem; }
+.attack-summary-row > span { min-width: 0; overflow-wrap: anywhere; }
+.attack-range-value {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
 .condition-controls { margin-top: .7rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .results { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: .75rem; }
 .results > div { display: grid; align-content: start; gap: .25rem; min-width: 0; padding: .7rem; border: 1px solid var(--border); border-radius: .6rem; }

@@ -59,6 +59,25 @@ async function measure(width) {
       viewportWidth: innerWidth
     };
   });
+  await page.locator('#mode-damage').check();
+  await page.locator('#event-select').selectOption('preview:event:forest');
+  await page.waitForFunction(() => globalThis.Phase8RC.state.event?.id === 'preview:event:forest');
+  await page.locator('#enemy-select').selectOption('preview:enemy:green');
+  Object.assign(result, await page.evaluate(() => {
+    const ranges = [...document.querySelectorAll('.attack-range-value')];
+    const rangeLines = ranges.map((element) => {
+      const textRange = document.createRange();
+      textRange.selectNodeContents(element);
+      return textRange.getClientRects().length;
+    });
+    return {
+      attackRangeCount: ranges.length,
+      attackRangesSingleLine: rangeLines.every((count) => count === 1),
+      attackRangeOverflow: Math.max(0, ...ranges.map((element) => element.scrollWidth - element.clientWidth)),
+      damageModeHorizontalOverflow: document.documentElement.scrollWidth > innerWidth
+    };
+  }));
+  await page.locator('#mode-durability').check();
   const collapseButton = page.locator('[data-action="toggle-collapse"]').first();
   if (await collapseButton.count()) {
     await collapseButton.click();

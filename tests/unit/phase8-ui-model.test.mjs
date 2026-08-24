@@ -3,11 +3,13 @@ import test from 'node:test';
 
 import calculationCore from '../../src/calculation-core.js';
 import {
+  createAreaAttackSelection,
   enemyAttackRanges,
   enumerateValidEnemyStates,
   formatAttackRange,
   japaneseType,
   normalizeNumericInputValue,
+  parseAreaAttackSelection,
   superAttackAvailableInState
 } from '../../src/release-candidate/phase8-ui-model.mjs';
 
@@ -88,4 +90,13 @@ test('Phase 8 UI: each Super range obeys its own HP usage rules', () => {
   ]);
   assert.equal(superAttackAvailableInState(usageEnemy.superAttacks[0], { hp: 50 }), false);
   assert.equal(superAttackAvailableInState(usageEnemy.superAttacks[1], { hp: 50 }), true);
+});
+
+test('Phase 8 UI: area-attack selections preserve colon-delimited canonical IDs', () => {
+  const value = createAreaAttackSelection('preview:area:green:1', 'additional');
+  assert.equal(value, 'area:preview:area:green:1:additional');
+  assert.deepEqual(parseAreaAttackSelection(value), { id: 'preview:area:green:1', target: 'additional' });
+  assert.deepEqual(parseAreaAttackSelection('area:preview:area:green:1:first'), { id: 'preview:area:green:1', target: 'first' });
+  assert.equal(parseAreaAttackSelection('area:missing-target'), null);
+  assert.throws(() => createAreaAttackSelection('preview:area:green:1', 'unknown'), /Unsupported area-attack target/);
 });

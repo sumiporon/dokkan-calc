@@ -2,6 +2,7 @@ import { Phase8ReleaseStore } from '../../src/release-candidate/phase8-release-s
 import { Phase8RuntimeClient } from '../../src/release-candidate/phase8-runtime-client.mjs';
 import { readLastEvent, saveLastEvent } from '../../src/release-candidate/phase8-selection-state.mjs';
 import {
+  createAreaAttackSelection,
   enemyAttackRanges,
   enemyAttackState,
   enemyConditionDimensions,
@@ -10,6 +11,7 @@ import {
   japaneseType,
   known,
   normalizeNumericInputValue,
+  parseAreaAttackSelection,
   superAttackAvailableInState
 } from '../../src/release-candidate/phase8-ui-model.mjs';
 
@@ -327,6 +329,7 @@ function renderEnemyAttackSummary(context, item) {
     const label = document.createElement('span');
     label.textContent = name;
     const strong = document.createElement('strong');
+    strong.className = 'attack-range-value';
     strong.textContent = value;
     row.append(label, strong);
     container.append(row);
@@ -349,9 +352,9 @@ function renderAttackOptions(context, { initial = {} } = {}) {
     if (superAttackAvailableInState(source, selectedState)) options.push({ value: `super:${attack.id}`, label: `${attack.name} ${formatAttackRange(attack.range)}` });
   });
   for (const area of areaAttacksFor(item)) {
-    options.push({ value: `area:${area.id}:first`, label: `全体攻撃 ${Number(known(area.firstTargetDamage, 0)).toLocaleString()}` });
+    options.push({ value: createAreaAttackSelection(area.id, 'first'), label: `全体攻撃 ${Number(known(area.firstTargetDamage, 0)).toLocaleString()}` });
     if (known(area.additionalTargetDamage, null) != null && known(area.additionalTargetDamage, null) !== known(area.firstTargetDamage, null)) {
-      options.push({ value: `area:${area.id}:additional`, label: `全体攻撃（2体目以降） ${Number(known(area.additionalTargetDamage, 0)).toLocaleString()}` });
+      options.push({ value: createAreaAttackSelection(area.id, 'additional'), label: `全体攻撃（2体目以降） ${Number(known(area.additionalTargetDamage, 0)).toLocaleString()}` });
     }
   }
   const custom = customAttackOption(context);
@@ -529,10 +532,13 @@ function selectedAttack(context, item) {
     const attack = condition.supers.find((candidate) => candidate.id === id);
     return attack ? { name: attack.name, value: attack.value } : null;
   }
-  if (value.startsWith('area:')) {
-    const [, id, target] = value.split(':');
-    const attack = areaAttacksFor(item).find((candidate) => candidate.id === id);
-    return attack ? { name: target === 'additional' ? '全体攻撃（2体目以降）' : '全体攻撃', value: areaAttackValue(attack, condition, target) } : null;
+  const areaSelection = parseAreaAttackSelection(value);
+  if (areaSelection) {
+    const attack = areaAttacksFor(item).find((candidate) => candidate.id === areaSelection.id);
+    return attack ? {
+      name: areaSelection.target === 'additional' ? '全体攻撃（2体目以降）' : '全体攻撃',
+      value: areaAttackValue(attack, condition, areaSelection.target)
+    } : null;
   }
   return null;
 }

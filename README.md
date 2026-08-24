@@ -160,6 +160,7 @@ npm run benchmark:phase8
 - 追加実機フィードバックにより、通常画面から未使用の「キャラクター管理」UIを削除しました。複数の計算用状況カード、追加・複製・削除、Pages内の作業中状態の自動保存は残しています。
 - 「計算する状況」には個別の開閉に加えて「すべて開く」「すべて閉じる」を追加しました。開閉は表示だけを変え、計算・入力・保存内容を変更しません。
 - 最新の追加実機フィードバックでは、属性・防御設定のスマホ整列、両結果直近の最終DEF／軽減率／全属性ガード表示、不要説明の削除、OneDrive→Pages移行機能の完全撤去を行いました。PagesとOneDriveは保存状態を同期しません。
+- Phase 8最終実機フィードバックでは、ダメージ軽減率をDEF設定の末尾へ移し、IDに区切り文字を含む全体攻撃も対象別ATKで選択・自動計算できるよう修正しました。スマホの攻撃力範囲は数値部分を途中改行せず、360px／390pxでも横overflowを起こしません。
 
 ## 重要な安全上の注意
 
@@ -178,6 +179,8 @@ npm run benchmark:phase8
 - [localStorage形式](docs/local-storage-schema.md)
 - [第3段階の計算仕様調査](docs/phase3-calculation-specification.md)
 - [第3段階の敵データ取得元再評価](docs/phase3-data-source-evaluation.md)
+- [Phase 8最終実機フィードバック修正報告](docs/phase8-final-device-feedback-report.md)
+- [Phase 8最終修正版 PC・スマホ再確認手順](docs/phase8-final-device-feedback-recheck-checklist.md)
 - [保存HTMLの再解析結果](docs/phase3-cached-source-analysis.md)
 - [将来構成と敵データ設計](docs/phase3-architecture-and-data-design.md)
 - [第4段階の完了報告](docs/phase4-completion-report.md)

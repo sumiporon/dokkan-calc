@@ -203,3 +203,14 @@ export function formatAttackRange(range) {
   const maximum = Math.floor(range.maximum).toLocaleString();
   return range.minimum === range.maximum ? minimum : `${minimum}～${maximum}`;
 }
+
+export function createAreaAttackSelection(areaAttackId, target = 'first') {
+  if (!['first', 'additional'].includes(target)) throw new TypeError(`Unsupported area-attack target: ${target}`);
+  return `area:${areaAttackId}:${target}`;
+}
+
+export function parseAreaAttackSelection(value) {
+  if (typeof value !== 'string') return null;
+  const match = /^area:(.+):(first|additional)$/.exec(value);
+  return match ? { id: match[1], target: match[2] } : null;
+}
