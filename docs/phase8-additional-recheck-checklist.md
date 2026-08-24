@@ -1,5 +1,7 @@
 # Phase 8追加修正版 PC・スマホ再確認手順
 
+> この手順は新しいPhase 8追加修正に置き換えられました。[管理UI削除版の再確認手順](phase8-management-removal-recheck-checklist.md)を使用してください。
+
 作成日: 2026-08-24（JST）
 
 ## 再確認URL

@@ -157,6 +157,9 @@ npm run benchmark:phase8
 - 公開可能なpreviewは架空3 eventだけです。実data由来5,032敵の全量releaseはローカル性能検証専用で、Git追跡・公開・production activationを禁止しています。
 - 正式Pages root、main、現在のOneDrive、本番敵data/localStorage/workflowは変更していません。0操作更新と外部source接続も無効です。
 - DokkanStatsはowner送信済み・返信待ちで、permissionは引き続きunknown/pendingです。
+- 追加実機フィードバックにより、通常画面から未使用の「キャラクター管理」UIを削除しました。複数の計算用状況カード、追加・複製・削除、作業中状態の自動保存、旧`savedCharacters`データの互換保持は残しています。
+- 「計算する状況」には個別の開閉に加えて「すべて開く」「すべて閉じる」を追加しました。開閉は表示だけを変え、計算・入力・保存内容を変更しません。保存データ移行後は、通常計算画面へ復元された作業中カードと「設定・データ」の件数表示で成功を確認します。
+- 360px／390pxの初期画面全高は直前版の1,713pxから1,470pxへ短縮し、横overflowなしを確認しました。最終`npm test`は177件成功、failed 0、skipped 0です。
 
 ## 重要な安全上の注意
 
@@ -199,3 +202,5 @@ npm run benchmark:phase8
 - [第8段階修正版のPC再確認手順](docs/phase8-pc-recheck-checklist.md)
 - [第8段階の追加実機フィードバック修正報告](docs/phase8-additional-feedback-report.md)
 - [第8段階追加修正版のPC・スマホ再確認手順](docs/phase8-additional-recheck-checklist.md)
+- [第8段階のキャラクター管理UI削除・一括開閉修正報告](docs/phase8-management-removal-report.md)
+- [第8段階管理UI削除版のPC・スマホ再確認手順](docs/phase8-management-removal-recheck-checklist.md)
