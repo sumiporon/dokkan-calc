@@ -1,5 +1,7 @@
 # Phase 8 被ダメージ結果 baseline修正報告
 
+> ownerは実機でこのbaseline修正を確認済みである。後続の属性カード中央配置では、被ダメージ側のHTML/CSS構造とbaseline整列を変更していない。
+
 ## 対象
 
 ownerが再確認で特定した、1行表示時にdamage rangeだけが攻撃名より上へ見える問題だけを修正した。確認済みのselect枠、計算、保存、更新、その他のPhase 8 UIには変更を加えていない。Phase 9、`main`、本番Pages、OneDrive本番版、production敵データ／workflowも変更していない。

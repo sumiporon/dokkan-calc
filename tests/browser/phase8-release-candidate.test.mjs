@@ -946,8 +946,26 @@ for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['
           const range = document.querySelector('.damage-range-value');
           const textRange = document.createRange();
           textRange.selectNodeContents(range);
+          const damageCardRect = cards[0].getBoundingClientRect();
+          const typeCardRect = cards[1].getBoundingClientRect();
+          const damageHeadingRect = cards[0].querySelector(':scope > span').getBoundingClientRect();
+          const typeHeadingRect = cards[1].querySelector(':scope > span').getBoundingClientRect();
+          const typeValue = cards[1].querySelector('[data-role="result-types"]');
+          const typeValueRect = typeValue.getBoundingClientRect();
+          const typeTextRange = document.createRange();
+          typeTextRange.selectNodeContents(typeValue);
+          const typeTextRect = typeTextRange.getBoundingClientRect();
+          const typeValueStyle = getComputedStyle(typeValue);
           return {
-            ratio: cards[0].getBoundingClientRect().width / cards[1].getBoundingClientRect().width,
+            ratio: damageCardRect.width / typeCardRect.width,
+            cardHeightDelta: typeCardRect.height - damageCardRect.height,
+            headingTopDelta: typeHeadingRect.top - damageHeadingRect.top,
+            typeContentAreaHeight: typeValueRect.height,
+            typeTextTopInset: typeTextRect.top - typeValueRect.top,
+            typeTextBottomInset: typeValueRect.bottom - typeTextRect.bottom,
+            typeContentDisplay: typeValueStyle.display,
+            typeContentAlignContent: typeValueStyle.alignContent,
+            typeCardRows: getComputedStyle(cards[1]).gridTemplateRows,
             lines: textRange.getClientRects().length,
             text: range.textContent,
             types: document.querySelector('[data-role="result-types"]').innerText,
@@ -966,6 +984,15 @@ for (const [browserName, getBrowser] of [['Chromium', () => chromiumBrowser], ['
           };
         });
         assert.ok(damageLayout.ratio >= 1.55, JSON.stringify(damageLayout));
+        assert.ok(damageLayout.ratio <= 1.75, JSON.stringify(damageLayout));
+        assert.ok(Math.abs(damageLayout.cardHeightDelta) <= 0.5, JSON.stringify(damageLayout));
+        assert.ok(Math.abs(damageLayout.headingTopDelta) <= 0.5, JSON.stringify(damageLayout));
+        assert.ok(damageLayout.typeContentAreaHeight >= 50, JSON.stringify(damageLayout));
+        assert.ok(Math.abs(damageLayout.typeTextTopInset - damageLayout.typeTextBottomInset) <= 1, JSON.stringify(damageLayout));
+        assert.ok(damageLayout.typeTextTopInset >= 4 && damageLayout.typeTextBottomInset >= 4, JSON.stringify(damageLayout));
+        assert.equal(damageLayout.typeContentDisplay, 'grid', JSON.stringify(damageLayout));
+        assert.equal(damageLayout.typeContentAlignContent, 'center', JSON.stringify(damageLayout));
+        assert.match(damageLayout.typeCardRows, /50px/, JSON.stringify(damageLayout));
         assert.equal(damageLayout.lines, 1);
         assert.match(damageLayout.text, /〜/);
         assert.match(damageLayout.types, /自分：超技\s*敵：極技/);

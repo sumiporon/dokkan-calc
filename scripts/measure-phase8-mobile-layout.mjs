@@ -134,8 +134,24 @@ async function measure(width) {
     const textRange = document.createRange();
     textRange.selectNodeContents(range);
     const damageContentStyle = getComputedStyle(damageContent);
+    const damageCardRect = cards[0].getBoundingClientRect();
+    const typeCardRect = cards[1].getBoundingClientRect();
+    const typeHeadingRect = cards[1].querySelector(':scope > span').getBoundingClientRect();
+    const typeValue = cards[1].querySelector('[data-role="result-types"]');
+    const typeValueRect = typeValue.getBoundingClientRect();
+    const typeTextRange = document.createRange();
+    typeTextRange.selectNodeContents(typeValue);
+    const typeTextRect = typeTextRange.getBoundingClientRect();
+    const typeValueStyle = getComputedStyle(typeValue);
     return {
-      damageResultWidthRatio: Number((cards[0].getBoundingClientRect().width / cards[1].getBoundingClientRect().width).toFixed(3)),
+      damageResultWidthRatio: Number((damageCardRect.width / typeCardRect.width).toFixed(3)),
+      resultCardHeightDelta: Number((typeCardRect.height - damageCardRect.height).toFixed(2)),
+      resultHeadingTopDelta: Number((typeHeadingRect.top - damageHeading.top).toFixed(2)),
+      typeContentAreaHeight: Number(typeValueRect.height.toFixed(2)),
+      typeTextTopInset: Number((typeTextRect.top - typeValueRect.top).toFixed(2)),
+      typeTextBottomInset: Number((typeValueRect.bottom - typeTextRect.bottom).toFixed(2)),
+      typeContentDisplay: typeValueStyle.display,
+      typeContentAlignContent: typeValueStyle.alignContent,
       damageRangeSingleLine: textRange.getClientRects().length === 1,
       damageRangeOverflow: range.scrollWidth - range.clientWidth,
       damageValuePaddingTop: damageValueStyle.paddingTop,

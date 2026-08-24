@@ -140,8 +140,9 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .results > div { display: grid; align-content: start; gap: .25rem; min-width: 0; padding: .7rem; border: 1px solid var(--border); border-radius: .6rem; }
 .results span { color: var(--muted); font-size: .8rem; }
 .results strong { overflow-wrap: anywhere; font-size: 1.08rem; }
-.damage-result-card { grid-template-rows: auto 1fr; }
+.damage-result-card, .damage-type-card { grid-template-rows: auto 1fr; }
 .damage-result-value { display: grid; align-self: stretch; align-content: center; }
+.damage-type-value { display: grid; align-self: stretch; align-content: center; }
 .results .damage-result-content, .results .damage-result-label, .results .damage-range-value { color: inherit; font-size: inherit; }
 .damage-result-content { display: flex; flex-wrap: wrap; align-items: baseline; }
 .damage-result-label { flex: 0 1 auto; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
@@ -198,7 +199,7 @@ dialog::backdrop { background: #0008; }
   .results span { font-size: .68rem; }
   .results strong { font-size: .9rem; }
   .damage-results { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
-  .damage-result-card { grid-template-rows: auto minmax(3.125rem, 1fr); }
+  .damage-result-card, .damage-type-card { grid-template-rows: auto minmax(3.125rem, 1fr); }
   .damage-result-value { padding: 0; line-height: 1.3; }
   .section-heading { margin: .5rem 0 .25rem; align-items: center; gap: .3rem; }
   .section-heading p { display: none; }
@@ -385,7 +386,7 @@ dialog::backdrop { background: #0008; }
             </div>
             <div class="results damage-results" aria-live="polite">
               <div class="damage-result-card"><span>被ダメージ（1.00〜1.03）</span><strong data-role="damage-result">敵を選択してください</strong></div>
-              <div><span>属性</span><strong data-role="result-types">自分：超技<br>敵：未選択</strong></div>
+              <div class="damage-type-card"><span>属性</span><strong class="damage-type-value" data-role="result-types">自分：超技<br>敵：未選択</strong></div>
             </div>
           </section>
         </div>

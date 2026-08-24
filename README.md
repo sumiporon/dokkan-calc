@@ -165,6 +165,7 @@ npm run benchmark:phase8
 - Phase 8の結果・select調整では、敵選択系selectのfocusを外側outlineではなく内側2px borderで描き、長い選択肢を収める親枠に四辺・四隅を切られないようにしました。最初の被ダメージ値padding調整は実機で不十分と判明したため、後の構造修正で置き換えています。
 - 被ダメージ結果の再修正では、見出しと値を別grid rowへ分け、スマホでは高さ50pxの値領域内で1行／2行の値ブロック全体を上下中央へ配置しました。値文字へのpadding追加ではなく、余白を上下へ同量に配る構造です。
 - その後の実機確認で、`overflow: hidden`付きinline-blockだったrangeだけが攻撃名より上に見えるbaseline差を確認しました。攻撃名とrangeを折り返し可能なflex行の別itemとし、1行時は同一baseline、2行時はrange全体を次行へ送る構造へ修正しています。
+- 属性結果カードは見出しとcontentを別grid rowへ分け、スマホでは50pxのcontent領域内で「自分／敵」の2行全体を上下中央へ配置しました。見出し位置、左右カード高さ、約1.65:1の横幅比は維持しています。
 
 ## 重要な安全上の注意
 
@@ -193,6 +194,8 @@ npm run benchmark:phase8
 - [Phase 8被ダメージ結果再修正版 PC・スマホ再確認手順](docs/phase8-damage-result-alignment-recheck-checklist.md)
 - [Phase 8被ダメージ結果 baseline修正報告](docs/phase8-damage-baseline-report.md)
 - [Phase 8被ダメージ結果 baseline修正版 PC・スマホ再確認手順](docs/phase8-damage-baseline-recheck-checklist.md)
+- [Phase 8属性カード content中央配置報告](docs/phase8-type-card-alignment-report.md)
+- [Phase 8属性カード修正版 PC・スマホ再確認手順](docs/phase8-type-card-alignment-recheck-checklist.md)
 - [保存HTMLの再解析結果](docs/phase3-cached-source-analysis.md)
 - [将来構成と敵データ設計](docs/phase3-architecture-and-data-design.md)
 - [第4段階の完了報告](docs/phase4-completion-report.md)
