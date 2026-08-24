@@ -197,3 +197,5 @@ npm run benchmark:phase8
 - [第8段階の完了報告](docs/phase8-completion-report.md)
 - [第8段階のPC実機フィードバック修正・機能差監査](docs/phase8-pc-feedback-fix-report.md)
 - [第8段階修正版のPC再確認手順](docs/phase8-pc-recheck-checklist.md)
+- [第8段階の追加実機フィードバック修正報告](docs/phase8-additional-feedback-report.md)
+- [第8段階追加修正版のPC・スマホ再確認手順](docs/phase8-additional-recheck-checklist.md)

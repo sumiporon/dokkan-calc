@@ -121,3 +121,9 @@ loadedEnemy
 - 旧2階層・3階層からの読み込み能力
 
 GitHub認証情報は一般データと同じ移行・バックアップ・エクスポート経路へ含めません。扱いを変更する場合は、セキュリティ方針を説明してから実施します。
+
+## Phase 8 RCだけの互換拡張
+
+Phase 8確認版はproductionの`dokkan_calc_data_v22`を直接書き換えず、別keyの`dokkan_phase8_rc_imported_dokkan_calc_data_v22`へ保存する。追加実機フィードバック版では、このRC保存に`phase8UiSchemaVersion: 2`を付け、Scenarioへ任意fieldの`phase8_durability_enemy_affinity`（例: `extreme:int`）を追加した。
+
+version 1またはversion表記なしのRC保存を読むときは、自分の`own_class`／`own_type`を耐久ラインの敵属性初期値としてversion 2へ移す。これにより旧仕様の「同クラス・同属性」を保つ。保存キャラクター、作業中状況、未知fieldは保持し、production key、PAT、手動敵属性は変更しない。カードの開閉状態は表示専用で保存しない。
