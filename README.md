@@ -56,6 +56,7 @@ npm run test:phase6
 npm run test:phase7
 npm run test:phase8
 npm run test:phase9
+npm run test:phase10
 npm run test:cached-source
 npm run test:browser
 npm run audit:data
@@ -194,6 +195,14 @@ npm run benchmark:phase8
 - `敵データを更新`は利用者が押した時だけmanifestとreleaseを確認します。0操作startup updateは無効で、外部source未接続の現在は同じ正式releaseなら「すでに最新です」と表示します。
 - 正式版はplain HTML/CSS/JavaScriptと生成済みJSONで成立するため、Phase 9でもVite、React、backendは導入していません。
 
+## 第10段階の代替取得元・接続準備
+
+- 代替API、license付きrepo、公式配布、コミュニティの一次情報を比較しましたが、敵dataの充足・更新速度・自動取得と派生公開許可をすべて確認できたsourceはなく、現時点では採用なしです。
+- DokkanStatsは引き続き返信待ちで、アクセス・取得・follow-upをしていません。productionは第9段階の4,245敵のままです。
+- 開発branchにoffline source preflightとrecord単位の公開前reviewを追加しました。必殺/AOE消失、同数の別IDへの差替、属性変更、無効な許可、schema/digest/projection不整合を止めます。live取得・公開機能はありません。
+- `npm run review:phase10 -- --baseline`は現productionの全artifactと差分0を、通信せず敵データを変更せずに再確認する開発者用commandです（前処理でTypeScriptを`generated/`へbuildします）。ownerの日常更新手順ではありません。
+- このbranchの旧scrape workflowは手動実行も無効化しました。mainと公開workflowは未変更です。新sourceの接続・mainへの反映・0操作更新は別承認まで行いません。
+
 ## 重要な安全上の注意
 
 - DokkanInfoへの自動取得は停止中です。規約・許可の問題が解決するまで再開しません。
@@ -204,6 +213,8 @@ npm run benchmark:phase8
 
 ## 調査文書
 
+- [第10段階の代替source比較・採否と未確認事項](docs/phase10-source-research.md)
+- [第10段階のoffline接続前検査・production差分review](docs/phase10-offline-intake.md)
 - [第9段階のGitHub Pages正式版・安全記録](docs/phase9-production-cutover.md)
 - [第1段階の安全記録](docs/phase1-safety.md)
 - [敵データ取得元の評価](docs/data-source-evaluation.md)
