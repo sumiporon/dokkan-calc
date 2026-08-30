@@ -2,6 +2,12 @@ import { Phase8ReleaseStore } from '../../src/release-candidate/phase8-release-s
 import { Phase8RuntimeClient } from '../../src/release-candidate/phase8-runtime-client.mjs';
 import { readLastEvent, saveLastEvent } from '../../src/release-candidate/phase8-selection-state.mjs';
 import {
+  validatePhase9Index,
+  validatePhase9Manifest,
+  validatePhase9Runtime,
+  verifyArtifactText as verifyPhase9ArtifactText
+} from '../../src/production/phase9-manifest.mjs';
+import {
   createAreaAttackSelection,
   enemyAttackRanges,
   enemyAttackState,
@@ -15,16 +21,75 @@ import {
   superAttackAvailableInState
 } from '../../src/release-candidate/phase8-ui-model.mjs';
 
+const isProduction = document.documentElement.dataset.appEnvironment === 'production';
+const environment = Object.freeze(isProduction ? {
+  production: true,
+  stateKey: 'dokkan_calc_pages_state_v1',
+  stateVersionProperty: 'pagesStateVersion',
+  stateVersion: 1,
+  lastEventKey: 'dokkan_calc_pages_last_event_v1',
+  dbName: 'dokkan-calc-production-releases-v1',
+  cacheName: 'dokkan-calc-production-artifacts-v1',
+  cacheDigestParameter: 'dokkanCalcDigest',
+  updateMetricsKey: 'dokkan_calc_production_update_history_v1',
+  appVersion: 'phase9-production-1',
+  embeddedFetchGlobal: '__dokkanCalcEmbeddedFetch',
+  metricsGlobal: '__dokkanCalcMetrics',
+  readyGlobal: '__dokkanCalcReady',
+  errorGlobal: '__dokkanCalcError',
+  appGlobal: 'DokkanCalcApp',
+  readyEvent: 'dokkan-calc-ready',
+  eventReadyEvent: 'dokkan-calc-event-ready',
+  saveErrorLabel: 'production Pages state',
+  incompatibleMessage: 'このアプリとは互換性がありません。',
+  initializationError: '敵データを準備できませんでした。しばらくしてから再読み込みしてください。'
+} : {
+  production: false,
+  stateKey: 'dokkan_phase8_rc_pages_state_v1',
+  stateVersionProperty: 'phase8PagesStateVersion',
+  stateVersion: 1,
+  lastEventKey: 'dokkan_phase8_rc_last_event_v1',
+  dbName: 'dokkan-phase8-rc-releases-v1',
+  cacheName: 'dokkan-phase8-rc-artifacts-v1',
+  cacheDigestParameter: 'phase8Digest',
+  updateMetricsKey: 'dokkan_phase8_rc_update_history_v1',
+  appVersion: 'phase8-rc-1',
+  embeddedFetchGlobal: '__phase8EmbeddedFetch',
+  metricsGlobal: '__phase8Metrics',
+  readyGlobal: '__phase8Ready',
+  errorGlobal: '__phase8Error',
+  appGlobal: 'Phase8RC',
+  readyEvent: 'phase8-ready',
+  eventReadyEvent: 'phase8-event-ready',
+  saveErrorLabel: 'Phase 8 RC state',
+  incompatibleMessage: 'この確認版とは互換性がありません。',
+  initializationError: '敵データを準備できませんでした。OneDrive backupはヘルプから確認できます。'
+});
+const validationDependencies = environment.production ? {
+  manifestValidator: validatePhase9Manifest,
+  runtimeValidator: validatePhase9Runtime,
+  indexValidator: validatePhase9Index,
+  artifactVerifier: verifyPhase9ArtifactText
+} : {};
 const params = new URLSearchParams(location.search);
 const dataRoot = params.get('dataRoot') || './data';
-const storageKey = 'dokkan_phase8_rc_pages_state_v1';
-const phase8PagesStateVersion = 1;
 const core = globalThis.DokkanCalcCore;
 const elements = Object.fromEntries([...document.querySelectorAll('[id]')].map((element) => [element.id, element]));
-const store = new Phase8ReleaseStore({ dbName: params.get('dbName') || 'dokkan-phase8-rc-releases-v1' });
-const clientOptions = { dataRoot, store };
-if (globalThis.__phase8EmbeddedFetch) {
-  clientOptions.fetchImpl = globalThis.__phase8EmbeddedFetch;
+const store = new Phase8ReleaseStore({
+  dbName: params.get('dbName') || environment.dbName,
+  ...validationDependencies
+});
+const clientOptions = {
+  dataRoot,
+  store,
+  cacheName: environment.cacheName,
+  cacheDigestParameter: environment.cacheDigestParameter,
+  metricsKey: environment.updateMetricsKey,
+  appVersion: environment.appVersion,
+  ...validationDependencies
+};
+if (globalThis[environment.embeddedFetchGlobal]) {
+  clientOptions.fetchImpl = globalThis[environment.embeddedFetchGlobal];
   clientOptions.cacheStorage = null;
 }
 const client = new Phase8RuntimeClient(clientOptions);
@@ -35,7 +100,7 @@ const state = {
   durabilityLines: [],
   initializing: true
 };
-const metrics = globalThis.__phase8Metrics = { startedAt: performance.now(), readyMs: null, lastEventMs: null };
+const metrics = globalThis[environment.metricsGlobal] = { startedAt: performance.now(), readyMs: null, lastEventMs: null };
 
 const firstCardIds = Object.freeze({
   'event-select': 'event-select',
@@ -115,21 +180,21 @@ function allScenarioData() {
 function persistState() {
   if (state.initializing) return;
   const next = {
-    phase8PagesStateVersion,
+    [environment.stateVersionProperty]: environment.stateVersion,
     durabilityLines: state.durabilityLines,
     currentScenarios: allScenarioData(),
     theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
   };
   try {
-    localStorage.setItem(storageKey, JSON.stringify(next));
+    localStorage.setItem(environment.stateKey, JSON.stringify(next));
   } catch (error) {
-    console.error('Failed to save Phase 8 RC state', error);
+    console.error(`Failed to save ${environment.saveErrorLabel}`, error);
   }
 }
 
 function readSavedState() {
   try {
-    const raw = localStorage.getItem(storageKey);
+    const raw = localStorage.getItem(environment.stateKey);
     if (!raw) return null;
     const saved = JSON.parse(raw);
     const validScenarios = Array.isArray(saved?.currentScenarios)
@@ -139,12 +204,12 @@ function readSavedState() {
         && typeof line.name === 'string' && Number.isFinite(Number(line.value)) && Number(line.value) >= 0);
     const validTheme = saved?.theme === 'light' || saved?.theme === 'dark';
     if (!saved || typeof saved !== 'object'
-      || Number(saved.phase8PagesStateVersion) !== phase8PagesStateVersion
+      || Number(saved[environment.stateVersionProperty]) !== environment.stateVersion
       || !validScenarios || !validLines || !validTheme) return null;
     state.durabilityLines = saved.durabilityLines;
     return saved;
   } catch (error) {
-    console.warn('Failed to read Phase 8 Pages-local state', error);
+    console.warn(`Failed to read ${environment.saveErrorLabel}`, error);
     return null;
   }
 }
@@ -408,10 +473,10 @@ async function selectEventForCard(context, eventId, { persist = true, selectedSt
     role(context, 'event-select').value = eventId;
     renderStages(context, { selectedStageId, selectedEnemyId, initial });
     if (state.cards[0] === context) state.event = event;
-    if (persist) saveLastEvent(localStorage, eventId, client.manifest.datasetVersion);
+    if (persist) saveLastEvent(localStorage, eventId, client.manifest.datasetVersion, environment.lastEventKey);
     metrics.lastEventMs = performance.now() - started;
     setStatus('準備完了');
-    globalThis.dispatchEvent(new CustomEvent('phase8-event-ready', { detail: { eventId, cardId: context.id } }));
+    globalThis.dispatchEvent(new CustomEvent(environment.eventReadyEvent, { detail: { eventId, cardId: context.id } }));
     persistState();
     return true;
   } catch {
@@ -481,7 +546,9 @@ async function addScenarioCard(data = defaultScenario(state.cards.length), { ins
   else elements['scenario-cards-container'].append(element);
   populateEventSelect(context);
   let eventId = data.phase8_event_id || '';
-  if (!eventId && restoreLastEvent) eventId = readLastEvent(localStorage, new Set(client.index.events.map((entry) => entry.id))).eventId || '';
+  if (!eventId && restoreLastEvent) {
+    eventId = readLastEvent(localStorage, new Set(client.index.events.map((entry) => entry.id)), environment.lastEventKey).eventId || '';
+  }
   if (eventId) await selectEventForCard(context, eventId, {
     persist: false,
     selectedStageId: data.phase8_stage_id || '',
@@ -667,7 +734,7 @@ function updateMessage(result) {
   if (result.status === 'applied') return { text: '敵データを更新しました。', error: false };
   if (result.status === 'unchanged') return { text: 'すでに最新です。', error: false };
   const reasons = {
-    INCOMPATIBLE_APP_VERSION: 'この確認版とは互換性がありません。',
+    INCOMPATIBLE_APP_VERSION: environment.incompatibleMessage,
     STALE_DATASET: '現在より古いデータでした。',
     SAFETY_GATE_REJECTED: 'データ件数に大きな異常がありました。',
     RUNTIME_SCHEMA_INVALID: 'データの形式に問題がありました。',
@@ -816,19 +883,20 @@ async function initialize() {
     const restoredEvent = role(state.cards[0], 'event-select').value;
     setStatus(restoredEvent || recovery.recovery.includes('restored') ? '準備完了' : '準備完了。被ダメージ計算ではイベントと敵を選んでください。');
     metrics.readyMs = performance.now() - metrics.startedAt;
-    globalThis.__phase8Ready = true;
-    globalThis.dispatchEvent(new CustomEvent('phase8-ready'));
+    globalThis[environment.readyGlobal] = true;
+    globalThis.dispatchEvent(new CustomEvent(environment.readyEvent));
   } catch (error) {
     console.error(error);
-    setStatus('敵データを準備できませんでした。OneDrive backupはヘルプから確認できます。', true);
-    globalThis.__phase8Error = true;
+    setStatus(environment.initializationError, true);
+    globalThis[environment.errorGlobal] = true;
   }
 }
 
-globalThis.Phase8RC = {
+globalThis[environment.appGlobal] = {
   client,
   store,
   state,
+  environment,
   selectEvent: async (eventId) => selectEventForCard(state.cards[0], eventId),
   calculate: () => renderCard(state.cards[0]),
   currentEnemy: () => currentEnemyContext(state.cards[0])?.enemy ?? null,

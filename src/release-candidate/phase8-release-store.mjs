@@ -18,10 +18,19 @@ function transactionDone(transaction) {
 }
 
 export class Phase8ReleaseStore {
-  constructor({ indexedDB = globalThis.indexedDB, dbName = 'dokkan-phase8-rc-releases-v1' } = {}) {
+  constructor({
+    indexedDB = globalThis.indexedDB,
+    dbName = 'dokkan-phase8-rc-releases-v1',
+    manifestValidator = validatePhase8Manifest,
+    runtimeValidator = validatePhase8Runtime,
+    artifactVerifier = verifyArtifactText
+  } = {}) {
     if (!indexedDB) throw new Error('IndexedDB is unavailable');
     this.indexedDB = indexedDB;
     this.dbName = dbName;
+    this.manifestValidator = manifestValidator;
+    this.runtimeValidator = runtimeValidator;
+    this.artifactVerifier = artifactVerifier;
     this.db = null;
     this.active = null;
     this.knownGood = null;
@@ -42,10 +51,10 @@ export class Phase8ReleaseStore {
   }
 
   async usable(release) {
-    if (!release || validatePhase8Manifest(release.manifest).length > 0 || release.datasetVersion !== release.manifest.datasetVersion) return false;
+    if (!release || this.manifestValidator(release.manifest).length > 0 || release.datasetVersion !== release.manifest.datasetVersion) return false;
     if (release.runtime) {
-      if (validatePhase8Runtime(release.runtime).length > 0 || typeof release.payload?.text !== 'string') return false;
-      if (!(await verifyArtifactText(release.payload.text, release.manifest.full.json)).valid) return false;
+      if (this.runtimeValidator(release.runtime).length > 0 || typeof release.payload?.text !== 'string') return false;
+      if (!(await this.artifactVerifier(release.payload.text, release.manifest.full.json)).valid) return false;
     }
     return true;
   }

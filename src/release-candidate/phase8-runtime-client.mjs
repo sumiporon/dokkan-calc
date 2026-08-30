@@ -8,13 +8,36 @@ function releaseFromManifest(manifest) {
 }
 
 export class Phase8RuntimeClient {
-  constructor({ dataRoot = './data', store, fetchImpl = globalThis.fetch.bind(globalThis), cacheStorage = globalThis.caches, storage = globalThis.localStorage, locationHref = globalThis.location?.href } = {}) {
+  constructor({
+    dataRoot = './data',
+    store,
+    fetchImpl = globalThis.fetch.bind(globalThis),
+    cacheStorage = globalThis.caches,
+    storage = globalThis.localStorage,
+    locationHref = globalThis.location?.href,
+    manifestValidator = validatePhase8Manifest,
+    runtimeValidator = validatePhase8Runtime,
+    indexValidator = validatePhase8Index,
+    artifactVerifier = verifyArtifactText,
+    cacheName = 'dokkan-phase8-rc-artifacts-v1',
+    cacheDigestParameter = 'phase8Digest',
+    metricsKey = METRICS_KEY,
+    appVersion = 'phase8-rc-1'
+  } = {}) {
     this.dataRoot = dataRoot.replace(/\/$/, '');
     this.store = store;
     this.fetchImpl = fetchImpl;
     this.cacheStorage = cacheStorage;
     this.storage = storage;
     this.locationHref = locationHref;
+    this.manifestValidator = manifestValidator;
+    this.runtimeValidator = runtimeValidator;
+    this.indexValidator = indexValidator;
+    this.artifactVerifier = artifactVerifier;
+    this.cacheName = cacheName;
+    this.cacheDigestParameter = cacheDigestParameter;
+    this.metricsKey = metricsKey;
+    this.appVersion = appVersion;
     this.manifest = null;
     this.index = null;
     this.eventCache = new Map();
@@ -34,19 +57,19 @@ export class Phase8RuntimeClient {
 
   async fetchCandidateManifest() {
     const manifest = JSON.parse(await this.networkText('release-manifest.json'));
-    const errors = validatePhase8Manifest(manifest);
+    const errors = this.manifestValidator(manifest);
     if (errors.length > 0) throw new Error(errors.join(' / '));
     return manifest;
   }
 
   async readVerified(descriptor) {
     const url = this.url(descriptor.path);
-    const key = `${url}?phase8Digest=${encodeURIComponent(descriptor.digest)}`;
-    const cache = this.cacheStorage ? await this.cacheStorage.open('dokkan-phase8-rc-artifacts-v1') : null;
+    const key = `${url}?${this.cacheDigestParameter}=${encodeURIComponent(descriptor.digest)}`;
+    const cache = this.cacheStorage ? await this.cacheStorage.open(this.cacheName) : null;
     const cached = cache ? await cache.match(key) : null;
     if (cached) {
       const text = await cached.text();
-      if ((await verifyArtifactText(text, descriptor)).valid) {
+      if ((await this.artifactVerifier(text, descriptor)).valid) {
         this.metrics.cacheHits += 1;
         return text;
       }
@@ -54,7 +77,7 @@ export class Phase8RuntimeClient {
       await cache.delete(key);
     }
     const text = await this.networkText(descriptor.path);
-    const verified = await verifyArtifactText(text, descriptor);
+    const verified = await this.artifactVerifier(text, descriptor);
     if (!verified.valid) throw new Error(`${verified.code}: ${descriptor.path}`);
     if (cache) await cache.put(key, new Response(text, { headers: { 'Content-Type': descriptor.contentType } }));
     return text;
@@ -63,7 +86,7 @@ export class Phase8RuntimeClient {
   async loadIndex(manifest = this.manifest) {
     const text = await this.readVerified(manifest.chunked.indexJson);
     const index = JSON.parse(text);
-    const errors = validatePhase8Index(index, manifest);
+    const errors = this.indexValidator(index, manifest);
     if (errors.length > 0) throw new Error(errors.join(' / '));
     if (manifest === this.manifest) this.index = index;
     return index;
@@ -97,11 +120,11 @@ export class Phase8RuntimeClient {
   recordUpdate(result) {
     let history = [];
     try {
-      const saved = JSON.parse(this.storage.getItem(METRICS_KEY) || '[]');
+      const saved = JSON.parse(this.storage.getItem(this.metricsKey) || '[]');
       if (Array.isArray(saved)) history = saved;
     } catch {}
     history.push({ at: new Date().toISOString(), status: result.status, code: result.code, version: result.activeVersion ?? result.retainedVersion ?? null, milliseconds: Math.round(result.milliseconds ?? 0) });
-    this.storage.setItem(METRICS_KEY, JSON.stringify(history.slice(-50)));
+    this.storage.setItem(this.metricsKey, JSON.stringify(history.slice(-50)));
   }
 
   async update() {
@@ -113,9 +136,9 @@ export class Phase8RuntimeClient {
       manifestPath: 'release-manifest.json',
       mode: 'full',
       store: this.store,
-      appVersion: 'phase8-rc-1',
-      manifestValidator: validatePhase8Manifest,
-      runtimeValidator: validatePhase8Runtime,
+      appVersion: this.appVersion,
+      manifestValidator: this.manifestValidator,
+      runtimeValidator: this.runtimeValidator,
       healthCheck: async (release) => {
         try {
           const index = await this.loadIndex(release.manifest);

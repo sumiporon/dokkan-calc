@@ -4,6 +4,16 @@
 
 プログラミングに詳しくない所有者でも安全に維持できることを優先しています。大きな変更の前には必ずテストと復旧点を用意し、公開中の`main`へ直接作業を入れない方針です。詳しい恒久ルールは[AGENTS.md](AGENTS.md)にあります。
 
+## 普段使うアプリ
+
+正式版はGitHub Pagesから開きます。
+
+```text
+https://sumiporon.github.io/dokkan-calc/
+```
+
+Pages版は初回だけ新しい状態から始まり、その後の入力・複数状況カード・設定はPages専用の保存領域へ自動保存されます。以前のOneDrive版は独立した旧known-good／offline backupで、両者の保存内容は別々です。
+
 ## アプリを手元で開く
 
 このアプリにビルド作業はありません。プロジェクトのフォルダで次を実行します。
@@ -15,7 +25,7 @@ python -m http.server 8765
 その後、ブラウザで次を開きます。
 
 ```text
-http://127.0.0.1:8765/dokkan_calc_final.html
+http://127.0.0.1:8765/
 ```
 
 停止するときは、コマンドを実行した画面で`Ctrl+C`を押します。
@@ -45,12 +55,13 @@ npm run test:phase4
 npm run test:phase6
 npm run test:phase7
 npm run test:phase8
+npm run test:phase9
 npm run test:cached-source
 npm run test:browser
 npm run audit:data
 ```
 
-`npm test`には、第4段階の候補データ変換と全件再現、第6段階のcanonical/runtime、第7段階の配信・更新prototypeに加え、第8段階のrelease candidate、前回event、1操作更新・rollback、Pages内の通常保存、Chromium/WebKit、HTTP/`file://` browser操作も含まれます。OneDrive→Pages保存データ移行は不採用となり、専用testも削除しました。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
+`npm test`には、第4段階の候補データ変換と全件再現、第6段階のcanonical/runtime、第7段階の配信・更新prototype、第8段階のrelease candidateに加え、第9段階の正式root、既存production敵データ変換、manifest/digest、Pages内保存、1操作更新・rollback、Chromium/WebKit、360px／390px、HTTP/`file://` browser操作も含まれます。OneDrive→Pages保存データ移行は不採用となり、専用testも削除しました。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
 
 ブラウザテストは独立した一時ブラウザを使います。普段使用しているブラウザの保存データやlocalStorageは読み書きしません。
 
@@ -89,7 +100,10 @@ npm run benchmark:phase8
 
 ## 主なファイル
 
-- `dokkan_calc_final.html` / `.css` / `.js`：現在の公開アプリ本体
+- `index.html`：GitHub Pages正式版の入口
+- `release-candidate/phase8/app.mjs` / `app.css`：owner承認済みUIを正式版と確認版で共用する画面実装
+- `data/`：既存production敵データから生成した正式版manifest、event index/chunk、検証用full runtime
+- `dokkan_calc_final.html` / `.css` / `.js`：OneDrive側に残す旧known-goodアプリのrepo内原本
 - `src/calculation-core.js`：画面と自動テストが共用する純粋計算モジュール
 - `scraper/all_enemies.json`：現行の敵データ
 - `scraper/`：過去のデータ取得・解析コードとHTMLキャッシュ
@@ -109,6 +123,9 @@ npm run benchmark:phase8
 - `release-candidate/phase8/`：第8段階の本番分離Pages候補、架空公開preview、単一HTML fallback
 - `src/release-candidate/`：第8段階のmanifest、chunk client、IndexedDB known-good、前回event
 - `artifacts/phase8/`：第8段階の性能とpermission状態
+- `src/production/`：第9段階の既存productionデータadapterと正式manifest validator
+- `scripts/generate-phase9-production.mjs`：外部通信なしで正式Pages用runtime/event chunksを決定生成する唯一のgenerator
+- `artifacts/phase9/`：第9段階のsource・件数・digest・permission gate報告
 - `schemas/`：将来形式の設計案（現行アプリはまだ読み込まない）
 - `docs/`：安全記録、データ形式、計算上の既知差、更新・公開方針
 
@@ -167,16 +184,27 @@ npm run benchmark:phase8
 - その後の実機確認で、`overflow: hidden`付きinline-blockだったrangeだけが攻撃名より上に見えるbaseline差を確認しました。攻撃名とrangeを折り返し可能なflex行の別itemとし、1行時は同一baseline、2行時はrange全体を次行へ送る構造へ修正しています。
 - 属性結果カードは見出しとcontentを別grid rowへ分け、スマホでは50pxのcontent領域内で「自分／敵」の2行全体を上下中央へ配置しました。見出し位置、左右カード高さ、約1.65:1の横幅比は維持しています。
 
+## 第9段階の正式Pages版
+
+- owner承認済みPhase 8 UIをroot `index.html`へ昇格し、GitHub Pagesを通常利用先にしました。raw.githackやpreview URL、GitHub login、PAT、PowerShell操作は通常利用に不要です。
+- 敵データは外部サイトから取得せず、旧productionと同じrepo内正本`scraper/all_enemies.json`だけを直接変換します。56 event種別、647 stage、4,245 enemy、8,899 attackを保持します。
+- 公開runtimeはsource-neutral形式のevent index＋選択event chunkです。更新検証用full runtimeもmanifestに含め、schema、件数、size、SHA-256 digest、app互換性を通ったreleaseだけを適用します。
+- Phase 8の架空3 eventと、保存HTML由来5,032 enemy candidateは正式`data/`へ入りません。DokkanStatsを含むlive外部sourceも接続していません。
+- Pagesの通常状態はstableなversion付きkey `dokkan_calc_pages_state_v1`へ保存します。旧OneDrive key、廃止したimport key、PAT、未知keyを読まず、OneDriveとのimport・同期を行いません。
+- `敵データを更新`は利用者が押した時だけmanifestとreleaseを確認します。0操作startup updateは無効で、外部source未接続の現在は同じ正式releaseなら「すでに最新です」と表示します。
+- 正式版はplain HTML/CSS/JavaScriptと生成済みJSONで成立するため、Phase 9でもVite、React、backendは導入していません。
+
 ## 重要な安全上の注意
 
 - DokkanInfoへの自動取得は停止中です。規約・許可の問題が解決するまで再開しません。
 - `npm run audit:data`はローカルファイルを読むだけで、敵データを取得・上書きしません。
 - スクレイパーの`npm run scrape`、`download`、`inject`は、通常の確認作業では実行しないでください。
-- 現行アプリにはGitHub PATをlocalStorageへ保存する既存機能があります。テスト用データや通常のバックアップへPATを含めないでください。
+- 旧OneDriveアプリのrepo内原本にはGitHub PATをlocalStorageへ保存するlegacy機能があります。正式Pages版はそのkeyを読まず、PAT入力も要求しません。テスト用データや通常のバックアップへPATを含めないでください。
 - 公開版は`main`から配信されています。テストブランチのpushだけでは公開版は変わりません。
 
 ## 調査文書
 
+- [第9段階のGitHub Pages正式版・安全記録](docs/phase9-production-cutover.md)
 - [第1段階の安全記録](docs/phase1-safety.md)
 - [敵データ取得元の評価](docs/data-source-evaluation.md)
 - [計算基準と既知の差](docs/calculation-baseline.md)
