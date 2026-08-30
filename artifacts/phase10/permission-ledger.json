@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "1.0.0",
+  "ledgerId": "phase10-source-review-no-adopted-source",
+  "generatedAt": "2026-08-30T21:42:00.000Z",
+  "entries": [
+    {
+      "sourceKey": "dokkanstats", "displayName": "DokkanStats", "acquisitionMode": "written-permission-pending",
+      "automaticFetch": "unknown", "manualFetch": "unknown", "offlineTransform": "unknown", "redistributeRaw": "unknown", "redistributeDerived": "unknown", "publishDerived": "unknown",
+      "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-30T21:18:00.000Z", "evidenceUrls": [],
+      "notes": "permission: pending。ownerが2026-08-24に問い合わせ送信済み、返信なし。Phase 10ではアクセス・取得・再問い合わせ・follow-upを行わない。既存記録だけを引き継ぐ。"
+    },
+    {
+      "sourceKey": "dokkaninfo-saved-cache", "displayName": "Existing offline DokkanInfo cache", "acquisitionMode": "offline-existing-copy",
+      "automaticFetch": "denied", "manualFetch": "unknown", "offlineTransform": "allowed", "redistributeRaw": "denied", "redistributeDerived": "unknown", "publishDerived": "unknown",
+      "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-30T21:18:00.000Z", "evidenceUrls": [],
+      "notes": "既存offline検証の許容範囲だけを保持。新規取得・新source・production公開の許可ではない。"
+    },
+    {
+      "sourceKey": "dokkaninfo-live", "displayName": "DokkanInfo live", "acquisitionMode": "prohibited",
+      "automaticFetch": "denied", "manualFetch": "unknown", "offlineTransform": "unknown", "redistributeRaw": "denied", "redistributeDerived": "unknown", "publishDerived": "unknown",
+      "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-23T00:00:00.000Z", "evidenceUrls": ["https://jpnja.dokkaninfo.com/terms", "https://jpnja.dokkaninfo.com/robots.txt"],
+      "notes": "Phase 3/5の一次規約調査を再利用。automated request禁止を解除する新事実なし。Phase 10で再収集していない。"
+    },
+    {
+      "sourceKey": "dokkandb-live", "displayName": "DokkanDB live", "acquisitionMode": "prohibited",
+      "automaticFetch": "denied", "manualFetch": "unknown", "offlineTransform": "unknown", "redistributeRaw": "denied", "redistributeDerived": "unknown", "publishDerived": "unknown",
+      "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-23T00:00:00.000Z", "evidenceUrls": ["https://dokkandb.com/legal?tab=terms", "https://dokkandb.com/robots.txt"],
+      "notes": "Phase 3/5の一次規約とrecent detail欠損観察を再利用。隠しAPI探索・取得は行わない。"
+    },
+    {
+      "sourceKey": "gachadata", "displayName": "GachaData Dokkan API", "acquisitionMode": "written-permission-pending",
+      "automaticFetch": "unknown", "manualFetch": "unknown", "offlineTransform": "unknown", "redistributeRaw": "unknown", "redistributeDerived": "unknown", "publishDerived": "unknown",
+      "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-30T21:18:00.000Z", "evidenceUrls": ["https://gacha-data.com/api/", "https://gacha-data.com/terms/", "https://gacha-data.com/dokkan-battle/"],
+      "notes": "API自体はtoken/契約条件下で利用可能。ただし本projectは契約・tokenなし、Dokkan敵datasetなし、公開JSON再配布scope未確認。pendingは許可条件未充足の意味で問い合わせ送信済みではない。"
+    },
+    {
+      "sourceKey": "dbz-dokkanbattle-fr", "displayName": "DBZ Dokkan Battle France", "acquisitionMode": "written-permission-pending",
+      "automaticFetch": "unknown", "manualFetch": "unknown", "offlineTransform": "unknown", "redistributeRaw": "unknown", "redistributeDerived": "unknown", "publishDerived": "unknown",
+      "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-30T21:18:00.000Z", "evidenceUrls": ["https://dbz-dokkanbattle.com/privacy", "https://dbz-dokkanbattle.com/"],
+      "notes": "公開UIには敵詳細あり。privacyは再利用ライセンスではない。auto access/API/export/derived配布の許可未確認。未照会。少数ページの調査のみ、敵dataset取得なし。"
+    },
+    {
+      "sourceKey": "bandai-public", "displayName": "Bandai Namco official public material", "acquisitionMode": "written-permission-pending",
+      "automaticFetch": "unknown", "manualFetch": "unknown", "offlineTransform": "unknown", "redistributeRaw": "unknown", "redistributeDerived": "unknown", "publishDerived": "unknown",
+      "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-30T21:18:00.000Z", "evidenceUrls": ["https://dbz-dokkan.bn-ent.net/en/"],
+      "notes": "調査範囲に公開enemy API/feed/licenseなし。未照会。公式ニュース閲覧とゲーム内部data取得は別。"
+    },
+    {
+      "sourceKey": "bandai-client-files", "displayName": "Game client/database files", "acquisitionMode": "prohibited",
+      "automaticFetch": "unknown", "manualFetch": "unknown", "offlineTransform": "unknown", "redistributeRaw": "unknown", "redistributeDerived": "unknown", "publishDerived": "unknown",
+      "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-30T21:42:00.000Z", "evidenceUrls": ["https://www.bandainamcoent.com/legal/bnea-eula-googleplay", "https://legal.bandainamcoent.co.jp/terms/?lang=en"],
+      "notes": "本projectで取得・復号を禁止。BNEA EULAとBNEI公開Termsの逆解析・複製制限を確認したがJP版個別契約への適用は別途確認が必要。本用途の明示的なゲームdata再配布許可は未確認。"
+    },
+    {
+      "sourceKey": "fandom-dokkan", "displayName": "Dokkan Fandom wiki", "acquisitionMode": "written-permission-pending",
+      "automaticFetch": "unknown", "manualFetch": "unknown", "offlineTransform": "unknown", "redistributeRaw": "unknown", "redistributeDerived": "unknown", "publishDerived": "unknown",
+      "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-30T21:18:00.000Z", "evidenceUrls": ["https://www.fandom.com/licensing", "https://www.fandom.com/terms-of-use"],
+      "notes": "一般wiki本文のCC BY-SA条件は認識するが画像/転載dataは別。現行API/bot条件を一次情報で確認できずrobots blockを回避しなかった。未照会。"
+    },
+    {
+      "sourceKey": "dokkan-wiki", "displayName": "dokkan.wiki", "acquisitionMode": "prohibited",
+      "automaticFetch": "denied", "manualFetch": "unknown", "offlineTransform": "unknown", "redistributeRaw": "denied", "redistributeDerived": "unknown", "publishDerived": "unknown",
+      "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-30T21:18:00.000Z", "evidenceUrls": ["https://dokkan.wiki/terms"],
+      "notes": "card APIがあることはenemy feedや自動再利用許可を意味しない。規約上の制限を維持。"
+    },
+    {
+      "sourceKey": "github-card-data", "displayName": "Public card API/dataset repositories", "acquisitionMode": "written-permission-pending",
+      "automaticFetch": "unknown", "manualFetch": "unknown", "offlineTransform": "unknown", "redistributeRaw": "unknown", "redistributeDerived": "unknown", "publishDerived": "unknown",
+      "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-30T21:18:00.000Z", "evidenceUrls": ["https://github.com/dthiel22/dokkan-database", "https://github.com/MNprojects/DokkanAPI", "https://github.com/feijoes/DokkanAPI"],
+      "notes": "MIT/AGPL等のコード/リポジトリlicenseと上流ゲームdata権利を分離。player card中心、enemy pipeline不成立。許可済みcanonical sourceとして登録していない。"
+    },
+    {
+      "sourceKey": "github-client-databases", "displayName": "Client database/archive and schema-tool repositories", "acquisitionMode": "written-permission-pending",
+      "automaticFetch": "unknown", "manualFetch": "unknown", "offlineTransform": "unknown", "redistributeRaw": "unknown", "redistributeDerived": "unknown", "publishDerived": "unknown",
+      "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-30T21:18:00.000Z", "evidenceUrls": ["https://github.com/itZcat17/CapsuleOS", "https://github.com/dthiel22/dokkan-database-compiler", "https://github.com/KaryonixX/kxdokkan-wiki"],
+      "notes": "readme/license/tree metadataのみ調査。DB本体・鍵・復号・private APIは取得/利用なし。公開repoや復号コードのlicenseはゲームdata配布許可ではない。未照会。"
+    }
+  ]
+}

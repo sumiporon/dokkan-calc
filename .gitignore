@@ -42,6 +42,10 @@
 # tracked public preview contains fictional fixtures only.
 /generated/phase8/
 
+# Phase 10 intake material is internal-only unless separate publication review
+# approves it. The read-only review CLI never writes to this directory.
+/generated/phase10/
+
 # Scraper caches and intermediate data
 # Some of these paths are already tracked in the legacy history. Ignoring them
 # here does not delete or untrack those files; that decision is deferred.

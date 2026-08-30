@@ -5,16 +5,20 @@ on:
   # SAFETY PAUSE (2026-08-21): the daily schedule is intentionally disabled.
   # The current scraper can silently lose or misclassify enemy data, and
   # DokkanInfo's current Terms of Use also require a source-policy review.
-  # Keep workflow_dispatch so a maintainer can run a reviewed test manually.
+  # Phase 10: manual dispatch is also blocked below. Retain the legacy job
+  # for historical review, not as an approved acquisition/publication route.
   # schedule:
   #   # 毎日 JST 06:00 (UTC 21:00 前日)
   #   - cron: '0 21 * * *'
 
 jobs:
   scrape-and-update:
+    # No permitted live source. Never run the legacy scrape/inject/push chain.
+    # A future candidate-only pipeline needs separate source and release review.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
 
     steps:
       - name: Checkout repository

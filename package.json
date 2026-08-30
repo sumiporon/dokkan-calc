@@ -4,7 +4,7 @@
   "private": true,
   "description": "Characterization, calculation-reference, enemy-data, and browser tests for the legacy Dokkan calculator.",
   "scripts": {
-    "test": "npm run test:syntax && npm run typecheck && npm run test:unit && npm run test:data && npm run test:phase4 && npm run test:phase6 && npm run test:phase7 && npm run test:phase8 && npm run test:phase9 && npm run test:browser",
+    "test": "npm run test:syntax && npm run typecheck && npm run test:unit && npm run test:data && npm run test:phase4 && npm run test:phase6 && npm run test:phase7 && npm run test:phase8 && npm run test:phase9 && npm run test:phase10 && npm run test:browser",
     "test:syntax": "node --check src/calculation-core.js && node --check dokkan_calc_final.js && node --check chrome_extension/content.js && node --check scripts/generate-phase4-enemy-candidate.mjs && node --check scripts/generate-phase6-data-foundation.mjs && node --check scripts/benchmark-phase6-data-foundation.mjs && node --check scripts/generate-phase7-runtime-delivery.mjs && node --check scripts/benchmark-phase7-runtime-delivery.mjs && node --check scripts/generate-phase8-release-candidate.mjs && node --check scripts/build-phase8-device-preview.mjs && node --check scripts/benchmark-phase8-release-candidate.mjs && node --check scripts/measure-phase8-mobile-layout.mjs && node --check scripts/generate-phase9-production.mjs && node --check src/prototype/phase7-update-engine.mjs && node --check src/release-candidate/phase8-manifest.mjs && node --check src/release-candidate/phase8-selection-state.mjs && node --check src/release-candidate/phase8-release-store.mjs && node --check src/release-candidate/phase8-runtime-client.mjs && node --check src/release-candidate/phase8-ui-model.mjs && node --check src/production/legacy-production-runtime.mjs && node --check src/production/phase9-manifest.mjs && node --check prototypes/phase7-runtime-delivery/prototype.js && node --check prototypes/phase7-runtime-delivery/update-prototype.mjs && node --check release-candidate/phase8/app.mjs",
     "typecheck": "tsc -p tsconfig.phase6.json",
     "build:phase4": "tsc -p tsconfig.phase4.build.json",
@@ -16,6 +16,8 @@
     "test:phase7": "npm run generate:phase7 && node --test --test-reporter=spec tests/data/phase7-runtime-delivery.test.mjs tests/data/phase7-full-scale.test.mjs && node --test --test-concurrency=1 --test-reporter=spec tests/browser/phase7-prototype.test.mjs",
     "test:phase8": "npm run generate:phase8 && node --test --test-reporter=spec tests/data/phase8-release-candidate.test.mjs && node --test --test-concurrency=1 --test-reporter=spec tests/browser/phase8-release-candidate.test.mjs",
     "test:phase9": "npm run generate:phase9 && node --test --test-reporter=spec tests/data/phase9-production.test.mjs && node --test --test-concurrency=1 --test-reporter=spec tests/browser/phase9-production.test.mjs",
+    "test:phase10": "npm run build:phase6 && node --check scripts/review-phase10-candidate.mjs && node --test --test-reporter=spec tests/data/phase10-source-review.test.mjs",
+    "review:phase10": "npm run build:phase6 && node scripts/review-phase10-candidate.mjs",
     "test:cached-source": "node --test --test-reporter=spec tests/data/cached-source.test.mjs",
     "test:browser": "node --test --test-concurrency=1 --test-reporter=spec tests/browser/app.test.mjs",
     "audit:data": "node scripts/audit-enemy-data.mjs",
