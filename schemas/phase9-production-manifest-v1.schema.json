@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sumiporon.github.io/dokkan-calc/schemas/phase9-production-manifest-v1.schema.json",
+  "title": "Phase 9 production release manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "releaseCandidate", "productionActivated", "dataClassification", "datasetVersion", "generatedAt", "runtimeSchemaVersion", "source", "appCompatibility", "counts", "sourceCounts", "full", "chunked", "knownGood", "validation", "permission", "updatePolicy"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "releaseCandidate": { "const": false },
+    "productionActivated": { "const": true },
+    "dataClassification": { "const": "legacy-production-baseline" },
+    "datasetVersion": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "runtimeSchemaVersion": { "const": "1.0.0" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path", "digest", "networkRequests", "embeddedPresetMatches", "savedCacheCandidateIncluded", "syntheticFixtureIncluded"],
+      "properties": {
+        "kind": { "const": "existing-production-repository-data" },
+        "path": { "const": "scraper/all_enemies.json" },
+        "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "networkRequests": { "const": 0 },
+        "embeddedPresetMatches": { "const": true },
+        "savedCacheCandidateIncluded": { "const": false },
+        "syntheticFixtureIncluded": { "const": false }
+      }
+    },
+    "appCompatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimum", "maximum", "productionAppReadsArtifact"],
+      "properties": {
+        "minimum": { "const": "phase9-production-1" },
+        "maximum": { "type": ["string", "null"] },
+        "productionAppReadsArtifact": { "const": true }
+      }
+    },
+    "counts": { "$ref": "#/$defs/runtimeCounts" },
+    "sourceCounts": { "$ref": "#/$defs/sourceCounts" },
+    "full": {
+      "type": "object", "additionalProperties": false, "required": ["json"],
+      "properties": { "json": { "$ref": "#/$defs/jsonArtifact" } }
+    },
+    "chunked": {
+      "type": "object", "additionalProperties": false,
+      "required": ["indexJson", "eventCount", "jsonFiles", "totalJsonBytes", "largestChunkBytes"],
+      "properties": {
+        "indexJson": { "$ref": "#/$defs/jsonArtifact" },
+        "eventCount": { "type": "integer", "minimum": 1 },
+        "jsonFiles": { "type": "integer", "minimum": 2 },
+        "totalJsonBytes": { "type": "integer", "minimum": 1 },
+        "largestChunkBytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "knownGood": {
+      "type": "object", "additionalProperties": false,
+      "required": ["datasetVersion", "runtimeDigest", "retainedReleaseCount"],
+      "properties": {
+        "datasetVersion": { "type": "string", "minLength": 1 },
+        "runtimeDigest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "retainedReleaseCount": { "const": 2 }
+      }
+    },
+    "validation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "hardFailCount", "reviewRequiredCount", "sourceAuditErrorCount", "projectionErrorCount", "note"],
+      "properties": {
+        "status": { "const": "passed" },
+        "hardFailCount": { "const": 0 },
+        "reviewRequiredCount": { "const": 0 },
+        "sourceAuditErrorCount": { "const": 0 },
+        "projectionErrorCount": { "const": 0 },
+        "note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "permission": {
+      "type": "object", "additionalProperties": false,
+      "required": ["publicArtifactAllowed", "productionActivateAllowed", "liveSourceAccessAllowed", "unapprovedDerivedDataIncluded", "syntheticDataIncluded"],
+      "properties": {
+        "publicArtifactAllowed": { "const": true },
+        "productionActivateAllowed": { "const": true },
+        "liveSourceAccessAllowed": { "const": false },
+        "unapprovedDerivedDataIncluded": { "const": false },
+        "syntheticDataIncluded": { "const": false }
+      }
+    },
+    "updatePolicy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["userInitiated", "zeroOperationEnabled", "browserPatRequired"],
+      "properties": {
+        "userInitiated": { "const": true },
+        "zeroOperationEnabled": { "const": false },
+        "browserPatRequired": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "runtimeCounts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["events", "stages", "encounters", "enemies"],
+      "properties": {
+        "events": { "type": "integer", "minimum": 1 },
+        "stages": { "type": "integer", "minimum": 1 },
+        "encounters": { "type": "integer", "minimum": 1 },
+        "enemies": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "sourceCounts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["eventTypes", "series", "stages", "enemies", "attacks", "areaAttacks"],
+      "properties": {
+        "eventTypes": { "type": "integer", "minimum": 1 },
+        "series": { "type": "integer", "minimum": 1 },
+        "stages": { "type": "integer", "minimum": 1 },
+        "enemies": { "type": "integer", "minimum": 1 },
+        "attacks": { "type": "integer", "minimum": 1 },
+        "areaAttacks": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "jsonArtifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "digest", "bytes", "contentType"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "contentType": { "const": "application/json" }
+      }
+    }
+  }
+}

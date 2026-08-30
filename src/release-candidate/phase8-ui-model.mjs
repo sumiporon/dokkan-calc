@@ -50,7 +50,10 @@ function turnOptions(effects) {
     if (effect.trigger.kind === 'elapsed-turn') {
       const value = Math.abs(knownNumber(effect.value));
       const cap = Math.abs(knownNumber(effect.cap));
-      if (value > 0 && cap > 0) candidates.push(start + Math.max(0, Math.ceil(cap / value) - 1));
+      if (value > 0 && cap > 0) {
+        const steps = Math.ceil(cap / value);
+        for (let step = 0; step < steps; step += 1) candidates.push(start + step);
+      }
     }
     const end = knownNumber(effect.trigger.end, 0);
     if (end > 0) candidates.push(Math.floor(end), Math.floor(end) + 1);
@@ -67,7 +70,10 @@ function hitOptions(effects) {
     const value = Math.abs(knownNumber(effect.value));
     const cap = Math.abs(knownNumber(effect.cap));
     candidates.push(start);
-    if (value > 0 && cap > 0) candidates.push(start + Math.max(0, Math.ceil(cap / value) - 1));
+    if (value > 0 && cap > 0) {
+      const steps = Math.ceil(cap / value);
+      for (let step = 0; step < steps; step += 1) candidates.push(start + step);
+    }
   }
   return sortedUnique(candidates).map((value) => ({ value, label: `被弾${value}回` }));
 }
@@ -147,11 +153,20 @@ export function enemyAttackState(enemy, state, core) {
     .map((effect) => knownNumber(effect.value))
     .filter((value) => value !== 0);
   const normalValues = [normal, ...postSuperPercents.map((percent) => core.applyPercentAndFloor(normal, percent))];
-  const supers = (enemy.superAttacks ?? []).map((attack) => ({
-    id: attack.id,
-    name: String(known(attack.name, '必殺技')),
-    value: apply(knownNumber(attack.displayedDamage))
-  }));
+  const supers = (enemy.superAttacks ?? []).map((attack) => {
+    const displayedDamage = knownNumber(attack.displayedDamage);
+    const baseAttack = knownNumber(enemy.baseAttack);
+    const derivedMultiplier = knownNumber(attack.derivedMultiplier, Number.NaN);
+    const canDeriveFromConditionedNormal = Number.isFinite(derivedMultiplier)
+      && Math.floor(baseAttack * derivedMultiplier) === displayedDamage;
+    return {
+      id: attack.id,
+      name: String(known(attack.name, '必殺技')),
+      value: canDeriveFromConditionedNormal
+        ? Math.floor(normal * derivedMultiplier)
+        : apply(displayedDamage)
+    };
+  });
   return { normalValues, supers, startOfTurnPercent, receivedHitPercent };
 }
 

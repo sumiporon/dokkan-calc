@@ -1,0 +1,76 @@
+{
+  "reportVersion": "1.0.0",
+  "generatedAt": "2026-08-30T00:00:00.000Z",
+  "datasetVersion": "legacy-production-runtime:f1cb27a2e5cae962",
+  "source": {
+    "kind": "existing-production-repository-data",
+    "path": "scraper/all_enemies.json",
+    "digest": "sha256:f1cb27a2e5cae9627be61934aaabec79e4af0b42d3e21ad0cc7945eb6d7a0b40",
+    "networkRequests": 0,
+    "savedCacheCandidateIncluded": false,
+    "syntheticFixtureIncluded": false,
+    "embeddedPresetMatches": true
+  },
+  "sourceCounts": {
+    "eventTypes": 56,
+    "series": 73,
+    "stages": 647,
+    "enemies": 4245,
+    "attacks": 8899,
+    "areaAttacks": 0
+  },
+  "runtimeCounts": {
+    "events": 56,
+    "stages": 647,
+    "encounters": 647,
+    "enemies": 4245
+  },
+  "exactProjectionChecks": {
+    "normalAttacks": 4245,
+    "superAttacks": 4245,
+    "postSuperAttacks": 409
+  },
+  "sourceAudit": {
+    "errors": 0,
+    "warnings": [
+      "KNOWN_MISSING_EVENT_IDS",
+      "KNOWN_MISSING_STAGE_IDS",
+      "KNOWN_MISSING_ENEMY_IDS",
+      "KNOWN_MISSING_ENEMY_DEF",
+      "DUPLICATE_STAGE_NAMES",
+      "EXACT_DUPLICATE_STAGES",
+      "DUPLICATE_BOSS_NAMES",
+      "EXACT_DUPLICATE_BOSSES",
+      "NON_UNIQUE_HUMAN_BOSS_PATHS",
+      "KNOWN_EMPTY_AOE_DATA",
+      "KNOWN_EMPTY_CRITICAL_EFFECTS",
+      "SA_MULTIPLIER_OUTLIERS",
+      "NON_DIVISIBLE_CONDITION_MAXIMUM"
+    ]
+  },
+  "artifacts": {
+    "full": {
+      "path": "releases/de044790a521508a/full/runtime.min.json",
+      "digest": "sha256:076efb18675b1b9e8b9dd9a1013b50cf6f78d1189390e44f1d3e84952b280545",
+      "bytes": 4915199,
+      "contentType": "application/json"
+    },
+    "index": {
+      "path": "releases/de044790a521508a/chunked/event-index.json",
+      "digest": "sha256:460e8ee3ac8432af1c4d2f29b60666beb5029f2a3209d70cd323e29fbf06079a",
+      "bytes": 21065,
+      "contentType": "application/json"
+    },
+    "eventChunks": 56,
+    "totalChunkJsonBytes": 4935992,
+    "largestChunkBytes": 837740
+  },
+  "gates": {
+    "runtimeSchema": "passed",
+    "manifestSchema": "passed",
+    "digestDescriptors": "passed",
+    "externalNetworkRequests": 0,
+    "savedCacheCandidateIncluded": false,
+    "syntheticFixtureIncluded": false
+  }
+}
