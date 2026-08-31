@@ -37,7 +37,7 @@
       "sourceKey": "dbz-dokkanbattle-fr", "displayName": "DBZ Dokkan Battle France", "acquisitionMode": "written-permission-pending",
       "automaticFetch": "unknown", "manualFetch": "unknown", "offlineTransform": "unknown", "redistributeRaw": "unknown", "redistributeDerived": "unknown", "publishDerived": "unknown",
       "validFrom": null, "validUntil": null, "reviewedAt": "2026-08-30T21:18:00.000Z", "evidenceUrls": ["https://dbz-dokkanbattle.com/privacy", "https://dbz-dokkanbattle.com/"],
-      "notes": "公開UIには敵詳細あり。privacyは再利用ライセンスではない。auto access/API/export/derived配布の許可未確認。未照会。少数ページの調査のみ、敵dataset取得なし。"
+      "notes": "公開UIには敵詳細あり。privacyは再利用ライセンスではない。Phase 10時点は未照会・少数ページ観察のみ。Phase 11でowner申告: 2026-08-31にautomatic access、Actions、derived JSON、GitHub/Pages、history保存、手動表示済みDOMのローカル解析について問い合わせ送信済み、返信待ち。自動/手動取得・加工・再配布の許可は未確認のまま。Codexによる再送・follow-up・source自動通信なし。"
     },
     {
       "sourceKey": "bandai-public", "displayName": "Bandai Namco official public material", "acquisitionMode": "written-permission-pending",

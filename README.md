@@ -203,7 +203,17 @@ npm run benchmark:phase8
 - `npm run review:phase10 -- --baseline`は現productionの全artifactと差分0を、通信せず敵データを変更せずに再確認する開発者用commandです（前処理でTypeScriptを`generated/`へbuildします）。ownerの日常更新手順ではありません。
 - このbranchの旧scrape workflowは手動実行も無効化しました。mainと公開workflowは未変更です。新sourceの接続・mainへの反映・0操作更新は別承認まで行いません。
 
+## 第11段階のAndroid中心・手動更新方式比較
+
+- 自動取得許可が得られない場合を基本に、ownerが通常ブラウザで開いた内容のローカル取り込みを検討します。主要対象はAndroidスマホとWindows PCで、Android単独完結を最優先します。
+- 中断前に作成したPhase 11 branchと比較調査を再利用しました。Android Chromeの保存/共有、bookmarklet、コピー、file、拡張対応browser、更新packを比較しています。
+- 暫定の試作第一候補はChromeで保存したページをPages側のfile選択で読み込む方式です。共有PWA案は失敗時のfile外部送信防止が未解決なので短縮候補に留めます。毎回の保存操作・file選択・端末別保存という実用上の差があるため、owner選択前にprototypeや本番UIを実装していません。
+- Franceへの問い合わせはownerが2026-08-31に送信済み、手動DOM解析を含め返信待ちです。自動取得も行っていません。許可待ちは自作fixtureによる共通基盤開発を止める理由にしません。
+- 直近の全testは222件成功。再開時にPhase 10検査33件を再確認しました。Android実機の共有/file受渡しは未検証で、360px/390pxのbrowser回帰を実機検証と混同しません。
+
 ## 重要な安全上の注意
+
+最新の更新方式検討は第11段階です。以下の過去段階の記述より、ownerの最新のAndroid優先・手動取得方針を優先します。
 
 - DokkanInfoへの自動取得は停止中です。規約・許可の問題が解決するまで再開しません。
 - `npm run audit:data`はローカルファイルを読むだけで、敵データを取得・上書きしません。
@@ -213,6 +223,8 @@ npm run benchmark:phase8
 
 ## 調査文書
 
+- [第11段階のAndroid中心・手動更新方式比較とowner選択](docs/phase11-manual-update-options.md)
+- [第11段階の中断復元・安全な手動取り込み設計・検証結果](docs/phase11-manual-intake-design.md)
 - [第10段階の代替source比較・採否と未確認事項](docs/phase10-source-research.md)
 - [第10段階のoffline接続前検査・production差分review](docs/phase10-offline-intake.md)
 - [第9段階のGitHub Pages正式版・安全記録](docs/phase9-production-cutover.md)
