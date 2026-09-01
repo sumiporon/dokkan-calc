@@ -57,9 +57,12 @@ npm run test:phase7
 npm run test:phase8
 npm run test:phase9
 npm run test:phase10
+npm run test:phase11
 npm run test:cached-source
 npm run test:browser
 npm run audit:data
+npm run build:phase11
+npm run build:phase11:fixed
 ```
 
 `npm test`には、第4段階の候補データ変換と全件再現、第6段階のcanonical/runtime、第7段階の配信・更新prototype、第8段階のrelease candidateに加え、第9段階の正式root、既存production敵データ変換、manifest/digest、Pages内保存、1操作更新・rollback、Chromium/WebKit、360px／390px、HTTP/`file://` browser操作も含まれます。OneDrive→Pages保存データ移行は不採用となり、専用testも削除しました。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
@@ -207,9 +210,9 @@ npm run benchmark:phase8
 
 - 自動取得許可が得られない場合を基本に、ownerが通常ブラウザで開いた内容のローカル取り込みを検討します。主要対象はAndroidスマホとWindows PCで、Android単独完結を最優先します。
 - 中断前に作成したPhase 11 branchと比較調査を再利用しました。Android Chromeの保存/共有、bookmarklet、コピー、file、拡張対応browser、更新packを比較しています。
-- 暫定の試作第一候補はChromeで保存したページをPages側のfile選択で読み込む方式です。共有PWA案は失敗時のfile外部送信防止が未解決なので短縮候補に留めます。毎回の保存操作・file選択・端末別保存という実用上の差があるため、owner選択前にprototypeや本番UIを実装していません。
+- owner承認後、Chromeで保存したHTML/MHTMLをfile選択で読むproduction分離prototypeを作成しました。自作の架空fixtureだけをparseし、Phase 10検査、preview、明示保存、reload、rollbackまで試せます。暫定IndexedDBは最終仕様ではなく、production UIにも入れていません。
 - Franceへの問い合わせはownerが2026-08-31に送信済み、手動DOM解析を含め返信待ちです。自動取得も行っていません。許可待ちは自作fixtureによる共通基盤開発を止める理由にしません。
-- 直近の全testは222件成功。再開時にPhase 10検査33件を再確認しました。Android実機の共有/file受渡しは未検証で、360px/390pxのbrowser回帰を実機検証と混同しません。
+- Phase 11専用testは30件（data 20、Chromium/WebKit 10）です。Android実機の共有/file受渡しは未検証で、360px/390pxのbrowser回帰を実機検証と混同しません。
 
 ## 重要な安全上の注意
 
@@ -225,6 +228,7 @@ npm run benchmark:phase8
 
 - [第11段階のAndroid中心・手動更新方式比較とowner選択](docs/phase11-manual-update-options.md)
 - [第11段階の中断復元・安全な手動取り込み設計・検証結果](docs/phase11-manual-intake-design.md)
+- [第11段階の非本番・保存file取り込みprototype](docs/phase11-manual-intake-prototype.md)
 - [第10段階の代替source比較・採否と未確認事項](docs/phase10-source-research.md)
 - [第10段階のoffline接続前検査・production差分review](docs/phase10-offline-intake.md)
 - [第9段階のGitHub Pages正式版・安全記録](docs/phase9-production-cutover.md)

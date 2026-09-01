@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-%%SCRIPT_HASH%%'; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; font-src 'none'; media-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phase 11 手動取込・非本番の試作</title><style>%%STYLE%%</style></head>
+<body><main>
+<header><span class="badge">Phase 11 · 非本番</span><h1>保存ページの取り込み試作</h1>
+<p>Android向けの操作確認用です。<strong>架空の確認用ファイルだけ</strong>取り込めます。正式版の計算画面・敵データには反映しません。</p></header>
+<aside class="notice">端末内保存は<strong>暫定方式</strong>です。同じブラウザ・同じ開き方でのみ保持します。PCとの共有・バックアップ同期はありません。ブラウザデータを消すと失われます。大切なデータには使わないでください。</aside>
+<section aria-labelledby="input-title"><h2 id="input-title">1. 保存したページを選ぶ</h2>
+<p>HTML / MHTMLを選ぶと自動で検査します。送信・外部ページの取得・元ページのスクリプト実行はしません。France等の実ページは未対応です。</p>
+<label class="file-label" for="source-files">ファイルを選択（複数可）</label>
+<input id="source-files" type="file" multiple accept=".html,.htm,.mhtml,.mht,text/html,multipart/related">
+<p class="small">各8MB・合計16MB・一度に10ファイル、保存は20ステージまでの試験上限です。</p>
+<details><summary>架空サンプルで試す</summary>
+<p>まず「完全なMHTMLを保存」を押し、上のファイル選択でダウンロードしたファイルを選んでください。</p>
+<div class="buttons"><button data-sample="mhtml">完全なMHTMLを保存</button><button data-sample="complete">完全なHTMLを保存</button></div>
+<p>不足案内の試験：本編だけを選ぶと停止します。本編と補足を<strong>一緒に選び直す</strong>と揃います。</p>
+<div class="buttons"><button data-sample="main">不足する本編を保存</button><button data-sample="detail">補足を保存</button></div>
+<div class="buttons"><button data-sample="updated">ATK変更版を保存</button><button data-sample="second">2ステージ目を保存</button></div>
+</details></section>
+<div id="status" role="status" aria-live="polite">試作の保存状態を確認しています…</div>
+<section id="preview" hidden aria-labelledby="preview-title"><h2 id="preview-title">2. 検査結果を確認</h2><div id="preview-body"></div>
+<div class="buttons"><button id="apply" class="primary" disabled>この端末の試作に保存</button><button id="discard">取り消す</button></div></section>
+<section aria-labelledby="saved-title"><div class="section-head"><h2 id="saved-title">試作に保存したステージ</h2><div class="buttons compact"><button id="rollback" disabled>1つ前へ戻す</button><button id="clear-all" class="danger" disabled>個人追加をすべて削除</button></div></div>
+<p id="saved-count">0ステージ</p><div id="saved-list"></div></section>
+<details><summary>試作の安全境界と確認方法</summary>
+<p>本番との比較は読み取り専用です。試作で追加したデータだけを別の保存領域へ記録します。許可確認は自作サンプル専用で、実サイトの利用許可を与えるものではありません。</p>
+<p>保存後に再読み込みして、ステージ名・通常ATK・必殺2件・全体攻撃の対象別ATKを確認してください。変更版を保存した後は「1つ前へ戻す」で戻せます。失敗時に旧データを自動消去しません。</p>
+<p>元HTML・画像・Cookie・フォーム・認証情報は保存しません。必要な項目と出典・検査用ハッシュだけを保持します。自作サンプルの値から一般のサイトの完全性は判断できません。</p>
+<p id="baseline" class="small"></p></details>
+</main><script>%%SCRIPT%%</script></body></html>

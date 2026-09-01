@@ -46,6 +46,9 @@
 # approves it. The read-only review CLI never writes to this directory.
 /generated/phase10/
 
+# Private, generated Phase 11 trial; never a production/Pages deployment artifact.
+/generated/phase11/
+
 # Scraper caches and intermediate data
 # Some of these paths are already tracked in the legacy history. Ignoring them
 # here does not delete or untrack those files; that decision is deferred.
