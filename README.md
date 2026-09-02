@@ -218,6 +218,9 @@ npm run benchmark:phase8
 - eventページはstageリンクだけで敵詳細を持ちません。固定previewへ実snapshot由来event名を埋め込まないため、1 eventにつきeventページ1件＋追加するstage各1ページが必要です。複数fileの解析・保存は一括できますが、各stageを保存する手間は残るため、Android内保存も取得方式も最終仕様に固定していません。
 - 暫定IndexedDBはPhase 11専用で、production UI、Pages保存、OneDrive、PATと分離しています。raw HTML/MHTMLは保存せず、正規化結果と検査hashだけを保持します。
 - Franceへの問い合わせはownerが2026-08-31に送信済み、手動DOM解析を含め返信待ちです。自動取得も行っていません。許可待ちは自作fixtureによる共通基盤開発を止める理由にしません。
+- Androidでの総操作数を重視してsourceと取得方法を再比較しました。保存済み88 eventの全監査でも、DokkanInfo eventページに複数stageの敵詳細や埋め込みJSONはなく、`event 1 + stage N`は最終UXではなくfallbackです。
+- DokkanDBはstage詳細の情報量が高い一方、現行eventページには複数stageの敵値が集約されず、各stage／difficultyページが必要でした。通常共有、PWA、bookmarklet、Android拡張・補助appも、現在ページの受渡しは軽くできてもstage数自体を減らしません。
+- 理想に最も近いのは許可済みproducerが作るevent単位update packですが、現在その作成者・event一括export・利用許可がありません。DokkanInfo prototypeと共通安全基盤を保持し、owner-facing tradeoffの確認前に補助appやproduction統合を開始しません。
 - Phase 11専用testは48件（data 35、Chromium/WebKit 13）、全体は270件です。すべて成功し、failed/skipped/cancelledは0です。Android実機の保存/file受渡しは未検証で、360px/390pxのbrowser回帰を実機検証と混同しません。
 
 ## 重要な安全上の注意
@@ -236,6 +239,7 @@ npm run benchmark:phase8
 - [第11段階の中断復元・安全な手動取り込み設計・検証結果](docs/phase11-manual-intake-design.md)
 - [第11段階の非本番・保存file取り込みprototype](docs/phase11-manual-intake-prototype.md)
 - [第11段階のDokkanInfo保存ページ手動取り込みprototype 完了報告](docs/phase11-dokkaninfo-manual-prototype.md)
+- [第11段階のAndroid manual source・event総操作数再比較](docs/phase11-android-manual-source-recomparison.md)
 - [第10段階の代替source比較・採否と未確認事項](docs/phase10-source-research.md)
 - [第10段階のoffline接続前検査・production差分review](docs/phase10-offline-intake.md)
 - [第9段階のGitHub Pages正式版・安全記録](docs/phase9-production-cutover.md)
