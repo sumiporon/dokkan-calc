@@ -1,6 +1,9 @@
 /** Bounded local decoding only. No browser DOM, scripts, images, fetch or I/O. */
 export const FILE_LIMIT = 8 * 1024 * 1024;
-const HTML_LIMIT = 2 * 1024 * 1024;
+// The audited saved DokkanInfo cache contains a valid 2,368,182-byte stage.
+// Keep a bounded margin above that real offline sample without accepting an
+// unbounded DOM on memory-constrained Android devices.
+export const HTML_LIMIT = 4 * 1024 * 1024;
 const PART_LIMIT = 128;
 export class IntakeError extends Error {
   constructor(code, message) { super(message); this.code = code; }
@@ -54,7 +57,7 @@ function decodeTransfer(body, encoding = '7bit') {
   throw new IntakeError('MIME_ENCODING', 'この保存ファイルのエンコードは未対応です。');
 }
 function decodeHtml(bytes, charset = 'utf-8') {
-  requireIntake(bytes.length <= HTML_LIMIT, 'HTML_TOO_LARGE', '本文が試作の上限2MBを超えています。');
+  requireIntake(bytes.length <= HTML_LIMIT, 'HTML_TOO_LARGE', '本文が試作の上限4MBを超えています。');
   requireIntake(['utf-8', 'utf8', 'us-ascii', 'windows-1252', 'shift_jis'].includes(charset.toLowerCase()), 'HTML_CHARSET', 'この文字コードは試作では未対応です。');
   try { return new TextDecoder(charset, { fatal: true }).decode(bytes); }
   catch { throw new IntakeError('HTML_DECODE', '本文の文字コードを正しく読み取れません。'); }

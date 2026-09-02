@@ -7,6 +7,17 @@ const $ = (selector) => document.querySelector(selector);
 const element = (tag, text, className) => { const node = document.createElement(tag); if (text != null) node.textContent = text; if (className) node.className = className; return node; };
 const num = (value) => typeof value === 'number' ? value.toLocaleString('ja-JP') : '不明';
 const labels = { agl: '速', teq: '技', int: '知', str: '力', phy: '体', super: '超', extreme: '極', neutral: '中立' };
+const sampleDownloads = {
+  mhtml: ['sample-complete.mhtml', 'multipart/related'],
+  complete: ['sample-complete.html', 'text/html;charset=utf-8'],
+  main: ['sample-main.html', 'text/html;charset=utf-8'],
+  detail: ['sample-detail.html', 'text/html;charset=utf-8'],
+  updated: ['sample-updated.html', 'text/html;charset=utf-8'],
+  second: ['sample-second.html', 'text/html;charset=utf-8'],
+  dokkaninfoEvent: ['sample-dokkaninfo-event.html', 'text/html;charset=utf-8'],
+  dokkaninfoStage: ['sample-dokkaninfo-stage.html', 'text/html;charset=utf-8'],
+  dokkaninfoStageMhtml: ['sample-dokkaninfo-stage.mhtml', 'multipart/related']
+};
 let store, state, prepared, busy = false;
 function status(message, error = false) { $('#status').textContent = message; $('#status').dataset.error = String(error); }
 function controls() {
@@ -41,7 +52,7 @@ function displayPackages(target, packages) {
       for (const action of sourceEncounter.aiActions) article.append(element('p', action.sourceText.value, 'small'));
     }
     const details = element('details'); details.append(element('summary', '出典・検査情報'));
-    details.append(element('p', `自作の架空データ / ${pack.revision}`, 'small'));
+    details.append(element('p', `${pack.classification === 'manual-dokkaninfo-private-prototype' ? 'ownerが選択したDokkanInfoローカル保存ページ（許可未確認・個人試作のみ）' : '自作の架空データ'} / ${pack.revision}`, 'small'));
     for (const snapshot of pack.canonical.sourceSnapshots) details.append(element('p', snapshot.sourceRootUrl, 'small'));
     details.append(element('p', pack.digest, 'small')); article.append(details); target.append(article);
   }
@@ -63,7 +74,7 @@ function showPreview() {
     body.append(element('p', 'このページだけでは不足があります。保存せず停止しました。'));
     const ul = element('ul'); for (const item of prepared.missing) ul.append(element('li', item)); body.append(ul);
     for (const link of prepared.links) body.append(element('p', `${link.label}：${link.href}`, 'small'));
-    body.append(element('p', 'サンプル欄から「補足」を保存し、本編と補足を一緒に選び直してください。リンク先をツールが開くことはありません。'));
+    body.append(element('p', '不足するページを通常のブラウザ操作で保存し、必要なファイルを一緒に選び直してください。表示したリンクは選択済みHTMLに実在する案内だけで、ツールが開くことはありません。'));
     status('不足するページがあります。保存済みの内容は維持しています。', true); return;
   }
   const rows = [
@@ -112,8 +123,9 @@ $('#clear-all').addEventListener('click', () => {
   });
 });
 for (const button of document.querySelectorAll('[data-sample]')) button.addEventListener('click', () => {
-  const key = button.dataset.sample; const url = URL.createObjectURL(new Blob([samples[key]], { type: key === 'mhtml' ? 'multipart/related' : 'text/html;charset=utf-8' }));
-  const anchor = element('a'); anchor.href = url; anchor.download = key === 'mhtml' ? 'sample-complete.mhtml' : `sample-${key}.html`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 30000);
+  const key = button.dataset.sample; const [name, type] = sampleDownloads[key];
+  const url = URL.createObjectURL(new Blob([samples[key]], { type }));
+  const anchor = element('a'); anchor.href = url; anchor.download = name; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 30000);
 });
 $('#baseline').textContent = `比較用正式データ：${baseline.counts.enemies}敵 / ${baseline.counts.stages}ステージ / ${baseline.fullDigest}`;
 run(async () => { store = new PrototypeStore(); state = await store.load(); displaySaved(); status(state.recovery === 'new' ? '新しい試作状態です。ファイルを選んでください。' : state.recovery === 'previous-recovered' ? '直近の試作保存に不整合があったため、検査済みの1つ前を表示しています。自動上書きはしていません。' : '保存済みの試作データを再検査して復元しました。'); });

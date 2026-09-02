@@ -54,7 +54,7 @@ for (const engine of ['chromium', 'webkit']) for (const width of [360, 390]) {
     const run = await open(engine, width), { page } = run;
     try {
       await noOverflow(page, width);
-      await page.getByText('架空サンプルで試す', { exact: true }).click();
+      await page.getByText('従来の汎用架空サンプルで試す', { exact: true }).click();
       const downloadPromise = page.waitForEvent('download'); await page.locator('[data-sample=mhtml]').click();
       const download = await downloadPromise;
       assert.equal(download.suggestedFilename(), 'sample-complete.mhtml');
@@ -79,6 +79,22 @@ for (const engine of ['chromium', 'webkit']) for (const width of [360, 390]) {
   });
 }
 for (const engine of ['chromium', 'webkit']) {
+  test(`Phase11 ${engine} 390px self-authored DokkanInfo-shaped event + MHTML stage saves and restores locally`, { timeout: TIMEOUT }, async () => {
+    const run = await open(engine, 390), { page } = run;
+    try {
+      await pick(page, [sample('dokkaninfo-event.html'), sample('dokkaninfo-stage.mhtml')]);
+      assert.match(await page.locator('#preview-body').innerText(), /取込確認用・架空の敵[\s\S]*架空必殺A[\s\S]*1,500,000[\s\S]*架空必殺B[\s\S]*2,500,000/);
+      assert.match(await page.locator('#preview-body').innerText(), /警告 \/ エラー[\s\S]*0 \/ 0/);
+      await noOverflow(page, 390);
+      await page.locator('#preview').screenshot({ path: path.join(output, `${engine}-390-dokkaninfo-preview.png`) });
+      await apply(page);
+      await page.reload(); await page.locator('#status').filter({ hasText: '復元しました' }).waitFor();
+      assert.match(await page.locator('#saved-list').innerText(), /架空ステージ1[\s\S]*極知[\s\S]*600,000/);
+      await noOverflow(page, 390);
+      assert.ok(run.requests.every((url) => url === `${server.origin}/generated/phase11/preview.html`), JSON.stringify(run.requests));
+    } finally { await close(run); }
+  });
+
   test(`Phase11 ${engine} incomplete guidance, multi-file completion, update and rollback`, { timeout: TIMEOUT }, async () => {
     const run = await open(engine, 390), { page } = run;
     try {
@@ -164,5 +180,15 @@ test('Phase11 Chromium standalone file route imports and restores without HTTP',
     await page.reload(); await page.locator('#status').filter({ hasText: '復元しました' }).waitFor();
     assert.match(await page.locator('#saved-count').innerText(), /^1ステージ/);
     assert.ok(run.requests.every((url) => url.startsWith('file:')), JSON.stringify(run.requests));
+  } finally { await close(run); }
+});
+
+test('Phase11 fixed-tag preview route is self-contained and makes no external request', { timeout: TIMEOUT }, async () => {
+  const url = `${server.origin}/phase11-preview/index.html`;
+  const run = await open('chromium', 390, url), { page } = run;
+  try {
+    assert.match(await page.locator('main').innerText(), /DokkanInfo[\s\S]*利用許可は未確認/);
+    await noOverflow(page, 390);
+    assert.ok(run.requests.every((request) => request === url), JSON.stringify(run.requests));
   } finally { await close(run); }
 });

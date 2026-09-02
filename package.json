@@ -20,7 +20,7 @@
     "review:phase10": "npm run build:phase6 && node scripts/review-phase10-candidate.mjs",
     "build:phase11": "npm run build:phase6 && node scripts/build-phase11-prototype.mjs",
     "build:phase11:fixed": "npm run build:phase6 && node scripts/build-phase11-prototype.mjs --fixed-preview",
-    "test:phase11": "npm run build:phase11 && node --test --test-reporter=spec tests/data/phase11-manual-intake.test.mjs && node --test --test-concurrency=1 --test-reporter=spec tests/browser/phase11-manual-intake.test.mjs",
+    "test:phase11": "npm run build:phase11:fixed && node --test --test-reporter=spec tests/data/phase11-manual-intake.test.mjs tests/data/phase11-dokkaninfo-manual.test.mjs && node --test --test-concurrency=1 --test-reporter=spec tests/browser/phase11-manual-intake.test.mjs",
     "test:cached-source": "node --test --test-reporter=spec tests/data/cached-source.test.mjs",
     "test:browser": "node --test --test-concurrency=1 --test-reporter=spec tests/browser/app.test.mjs",
     "audit:data": "node scripts/audit-enemy-data.mjs",

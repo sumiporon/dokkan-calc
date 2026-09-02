@@ -384,6 +384,24 @@ function mapAreaAttack(
 }
 
 export function adaptPhase4OfflineCandidate(dataset: FutureDataset, context: SourceAdapterContext): SourceAdapterResult {
+  return adaptPhase4CandidateWithProvenance(dataset, context);
+}
+
+export interface Phase4CandidateProvenanceOverride {
+  sourceKey?: string;
+  inputFormat?: string;
+}
+
+/**
+ * Reuses the Phase 4 mapping for an owner-provided local file while keeping
+ * the original adapter's defaults byte-for-byte stable when no override is
+ * supplied. This function is pure and performs no source or network I/O.
+ */
+export function adaptPhase4CandidateWithProvenance(
+  dataset: FutureDataset,
+  context: SourceAdapterContext,
+  provenance: Phase4CandidateProvenanceOverride = {}
+): SourceAdapterResult {
   const snapshotId = `snapshot:${safeId(dataset.sourceSnapshot.region)}:${safeId(dataset.datasetId)}`;
   const canonicalEnemyIdByOccurrence = new Map<string, string>();
   for (const event of dataset.events) {
@@ -420,7 +438,7 @@ export function adaptPhase4OfflineCandidate(dataset: FutureDataset, context: Sou
     region: dataset.sourceSnapshot.region,
     sourceSnapshots: [{
       id: snapshotId,
-      sourceKey: 'dokkaninfo-saved-cache',
+      sourceKey: provenance.sourceKey ?? 'dokkaninfo-saved-cache',
       provider: dataset.sourceSnapshot.provider,
       region: dataset.sourceSnapshot.region,
       acquiredAt: dataset.sourceSnapshot.acquiredAt,
@@ -499,7 +517,7 @@ export function adaptPhase4OfflineCandidate(dataset: FutureDataset, context: Sou
     canonical,
     sourceMaterial: {
       sourceSnapshotId: snapshotId,
-      inputFormat: 'phase4-enemy-data-v1',
+      inputFormat: provenance.inputFormat ?? 'phase4-enemy-data-v1',
       inputDatasetId: dataset.datasetId,
       inputPath: context.inputPath,
       inputDigest: context.inputDigest,

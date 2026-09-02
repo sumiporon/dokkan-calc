@@ -7,6 +7,7 @@ import path from 'node:path';
 import { build } from 'esbuild';
 import { readProductionBaseline } from './review-phase10-candidate.mjs';
 import { referencePage, referenceMhtml } from '../tests/fixtures/phase11/reference-source.mjs';
+import { dokkanInfoEventHtml, dokkanInfoStageHtml, dokkanInfoMhtml } from '../tests/fixtures/phase11/dokkaninfo-source.mjs';
 import { renderReferenceHtml } from '../src/prototype/phase11-reference-adapter.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -26,19 +27,25 @@ await mkdir(OUT, { recursive: true });
 await writeFile(path.join(OUT, 'validators.cjs'), standalone(ajv, ids));
 const baseline = await readProductionBaseline();
 await writeFile(path.join(OUT, 'baseline.mjs'), `export default ${JSON.stringify(baseline)};\n`);
-await build({ absWorkingDir: ROOT, entryPoints: ['src/prototype/phase11-test-api.mjs'], outfile: 'generated/phase11/api.mjs', bundle: true, format: 'esm', platform: 'neutral', target: 'es2022' });
+await build({ absWorkingDir: ROOT, entryPoints: [path.join(ROOT, 'src/prototype/phase11-test-api.mjs')], outfile: path.join(OUT, 'api.mjs'), bundle: true, format: 'esm', platform: 'browser', target: 'es2022' });
 const samples = {
   complete: renderReferenceHtml(referencePage()),
   main: renderReferenceHtml(referencePage({ split: true })),
   detail: renderReferenceHtml(referencePage({ split: true, detail: true })),
   updated: renderReferenceHtml(referencePage({ normalAtk: 660000 })),
-  second: renderReferenceHtml(referencePage({ stageId: 'forest-2' }))
+  second: renderReferenceHtml(referencePage({ stageId: 'forest-2' })),
+  dokkaninfoEvent: dokkanInfoEventHtml(),
+  dokkaninfoStage: dokkanInfoStageHtml(),
+  dokkaninfoStageMhtml: dokkanInfoMhtml(dokkanInfoStageHtml())
 };
 for (const [name, html] of Object.entries(samples)) await writeFile(path.join(OUT, `sample-${name}.html`), html);
 samples.mhtml = referenceMhtml(samples.complete);
 await writeFile(path.join(OUT, 'sample-complete.mhtml'), samples.mhtml);
+await writeFile(path.join(OUT, 'sample-dokkaninfo-event.html'), samples.dokkaninfoEvent);
+await writeFile(path.join(OUT, 'sample-dokkaninfo-stage.html'), samples.dokkaninfoStage);
+await writeFile(path.join(OUT, 'sample-dokkaninfo-stage.mhtml'), samples.dokkaninfoStageMhtml);
 await writeFile(path.join(OUT, 'samples.mjs'), `export default ${JSON.stringify(samples)};\n`);
-const built = await build({ absWorkingDir: ROOT, entryPoints: ['prototypes/phase11-manual-intake/app.mjs'], write: false, bundle: true, format: 'iife', platform: 'browser', target: 'es2022', minify: true, legalComments: 'none' });
+const built = await build({ absWorkingDir: ROOT, entryPoints: [path.join(ROOT, 'prototypes/phase11-manual-intake/app.mjs')], write: false, bundle: true, format: 'iife', platform: 'browser', target: 'es2022', minify: true, legalComments: 'none' });
 // Escape literal end tags before computing CSP; the exact embedded script is hashed.
 const js = built.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
 const hash = createHash('sha256').update(js).digest('base64');
