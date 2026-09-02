@@ -2,6 +2,8 @@
 
 2026-09-01 JST。中断前の調査を再利用し、ownerの追加方針に従って**Android単独 → Android＋必要時PC → PCのみ**の順に評価し直した。iPhoneは今回の主要評価対象から外した。
 
+> 2026-09-02更新: 本文は試作承認前の比較記録である。その後owner承認を受け、Franceのrecent保存ページでは主要数値が0だった実機結果を踏まえてDokkanInfo保存ページへ主検証を切り替えた。現行の`manual-dokkaninfo`試作、4MB本文上限、48件のPhase 11 test、必要ページ数は[DokkanInfo保存ページ手動取り込みprototype 完了報告](phase11-dokkaninfo-manual-prototype.md)を参照する。取得方法もAndroid内保存も最終仕様にはまだ固定していない。
+
 ## 結論とownerへ戻す点
 
 **最初の試作候補は、Android Chromeでページを保存し、Pages側でそのfileを選択してローカル解析する方法（D）を推奨する。** 通常のChromeを使い続け、コピーでは失われる構造も保持しやすく、追加browserやPWA導入を初回必須にしないためである。ただし保存・file選択・保存fileの蓄積という負担がある。Chromeの保存ページがpickerから見えるか、MHTMLに必要情報が残るかはAndroid実機で未確認なので、完成方式として採用済みとはしない。

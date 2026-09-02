@@ -65,7 +65,7 @@ npm run build:phase11
 npm run build:phase11:fixed
 ```
 
-`npm test`には、第4段階の候補データ変換と全件再現、第6段階のcanonical/runtime、第7段階の配信・更新prototype、第8段階のrelease candidateに加え、第9段階の正式root、既存production敵データ変換、manifest/digest、Pages内保存、1操作更新・rollback、Chromium/WebKit、360px／390px、HTTP/`file://` browser操作も含まれます。OneDrive→Pages保存データ移行は不採用となり、専用testも削除しました。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
+`npm test`には、第4段階の候補データ変換と全件再現、第6段階のcanonical/runtime、第7段階の配信・更新prototype、第8段階のrelease candidate、第9段階の正式root、第10段階のoffline source安全検査に加え、第11段階のHTML/MHTMLローカル取込、DokkanInfo保存parser、差分・暫定保存・rollbackも含まれます。既存production敵データ変換、manifest/digest、Pages内保存、1操作更新、Chromium/WebKit、360px／390px、HTTP/`file://` browser操作も検査します。OneDrive→Pages保存データ移行は不採用となり、専用testも削除しました。TypeScriptは`tsc`で通常のJavaScriptへ事前コンパイルしてからNodeで実行するため、Node 22の実験機能は使いません。対応範囲は`package.json`どおりNode 20以降です。
 
 ブラウザテストは独立した一時ブラウザを使います。普段使用しているブラウザの保存データやlocalStorageは読み書きしません。
 
@@ -122,6 +122,9 @@ npm run benchmark:phase8
 - `artifacts/phase6/`：追跡可能なmanifest、検証、permission、性能、omission報告
 - `prototypes/phase7-runtime-delivery/`：第7段階の本番分離full/chunkと1操作更新prototype
 - `src/prototype/`：第7段階の更新・rollback用pure prototype
+- `src/data-foundation/dokkaninfo-saved-stage.mjs`：保存済みDokkanInfo stageをoffline解析するPhase 3/4/11共通parser
+- `src/prototype/phase11-dokkaninfo-adapter.mjs`：owner選択済みHTML/MHTMLだけをcanonicalへ渡す非本番adapter
+- `prototypes/phase11-manual-intake/` / `phase11-preview/`：第11段階の暫定IndexedDB取込UIと固定確認用artifact
 - `scripts/generate-phase7-runtime-delivery.mjs`：full、event index/chunk、file-compatible dataの決定的generator
 - `artifacts/phase7/`：第7段階のcompact全件summaryと複数回performance実測
 - `release-candidate/phase8/`：第8段階の本番分離Pages候補、架空公開preview、単一HTML fallback
@@ -206,13 +209,16 @@ npm run benchmark:phase8
 - `npm run review:phase10 -- --baseline`は現productionの全artifactと差分0を、通信せず敵データを変更せずに再確認する開発者用commandです（前処理でTypeScriptを`generated/`へbuildします）。ownerの日常更新手順ではありません。
 - このbranchの旧scrape workflowは手動実行も無効化しました。mainと公開workflowは未変更です。新sourceの接続・mainへの反映・0操作更新は別承認まで行いません。
 
-## 第11段階のAndroid中心・手動更新方式比較
+## 第11段階のAndroid中心・手動更新prototype
 
 - 自動取得許可が得られない場合を基本に、ownerが通常ブラウザで開いた内容のローカル取り込みを検討します。主要対象はAndroidスマホとWindows PCで、Android単独完結を最優先します。
 - 中断前に作成したPhase 11 branchと比較調査を再利用しました。Android Chromeの保存/共有、bookmarklet、コピー、file、拡張対応browser、更新packを比較しています。
-- owner承認後、Chromeで保存したHTML/MHTMLをfile選択で読むproduction分離prototypeを作成しました。自作の架空fixtureだけをparseし、Phase 10検査、preview、明示保存、reload、rollbackまで試せます。暫定IndexedDBは最終仕様ではなく、production UIにも入れていません。
+- owner承認後、Chromeで保存したHTML/MHTMLをfile選択で読むproduction分離prototypeを作成しました。さらにPhase 3/4の保存済みDokkanInfo parserを`manual-dokkaninfo` adapterとして再利用し、ローカルparse、canonical v2、Phase 10検査、diff、明示保存、reload、rollbackへ接続しました。公開previewのsampleは自作の架空fixtureだけです。
+- 保存済み2026-02-23 snapshot（891 file、88 event、801 stage、5,032 enemy）をofflineで代表検証しました。stage 1ページからHP/ATK/DEF、複数必殺、usage rule、neutral、表示AI、対象別AOE値を保持できます。AOEの通常/必殺種別は保存layoutだけでは確定できず、推測せず適用を停止します。
+- eventページはstageリンクだけで敵詳細を持ちません。固定previewへ実snapshot由来event名を埋め込まないため、1 eventにつきeventページ1件＋追加するstage各1ページが必要です。複数fileの解析・保存は一括できますが、各stageを保存する手間は残るため、Android内保存も取得方式も最終仕様に固定していません。
+- 暫定IndexedDBはPhase 11専用で、production UI、Pages保存、OneDrive、PATと分離しています。raw HTML/MHTMLは保存せず、正規化結果と検査hashだけを保持します。
 - Franceへの問い合わせはownerが2026-08-31に送信済み、手動DOM解析を含め返信待ちです。自動取得も行っていません。許可待ちは自作fixtureによる共通基盤開発を止める理由にしません。
-- Phase 11専用testは30件（data 20、Chromium/WebKit 10）です。Android実機の共有/file受渡しは未検証で、360px/390pxのbrowser回帰を実機検証と混同しません。
+- Phase 11専用testは48件（data 35、Chromium/WebKit 13）、全体は270件です。すべて成功し、failed/skipped/cancelledは0です。Android実機の保存/file受渡しは未検証で、360px/390pxのbrowser回帰を実機検証と混同しません。
 
 ## 重要な安全上の注意
 
@@ -229,6 +235,7 @@ npm run benchmark:phase8
 - [第11段階のAndroid中心・手動更新方式比較とowner選択](docs/phase11-manual-update-options.md)
 - [第11段階の中断復元・安全な手動取り込み設計・検証結果](docs/phase11-manual-intake-design.md)
 - [第11段階の非本番・保存file取り込みprototype](docs/phase11-manual-intake-prototype.md)
+- [第11段階のDokkanInfo保存ページ手動取り込みprototype 完了報告](docs/phase11-dokkaninfo-manual-prototype.md)
 - [第10段階の代替source比較・採否と未確認事項](docs/phase10-source-research.md)
 - [第10段階のoffline接続前検査・production差分review](docs/phase10-offline-intake.md)
 - [第9段階のGitHub Pages正式版・安全記録](docs/phase9-production-cutover.md)

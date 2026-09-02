@@ -1,6 +1,6 @@
 # Phase 11 手動取り込みの安全設計・中断復元記録
 
-2026-09-01 JST。**設計案であり、取り込みUI・parser・個人敵保存・PWAの実装はまだない。** 操作方式と保存・共有の選択をownerへ戻す。Phase 12へ進まない。
+2026-09-01 JST時点の、prototype承認前の比較・設計記録。ownerはその後、production分離のHTML/MHTML file選択prototypeと暫定IndexedDBを承認した。2026-09-02時点の実装・検証結果は[DokkanInfo保存ページ手動取り込みprototype 完了報告](phase11-dokkaninfo-manual-prototype.md)を参照する。この文書の「未実装」「まだ作らない」は当時の判断経緯として残し、現在状態を表すものではない。Phase 12へは進まない。
 
 Android中心の操作比較と推奨案は[方式比較](phase11-manual-update-options.md)を参照。
 
@@ -144,9 +144,9 @@ browser storageは同じURLを開いてもPC/Android/別browser間で同期さ�
 - schema/app version不適合、破損、対象外書込、履歴後退、未知source、必須情報の消失はactiveへ適用しない。同じhashの再取込は重複追加しない。
 - 個人packは敵dataの範囲だけ。旧OneDrive状態、Scenario転送、PAT/credential、未知storage keyのimport/exportを復活させない。
 
-## 7. 試作をまだ作らない理由と、選択後の検証
+## 7. 承認前に試作を作らなかった理由と、選択後の検証
 
-Android優先は確定したが、Chrome継続で保存/共有する手間と、別browser導入でDOMを直接読む手間には実際の使い勝手の差がある。さらに個人保存にはPCと自動共有されない制約がある。元依頼の「明確な最適案がない場合は選択提示して停止」に従い、今回は方式決定前のprototypeを作らない。**停止理由は自動取得許可待ちではなく、操作・保存方式のowner選択である。**
+Android優先は確定したが、Chrome継続で保存/共有する手間と、別browser導入でDOMを直接読む手間には実際の使い勝手の差がある。さらに個人保存にはPCと自動共有されない制約がある。元依頼の「明確な最適案がない場合は選択提示して停止」に従い、この時点では方式決定前のprototypeを作らなかった。**停止理由は自動取得許可待ちではなく、操作・保存方式のowner選択だった。** 後にownerがfile選択と暫定IndexedDBの試作を承認し、実装結果は別報告へ引き継いだ。
 
 選択後は自作fixture・既存の利用可能なoffline sampleを使い、実sourceへの自動通信なしで次を検証できる。
 

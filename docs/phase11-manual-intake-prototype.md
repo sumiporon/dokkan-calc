@@ -2,6 +2,8 @@
 
 2026-09-01 JST。owner承認を受けた**非本番の操作・安全性試作**。Phase 12でも最終仕様でもない。正式計算画面、production敵data、main、Pages、OneDrive、workflowには接続していない。
 
+> 2026-09-02更新: この最初の自作fixture専用prototypeを基盤に、保存済みDokkanInfo parserを接続した。現行は`manual-dokkaninfo`、解析後HTML本文4MB上限、48件のPhase 11 testに更新済みである。最新の実装範囲とAndroid確認手順は[DokkanInfo保存ページ手動取り込みprototype 完了報告](phase11-dokkaninfo-manual-prototype.md)を参照する。以下の2MB・30件・実source未対応等の記述は、接続前のbaseline記録として残す。
+
 ## 実装範囲
 
 `HTML / MHTML選択 → 端末内parse → source adapter → canonical v2 → runtime → schema/意味検査 → Phase 10差分検査 → preview → 明示保存 → reload復元 / rollback`をstandalone HTMLで実装した。
