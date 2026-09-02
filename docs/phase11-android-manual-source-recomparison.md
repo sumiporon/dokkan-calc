@@ -171,15 +171,11 @@ ownerの日常操作は、`新eventのpackを開く → calculatorへ渡す → 
 
 権利とproducerが未解決なので、現在すぐ成立するのはDokkanInfoの`event 1 + stage N`保存prototypeだけである。これはfallbackであり、Phase 11の最終primary UXとは認定しない。
 
-### 残るowner-facing tradeoff
+### ownerの確定方針
 
-ownerの判断が必要なのは次の1点である。
+ownerは2026-09-03に、**1 event 1～数回を最終目標として維持し、DokkanInfoのstage単位保存を今すぐ必要な場合のfallbackに限定する**方針を選択した。許可済みevent export／pack producerが見つかるまで最終方式を固定せず、manual intake UXの小さな省tap改善を続けない。
 
-1. **1event 1～数回を必須のままにする（推奨）**: DokkanInfo fallbackを保存し、許可済みevent export／pack producerが見つかるまで最終方式を固定しない。現在の新eventは自動では増えない。
-2. **Androidだけで今すぐ更新できることを優先する**: DokkanInfo stage単位保存を暫定運用し、後でbookmarklet／share inboxにより1ページ当たりの手間だけを減らす。それでも5／10／20 stageで6／11／21ページを触る。
-3. **時々PCまたは別の作成者へ任せることを許容する**: private update packを採用候補にできる。ただし作成者のsource取得・許可・stage N作業を別途解決する必要がある。
-
-補助アプリを今作っても選択肢1のproducer不足やevent一括data不足は解決しないため、現段階では推奨しない。
+補助アプリを今作ってもproducer不足やevent一括data不足は解決しないため、現段階では実装しない。正式な停止地点と再開条件は[Phase 11 closeout](phase11-closeout.md)へ記録した。
 
 ## 8. 既存基盤の再利用と停止地点
 
