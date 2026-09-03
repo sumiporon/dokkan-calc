@@ -222,6 +222,7 @@ npm run benchmark:phase8
 - DokkanDBはstage詳細の情報量が高い一方、現行eventページには複数stageの敵値が集約されず、各stage／difficultyページが必要でした。通常共有、PWA、bookmarklet、Android拡張・補助appも、現在ページの受渡しは軽くできてもstage数自体を減らしません。
 - 理想に最も近いのは許可済みproducerが作るevent単位update packですが、現在その作成者・event一括export・利用許可がありません。DokkanInfo prototypeと共通安全基盤を保持し、owner-facing tradeoffの確認前に補助appやproduction統合を開始しません。
 - ownerはPhase 11 closeoutとして、DokkanInfo方式を今すぐ必要な新stage用のpersonal fallbackに限定し、日常利用の本命をevent単位update packと確定しました。合法で継続可能なsource／producerが見つかるまでは最終方式を固定せず、細かな省tap改善やPhase 12へ進みません。
+- closeout後の最後の重点調査では、Fandom full dump、CapsuleOS/Dokkan Eclipse系DB・event project、公開calculator同梱data、event API、古いGitHub DBまでevent単位取得の観点で確認しました。stage数に依存しない技術的な形はありましたが、必要field、1週間程度の更新、data provenance、private/public pack許可を同時に満たすsourceはありません。新prototypeは作らず、返信または明示license付きexportの登場まで待ちます。
 - Phase 11専用testは48件（data 35、Chromium/WebKit 13）、全体は270件です。すべて成功し、failed/skipped/cancelledは0です。Android実機の保存/file受渡しは未検証で、360px/390pxのbrowser回帰を実機検証と混同しません。
 
 ## 重要な安全上の注意
@@ -242,6 +243,7 @@ npm run benchmark:phase8
 - [第11段階のDokkanInfo保存ページ手動取り込みprototype 完了報告](docs/phase11-dokkaninfo-manual-prototype.md)
 - [第11段階のAndroid manual source・event総操作数再比較](docs/phase11-android-manual-source-recomparison.md)
 - [第11段階closeout・fallback・event update pack再開条件](docs/phase11-closeout.md)
+- [第11段階closeout後の最終event pack取得経路深掘り](docs/phase11-final-event-pack-source-deep-dive.md)
 - [第10段階の代替source比較・採否と未確認事項](docs/phase10-source-research.md)
 - [第10段階のoffline接続前検査・production差分review](docs/phase10-offline-intake.md)
 - [第9段階のGitHub Pages正式版・安全記録](docs/phase9-production-cutover.md)
