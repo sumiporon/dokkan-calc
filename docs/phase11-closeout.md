@@ -4,7 +4,9 @@
 
 ## 状態
 
-Phase 11は、**DokkanInfo manual importを今すぐ使えるpersonal fallbackとして保持し、日常利用の本命をevent単位update packとする**方針で一区切りとする。Phase 12、production統合、source自動取得、補助アプリ等の追加実装には進まない。
+Phase 11は、**DokkanInfo manual importの技術的prototype経路を保持し、日常利用の本命をevent単位update packとする**方針で一区切りとする。Phase 12、production統合、source自動取得、補助アプリ等の追加実装には進まない。
+
+ここでいうfallbackは、緊急時に具体的な必要が生じた場合に、残るAndroid実機確認と必要な接続を限定して進められる技術的prototype経路である。正式版へ接続済みの日常利用機能ではない。個人用event packの書き出し・別端末での取込も未実装で、DokkanInfoの利用条件、現行Android Chromeの保存形式・file picker・実操作量も未確認である。
 
 ## 1. 確定したfallback
 
@@ -17,7 +19,7 @@ Phase 11は、**DokkanInfo manual importを今すぐ使えるpersonal fallback�
 5. ownerが差分を確認した場合だけ、Phase 11専用の暫定IndexedDBへpersonal importする。
 6. 失敗時は適用せず、既存known-goodを維持またはrollbackする。
 
-これは、ownerが特定の新stageをすぐ必要とする場合のfallbackである。sourceへの自動通信は行わず、production datasetへ公開・mergeしない。AOEのattack kind等を保存ページから証明できない場合は、値を推測せず適用を停止する。
+これは、ownerが特定の新stageをすぐ必要とする場合に限定して再開できるprototype経路である。sourceへの自動通信は行わず、production datasetへ公開・mergeしない。AOEのattack kind等を保存ページから証明できない場合は、値を推測せず適用を停止する。
 
 ## 2. fallbackの実操作量
 
@@ -68,7 +70,7 @@ stage数が5でも20でも、owner側の操作を1～数回程度に保つ。pac
 
 ### ownerが特定の新eventをすぐ追加したい場合
 
-既存DokkanInfo fallbackから再開する。ownerがevent 1件と必要stageだけを保存し、Phase 11 prototypeへ読み込む。結果はpersonal IndexedDBだけへ保存し、productionへのmerge、公開、source fetchは行わない。
+既存DokkanInfo prototype経路から再開する。ownerがevent 1件と必要stageだけを保存し、残るAndroid実機確認と必要な接続の範囲を確認してからPhase 11 prototypeへ読み込む。結果はpersonal IndexedDBだけへ保存し、productionへのmerge、公開、source fetchは行わない。
 
 ## 6. 再利用する安全・データ基盤
 

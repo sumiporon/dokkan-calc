@@ -8,6 +8,8 @@ owner再確認用の固定previewは `https://raw.githack.com/sumiporon/dokkan-c
 
 保存済みDokkanInfoのchallenge stageページは、旧snapshotでHP、ATK、DEF、属性、超・極・中立、複数必殺、usage rule、skill、表示されたAI、対象別AOE値を1ページから復元できた。既存parserをPhase 11のローカルfile入力へ接続し、`manual-dokkaninfo → canonical v2 → runtime → Phase 10安全検査 → diff → 明示的な個人保存`まで動作するprototypeを作成した。
 
+この完成範囲は技術的prototype経路であり、正式版の計算画面へ接続済みの実用機能ではない。個人用event packの書き出し・別端末取込は未実装で、DokkanInfoの利用条件と、現行Android Chrome実機の保存形式・file picker・操作量は未確認である。
+
 一方、eventページにあるのはstage名・stageリンクで、各stageの敵詳細は含まれない。したがって、次が実測に基づく最小単位である。
 
 | 追加対象 | 必要な保存ページ |

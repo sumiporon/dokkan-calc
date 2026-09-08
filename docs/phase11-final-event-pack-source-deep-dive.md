@@ -219,4 +219,4 @@ Phase 12は開始していない。Phase 11のDokkanInfo personal fallback、can
 
 ## 最終判断
 
-Androidで1 eventを1〜数操作で追加する理想は、**packの受取・検査・取込側では実現可能**である。しかし、2026-09-03時点で利用可能な公開情報には、packの入力を合法・完全・最新・継続的に供給する経路がない。したがって新prototypeを作らず、DokkanInfoを緊急時fallbackとして保持し、France/DokkanStatsの返信または新しい明示license付きevent exportを待つ。
+Androidで1 eventを1〜数操作で追加する理想は、**packの受取・検査・取込側では実現可能**である。しかし、2026-09-03時点で利用可能な公開情報には、packの入力を合法・完全・最新・継続的に供給する経路がない。したがって新prototypeを作らず、DokkanInfoの技術的prototype経路を保持し、France/DokkanStatsの返信または新しい明示license付きevent exportを待つ。

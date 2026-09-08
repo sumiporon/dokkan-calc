@@ -218,10 +218,10 @@ npm run benchmark:phase8
 - eventページはstageリンクだけで敵詳細を持ちません。固定previewへ実snapshot由来event名を埋め込まないため、1 eventにつきeventページ1件＋追加するstage各1ページが必要です。複数fileの解析・保存は一括できますが、各stageを保存する手間は残るため、Android内保存も取得方式も最終仕様に固定していません。
 - 暫定IndexedDBはPhase 11専用で、production UI、Pages保存、OneDrive、PATと分離しています。raw HTML/MHTMLは保存せず、正規化結果と検査hashだけを保持します。
 - Franceへの問い合わせはownerが2026-08-31に送信済み、手動DOM解析を含め返信待ちです。自動取得も行っていません。許可待ちは自作fixtureによる共通基盤開発を止める理由にしません。
-- Androidでの総操作数を重視してsourceと取得方法を再比較しました。保存済み88 eventの全監査でも、DokkanInfo eventページに複数stageの敵詳細や埋め込みJSONはなく、`event 1 + stage N`は最終UXではなくfallbackです。
+- Androidでの総操作数を重視してsourceと取得方法を再比較しました。保存済み88 eventの全監査でも、DokkanInfo eventページに複数stageの敵詳細や埋め込みJSONはなく、`event 1 + stage N`は最終UXではなく、緊急時に限定再開する技術的prototype経路です。
 - DokkanDBはstage詳細の情報量が高い一方、現行eventページには複数stageの敵値が集約されず、各stage／difficultyページが必要でした。通常共有、PWA、bookmarklet、Android拡張・補助appも、現在ページの受渡しは軽くできてもstage数自体を減らしません。
 - 理想に最も近いのは許可済みproducerが作るevent単位update packですが、現在その作成者・event一括export・利用許可がありません。DokkanInfo prototypeと共通安全基盤を保持し、owner-facing tradeoffの確認前に補助appやproduction統合を開始しません。
-- ownerはPhase 11 closeoutとして、DokkanInfo方式を今すぐ必要な新stage用のpersonal fallbackに限定し、日常利用の本命をevent単位update packと確定しました。合法で継続可能なsource／producerが見つかるまでは最終方式を固定せず、細かな省tap改善やPhase 12へ進みません。
+- ownerはPhase 11 closeoutとして、DokkanInfo方式を緊急時に限定再開する技術的prototype経路に留め、日常利用の本命をevent単位update packと確定しました。prototypeは正式版へ未接続で、personal event packの書き出し・別端末取込、現行Android Chrome実機の保存形式・file picker・操作量、DokkanInfoの利用条件は未確認または未実装です。合法で継続可能なsource／producerが見つかるまでは最終方式を固定せず、細かな省tap改善やPhase 12へ進みません。
 - closeout後の最後の重点調査では、Fandom full dump、CapsuleOS/Dokkan Eclipse系DB・event project、公開calculator同梱data、event API、古いGitHub DBまでevent単位取得の観点で確認しました。stage数に依存しない技術的な形はありましたが、必要field、1週間程度の更新、data provenance、private/public pack許可を同時に満たすsourceはありません。新prototypeは作らず、返信または明示license付きexportの登場まで待ちます。
 - Phase 11専用testは48件（data 35、Chromium/WebKit 13）、全体は270件です。すべて成功し、failed/skipped/cancelledは0です。Android実機の保存/file受渡しは未検証で、360px/390pxのbrowser回帰を実機検証と混同しません。
 

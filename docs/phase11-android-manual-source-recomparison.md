@@ -6,8 +6,8 @@
 
 **「Androidで新eventを1～数回の操作で丸ごと取り込む」という条件を、必要データの完全性と利用条件を保ったまま満たすsource／方法は、現時点では確認できなかった。**
 
-- DokkanInfoは、保存済み実物でHP／ATK／DEF、複数Super、usage rule、neutral属性、表示AI、対象別AOE値まで復元でき、既存adapterも完成しているため、引き続き**技術面の第一候補かつ安全なfallback**である。
-- ただし、eventページはstageリンクだけで敵詳細を持たない。`event 1 + stage N`保存は最終UXに採用せず、fallbackとして保持する。
+- DokkanInfoは、保存済み実物でHP／ATK／DEF、複数Super、usage rule、neutral属性、表示AI、対象別AOE値まで復元でき、既存adapterも完成しているため、引き続き**緊急時に限定再開できる技術的prototype経路**である。
+- ただし、eventページはstageリンクだけで敵詳細を持たない。`event 1 + stage N`保存は最終UXに採用せず、緊急時に限定再開する技術的prototype経路として保持する。
 - DokkanDBは、今回の少数通常閲覧でstage詳細の情報量が非常に高いことを再確認した。しかしeventページにstage詳細は集約されず、各stage／難易度の`BOSS STATS`ページを開く必要がある。Androidでの総ページ数を明確には減らさないため、DokkanInfoを置き換える優位はない。
 - Android Chromeの通常の「共有」はページ本文ではなくリンクを渡す。PWAや小さなAndroid補助アプリを共有先にしても、受信側がURLを自動取得しない限り本文を得られない。URLの自動取得は禁止なので、通常共有だけでは解決しない。
 - bookmarklet、対応browser拡張、補助アプリはMHTML保存やfile pickerを省ける可能性がある一方、eventページに詳細がない限り各stageを開く回数は減らせない。現段階で導入・実装コストに見合わない。
@@ -62,7 +62,7 @@ stage link数は最小1、中央値5、最大89で、10件を超えるeventも15
 
 | source | 1 eventの入力単位 | HP/ATK/DEF | 複数Super | AOE | AI / usage rule | Android保存・parser | recent性 | manual個人利用上の注意 | 判定 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| DokkanInfo | event 1 + stage N | ○ | ○ | ○（対象別値、kind不明時は停止） | ○（表示分） | 過去HTML○、synthetic MHTML○、現行Android実物? | 2026-08-23比較でrecent 4/4に詳細。初回掲載時刻? | 個人・非商用アクセスの記載はあるが、自動requestと複製・再配布に制限。個人抽出・保持の明示許可は未確認 | **fallback／技術第一候補。最終UXではない** |
+| DokkanInfo | event 1 + stage N | ○ | ○ | ○（対象別値、kind不明時は停止） | ○（表示分） | 過去HTML○、synthetic MHTML○、現行Android実物? | 2026-08-23比較でrecent 4/4に詳細。初回掲載時刻? | 個人・非商用アクセスの記載はあるが、自動requestと複製・再配布に制限。個人抽出・保持の明示許可は未確認 | **技術的prototype経路。最終UXでも正式版機能でもない** |
 | DokkanDB | event 1 + stage/difficulty N | ○ | ○ | 過去調査○、今回sampleは非AOE | ○、今回sampleは非常に詳細 | live DOM○、現行Android保存物?、adapterなし | event 1768は開始表示から5日以内の確認時に詳細あり。一方Phase 5では3 recent eventの長期欠損を観察 | 現行Termsはautomated scrape／harvest／bulk-downloadとhidden APIを禁止。open data license、個人抽出・保持の明示許可なし | 情報量は強いがページ数・許可・過去coverageで置換優位なし |
 | DBZ Dokkan Battle France | 少なくともevent + stage。完全ページ数? | owner recent保存で**0** | 名称・効果はあり | 説明△、対象別値? | 条件・skill△ | owner保存は可能、core値が0 | recent page自体はあるがcore値欠損 | 2026-08-31にmanual local parsingを含めownerが照会済み、返信待ち | primary不可。許可後の補助候補のみ |
 | dokkan.wiki | event enemy一括入力を確認できず | × | × | × | × | card用構造はあるが目的不適合 | enemy更新速度N/A | 自動requestとサイト複製に制限。manual保存で不足は解消しない | 不採用 |
@@ -169,11 +169,11 @@ ownerの日常操作は、`新eventのpackを開く → calculatorへ渡す → 
 
 ### 現在すぐ使える方法
 
-権利とproducerが未解決なので、現在すぐ成立するのはDokkanInfoの`event 1 + stage N`保存prototypeだけである。これはfallbackであり、Phase 11の最終primary UXとは認定しない。
+権利とproducerが未解決なので、現在残っているのはDokkanInfoの`event 1 + stage N`保存prototypeだけである。これは緊急時に限定再開する技術的経路であり、Phase 11の最終primary UXでも正式版の実用機能でもない。
 
 ### ownerの確定方針
 
-ownerは2026-09-03に、**1 event 1～数回を最終目標として維持し、DokkanInfoのstage単位保存を今すぐ必要な場合のfallbackに限定する**方針を選択した。許可済みevent export／pack producerが見つかるまで最終方式を固定せず、manual intake UXの小さな省tap改善を続けない。
+ownerは2026-09-03に、**1 event 1～数回を最終目標として維持し、DokkanInfoのstage単位保存を緊急時に限定再開するtechnical prototypeに留める**方針を選択した。許可済みevent export／pack producerが見つかるまで最終方式を固定せず、manual intake UXの小さな省tap改善を続けない。
 
 補助アプリを今作ってもproducer不足やevent一括data不足は解決しないため、現段階では実装しない。正式な停止地点と再開条件は[Phase 11 closeout](phase11-closeout.md)へ記録した。
 
