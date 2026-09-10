@@ -1,0 +1,30 @@
+{
+  "background.js": {
+    "bytes": 752562,
+    "sha256": "1bd76872eb2e9dba1daba7bd7f82f02f2e25e41f30972a3f8abd8dd61630bb9a"
+  },
+  "baseline-runtime.json": {
+    "bytes": 4915199,
+    "sha256": "076efb18675b1b9e8b9dd9a1013b50cf6f78d1189390e44f1d3e84952b280545"
+  },
+  "content.js": {
+    "bytes": 825288,
+    "sha256": "128fa33ec44014ca316b6cd6cf73c0a67c7c1576eca0d74027ddf0f18304e6e5"
+  },
+  "manifest.json": {
+    "bytes": 932,
+    "sha256": "bb80b1cb121a7001490e5510e8ddd93fb13f3f57bca072d3d39aefd4fbdd32ab"
+  },
+  "review.css": {
+    "bytes": 1034,
+    "sha256": "4e5a3edae3213ea49f9014c60cb1d3b033dcd014228a027a47370532166add74"
+  },
+  "review.html": {
+    "bytes": 828,
+    "sha256": "166857939b41824f1154c256ac3ed8f0d511011eb261e18e44968467a8d07a09"
+  },
+  "review.js": {
+    "bytes": 823624,
+    "sha256": "97594a3b260f657a20d541eadaf44f590941058ade29f16fd1ce88405f0c7f67"
+  }
+}
