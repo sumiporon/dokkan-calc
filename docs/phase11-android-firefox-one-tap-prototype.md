@@ -6,8 +6,8 @@
 
 This production-separated prototype tests one narrow question: after an owner starts one event, can each displayed stage be validated and durably drafted before the same-position `次のステージへ` button causes the next normal top-level navigation?
 
-- The self-authored three-stage flow works in an actual desktop browser extension test.
-- Android Firefox stable installation, process termination, restore, and touch feel are **not yet verified on the owner's device**.
+- The self-authored three-stage flow works in automated desktop browser extension tests and passed the owner's Android Firefox actual-device gate on 2026-09-10.
+- Signed-XPI installation, fixed-position one-tap stage navigation, durable progress after Firefox termination, explicit writer takeover after restart, review/apply, and rollback are verified on the owner's Android device.
 - DokkanInfo is not selected as a primary source. Its Terms do not establish permission for this extraction/storage flow, and the prototype does not change that legal assessment.
 - Production Pages, production data, the OneDrive app, and the legacy Chrome extension are untouched.
 - No live DokkanInfo page is accessed by the build or automated tests.
@@ -48,7 +48,7 @@ The same batch ID and digest are idempotent. The same ID with different content 
 
 The source build requests only `storage` and the exact DokkanInfo challenge-page host path. The fictional gate build requests only `storage` plus localhost and the repository-specific RawGitHack fixture path. Neither uses `<all_urls>`, cookies, downloads, clipboard, tabs permission, or webRequest.
 
-Signing needs an owner-controlled Mozilla account/AMO submission and therefore cannot be completed by Codex. Once a signed XPI is installed, the expected daily event/stage flow needs no PC connection. This remains an expectation until the Android gate passes.
+Signing needs an owner-controlled Mozilla account/AMO submission and therefore cannot be completed by Codex. The owner completed self-distributed signing and installed the signed XPI on Android Firefox; the fictional event/stage gate then required no PC connection.
 
 ## Build and gate artifacts
 
@@ -64,11 +64,28 @@ Upload the fixture ZIP to AMO as an unlisted add-on and download the signed XPI.
 
 The commit-fixed RawGitHack fixture route currently shows its own `External Content Notice` before the fictional page. That one extra confirmation is fixture-host setup only, not part of the proposed everyday source flow; do not bypass it. After the owner opens the page normally, the gate begins with the extension's `開始` button.
 
-Passing desktop automation is not evidence that Android install, persistence under process termination, or touch UX passed.
+## Android actual-device gate — PASS
+
+Owner report, 2026-09-10 JST:
+
+- AMO accepted the v2 fixture package with validation errors 0 / warnings 0, approved it for self-distribution, and showed Android Firefox compatibility. The signed XPI installed normally on Android Firefox.
+- The fictional event started normally. Stages 1, 2, and 3 each passed parse, validation, and durable draft save, showing `1/3`, `2/3`, and `3/3` respectively.
+- After the event was selected once, each normal stage transition used the same fixed-position `次のステージへ` button once. The final `計算画面で確認` action opened the review page.
+- The review receiver showed state `received`, three stages, safety checks `passed`, and warnings/errors `0 / 0`. Explicit owner review and apply changed the state to `applied`.
+- `1つ前の個人prototypeへ戻す` succeeded. The state returned to `reviewed`, and the same batch could be applied again.
+- After stage 1 was saved, the owner fully terminated Firefox from Android's recent-apps screen. The draft and session survived restart. The safety stop `このタブは書き込み担当ではありません` appeared as designed; one `このタブへ担当を移す` tap resumed the session. This is an interruption-recovery exception, not an extra operation in the normal per-stage flow.
+
+Therefore the narrow Android technical question is **passed** for the self-authored fixture: `開始 → each stage uses one fixed-position next tap → final review → explicit apply`, including durable interruption recovery and rollback. This does not establish compatibility with live DokkanInfo DOM, source-specific data meaning, Terms permission, source adoption, or production integration.
 
 ## Known limits before any source adoption
 
 - Current DokkanInfo Terms applicability to displayed-DOM extraction, transformed personal storage, and this extension flow remains unresolved; a human tap is not treated as permission.
-- No live-site DOM test, Android device test, or current event freshness test is included.
+- No live-site DOM test or current-event freshness test is included. DokkanInfo-specific AOE and other source meanings remain unresolved.
 - The receiver is isolated prototype UI, not production calculator integration.
 - The prototype supports one active event, one writer, and at most 20 visit units. It does not implement multi-source fallback, synchronization, automatic updates, or raw-HTML retention.
+
+## Next single step
+
+The next step is the **DokkanInfo Terms/adoption gate**, not live-site use or production connection. Using the currently obtained Terms text and the exact prototype behavior, decide separately whether ordinary human page viewing, reading already displayed DOM, transient parsing, transformed personal storage, and cross-page session drafts are sufficiently permitted for a limited live compatibility test. Silence, a normal page load, or AMO approval is not source permission.
+
+Only if that gate permits proceeding, the next technical check should be one narrowly scoped owner-driven live DOM test: one public event and two or three representative stages, including multiple Supers/conditions where available and an AOE case only to confirm fail-closed behavior. The owner would install the separately signed source-gate XPI once, open the event normally, press `開始`, use the fixed `次のステージへ` tap once per selected stage, and open the final review. There would be no background fetch, automatic traversal, URL copying, page saving, file picker, publication, production apply, or access-control bypass. Stop after compatibility and safety output are recorded.
