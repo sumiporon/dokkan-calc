@@ -89,3 +89,16 @@ test('adapter/session/extension source boundaries contain no acquisition mechani
   assert.doesNotMatch(text, /\bfetch\s*\(|XMLHttpRequest|GM_xmlhttpRequest|sendBeacon|WebSocket|EventSource|setInterval\s*\(|location\.reload\s*\(|\.click\s*\(/);
   assert.doesNotMatch(await readFile(new URL('../../prototypes/phase11-one-tap-extension/manifest.source.json', import.meta.url), 'utf8'), /<all_urls>|cookies|downloads|clipboard|webRequest/);
 });
+
+test('AMO package keeps every JavaScript file below the 5MiB parser limit and externalizes baseline data', async () => {
+  const { stat, readFile } = await import('node:fs/promises');
+  for (const packageName of ['source', 'fixture']) {
+    const root = new URL(`../../generated/phase11-one-tap/${packageName}/`, import.meta.url);
+    for (const name of ['background.js', 'content.js', 'review.js']) assert.ok((await stat(new URL(name, root))).size < 5 * 1024 * 1024, `${packageName}/${name}`);
+    const baseline = JSON.parse(await readFile(new URL('baseline-runtime.json', root), 'utf8'));
+    assert.ok(Array.isArray(baseline.events) && baseline.events.length > 0);
+  }
+  const review = await readFile(new URL('../../generated/phase11-one-tap/fixture/review.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(review, /legacy-production:enemy:/);
+  assert.match(review, /baseline-runtime\.json/);
+});

@@ -1,4 +1,3 @@
-import baseline from '../../generated/phase11/baseline.mjs';
 import { BatchReceiverStore } from '../../src/prototype/phase11-one-tap-receiver.mjs';
 
 const status = document.querySelector('#status'); const summary = document.querySelector('#summary');
@@ -19,9 +18,12 @@ const render = () => {
 };
 async function init() {
   try {
+    const baselineResponse = await fetch(browser.runtime.getURL('baseline-runtime.json'));
+    if (!baselineResponse.ok) throw new Error('比較用baselineを拡張内から読み込めません。');
+    const official = await baselineResponse.json();
     const response = await browser.runtime.sendMessage({ type: 'batch:get' });
     if (!response?.ok || !response.value) throw new Error(response?.error?.message ?? 'extensionから送信済みbatchを確認できません。');
-    store = new BatchReceiverStore({ official: baseline.runtime });
+    store = new BatchReceiverStore({ official });
     ({ record } = await store.receive(response.value)); render();
   } catch (error) { showError(error); }
 }

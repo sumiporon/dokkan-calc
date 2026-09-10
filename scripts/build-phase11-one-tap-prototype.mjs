@@ -1,5 +1,5 @@
 /** Build-only packaging for the production-separated Firefox prototype. */
-import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { build } from 'esbuild';
@@ -14,6 +14,10 @@ const packages = [
   { name: 'fixture', manifest: 'manifest.fixture.json', fixture: true },
   { name: 'chromium-test', manifest: 'manifest.chromium-test.json', fixture: true }
 ];
+const baselineModule = await readFile(path.join(ROOT, 'generated/phase11/baseline.mjs'), 'utf8');
+const baseline = JSON.parse(baselineModule.replace(/^export default /, '').replace(/;\s*$/, ''));
+const baselineRuntime = JSON.stringify(baseline.runtime);
+const AMO_TEXT_PARSE_LIMIT = 5 * 1024 * 1024;
 
 for (const item of packages) {
   const destination = path.join(OUT, item.name);
@@ -21,6 +25,7 @@ for (const item of packages) {
   await cp(path.join(SRC, item.manifest), path.join(destination, 'manifest.json'));
   await cp(path.join(SRC, 'review.html'), path.join(destination, 'review.html'));
   await cp(path.join(SRC, 'review.css'), path.join(destination, 'review.css'));
+  await writeFile(path.join(destination, 'baseline-runtime.json'), baselineRuntime);
   for (const [entry, outfile] of [['background.mjs', 'background.js'], ['review.mjs', 'review.js']]) {
     await build({ absWorkingDir: ROOT, entryPoints: [path.join(SRC, entry)], outfile: path.join(destination, outfile), bundle: true, format: 'iife', platform: 'browser', target: item.name === 'chromium-test' ? 'chrome128' : 'firefox128', minify: true, legalComments: 'none', banner: { js: 'const browser=globalThis.browser??globalThis.chrome;' } });
   }
@@ -37,6 +42,10 @@ for (const item of packages) {
     banner: { js: 'const browser=globalThis.browser??globalThis.chrome;' },
     define: { PHASE11_FIXTURE_MODE: item.fixture ? 'true' : 'false' }
   });
+  for (const name of ['background.js', 'content.js', 'review.js']) {
+    const size = (await stat(path.join(destination, name))).size;
+    if (size >= AMO_TEXT_PARSE_LIMIT) throw new Error(`${item.name}/${name} is ${size} bytes; AMO parses JavaScript only below ${AMO_TEXT_PARSE_LIMIT} bytes.`);
+  }
 }
 
 await mkdir(FIXED, { recursive: true });

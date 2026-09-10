@@ -54,6 +54,8 @@ Signing needs an owner-controlled Mozilla account/AMO submission and therefore c
 
 Run `npm run build:phase11-one-tap`. It creates ignored, reproducible extension folders under `generated/phase11-one-tap/` and tracked fictional pages under `phase11-one-tap-fixture/`.
 
+The production comparison runtime is packaged as local `baseline-runtime.json`, not embedded in `review.js`. This is a local extension-resource read, never a source-site request. The build fails if any generated JavaScript reaches AMO's 5 MiB text-parser limit.
+
 - `fixture`: safe self-authored Android gate build; it has no DokkanInfo host permission.
 - `source`: technically wired build; do not install or use it on the live source until the separate Terms/adoption decision.
 - `chromium-test`: automated desktop test-only manifest.
