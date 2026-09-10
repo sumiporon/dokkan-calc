@@ -60,6 +60,8 @@ Run `npm run build:phase11-one-tap`. It creates ignored, reproducible extension 
 
 Upload the fixture ZIP to AMO as an unlisted add-on and download the signed XPI. The early Android check is intentionally limited to the fictional pages. It must verify stable Firefox install, content-script presence after navigation, saved progress after Firefox/process termination, explicit takeover on a new tab, review handoff, and no need for a PC during normal repeated use.
 
+The commit-fixed RawGitHack fixture route currently shows its own `External Content Notice` before the fictional page. That one extra confirmation is fixture-host setup only, not part of the proposed everyday source flow; do not bypass it. After the owner opens the page normally, the gate begins with the extension's `開始` button.
+
 Passing desktop automation is not evidence that Android install, persistence under process termination, or touch UX passed.
 
 ## Known limits before any source adoption
