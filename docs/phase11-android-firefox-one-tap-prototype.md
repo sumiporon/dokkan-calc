@@ -86,6 +86,8 @@ Therefore the narrow Android technical question is **passed** for the self-autho
 
 ## Next single step
 
+**Superseded by the subsequent owner decision:** the owner accepted the specified limited personal-use Terms uncertainty and authorized one event / two or three stage Android testing. Preparation and current boundaries are in [限定実サイトゲート](phase11-live-site-gate.md). The text below records the earlier proposal, not another approval requirement. Source permission remains unverified.
+
 The next step is the **DokkanInfo Terms/adoption gate**, not live-site use or production connection. Using the currently obtained Terms text and the exact prototype behavior, decide separately whether ordinary human page viewing, reading already displayed DOM, transient parsing, transformed personal storage, and cross-page session drafts are sufficiently permitted for a limited live compatibility test. Silence, a normal page load, or AMO approval is not source permission.
 
 Only if that gate permits proceeding, the next technical check should be one narrowly scoped owner-driven live DOM test: one public event and two or three representative stages, including multiple Supers/conditions where available and an AOE case only to confirm fail-closed behavior. The owner would install the separately signed source-gate XPI once, open the event normally, press `開始`, use the fixed `次のステージへ` tap once per selected stage, and open the final review. There would be no background fetch, automatic traversal, URL copying, page saving, file picker, publication, production apply, or access-control bypass. Stop after compatibility and safety output are recorded.

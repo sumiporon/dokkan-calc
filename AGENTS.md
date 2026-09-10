@@ -2,6 +2,10 @@
 
 This file defines the standing development policy for this repository. It applies to all files unless a more specific `AGENTS.md` is added below a subdirectory.
 
+## Latest Phase 11 owner decision (2026-09-10)
+
+The owner accepts unresolved DokkanInfo Terms risk for low-frequency personal use (only a few necessary new stage pages per month), with each page opened by the owner's explicit tap. No background fetch/XHR, crawling, preload/prerender, automatic retry, access-restriction/CAPTCHA bypass, or acquired-data publication/redistribution is authorized. Keep data on the personal device and stop on a clear DokkanInfo stop request. This supersedes earlier instructions requiring a resolved Terms gate before the limited owner-driven test; it is owner authorization, not verified source permission. The current authorized work is preparation and Android testing of one event and two or three stages through local review only. Routine operation, formal source adoption, and production integration remain separate decisions even if the test succeeds. See `docs/phase11-live-site-gate.md`. Do not have agents visit or acquire live stage pages on the owner's behalf.
+
 ## Product and user context
 
 - This is primarily a personal Dokkan Battle durability/damage calculator, but it is also publicly hosted on GitHub Pages.

@@ -22,6 +22,8 @@
     "build:phase11:fixed": "npm run build:phase6 && node scripts/build-phase11-prototype.mjs --fixed-preview",
     "build:phase11-one-tap": "npm run build:phase11 && node scripts/build-phase11-one-tap-prototype.mjs",
     "build:phase11-one-tap-amo-source": "npm run build:phase11-one-tap && node scripts/build-phase11-one-tap-amo-source.mjs",
+    "build:phase11-live-gate": "npm run build:phase11-one-tap && node scripts/build-phase11-live-gate.mjs",
+    "test:phase11-live-gate": "npm run build:phase11-live-gate && node --test --test-concurrency=1 tests/browser/phase11-live-gate.test.mjs",
     "test:phase11": "npm run build:phase11:fixed && node --test --test-reporter=spec tests/data/phase11-manual-intake.test.mjs tests/data/phase11-dokkaninfo-manual.test.mjs && node --test --test-concurrency=1 --test-reporter=spec tests/browser/phase11-manual-intake.test.mjs",
     "test:phase11-one-tap": "npm run build:phase11-one-tap && node --test --test-reporter=spec tests/data/phase11-one-tap.test.mjs && node --test --test-concurrency=1 --test-reporter=spec tests/browser/phase11-one-tap.test.mjs",
     "test:cached-source": "node --test --test-reporter=spec tests/data/cached-source.test.mjs",
