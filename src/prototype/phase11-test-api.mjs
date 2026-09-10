@@ -4,3 +4,6 @@ export * from './phase11-reference-adapter.mjs';
 export * from './phase11-dokkaninfo-adapter.mjs';
 export * from './phase11-intake.mjs';
 export * from './phase11-store.mjs';
+export * from './phase11-one-tap-adapter.mjs';
+export * from './phase11-one-tap-session.mjs';
+export * from './phase11-one-tap-receiver.mjs';

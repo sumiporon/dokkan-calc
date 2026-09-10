@@ -48,6 +48,7 @@
 
 # Private, generated Phase 11 trial; never a production/Pages deployment artifact.
 /generated/phase11/
+/generated/phase11-one-tap/
 
 # Scraper caches and intermediate data
 # Some of these paths are already tracked in the legacy history. Ignoring them

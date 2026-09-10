@@ -195,6 +195,13 @@ function stageMissing(page) {
   return [...new Set(missing)];
 }
 
+/** Stage-local completeness check for live-DOM intake before event bundling. */
+export function dokkanInfoStageProblems(page) {
+  validateDokkanInfoMaterial(page);
+  requireIntake(page.pageKind === 'stage', 'DOKKANINFO_MATERIAL', 'stageページの完全性検査にはstage材料が必要です。');
+  return stageMissing({ ...page, eventName: page.eventName ?? '(event pageで別途確認済み)' });
+}
+
 export function validateDokkanInfoMaterial(page) {
   requireIntake(page?.format === DOKKANINFO_FORMAT && page.sourceKey === DOKKANINFO_SOURCE, 'DOKKANINFO_MATERIAL', 'DokkanInfo正規化材料の版が不正です。');
   const identity = exactSourceUrl(page.sourceUrl);
