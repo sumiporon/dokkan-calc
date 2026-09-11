@@ -1,4 +1,4 @@
-import { IndexedDbTypedDraftStore, IndexedDbTypedSessionBackend, TypedOneTapSessionCoordinator } from '../../src/prototype/phase11-typed-one-tap-api.mjs';
+import { IndexedDbTypedDraftStore, IndexedDbTypedSessionBackend, TypedOneTapSessionCoordinator, createTypedInspectionBatch } from '../../src/prototype/phase11-typed-one-tap-api.mjs';
 import { PHASE_C_EVENT_ID, phaseDPlan, phaseDCandidate } from './fixtures.mjs';
 
 const root = document.querySelector('#screen');
@@ -35,18 +35,16 @@ async function prepare(caseId) {
     location.search = `?restart=${caseId}`;
   } catch (error) { stop(error); } finally { busy = false; }
 }
-function renderReadOnly(summary) {
-  root.replaceChildren(); const heading = document.createElement('h2'); heading.textContent = 'ここまでの取得結果'; root.append(heading);
-  const counts = document.createElement('p'); counts.textContent = `完全データ保存済み: ${summary.full}stage / 部分材料保存済み: ${summary.partial}stage / 利用不可: ${summary.unusable}stage / 未取得: ${summary.unvisited}stage`; root.append(counts);
-  const note = document.createElement('p'); note.className = 'small'; note.textContent = '読み取り専用です。適用、スキップ、再試行、次のstageへの遷移はできません。'; root.append(note);
-  const list = document.createElement('ul');
-  for (const stage of summary.stages) { const item = document.createElement('li'); const state = stage.state === 'full' ? '完全データ保存済み' : stage.state === 'partial' ? '部分材料保存済み' : stage.state === 'unusable' ? '利用不可' : '未取得'; item.textContent = `${stage.label}: ${state} — ${stage.ownerMessage}`; list.append(item); }
-  root.append(list);
+async function openInspection() {
+  try {
+    const batch = await createTypedInspectionBatch({ session });
+    location.href = `${location.origin}/prototypes/phase11-typed-inspection/index.html#batch=${encodeURIComponent(JSON.stringify(batch))}`;
+  } catch (error) { stop(error); }
 }
 async function resumeAfterTakeover(caseId) {
   const value = await session.load();
   if (value.status === 'stopped-unusable') {
-    render('このタブで続けられます', '利用不可stageで停止中のため、次のstageへは進めません。', { label: 'ここまでの取得結果を確認', click: async () => { try { renderReadOnly(await session.readOnlySummary()); } catch (error) { stop(error); } } });
+    render('このタブで続けられます', '利用不可stageで停止中のため、次のstageへは進めません。', { label: '取得結果を確認', click: openInspection }, '確認画面では保存済みsessionを再検証して、読み取り専用で表示します。');
     return;
   }
   render('このタブで続けられます', '保存済みのfull / partialを再検証しました。次のstageへ進めます。', { label: '次のstageへ', click: () => { location.hash = '#resume'; } }, `writer generation ${value.writerGeneration} / session revision ${value.revision}`);

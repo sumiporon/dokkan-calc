@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { startStaticServer } from '../helpers/static-server.mjs';
 
-test('Phase D browser fixture restores non-writer sessions, requires explicit takeover, and keeps unusable stopped', async () => {
+test('Phase E browser fixture restores safely, transfers a verified mixed batch, and renders only read-only inspection', async () => {
   const server = await startStaticServer(), browser = await chromium.launch({ headless: true });
   try {
     const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -51,15 +51,23 @@ test('Phase D browser fixture restores non-writer sessions, requires explicit ta
     await page.getByRole('heading', { name: 'このタブで続けられます' }).waitFor();
     assert.match(await page.locator('#screen').innerText(), /利用不可stageで停止中/);
     assert.equal(await page.getByRole('button', { name: '次のstageへ' }).count(), 0);
-    await page.getByRole('button', { name: 'ここまでの取得結果を確認' }).click();
-    await page.getByRole('heading', { name: 'ここまでの取得結果' }).waitFor();
-    assert.match(await page.locator('#screen').innerText(), /完全データ保存済み: 1stage \/ 部分材料保存済み: 1stage \/ 利用不可: 1stage \/ 未取得: 1stage/);
-    const stopped = await page.evaluate(async () => {
+    const beforeInspection = await page.evaluate(async () => {
       const api = await import('/generated/phase11/typed-one-tap/api.mjs'); const drafts = new api.IndexedDbTypedDraftStore(), backend = new api.IndexedDbTypedSessionBackend();
-      const value = await new api.TypedOneTapSessionCoordinator({ draftStore: drafts, backend }).readOnlySummary(); drafts.close(); backend.close();
-      return { states: value.stages.map(x => x.state), full: value.full, partial: value.partial, unusable: value.unusable, unvisited: value.unvisited };
+      const value = await new api.TypedOneTapSessionCoordinator({ draftStore: drafts, backend }).load(); drafts.close(); backend.close();
+      return value;
     });
-    assert.deepEqual(stopped, { states: ['full', 'partial', 'unusable', 'unvisited'], full: 1, partial: 1, unusable: 1, unvisited: 1 });
+    await page.getByRole('button', { name: '取得結果を確認' }).click();
+    await page.getByRole('heading', { name: 'typed inspection review' }).waitFor();
+    assert.match(page.url(), /prototypes\/phase11-typed-inspection\/index\.html#batch=/);
+    assert.match(await page.locator('#screen').innerText(), /完全データ保存済み: 1stage \/ 部分材料保存済み: 1stage \/ 利用不可: 1stage \/ 未取得: 1stage \/ 合計: 4stage/);
+    assert.match(await page.locator('#screen').innerText(), /材料のみ保存・現在は計算できません/);
+    assert.equal(await page.getByRole('button').count(), 0);
+    const afterInspection = await page.evaluate(async () => {
+      const api = await import('/generated/phase11/typed-one-tap/api.mjs'); const drafts = new api.IndexedDbTypedDraftStore(), backend = new api.IndexedDbTypedSessionBackend();
+      const value = await new api.TypedOneTapSessionCoordinator({ draftStore: drafts, backend }).load(); drafts.close(); backend.close();
+      return value;
+    });
+    assert.deepEqual(afterInspection, beforeInspection);
     for (const width of [360, 390]) { await page.setViewportSize({ width, height: 844 }); assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); }
     assert.deepEqual(external, []); assert.deepEqual(errors, []);
   } finally { await browser.close(); await server.close(); }

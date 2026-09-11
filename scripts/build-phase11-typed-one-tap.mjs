@@ -1,4 +1,4 @@
-/** Build only the independent Phase D fixture prototype. */
+/** Build only the independent Phase E fixture prototype. */
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -19,7 +19,7 @@ await writeFile(validators, require('ajv/dist/standalone').default(ajv, ids));
 const plugin = { name: 'isolated-existing-validators', setup(builder) {
   builder.onResolve({ filter: /generated\/phase11\/validators\.cjs$/ }, () => ({ path: validators }));
 } };
-for (const [entry, name] of [['src/prototype/phase11-typed-one-tap-api.mjs', 'api.mjs'], ['prototypes/phase11-typed-one-tap/app.mjs', 'app.mjs']]) {
+for (const [entry, name] of [['src/prototype/phase11-typed-one-tap-api.mjs', 'api.mjs'], ['src/prototype/phase11-one-tap-receiver.mjs', 'existing-full-receiver.mjs'], ['prototypes/phase11-typed-one-tap/app.mjs', 'app.mjs'], ['prototypes/phase11-typed-inspection/app.mjs', 'inspection-app.mjs']]) {
   await build({ absWorkingDir: root, entryPoints: [entry], outfile: path.join(out, name), bundle: true, format: 'esm', platform: 'browser', target: 'es2022', plugins: [plugin] });
 }
-console.log('Phase D typed one-tap fixture built: generated/phase11/typed-one-tap/');
+console.log('Phase E typed one-tap fixture built: generated/phase11/typed-one-tap/');
