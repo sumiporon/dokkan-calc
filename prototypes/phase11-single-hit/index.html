@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; img-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Phase 11・この1発の計算確認</title><link rel="stylesheet" href="style.css">
+<script src="../../src/calculation-core.js" defer></script><script type="module" src="app.mjs"></script></head>
+<body><main><p class="badge">独立prototype・自作データのみ・保存なし</p>
+<h1>この1発を受けた場合</h1><p>確認できる結果だけを計算します。発動回数・順序・ターン全体の安全性は対象外です。</p>
+<label for="fixture">確認するケース</label><select id="fixture"></select>
+<p id="facts"></p><p>DEFの結果は、乱数の上限1.03で条件を満たす最小の整数「最終DEF」です。初期DEFではありません。</p>
+<section id="results" aria-live="polite"></section>
+<details><summary>今回の未対応範囲</summary><p>敵ATKの全状態範囲、必殺後の履歴、使用回数・攻撃順序、1ターン総被ダメ、複数必殺の成立組合せ、敵全体の安全判定、複雑な全体攻撃。</p></details>
+</main></body></html>

@@ -47,6 +47,8 @@ AMOで新しいself-distributed add-onとして提出し、source codeにreviewe
 
 ## 検証の区別
 
+2026-09-11 owner報告: event認識・開始は成功したが、stage 17050015は必殺技の使用条件不足でincomplete停止。draft未保存、次stageへ移動不可。安全停止はPASS、live変換・3stage完走は未達。後続の[表示済みDOM診断](phase11-stage-dom-diagnostic.md)と[限定inlineデータ診断](phase11-inline-data-diagnostic.md)でも、必殺技ごとの最大ATK/ターン値は取得できなかった。external script/API等は今回の境界外として探索を終了する。旧保存値、敵本体の回数、推測値による補完は行わず、stage 17050015は現行完全取込基準で不合格のままとする。
+
 ローカル自動試験は架空DOMだけを使用し、4stageあるeventでも3stageで終了すること、tap前に次ページへ行かないこと、reviewの数値・複数必殺・条件、適用UI不在、再開始停止、ATK欠損・AOE種別不明で停止することを確認する。既存fixture回帰も実行する。AMO validatorとreviewer ZIPからの再build一致は提出物の確認であり、実DokkanInfoの正確性や利用許可の証明ではない。実サイト結果はowner報告後に追記する。
 
 準備完了時の結果: 限定版ブラウザ試験3件成功、既存one-tap回帰10件成功。Mozilla `web-ext lint` errors/warnings/notices各0。reviewer ZIPを別フォルダへ展開し、Node 22.17.0 / npm 10.9.2で `npm ci --ignore-scripts` → `npm run build` に成功。再生成ZIPと提出ZIPの全7ファイルはSHA-256一致。source ZIPは38ファイルで、node_modules/Git/cache/生成済みコードを含まない。fixture v2提出ZIPのSHA-256は従前の `FF19D35C1025F731AA18F43DF4471A5E738BF3D938A2EDB8142D60F8D5282555` のまま。
