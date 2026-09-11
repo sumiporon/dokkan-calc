@@ -36,6 +36,12 @@ function sameTicket(current, ticket) {
   return current.sessionId === ticket.sessionId && current.eventId === ticket.eventId && current.revision === ticket.revision
     && current.writerId === ticket.writerId && current.writerGeneration === ticket.writerGeneration;
 }
+function writerExpectation(value) { return { sessionId: value.sessionId, writerId: value.writerId, writerGeneration: value.writerGeneration, revision: value.revision }; }
+function validateWriterExpectation(value) {
+  exactKeys(value, ['sessionId', 'writerId', 'writerGeneration', 'revision']);
+  insist(typeof value.sessionId === 'string' && typeof value.writerId === 'string' && Number.isSafeInteger(value.writerGeneration)
+    && value.writerGeneration > 0 && Number.isSafeInteger(value.revision) && value.revision > 0, 'WRITER_EXPECTATION');
+}
 function validateDraftEntry(entry, plan) {
   exactKeys(entry, ['classification', 'stageId', 'capture', 'contentDigest', 'draftDigest', 'fingerprint', 'ticket']);
   const unit = plan.find(value => value.stageId === entry.stageId);
@@ -126,7 +132,7 @@ export class TypedOneTapSessionCoordinator {
   async beginCapture({ writerId, currentUrl }) {
     const current = await this.load(); if (!current) fail('NO_SESSION', '開始済みeventがありません。');
     if (current.status === 'stopped-unusable') fail('UNUSABLE_STOP', 'このeventは利用不可stageで停止しています。');
-    if (writerId !== current.writerId) fail('WRITER_MISMATCH', 'このタブは書き込み担当ではありません。');
+    if (writerId !== current.writerId) fail('WRITER_MISMATCH', '別のタブに担当が移っています。');
     const unit = current.plan.find(entry => entry.url === currentUrl); if (!unit) fail('EVENT_MISMATCH', '表示中ページは取得計画に含まれていません。');
     if (unit.id !== current.plan[current.currentIndex]?.id) fail('STAGE_ORDER', '取得計画の順番どおりに進めてください。');
     return { sessionId: current.sessionId, eventId: current.eventId, unitId: unit.id, unitUrl: unit.url, revision: current.revision, writerId: current.writerId, writerGeneration: current.writerGeneration };
@@ -175,7 +181,7 @@ export class TypedOneTapSessionCoordinator {
     return { session: saved, failure: savedFailure };
   }
   async nextNavigation({ writerId, currentUrl }) {
-    const current = await this.load(); if (!current || writerId !== current.writerId) fail('WRITER_MISMATCH', 'このタブからは次へ進めません。');
+    const current = await this.load(); if (!current || writerId !== current.writerId) fail('WRITER_MISMATCH', '別のタブに担当が移っています。');
     if (current.status === 'stopped-unusable') fail('UNUSABLE_STOP', '利用不可stageがあるため次へ進めません。');
     const unit = current.plan.find(entry => entry.url === currentUrl);
     if (!unit || !current.drafts[unit.id]) fail('NOT_READY', '検査・保存・照合が完了するまで次へ進めません。');
@@ -184,6 +190,17 @@ export class TypedOneTapSessionCoordinator {
     if (index < current.plan.length - 1) return { kind: 'navigate', url: current.plan[index + 1].url };
     await this.finalSummary();
     return { kind: 'final-confirmation' };
+  }
+  async takeover({ writerId, expected }) {
+    insist(typeof writerId === 'string' && writerId.length >= 12, 'WRITER_ID');
+    validateWriterExpectation(expected); const current = await this.load(); if (!current) fail('NO_SESSION', '開始済みeventがありません。');
+    if (stable(expected) !== stable(writerExpectation(current))) fail('SESSION_CONFLICT', '別のタブに担当が移っています。');
+    if (current.writerId === writerId) fail('ALREADY_WRITER', 'このタブはすでに担当です。');
+    const next = { ...current, writerId, writerGeneration: current.writerGeneration + 1, revision: current.revision + 1 };
+    await this.backend.compareAndSwap(current, next);
+    const verified = await this.backend.read();
+    insist(stable(verified) === stable(next), 'SESSION_TAKEOVER_VERIFY_FAILED');
+    return this.load();
   }
   async finalSummary() {
     const current = await this.load();

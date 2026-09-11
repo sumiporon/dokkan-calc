@@ -1,70 +1,83 @@
 import { IndexedDbTypedDraftStore, IndexedDbTypedSessionBackend, TypedOneTapSessionCoordinator } from '../../src/prototype/phase11-typed-one-tap-api.mjs';
-import { PHASE_C_EVENT_ID, PHASE_C_EVENT_NAME, PHASE_C_STAGES, phaseCPlan, fixtureCandidate } from './fixtures.mjs';
+import { PHASE_C_EVENT_ID, phaseDPlan, phaseDCandidate } from './fixtures.mjs';
 
 const root = document.querySelector('#screen');
-const writerId = 'phase-c-fixture-tab';
+const tabId = `phase-d-tab:${crypto.randomUUID()}`;
 const store = new IndexedDbTypedDraftStore();
-const session = new TypedOneTapSessionCoordinator({ draftStore: store, backend: new IndexedDbTypedSessionBackend() });
-let busy = false;
+const backend = new IndexedDbTypedSessionBackend();
+const session = new TypedOneTapSessionCoordinator({ draftStore: store, backend });
 const pageBase = `${location.origin}${location.pathname}`;
-const render = (title, text, button = null, extra = '') => {
-  root.replaceChildren(); const h = document.createElement('h2'); h.textContent = title; const p = document.createElement('p'); p.textContent = text; root.append(h, p);
+const restartCase = new URLSearchParams(location.search).get('restart');
+let busy = false;
+let takeoverExpected = null;
+
+function render(title, text, button = null, extra = '') {
+  root.replaceChildren(); const heading = document.createElement('h2'); heading.textContent = title; const body = document.createElement('p'); body.textContent = text; root.append(heading, body);
   if (extra) { const detail = document.createElement('p'); detail.className = 'small'; detail.textContent = extra; root.append(detail); }
   if (button) { const action = document.createElement('button'); action.textContent = button.label; action.disabled = busy || button.disabled; action.addEventListener('click', button.click); root.append(action); }
-};
-const stop = error => render('このstageで停止', error.message ?? String(error), null, '保存済みのstageは保持され、次のstageへは進みません。');
-
-async function start() {
-  if (busy) return; busy = true; render('保存中', 'eventと訪問計画を端末へ保存しています。');
-  try { await session.start({ eventId: PHASE_C_EVENT_ID, eventName: PHASE_C_EVENT_NAME, plan: phaseCPlan(pageBase), writerId }); location.hash = '#full-1'; }
-  catch (error) { stop(error); } finally { busy = false; }
 }
-async function stage(key) {
-  if (busy) return; busy = true; render('確認中', '通信せず、架空の表示済みstage材料を検査しています。');
+const stop = error => render(error?.code === 'WRITER_MISMATCH' ? '別のタブに担当が移っています' : 'このstageで停止', error?.message ?? String(error), null, '保存済みのstageは保持され、操作は進みません。');
+
+async function commitStage(caseId, index, writerId) {
+  const value = await session.load(), unit = value.plan[index];
+  const ticket = await session.beginCapture({ writerId, currentUrl: unit.url });
+  const candidate = await phaseDCandidate(caseId, index);
+  if (candidate.classification === 'unusable') return session.recordUnusable(ticket, candidate);
+  return session.commitCapture(ticket, candidate);
+}
+async function prepare(caseId) {
+  if (busy) return; busy = true; render('準備中', '自作fixtureの保存済みsessionを作成しています。');
   try {
-    const currentUrl = `${pageBase}#${key}`;
-    const ticket = await session.beginCapture({ writerId, currentUrl });
-    const candidate = await fixtureCandidate(key);
-    if (candidate.classification === 'unusable') {
-      const stopped = await session.recordUnusable(ticket, candidate);
-      busy = false;
-      render('このstageでは安全に保存できません', stopped.failure.ownerMessage, {
-        label: 'ここまでの取得結果を確認', click: () => { location.hash = '#review'; }
-      }, `完全データ検査: ${stopped.failure.fullFailureCode} / 部分材料検査: ${stopped.failure.partialFailureCode}。次のstageへは進めません。`);
-      return;
-    }
-    const committed = await session.commitCapture(ticket, candidate);
-    const draft = committed.session.drafts[ticket.unitId];
-    const partial = draft.classification === 'partial';
-    const noCapabilityCandidates = candidate.capabilityCandidates === 0;
-    const title = partial ? '一部の材料を保存しました' : '完全データを保存しました';
-    const detail = partial && noCapabilityCandidates ? '現在は計算できません。保存可能と計算可能は別です。' : partial ? '単発計算の候補があります。計算画面との接続は今回の範囲外です。' : '現行full検査、保存、読み戻し照合が完了しました。';
-    const navigation = await session.nextNavigation({ writerId, currentUrl });
-    // The save gate is complete; only now may the fixed next control become enabled.
-    busy = false;
-    render(title, `${Object.keys(committed.session.drafts).length}/${committed.session.plan.length} stage。${detail}`, {
-      label: navigation.kind === 'navigate' ? '次のステージへ' : '最終確認',
-      click: () => { if (navigation.kind === 'navigate') location.hash = new URL(navigation.url).hash; else location.hash = '#complete'; }
-    }, 'validator成功 → payload保存・read-back → typed draft保存 → session保存・read-back → ticket整合を確認済み。');
+    const plan = phaseDPlan(pageBase, caseId);
+    await session.start({ eventId: PHASE_C_EVENT_ID, eventName: caseId === 'progress' ? 'Phase D・進行途中' : 'Phase D・unusable停止済み', plan, writerId: tabId });
+    await commitStage(caseId, 0, tabId); await commitStage(caseId, 1, tabId);
+    if (caseId === 'stopped') await commitStage(caseId, 2, tabId);
+    location.search = `?restart=${caseId}`;
   } catch (error) { stop(error); } finally { busy = false; }
 }
-function renderReadOnlyReview(summary) {
+function renderReadOnly(summary) {
   root.replaceChildren(); const heading = document.createElement('h2'); heading.textContent = 'ここまでの取得結果'; root.append(heading);
   const counts = document.createElement('p'); counts.textContent = `完全データ保存済み: ${summary.full}stage / 部分材料保存済み: ${summary.partial}stage / 利用不可: ${summary.unusable}stage / 未取得: ${summary.unvisited}stage`; root.append(counts);
-  const note = document.createElement('p'); note.className = 'small'; note.textContent = '読み取り専用の確認です。適用、スキップ、再試行、次のstageへの遷移はできません。'; root.append(note);
+  const note = document.createElement('p'); note.className = 'small'; note.textContent = '読み取り専用です。適用、スキップ、再試行、次のstageへの遷移はできません。'; root.append(note);
   const list = document.createElement('ul');
-  for (const stage of summary.stages) { const item = document.createElement('li'); const label = stage.state === 'full' ? '完全データ保存済み' : stage.state === 'partial' ? '部分材料保存済み' : stage.state === 'unusable' ? '利用不可' : '未取得'; item.textContent = `${stage.label}: ${label} — ${stage.ownerMessage}`; list.append(item); }
+  for (const stage of summary.stages) { const item = document.createElement('li'); const state = stage.state === 'full' ? '完全データ保存済み' : stage.state === 'partial' ? '部分材料保存済み' : stage.state === 'unusable' ? '利用不可' : '未取得'; item.textContent = `${stage.label}: ${state} — ${stage.ownerMessage}`; list.append(item); }
   root.append(list);
+}
+async function resumeAfterTakeover(caseId) {
+  const value = await session.load();
+  if (value.status === 'stopped-unusable') {
+    render('このタブで続けられます', '利用不可stageで停止中のため、次のstageへは進めません。', { label: 'ここまでの取得結果を確認', click: async () => { try { renderReadOnly(await session.readOnlySummary()); } catch (error) { stop(error); } } });
+    return;
+  }
+  render('このタブで続けられます', '保存済みのfull / partialを再検証しました。次のstageへ進めます。', { label: '次のstageへ', click: () => { location.hash = '#resume'; } }, `writer generation ${value.writerGeneration} / session revision ${value.revision}`);
+}
+async function takeover(caseId) {
+  if (busy) return; busy = true; render('担当を確認中', '保存済みsessionを再検証しています。');
+  try { await session.takeover({ writerId: tabId, expected: takeoverExpected }); busy = false; await resumeAfterTakeover(caseId); }
+  catch (error) { stop(error); } finally { busy = false; }
+}
+async function renderRestart(caseId) {
+  try {
+    const value = await session.load();
+    if (!value) { render('保存済みsessionがありません', '最初の画面からfixtureを準備してください。'); return; }
+    if (value.writerId === tabId) { await resumeAfterTakeover(caseId); return; }
+    takeoverExpected = { sessionId: value.sessionId, writerId: value.writerId, writerGeneration: value.writerGeneration, revision: value.revision };
+    render('このタブでは操作を続けられません', '続けるには、このタブへ担当を移してください。', { label: 'このタブへ担当を移す', click: () => takeover(caseId) }, `保存済みstageを再検証済み。writer generation ${value.writerGeneration} / session revision ${value.revision}`);
+  } catch (error) { stop(error); }
+}
+async function resumeStage(caseId) {
+  if (busy) return; busy = true; render('確認中', '引継ぎ後のstageを検査しています。');
+  try {
+    const value = await session.load();
+    if (value.writerId !== tabId) throw Object.assign(new Error('別のタブに担当が移っています。'), { code: 'WRITER_MISMATCH' });
+    const result = await commitStage(caseId, value.currentIndex, tabId);
+    busy = false; render('完全データを保存しました', `${Object.keys(result.session.drafts).length}/${result.session.plan.length} stage。引継ぎ後に操作できることを確認しました。`, null, 'Phase Dではこの先のreview / applyは扱いません。');
+  } catch (error) { stop(error); } finally { busy = false; }
 }
 async function route() {
   const hash = location.hash || '#event';
-  if (hash === '#event') { render('eventを確認しました', `${PHASE_C_EVENT_NAME}・4stage（架空fixture）`, { label: '開始', click: start }); return; }
-  if (hash === '#review') { try { renderReadOnlyReview(await session.readOnlySummary()); } catch (error) { stop(error); } return; }
-  if (hash === '#complete') {
-    try { const summary = await session.finalSummary();
-      render('Phase Bの最終確認', `typed draftから集計：完全データ ${summary.full}stage / 部分材料 ${summary.partial}stage / 合計 ${summary.total}stage。安全に保持できたところまでで終了します。inspection reviewやapplyは今回の範囲外です。`); } catch (error) { stop(error); } return;
-  }
-  const item = PHASE_C_STAGES.find(value => `#${value.key}` === hash); if (!item) { location.hash = '#event'; return; }
-  await stage(item.key);
+  if (restartCase === 'progress' || restartCase === 'stopped') { if (hash === '#resume') await resumeStage(restartCase); else await renderRestart(restartCase); return; }
+  render('Phase Dのfixtureを選択', 'ページ再読込後の復元と明示writer引継ぎを確認します。', { label: 'ケースA：進行途中を準備', click: () => prepare('progress') }, 'ケースB（unusable停止済み）は、下のボタンで別途確認できます。');
+  const second = document.createElement('button'); second.textContent = 'ケースB：停止済みを準備'; second.addEventListener('click', () => prepare('stopped')); root.append(second);
 }
 addEventListener('hashchange', route); await route();

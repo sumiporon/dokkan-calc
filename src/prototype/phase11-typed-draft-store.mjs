@@ -186,6 +186,13 @@ export class IndexedDbTypedSessionBackend {
   }
   async read() { const tx = (await this.open()).transaction('sessions', 'readonly'), finished = done(tx); const value = await result(tx.objectStore('sessions').get(this.key)); await finished; return value ?? null; }
   async write(value) { if (this.failWrites) fail('SESSION_SAVE_FAILED'); const tx = (await this.open()).transaction('sessions', 'readwrite'), finished = done(tx); tx.objectStore('sessions').put(clone(value), this.key); await finished; }
+  async compareAndSwap(expected, value) {
+    if (this.failWrites) fail('SESSION_SAVE_FAILED');
+    const tx = (await this.open()).transaction('sessions', 'readwrite'), finished = done(tx), store = tx.objectStore('sessions');
+    const current = await result(store.get(this.key));
+    if (!current || stable(current) !== stable(expected)) { tx.abort(); try { await finished; } catch {} fail('SESSION_CONFLICT'); }
+    store.put(clone(value), this.key); await finished;
+  }
   close() { this.db?.close(); this.db = null; }
 }
 
@@ -193,4 +200,5 @@ export class MemoryTypedSessionBackend {
   constructor(value = null) { this.value = clone(value); this.failWrites = false; this.tamperReads = false; }
   async read() { const value = clone(this.value); if (value && this.tamperReads) value.revision += 1; return value; }
   async write(value) { if (this.failWrites) fail('SESSION_SAVE_FAILED'); this.value = clone(value); }
+  async compareAndSwap(expected, value) { if (this.failWrites) fail('SESSION_SAVE_FAILED'); if (stable(this.value) !== stable(expected)) fail('SESSION_CONFLICT'); this.value = clone(value); }
 }
