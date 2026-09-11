@@ -1,8 +1,8 @@
 /** Typed one-tap coordinator. It does not send batches or navigate live sites. */
-import { exactKeys, insist, stable } from './phase11-partial-rules.mjs';
-import { makeTypedDraft } from './phase11-typed-draft-store.mjs';
+import { digest, exactKeys, insist, stable } from './phase11-partial-rules.mjs';
+import { makeTypedDraft, makeUnusableFailure } from './phase11-typed-draft-store.mjs';
 
-export const TYPED_ONE_TAP_SESSION_VERSION = 'phase11-typed-one-tap-session-1';
+export const TYPED_ONE_TAP_SESSION_VERSION = 'phase11-typed-one-tap-session-2';
 const clone = value => value == null ? value : structuredClone(value);
 const fail = (code, message = code) => { const error = new Error(message); error.code = code; throw error; };
 
@@ -44,18 +44,45 @@ function validateDraftEntry(entry, plan) {
     && typeof entry.contentDigest === 'string' && typeof entry.draftDigest === 'string' && typeof entry.fingerprint === 'string', 'SESSION_DRAFT');
   validateBoundTicket(entry.ticket);
 }
+function validateFailureEntry(entry, plan) {
+  exactKeys(entry, ['stageId', 'planIndex', 'failureDigest', 'ticket']);
+  const unit = plan[entry.planIndex];
+  insist(unit && unit.stageId === entry.stageId && entry.ticket.unitId === unit.id && typeof entry.failureDigest === 'string', 'SESSION_FAILURE');
+  validateBoundTicket(entry.ticket);
+}
 function expectedCurrentIndex(value) {
+  const failed = value.plan.findIndex(unit => value.failures[unit.id]);
+  if (failed >= 0) return failed;
   const firstUnfinished = value.plan.findIndex(unit => !value.drafts[unit.id]);
   return firstUnfinished < 0 ? value.plan.length : firstUnfinished;
 }
 function validateProgress(value) {
   const expected = expectedCurrentIndex(value);
   insist(value.currentIndex === expected, 'SESSION_STAGE_ORDER');
+  const failed = value.plan.findIndex(unit => value.failures[unit.id]);
+  if (failed >= 0) {
+    insist(value.status === 'stopped-unusable', 'SESSION_STAGE_ORDER');
+    for (let index = 0; index < value.plan.length; index += 1) {
+      const unit = value.plan[index];
+      if (index < failed) insist(Boolean(value.drafts[unit.id]) && !value.failures[unit.id], 'SESSION_STAGE_ORDER');
+      if (index === failed) insist(!value.drafts[unit.id] && Boolean(value.failures[unit.id]), 'SESSION_STAGE_ORDER');
+      if (index > failed) insist(!value.drafts[unit.id] && !value.failures[unit.id], 'SESSION_STAGE_ORDER');
+    }
+    return;
+  }
+  insist(value.status !== 'stopped-unusable', 'SESSION_STAGE_ORDER');
   insist((value.status === 'ready-for-final-confirmation') === (expected === value.plan.length), 'SESSION_STAGE_ORDER');
 }
 function assertDraftMatchesEntry(draft, entry) {
   insist(draft.classification === entry.classification && draft.stageId === entry.stageId && draft.contentDigest === entry.contentDigest
     && stable(draft.capture) === stable(entry.capture) && stable(draft.ticket) === stable(entry.ticket), 'SESSION_DRAFT_READ_BACK');
+}
+function assertFailureMatchesEntry(failure, entry) {
+  insist(failure.classification === 'unusable' && failure.stageId === entry.stageId && failure.planIndex === entry.planIndex
+    && failure.failureDigest === entry.failureDigest && stable(failure.ticket) === stable(entry.ticket), 'SESSION_FAILURE_READ_BACK');
+}
+async function failureCode(task) {
+  try { await task(); return null; } catch (error) { return error?.code ?? 'VALIDATION_FAILED'; }
 }
 
 export class TypedOneTapSessionCoordinator {
@@ -63,17 +90,24 @@ export class TypedOneTapSessionCoordinator {
 
   async load() {
     const value = await this.backend.read(); if (!value) return null;
-    exactKeys(value, ['version', 'sessionId', 'eventId', 'eventName', 'plan', 'currentIndex', 'drafts', 'writerId', 'writerGeneration', 'revision', 'status']);
+    exactKeys(value, ['version', 'sessionId', 'eventId', 'eventName', 'plan', 'planDigest', 'currentIndex', 'drafts', 'failures', 'writerId', 'writerGeneration', 'revision', 'status']);
     insist(value.version === TYPED_ONE_TAP_SESSION_VERSION && typeof value.sessionId === 'string' && typeof value.eventId === 'string'
-      && typeof value.eventName === 'string' && typeof value.writerId === 'string' && Number.isSafeInteger(value.writerGeneration) && value.writerGeneration > 0
+      && typeof value.eventName === 'string' && /^sha256:[a-f0-9]{64}$/.test(value.planDigest) && typeof value.writerId === 'string' && Number.isSafeInteger(value.writerGeneration) && value.writerGeneration > 0
       && Number.isSafeInteger(value.revision) && value.revision > 0 && Number.isSafeInteger(value.currentIndex) && value.currentIndex >= 0 && value.currentIndex <= value.plan.length
-      && ['collecting', 'ready-for-final-confirmation'].includes(value.status) && value.drafts && typeof value.drafts === 'object' && !Array.isArray(value.drafts), 'SESSION_FORMAT');
+      && ['collecting', 'ready-for-final-confirmation', 'stopped-unusable'].includes(value.status) && value.drafts && typeof value.drafts === 'object' && !Array.isArray(value.drafts)
+      && value.failures && typeof value.failures === 'object' && !Array.isArray(value.failures), 'SESSION_FORMAT');
     validatePlan(value.plan);
+    insist(await digest(value.plan) === value.planDigest, 'PLAN_DIGEST');
     validateProgress(value);
     for (const [unitId, entry] of Object.entries(value.drafts)) {
       const unit = value.plan.find(item => item.id === unitId); insist(unit, 'SESSION_DRAFT'); validateDraftEntry(entry, value.plan);
       const draft = await this.draftStore.load(entry.draftDigest);
       assertDraftMatchesEntry(draft, entry);
+    }
+    for (const [unitId, entry] of Object.entries(value.failures)) {
+      const unit = value.plan.find(item => item.id === unitId); insist(unit, 'SESSION_FAILURE'); validateFailureEntry(entry, value.plan);
+      const failure = await this.draftStore.loadFailure(entry.failureDigest);
+      assertFailureMatchesEntry(failure, entry);
     }
     return value;
   }
@@ -85,11 +119,13 @@ export class TypedOneTapSessionCoordinator {
   async start({ eventId, eventName, plan, writerId }) {
     insist(typeof eventId === 'string' && typeof eventName === 'string' && typeof writerId === 'string' && writerId.length > 0, 'EVENT_INVALID');
     validatePlan(plan);
-    return this.persist({ version: TYPED_ONE_TAP_SESSION_VERSION, sessionId: crypto.randomUUID(), eventId, eventName, plan: clone(plan), currentIndex: 0,
-      drafts: {}, writerId, writerGeneration: 1, revision: 1, status: 'collecting' });
+    const savedPlan = clone(plan);
+    return this.persist({ version: TYPED_ONE_TAP_SESSION_VERSION, sessionId: crypto.randomUUID(), eventId, eventName, plan: savedPlan, planDigest: await digest(savedPlan), currentIndex: 0,
+      drafts: {}, failures: {}, writerId, writerGeneration: 1, revision: 1, status: 'collecting' });
   }
   async beginCapture({ writerId, currentUrl }) {
     const current = await this.load(); if (!current) fail('NO_SESSION', '開始済みeventがありません。');
+    if (current.status === 'stopped-unusable') fail('UNUSABLE_STOP', 'このeventは利用不可stageで停止しています。');
     if (writerId !== current.writerId) fail('WRITER_MISMATCH', 'このタブは書き込み担当ではありません。');
     const unit = current.plan.find(entry => entry.url === currentUrl); if (!unit) fail('EVENT_MISMATCH', '表示中ページは取得計画に含まれていません。');
     if (unit.id !== current.plan[current.currentIndex]?.id) fail('STAGE_ORDER', '取得計画の順番どおりに進めてください。');
@@ -120,8 +156,27 @@ export class TypedOneTapSessionCoordinator {
     const saved = await this.persist(next);
     return { session: saved, duplicate: false, readyForNext: true };
   }
+  async recordUnusable(ticket, { fullInput, partialInput, ownerMessage }) {
+    validateTicket(ticket); const before = await this.load();
+    if (!before || !sameTicket(before, ticket) || before.status === 'stopped-unusable') fail('STALE_CAPTURE', '古い解析結果は保存しませんでした。');
+    const unit = before.plan.find(entry => entry.id === ticket.unitId && entry.url === ticket.unitUrl);
+    if (!unit || unit.id !== before.plan[before.currentIndex]?.id) fail('STALE_CAPTURE', '解析対象が現在の取得計画と一致しません。');
+    const binding = boundTicket(ticket);
+    const fullFailureCode = await failureCode(() => makeTypedDraft({ classification: 'full', stageId: unit.stageId, ticket: binding, ...fullInput }));
+    const partialFailureCode = await failureCode(() => makeTypedDraft({ classification: 'partial', stageId: unit.stageId, ticket: binding, ...partialInput }));
+    if (!fullFailureCode || !partialFailureCode) fail('UNUSABLE_NOT_PROVEN', '完全または部分材料として安全に保存できるため停止しません。');
+    const failure = await makeUnusableFailure({ stageId: unit.stageId, planIndex: before.currentIndex, ticket: binding, fullFailureCode, partialFailureCode, ownerMessage });
+    const savedFailure = await this.draftStore.saveFailure(failure);
+    const latest = await this.load();
+    if (!latest || !sameTicket(latest, ticket)) fail('STALE_CAPTURE', '保存中にsessionが変わったため、停止状態を有効化しませんでした。');
+    const entry = { stageId: savedFailure.stageId, planIndex: savedFailure.planIndex, failureDigest: savedFailure.failureDigest, ticket: savedFailure.ticket };
+    const next = { ...latest, failures: { ...latest.failures, [unit.id]: entry }, revision: latest.revision + 1, status: 'stopped-unusable' };
+    const saved = await this.persist(next);
+    return { session: saved, failure: savedFailure };
+  }
   async nextNavigation({ writerId, currentUrl }) {
     const current = await this.load(); if (!current || writerId !== current.writerId) fail('WRITER_MISMATCH', 'このタブからは次へ進めません。');
+    if (current.status === 'stopped-unusable') fail('UNUSABLE_STOP', '利用不可stageがあるため次へ進めません。');
     const unit = current.plan.find(entry => entry.url === currentUrl);
     if (!unit || !current.drafts[unit.id]) fail('NOT_READY', '検査・保存・照合が完了するまで次へ進めません。');
     await this.draftStore.load(current.drafts[unit.id].draftDigest);
@@ -146,5 +201,23 @@ export class TypedOneTapSessionCoordinator {
     const partial = ordered.filter(value => value.classification === 'partial').length;
     if (full + partial !== current.plan.length || ordered.length !== current.plan.length) fail('FINAL_DRAFT_COUNT', '最終集計とtyped draftが一致しません。');
     return { full, partial, total: ordered.length, ordered };
+  }
+  async readOnlySummary() {
+    const current = await this.load(); if (!current) fail('NO_SESSION', '開始済みeventがありません。');
+    const stages = [];
+    for (let index = 0; index < current.plan.length; index += 1) {
+      const unit = current.plan[index], draftEntry = current.drafts[unit.id], failureEntry = current.failures[unit.id];
+      if (draftEntry) {
+        const draft = await this.draftStore.load(draftEntry.draftDigest); assertDraftMatchesEntry(draft, draftEntry);
+        stages.push({ stageId: unit.stageId, label: unit.label, state: draft.classification, ownerMessage: draft.classification === 'partial' ? '材料のみ保存・現在は計算できません' : '完全データ保存済み' });
+      } else if (failureEntry) {
+        const failure = await this.draftStore.loadFailure(failureEntry.failureDigest); assertFailureMatchesEntry(failure, failureEntry);
+        stages.push({ stageId: unit.stageId, label: unit.label, state: 'unusable', ownerMessage: failure.ownerMessage, stopCode: failure.fullFailureCode });
+      } else stages.push({ stageId: unit.stageId, label: unit.label, state: 'unvisited', ownerMessage: '未取得' });
+    }
+    const full = stages.filter(value => value.state === 'full').length, partial = stages.filter(value => value.state === 'partial').length;
+    const unusable = stages.filter(value => value.state === 'unusable').length, unvisited = stages.filter(value => value.state === 'unvisited').length;
+    if (full + partial + unusable + unvisited !== current.plan.length) fail('READ_ONLY_COUNT', '確認結果とsessionが一致しません。');
+    return { full, partial, unusable, unvisited, total: stages.length, stages };
   }
 }

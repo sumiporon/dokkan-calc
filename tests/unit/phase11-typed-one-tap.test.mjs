@@ -125,7 +125,7 @@ test('Phase B rejects out-of-order or duplicate plans and refuses mismatched fin
   await assert.rejects(duplicate.start({ eventId, eventName: 'duplicate', plan: [...mixedPlan, { ...mixedPlan[2], url: 'https://fixture.invalid/#duplicate' }], writerId: 'tab:duplicate' }), failCode('PLAN_INVALID'));
   const first = await mixedTicket(session, 0); await session.commitCapture(first, candidate.first);
   backend.value = { ...backend.value, plan: [backend.value.plan[1], backend.value.plan[0], backend.value.plan[2]] };
-  await assert.rejects(session.load(), failCode('SESSION_STAGE_ORDER'));
+  await assert.rejects(session.load(), failCode('PLAN_DIGEST'));
 
   const complete = await readyMixed();
   for (const [index, value] of [[0, complete.candidate.first], [1, complete.candidate.partial], [2, complete.candidate.last]]) {
@@ -144,4 +144,75 @@ test('Phase B rejects out-of-order or duplicate plans and refuses mismatched fin
   const { [mixedPlan[2].id]: removed, ...drafts } = finished.drafts;
   missing.backend.value = { ...missing.backend.value, drafts };
   await assert.rejects(missing.session.finalSummary(), failCode('SESSION_STAGE_ORDER'));
+});
+
+const stoppedPlan = [
+  { id: 'stage:99001102', kind: 'stage-page', stageId: '99001102', url: 'https://fixture.invalid/#full-1', label: 'stage 1' },
+  { id: 'stage:99001101', kind: 'stage-page', stageId: '99001101', url: 'https://fixture.invalid/#partial', label: 'stage 2' },
+  { id: 'stage:99001103', kind: 'stage-page', stageId: '99001103', url: 'https://fixture.invalid/#unusable', label: 'stage 3' },
+  { id: 'stage:99001104', kind: 'stage-page', stageId: '99001104', url: 'https://fixture.invalid/#unvisited', label: 'stage 4' }
+];
+async function readyStopped() {
+  const draftStore = new api.MemoryTypedDraftStore(), backend = new api.MemoryTypedSessionBackend();
+  const session = new api.TypedOneTapSessionCoordinator({ draftStore, backend });
+  await session.start({ eventId, eventName: '架空停止event', plan: stoppedPlan, writerId: 'tab:stopped' });
+  const mixed = await mixedCandidates();
+  const unusable = { fullInput: { capture: mixed.partial.capture, package: mixed.partial.material },
+    partialInput: { capture: mixed.partial.capture, material: { ...mixed.partial.material, contentDigest: 'sha256:' + '0'.repeat(64) } },
+    ownerMessage: '完全データにも部分材料にも安全に分類できません。' };
+  return { draftStore, backend, session, candidate: { first: mixed.first, partial: mixed.partial, unusable } };
+}
+async function stoppedTicket(session, index) { return session.beginCapture({ writerId: 'tab:stopped', currentUrl: stoppedPlan[index].url }); }
+
+test('Phase C stops only after both full and partial validation fail, retaining full/partial and leaving stage 4 unvisited', async () => {
+  const { session, draftStore, backend, candidate } = await readyStopped();
+  const first = await stoppedTicket(session, 0); await session.commitCapture(first, candidate.first);
+  const second = await stoppedTicket(session, 1);
+  await assert.rejects(session.recordUnusable(second, { ...candidate.unusable, partialInput: { capture: candidate.partial.capture, material: candidate.partial.material } }), failCode('UNUSABLE_NOT_PROVEN'));
+  assert.equal(Object.keys((await session.load()).failures).length, 0);
+  await session.commitCapture(second, candidate.partial);
+  const payloadCount = draftStore.payloads.size, draftCount = draftStore.drafts.size;
+  const third = await stoppedTicket(session, 2); const stopped = await session.recordUnusable(third, candidate.unusable);
+  assert.equal(stopped.session.status, 'stopped-unusable'); assert.equal(stopped.session.currentIndex, 2);
+  assert.equal(draftStore.payloads.size, payloadCount); assert.equal(draftStore.drafts.size, draftCount); assert.equal(draftStore.failures.size, 1);
+  assert.deepEqual(Object.keys(stopped.session.drafts), [stoppedPlan[0].id, stoppedPlan[1].id]);
+  await assert.rejects(session.nextNavigation({ writerId: 'tab:stopped', currentUrl: stoppedPlan[2].url }), failCode('UNUSABLE_STOP'));
+  await assert.rejects(stoppedTicket(session, 3), failCode('UNUSABLE_STOP'));
+  assert.equal((await draftStore.load(stopped.session.drafts[stoppedPlan[0].id].draftDigest)).classification, 'full');
+  assert.equal((await draftStore.load(stopped.session.drafts[stoppedPlan[1].id].draftDigest)).classification, 'partial');
+  const beforeReview = structuredClone(backend.value); const summary = await session.readOnlySummary();
+  assert.deepEqual({ full: summary.full, partial: summary.partial, unusable: summary.unusable, unvisited: summary.unvisited, total: summary.total }, { full: 1, partial: 1, unusable: 1, unvisited: 1, total: 4 });
+  assert.deepEqual(summary.stages.map(stage => stage.state), ['full', 'partial', 'unusable', 'unvisited']);
+  assert.deepEqual(backend.value, beforeReview);
+});
+
+test('Phase C rejects tampered failure metadata, plan order, and inconsistent read-only counts without replacing earlier drafts', async () => {
+  const { session, draftStore, backend, candidate } = await readyStopped();
+  for (const [index, value] of [[0, candidate.first], [1, candidate.partial]]) { const ticket = await stoppedTicket(session, index); await session.commitCapture(ticket, value); }
+  const third = await stoppedTicket(session, 2); await session.recordUnusable(third, candidate.unusable);
+  const priorDrafts = structuredClone(backend.value.drafts);
+  draftStore.tamperNextFailureRead = true;
+  await assert.rejects(session.readOnlySummary(), failCode('UNUSABLE_FAILURE_STAGE'));
+  assert.deepEqual(backend.value.drafts, priorDrafts);
+  const restored = await session.load();
+  backend.value = { ...backend.value, plan: [backend.value.plan[1], backend.value.plan[0], backend.value.plan[2], backend.value.plan[3]] };
+  await assert.rejects(session.readOnlySummary(), failCode('PLAN_DIGEST'));
+  backend.value = restored;
+  const { [stoppedPlan[2].id]: removed, ...failures } = restored.failures;
+  backend.value = { ...restored, failures };
+  await assert.rejects(session.readOnlySummary(), failCode('SESSION_STAGE_ORDER'));
+  assert.deepEqual((await draftStore.load(priorDrafts[stoppedPlan[0].id].draftDigest)).classification, 'full');
+  assert.deepEqual((await draftStore.load(priorDrafts[stoppedPlan[1].id].draftDigest)).classification, 'partial');
+});
+
+test('Phase C failure metadata save failure leaves prior full and partial drafts active', async () => {
+  const { session, draftStore, candidate } = await readyStopped();
+  for (const [index, value] of [[0, candidate.first], [1, candidate.partial]]) { const ticket = await stoppedTicket(session, index); await session.commitCapture(ticket, value); }
+  const before = await session.load(); draftStore.failFailureWrites = true;
+  const third = await stoppedTicket(session, 2);
+  await assert.rejects(session.recordUnusable(third, candidate.unusable), failCode('UNUSABLE_FAILURE_SAVE_FAILED'));
+  const after = await session.load();
+  assert.deepEqual(after.drafts, before.drafts); assert.deepEqual(after.failures, {}); assert.equal(after.status, 'collecting');
+  assert.equal((await draftStore.load(after.drafts[stoppedPlan[0].id].draftDigest)).classification, 'full');
+  assert.equal((await draftStore.load(after.drafts[stoppedPlan[1].id].draftDigest)).classification, 'partial');
 });

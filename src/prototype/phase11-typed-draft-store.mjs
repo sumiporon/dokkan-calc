@@ -1,5 +1,5 @@
 /**
- * Phase A only: a typed draft is never a canonical package unless its
+ * A typed draft is never a canonical package unless its
  * classification is full. Payload, typed reference, and session are written
  * in separate verified steps so a failed later step cannot replace a session.
  */
@@ -8,7 +8,8 @@ import { validatePartialMaterial } from './phase11-partial-material.mjs';
 import { digest, exactKeys, insist, stable } from './phase11-partial-rules.mjs';
 
 export const TYPED_DRAFT_FORMAT = 'phase11-typed-stage-draft-1';
-export const TYPED_DRAFT_DATABASE = 'dokkan-phase11-typed-one-tap-PROTOTYPE-v1';
+export const UNUSABLE_FAILURE_FORMAT = 'phase11-unusable-stage-failure-1';
+export const TYPED_DRAFT_DATABASE = 'dokkan-phase11-typed-one-tap-PROTOTYPE-v2';
 const result = request => new Promise((resolve, reject) => { request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
 const done = tx => new Promise((resolve, reject) => { tx.oncomplete = resolve; tx.onabort = tx.onerror = () => reject(tx.error ?? new Error('prototype保存に失敗しました。')); });
 const clone = value => value == null ? value : structuredClone(value);
@@ -16,6 +17,7 @@ const fail = (code, message = code) => { const error = new Error(message); error
 const stores = db => {
   if (!db.objectStoreNames.contains('payloads')) db.createObjectStore('payloads');
   if (!db.objectStoreNames.contains('drafts')) db.createObjectStore('drafts');
+  if (!db.objectStoreNames.contains('failures')) db.createObjectStore('failures');
   if (!db.objectStoreNames.contains('sessions')) db.createObjectStore('sessions');
 };
 
@@ -81,6 +83,27 @@ export async function validateTypedDraft(input) {
   return value;
 }
 
+function validateFailureCode(value) { insist(typeof value === 'string' && /^[A-Z][A-Z0-9_]{2,100}$/.test(value), 'UNUSABLE_FAILURE_CODE'); }
+export async function makeUnusableFailure({ stageId, planIndex, ticket, fullFailureCode, partialFailureCode, ownerMessage }) {
+  insist(typeof stageId === 'string' && stageId.length > 0 && Number.isSafeInteger(planIndex) && planIndex >= 0, 'UNUSABLE_FAILURE_FORMAT');
+  validateTicketBinding(ticket); insist(ticket.unitId === `stage:${stageId}`, 'UNUSABLE_FAILURE_STAGE');
+  validateFailureCode(fullFailureCode); validateFailureCode(partialFailureCode);
+  insist(typeof ownerMessage === 'string' && ownerMessage.length > 0 && ownerMessage.length <= 180, 'UNUSABLE_FAILURE_MESSAGE');
+  const core = { formatVersion: UNUSABLE_FAILURE_FORMAT, classification: 'unusable', stageId, planIndex, ticket: clone(ticket),
+    fullFailureCode, partialFailureCode, ownerMessage };
+  return { ...core, failureDigest: await digest(core) };
+}
+export async function validateUnusableFailure(input) {
+  const value = clone(input); exactKeys(value, ['formatVersion', 'classification', 'stageId', 'planIndex', 'ticket', 'fullFailureCode', 'partialFailureCode', 'ownerMessage', 'failureDigest']);
+  insist(value.formatVersion === UNUSABLE_FAILURE_FORMAT && value.classification === 'unusable' && typeof value.stageId === 'string'
+    && Number.isSafeInteger(value.planIndex) && value.planIndex >= 0 && /^sha256:[a-f0-9]{64}$/.test(value.failureDigest), 'UNUSABLE_FAILURE_FORMAT');
+  validateTicketBinding(value.ticket); insist(value.ticket.unitId === `stage:${value.stageId}`, 'UNUSABLE_FAILURE_STAGE');
+  validateFailureCode(value.fullFailureCode); validateFailureCode(value.partialFailureCode);
+  insist(typeof value.ownerMessage === 'string' && value.ownerMessage.length > 0 && value.ownerMessage.length <= 180, 'UNUSABLE_FAILURE_MESSAGE');
+  const { failureDigest, ...core } = value; insist(await digest(core) === failureDigest, 'UNUSABLE_FAILURE_DIGEST');
+  return value;
+}
+
 class BaseTypedDraftStore {
   async save(input) {
     const draft = await validateTypedDraft(input);
@@ -100,10 +123,20 @@ class BaseTypedDraftStore {
     insist(payload, 'PAYLOAD_MISSING');
     return validateTypedDraft({ ...stored, payload: payload.payload });
   }
+  async saveFailure(input) {
+    const failure = await validateUnusableFailure(input);
+    await this.writeFailure(failure.failureDigest, failure);
+    const verified = await this.readFailure(failure.failureDigest);
+    return validateUnusableFailure(verified);
+  }
+  async loadFailure(failureDigest) {
+    const stored = await this.readFailure(failureDigest); insist(stored, 'UNUSABLE_FAILURE_MISSING');
+    return validateUnusableFailure(stored);
+  }
 }
 
 export class MemoryTypedDraftStore extends BaseTypedDraftStore {
-  constructor() { super(); this.payloads = new Map(); this.drafts = new Map(); this.failPayloadWrites = false; this.failDraftWrites = false; this.tamperNextPayloadKey = null; this.tamperNextDraftRead = false; }
+  constructor() { super(); this.payloads = new Map(); this.drafts = new Map(); this.failures = new Map(); this.failPayloadWrites = false; this.failDraftWrites = false; this.failFailureWrites = false; this.tamperNextPayloadKey = null; this.tamperNextDraftRead = false; this.tamperNextFailureRead = false; }
   async writePayload(key, value) { if (this.failPayloadWrites) fail('PAYLOAD_SAVE_FAILED'); this.payloads.set(key, clone(value)); }
   async readPayload(key) {
     const value = clone(this.payloads.get(key));
@@ -117,6 +150,8 @@ export class MemoryTypedDraftStore extends BaseTypedDraftStore {
   }
   async writeDraft(key, value) { if (this.failDraftWrites) fail('TYPED_DRAFT_SAVE_FAILED'); this.drafts.set(key, clone(value)); }
   async readDraft(key) { const value = clone(this.drafts.get(key)); if (value && this.tamperNextDraftRead) { this.tamperNextDraftRead = false; value.draftDigest = 'sha256:' + '0'.repeat(64); } return value; }
+  async writeFailure(key, value) { if (this.failFailureWrites) fail('UNUSABLE_FAILURE_SAVE_FAILED'); this.failures.set(key, clone(value)); }
+  async readFailure(key) { const value = clone(this.failures.get(key)); if (value && this.tamperNextFailureRead) { this.tamperNextFailureRead = false; value.stageId = 'tampered-stage'; } return value; }
 }
 
 export class IndexedDbTypedDraftStore extends BaseTypedDraftStore {
@@ -135,6 +170,8 @@ export class IndexedDbTypedDraftStore extends BaseTypedDraftStore {
   async readPayload(key) { return this.read('payloads', key); }
   async writeDraft(key, value) { return this.write('drafts', key, value); }
   async readDraft(key) { return this.read('drafts', key); }
+  async writeFailure(key, value) { return this.write('failures', key, value); }
+  async readFailure(key) { return this.read('failures', key); }
   close() { this.db?.close(); this.db = null; }
 }
 
