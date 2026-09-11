@@ -1,4 +1,4 @@
-/** Build only the independent Phase A fixture prototype. */
+/** Build only the independent Phase B fixture prototype. */
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -22,4 +22,4 @@ const plugin = { name: 'isolated-existing-validators', setup(builder) {
 for (const [entry, name] of [['src/prototype/phase11-typed-one-tap-api.mjs', 'api.mjs'], ['prototypes/phase11-typed-one-tap/app.mjs', 'app.mjs']]) {
   await build({ absWorkingDir: root, entryPoints: [entry], outfile: path.join(out, name), bundle: true, format: 'esm', platform: 'browser', target: 'es2022', plugins: [plugin] });
 }
-console.log('Phase A typed one-tap fixture built: generated/phase11/typed-one-tap/');
+console.log('Phase B typed one-tap fixture built: generated/phase11/typed-one-tap/');

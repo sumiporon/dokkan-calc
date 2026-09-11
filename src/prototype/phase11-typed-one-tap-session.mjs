@@ -1,4 +1,4 @@
-/** Phase A typed one-tap coordinator. It does not send batches or navigate live sites. */
+/** Typed one-tap coordinator. It does not send batches or navigate live sites. */
 import { exactKeys, insist, stable } from './phase11-partial-rules.mjs';
 import { makeTypedDraft } from './phase11-typed-draft-store.mjs';
 
@@ -44,6 +44,19 @@ function validateDraftEntry(entry, plan) {
     && typeof entry.contentDigest === 'string' && typeof entry.draftDigest === 'string' && typeof entry.fingerprint === 'string', 'SESSION_DRAFT');
   validateBoundTicket(entry.ticket);
 }
+function expectedCurrentIndex(value) {
+  const firstUnfinished = value.plan.findIndex(unit => !value.drafts[unit.id]);
+  return firstUnfinished < 0 ? value.plan.length : firstUnfinished;
+}
+function validateProgress(value) {
+  const expected = expectedCurrentIndex(value);
+  insist(value.currentIndex === expected, 'SESSION_STAGE_ORDER');
+  insist((value.status === 'ready-for-final-confirmation') === (expected === value.plan.length), 'SESSION_STAGE_ORDER');
+}
+function assertDraftMatchesEntry(draft, entry) {
+  insist(draft.classification === entry.classification && draft.stageId === entry.stageId && draft.contentDigest === entry.contentDigest
+    && stable(draft.capture) === stable(entry.capture) && stable(draft.ticket) === stable(entry.ticket), 'SESSION_DRAFT_READ_BACK');
+}
 
 export class TypedOneTapSessionCoordinator {
   constructor({ backend, draftStore }) { insist(backend && draftStore, 'SESSION_DEPENDENCY'); this.backend = backend; this.draftStore = draftStore; }
@@ -56,11 +69,11 @@ export class TypedOneTapSessionCoordinator {
       && Number.isSafeInteger(value.revision) && value.revision > 0 && Number.isSafeInteger(value.currentIndex) && value.currentIndex >= 0 && value.currentIndex <= value.plan.length
       && ['collecting', 'ready-for-final-confirmation'].includes(value.status) && value.drafts && typeof value.drafts === 'object' && !Array.isArray(value.drafts), 'SESSION_FORMAT');
     validatePlan(value.plan);
+    validateProgress(value);
     for (const [unitId, entry] of Object.entries(value.drafts)) {
       const unit = value.plan.find(item => item.id === unitId); insist(unit, 'SESSION_DRAFT'); validateDraftEntry(entry, value.plan);
       const draft = await this.draftStore.load(entry.draftDigest);
-      insist(draft.classification === entry.classification && draft.stageId === entry.stageId && draft.contentDigest === entry.contentDigest
-        && stable(draft.capture) === stable(entry.capture) && stable(draft.ticket) === stable(entry.ticket), 'SESSION_DRAFT_READ_BACK');
+      assertDraftMatchesEntry(draft, entry);
     }
     return value;
   }
@@ -79,6 +92,7 @@ export class TypedOneTapSessionCoordinator {
     const current = await this.load(); if (!current) fail('NO_SESSION', '開始済みeventがありません。');
     if (writerId !== current.writerId) fail('WRITER_MISMATCH', 'このタブは書き込み担当ではありません。');
     const unit = current.plan.find(entry => entry.url === currentUrl); if (!unit) fail('EVENT_MISMATCH', '表示中ページは取得計画に含まれていません。');
+    if (unit.id !== current.plan[current.currentIndex]?.id) fail('STAGE_ORDER', '取得計画の順番どおりに進めてください。');
     return { sessionId: current.sessionId, eventId: current.eventId, unitId: unit.id, unitUrl: unit.url, revision: current.revision, writerId: current.writerId, writerGeneration: current.writerGeneration };
   }
   async commitCapture(ticket, input) {
@@ -99,9 +113,10 @@ export class TypedOneTapSessionCoordinator {
     const entry = { classification: typed.classification, stageId: typed.stageId, capture: typed.capture, contentDigest: typed.contentDigest,
       draftDigest: typed.draftDigest, fingerprint: input.fingerprint, ticket: typed.ticket };
     const drafts = { ...latest.drafts, [unit.id]: entry };
-    const firstUnfinished = latest.plan.findIndex(item => !drafts[item.id]);
-    const next = { ...latest, drafts, currentIndex: firstUnfinished < 0 ? latest.plan.length : firstUnfinished,
-      revision: latest.revision + 1, status: firstUnfinished < 0 ? 'ready-for-final-confirmation' : 'collecting' };
+    const nextDraftState = { ...latest, drafts };
+    const nextIndex = expectedCurrentIndex(nextDraftState);
+    const next = { ...nextDraftState, currentIndex: nextIndex,
+      revision: latest.revision + 1, status: nextIndex === latest.plan.length ? 'ready-for-final-confirmation' : 'collecting' };
     const saved = await this.persist(next);
     return { session: saved, duplicate: false, readyForNext: true };
   }
@@ -112,7 +127,24 @@ export class TypedOneTapSessionCoordinator {
     await this.draftStore.load(current.drafts[unit.id].draftDigest);
     const index = current.plan.findIndex(entry => entry.id === unit.id);
     if (index < current.plan.length - 1) return { kind: 'navigate', url: current.plan[index + 1].url };
-    insist(Object.keys(current.drafts).length === current.plan.length && current.status === 'ready-for-final-confirmation', 'NOT_READY');
+    await this.finalSummary();
     return { kind: 'final-confirmation' };
+  }
+  async finalSummary() {
+    const current = await this.load();
+    if (!current || current.status !== 'ready-for-final-confirmation' || current.currentIndex !== current.plan.length) fail('NOT_READY', '全stageの保存と照合が完了していません。');
+    const ordered = [];
+    for (const unit of current.plan) {
+      const entry = current.drafts[unit.id];
+      if (!entry) fail('FINAL_DRAFT_COUNT', '最終集計に必要なstageが保存されていません。');
+      const draft = await this.draftStore.load(entry.draftDigest);
+      assertDraftMatchesEntry(draft, entry);
+      if (draft.stageId !== unit.stageId) fail('FINAL_DRAFT_REFERENCE', 'stageとtyped draftの参照が一致しません。');
+      ordered.push({ stageId: draft.stageId, classification: draft.classification, contentDigest: draft.contentDigest, reference: draft.reference });
+    }
+    const full = ordered.filter(value => value.classification === 'full').length;
+    const partial = ordered.filter(value => value.classification === 'partial').length;
+    if (full + partial !== current.plan.length || ordered.length !== current.plan.length) fail('FINAL_DRAFT_COUNT', '最終集計とtyped draftが一致しません。');
+    return { full, partial, total: ordered.length, ordered };
   }
 }

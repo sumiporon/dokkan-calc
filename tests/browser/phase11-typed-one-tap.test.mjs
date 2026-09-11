@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { startStaticServer } from '../helpers/static-server.mjs';
 
-test('Phase A browser flow persists full then zero-capability partial with the same fixed next control and no external request', async () => {
+test('Phase B browser flow persists full → zero-capability partial → full with the same fixed next control and no external request', async () => {
   const server = await startStaticServer(), browser = await chromium.launch({ headless: true });
   try {
     const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -32,18 +32,20 @@ test('Phase A browser flow persists full then zero-capability partial with the s
     await page.getByText('一部の材料を保存しました').waitFor();
     assert.match(await page.locator('#screen').innerText(), /現在は計算できません/);
     assert.doesNotMatch(await page.locator('#screen').innerText(), /500,000|824,000|この敵を完封/);
+    await page.getByRole('button', { name: '次のステージへ' }).click();
+    await page.getByText('完全データを保存しました').waitFor();
+    assert.doesNotMatch(await page.locator('#screen').innerText(), /現在は計算できません|単発計算の候補/);
     await page.getByRole('button', { name: '最終確認' }).click();
-    await page.getByText('Phase Aの最終確認').waitFor();
-    assert.match(await page.locator('#screen').innerText(), new RegExp('完全データ保存済み 1stage / 部分材料保存済み 1stage'));
+    await page.getByText('Phase Bの最終確認').waitFor();
+    assert.match(await page.locator('#screen').innerText(), new RegExp('typed draftから集計：完全データ 2stage / 部分材料 1stage / 合計 3stage'));
     const stored = await page.evaluate(async () => {
       const api = await import('/generated/phase11/typed-one-tap/api.mjs');
       const drafts = new api.IndexedDbTypedDraftStore(), backend = new api.IndexedDbTypedSessionBackend();
-      const session = new api.TypedOneTapSessionCoordinator({ draftStore: drafts, backend }); const value = await session.load();
-      const records = await Promise.all(Object.values(value.drafts).map(entry => drafts.load(entry.draftDigest)));
+      const session = new api.TypedOneTapSessionCoordinator({ draftStore: drafts, backend }); const summary = await session.finalSummary();
       drafts.close(); backend.close();
-      return { classifications: records.map(value => value.classification).sort(), digests: records.every(value => /^sha256:[a-f0-9]{64}$/.test(value.contentDigest)), stages: Object.keys(value.drafts).length };
+      return { classifications: summary.ordered.map(value => value.classification), digests: summary.ordered.every(value => /^sha256:[a-f0-9]{64}$/.test(value.contentDigest)), stages: summary.total, full: summary.full, partial: summary.partial };
     });
-    assert.deepEqual(stored, { classifications: ['full', 'partial'], digests: true, stages: 2 });
+    assert.deepEqual(stored, { classifications: ['full', 'partial', 'full'], digests: true, stages: 3, full: 2, partial: 1 });
     for (const width of [360, 390]) { await page.setViewportSize({ width, height: 844 }); assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); }
     assert.deepEqual(external, []); assert.deepEqual(errors, []);
   } finally { await browser.close(); await server.close(); }

@@ -1,8 +1,8 @@
 import { IndexedDbTypedDraftStore, IndexedDbTypedSessionBackend, TypedOneTapSessionCoordinator } from '../../src/prototype/phase11-typed-one-tap-api.mjs';
-import { PHASE_A_EVENT_ID, PHASE_A_EVENT_NAME, PHASE_A_STAGES, phaseAPlan, fixtureCandidate } from './fixtures.mjs';
+import { PHASE_B_EVENT_ID, PHASE_B_EVENT_NAME, PHASE_B_STAGES, phaseBPlan, fixtureCandidate } from './fixtures.mjs';
 
 const root = document.querySelector('#screen');
-const writerId = 'phase-a-fixture-tab';
+const writerId = 'phase-b-fixture-tab';
 const store = new IndexedDbTypedDraftStore();
 const session = new TypedOneTapSessionCoordinator({ draftStore: store, backend: new IndexedDbTypedSessionBackend() });
 let busy = false;
@@ -16,7 +16,7 @@ const stop = error => render('このstageで停止', error.message ?? String(err
 
 async function start() {
   if (busy) return; busy = true; render('保存中', 'eventと訪問計画を端末へ保存しています。');
-  try { await session.start({ eventId: PHASE_A_EVENT_ID, eventName: PHASE_A_EVENT_NAME, plan: phaseAPlan(pageBase), writerId }); location.hash = '#full'; }
+  try { await session.start({ eventId: PHASE_B_EVENT_ID, eventName: PHASE_B_EVENT_NAME, plan: phaseBPlan(pageBase), writerId }); location.hash = '#full-1'; }
   catch (error) { stop(error); } finally { busy = false; }
 }
 async function stage(key) {
@@ -42,12 +42,12 @@ async function stage(key) {
 }
 async function route() {
   const hash = location.hash || '#event';
-  if (hash === '#event') { render('eventを確認しました', `${PHASE_A_EVENT_NAME}・2stage（架空fixture）`, { label: '開始', click: start }); return; }
+  if (hash === '#event') { render('eventを確認しました', `${PHASE_B_EVENT_NAME}・3stage（架空fixture）`, { label: '開始', click: start }); return; }
   if (hash === '#complete') {
-    try { const value = await session.load(); const full = Object.values(value?.drafts ?? {}).filter(x => x.classification === 'full').length; const partial = Object.values(value?.drafts ?? {}).filter(x => x.classification === 'partial').length;
-      render('Phase Aの最終確認', `完全データ保存済み ${full}stage / 部分材料保存済み ${partial}stage。read-only inspection reviewやapplyは今回の範囲外です。`); } catch (error) { stop(error); } return;
+    try { const summary = await session.finalSummary();
+      render('Phase Bの最終確認', `typed draftから集計：完全データ ${summary.full}stage / 部分材料 ${summary.partial}stage / 合計 ${summary.total}stage。安全に保持できたところまでで終了します。inspection reviewやapplyは今回の範囲外です。`); } catch (error) { stop(error); } return;
   }
-  const item = PHASE_A_STAGES.find(value => `#${value.key}` === hash); if (!item) { location.hash = '#event'; return; }
+  const item = PHASE_B_STAGES.find(value => `#${value.key}` === hash); if (!item) { location.hash = '#event'; return; }
   await stage(item.key);
 }
 addEventListener('hashchange', route); await route();
