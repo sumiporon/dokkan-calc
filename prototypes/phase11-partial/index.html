@@ -1,0 +1,13 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Phase 11 部分材料の保存・単発計算</title><link rel="stylesheet" href="style.css"></head>
+<body><main><p class="badge">Phase 11・自作fixtureのみ・独立prototype</p><h1>部分材料から「この1発」を確認</h1>
+<p>実サイト・正式版には接続しません。この画面専用の試験保存です。</p>
+<label for="case">架空の同一stageのケース</label><select id="case"><option value="FULL">完全版：既存full検査の確認</option><option value="A" selected>A：回数欠落・1発は確定</option><option value="B">B：履歴強化に依存</option><option value="C">C：1発ATK unknown</option><option value="D">D：敵属性unknown</option><option value="E">E：known 0</option><option value="F">F：未解釈効果あり</option></select>
+<section aria-label="材料の検査"><p id="full-check"></p><p id="partial-check"></p><p id="storage-status" role="status" aria-live="polite"></p>
+<div class="buttons"><button id="save" disabled>部分材料をこの試作に保存</button><button id="rollback" disabled>1つ前の材料へ戻す</button></div></section>
+<p id="scope">保証範囲：この1発を受けた場合。発動回数・順序・敵全体の完封は保証しません。</p>
+<p id="settings"></p><p id="availability" role="status"></p><section id="results" aria-label="single-hit capability"></section>
+<details><summary>保存材料の根拠・版を確認</summary><pre id="evidence"></pre></details>
+<script type="module" src="../../generated/phase11/partial/app.mjs"></script></main></body></html>
