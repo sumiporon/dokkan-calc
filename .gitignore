@@ -50,6 +50,11 @@
 /generated/phase11/
 /generated/phase11-one-tap/
 
+# Reproducible Phase 11 F3 extension/reviewer outputs. The reviewer-source
+# template and packager remain tracked; staging, bundles, and ZIP artifacts do not.
+/generated/phase11-f3-extension/
+/generated/phase11-f3-structure/
+
 # Scraper caches and intermediate data
 # Some of these paths are already tracked in the legacy history. Ignoring them
 # here does not delete or untrack those files; that decision is deferred.
