@@ -26,6 +26,7 @@
     "test:phase11-live-gate": "npm run build:phase11-live-gate && node --test --test-concurrency=1 tests/browser/phase11-live-gate.test.mjs",
     "test:phase11": "npm run build:phase11:fixed && node --test --test-reporter=spec tests/data/phase11-manual-intake.test.mjs tests/data/phase11-dokkaninfo-manual.test.mjs && node --test --test-concurrency=1 --test-reporter=spec tests/browser/phase11-manual-intake.test.mjs",
     "test:phase11-one-tap": "npm run build:phase11-one-tap && node --test --test-reporter=spec tests/data/phase11-one-tap.test.mjs && node --test --test-concurrency=1 --test-reporter=spec tests/browser/phase11-one-tap.test.mjs",
+    "test:phase11-f3-prep": "npm run build:phase11-one-tap && node scripts/build-phase11-typed-one-tap.mjs && node --test --test-reporter=spec tests/unit/phase11-f3-prep.test.mjs && node --test --test-concurrency=1 --test-reporter=spec tests/browser/phase11-f3-prep.test.mjs",
     "test:cached-source": "node --test --test-reporter=spec tests/data/cached-source.test.mjs",
     "test:browser": "node --test --test-concurrency=1 --test-reporter=spec tests/browser/app.test.mjs",
     "audit:data": "node scripts/audit-enemy-data.mjs",

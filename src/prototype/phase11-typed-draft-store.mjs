@@ -167,6 +167,9 @@ export class MemoryTypedDraftStore extends BaseTypedDraftStore {
   async readDraft(key) { const value = clone(this.drafts.get(key)); if (value && this.tamperNextDraftRead) { this.tamperNextDraftRead = false; value.draftDigest = 'sha256:' + '0'.repeat(64); } return value; }
   async writeFailure(key, value) { if (this.failFailureWrites) fail('UNUSABLE_FAILURE_SAVE_FAILED'); this.failures.set(key, clone(value)); }
   async readFailure(key) { const value = clone(this.failures.get(key)); if (value && this.tamperNextFailureRead) { this.tamperNextFailureRead = false; value.stageId = 'tampered-stage'; } return value; }
+  async removeDraft(key) { this.drafts.delete(key); }
+  async removePayload(key) { this.payloads.delete(key); }
+  async removeFailure(key) { this.failures.delete(key); }
 }
 
 export class IndexedDbTypedDraftStore extends BaseTypedDraftStore {
@@ -216,4 +219,5 @@ export class MemoryTypedSessionBackend {
   async read() { const value = clone(this.value); if (value && this.tamperReads) value.revision += 1; return value; }
   async write(value) { if (this.failWrites) fail('SESSION_SAVE_FAILED'); this.value = clone(value); }
   async compareAndSwap(expected, value) { if (this.failWrites) fail('SESSION_SAVE_FAILED'); if (stable(this.value) !== stable(expected)) fail('SESSION_CONFLICT'); this.value = clone(value); }
+  async clear() { if (this.failWrites) fail('SESSION_DELETE_FAILED'); this.value = null; }
 }

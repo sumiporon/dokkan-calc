@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Phase 11 F3 prep — fixture-only candidate",
+  "version": "0.0.1",
+  "description": "Unbuilt F3-prep source only. It is not an XPI and must not be used on a live page.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://jpnja.dokkaninfo.com/events/challenge/1705/17050015*"],
+  "content_scripts": [{"matches":["https://jpnja.dokkaninfo.com/events/challenge/1705/17050015*"],"js":["f3-content.mjs"]}],
+  "background": {"service_worker":"f3-background.mjs","type":"module"}
+}
