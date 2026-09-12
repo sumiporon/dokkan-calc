@@ -1,5 +1,6 @@
 import { FORMAT, VERSIONS, SOURCE, SLOTS, TARGETS, PRIMARY, insist, stable, digest, exactKeys, interpret, safeText } from './phase11-partial-rules.mjs';
 import { evaluateSingleHit, SINGLE_HIT_OUTPUTS } from './phase11-single-hit.mjs';
+import { F1_PARTIAL_FORMAT, F1_RULES, F1_SOURCE, f1Stable, f1Digest, f1SafeText, f1ExactKeys, f1Fail } from './phase11-dokkaninfo-f1-rules.mjs';
 
 export async function sealMaterial(body) { const { contentDigest, ...content } = body; return { ...content, contentDigest: await digest(content) }; }
 export function evidenceFor(slot, rawText, capture) {
@@ -65,6 +66,22 @@ export async function validatePartialMaterial(input) {
   // No full package can be re-labelled as partial to avoid its existing gate.
   insist(m.fields.find(f => f.slot === 'hit-0/attack.maxPerTurn').state !== 'known', 'NOT_PARTIAL');
   return m;
+}
+
+/**
+ * F1's DokkanInfo-shaped partial contract lives with the established partial
+ * material validators.  It is deliberately a separate format from the
+ * original fixed fictional-single-hit format above.
+ */
+export async function validateDokkanInfoF1Partial(input) {
+  const m=structuredClone(input); f1ExactKeys(m, ['kind','formatVersion','source','capture','rules','relationships','fields','evidence','coverage','uninterpreted','fullCheck','contentDigest']);
+  f1Fail(m.kind === 'partial' && m.formatVersion === F1_PARTIAL_FORMAT, 'PARTIAL_FORMAT');
+  f1ExactKeys(m.source,['key','region','eventId','stageId']); f1Fail(m.source.key === F1_SOURCE.key && m.source.region === F1_SOURCE.region && /^\d+$/.test(m.source.eventId) && /^\d+$/.test(m.source.stageId), 'SOURCE_OWNERSHIP');
+  f1ExactKeys(m.capture,['id','revision','observedAt','snapshotDigest']); f1Fail(f1SafeText(m.capture.id) && Number.isSafeInteger(m.capture.revision) && m.capture.revision >= 1 && Number.isFinite(Date.parse(m.capture.observedAt)) && /^sha256:[a-f0-9]{64}$/.test(m.capture.snapshotDigest), 'CAPTURE');
+  f1Fail(f1Stable(m.rules) === f1Stable(F1_RULES) && m.coverage?.complete === true && Array.isArray(m.fields) && Array.isArray(m.evidence) && m.fields.some(f => f.state === 'unknown' || f.state === 'unavailable'), 'PARTIAL_BOUNDARY');
+  const ids=new Set(); for (const e of m.evidence) { f1ExactKeys(e,['id','captureId','snapshotDigest','eventId','stageId','encounterOrdinal','enemyOrdinal','attackOrdinal','conditionOrdinal','fieldPath','labelText','valueText','rawDisplayedText','structuralPath','selectorRule','extractionRule','interpretationRule','terminal']); f1Fail(!ids.has(e.id) && e.captureId === m.capture.id && e.snapshotDigest === m.capture.snapshotDigest && e.eventId === m.source.eventId && e.stageId === m.source.stageId && e.extractionRule === m.rules.extraction && e.interpretationRule === m.rules.interpretation && f1SafeText(e.labelText) && f1SafeText(e.valueText) && f1SafeText(e.rawDisplayedText), 'EVIDENCE_OWNERSHIP'); ids.add(e.id); }
+  for (const f of m.fields) { f1ExactKeys(f,['encounterOrdinal','enemyOrdinal','attackOrdinal','conditionOrdinal','path','state','value','evidenceIds']); f1Fail(['known','unknown','unavailable','not-applicable'].includes(f.state) && Array.isArray(f.evidenceIds) && f.evidenceIds.length === 1 && ids.has(f.evidenceIds[0]), 'FIELD_STATE'); const e=m.evidence.find(v=>v.id===f.evidenceIds[0]); f1Fail(e.fieldPath === f.path && e.encounterOrdinal === f.encounterOrdinal && e.enemyOrdinal === f.enemyOrdinal && e.attackOrdinal === f.attackOrdinal && e.conditionOrdinal === f.conditionOrdinal, 'EVIDENCE_RELATIONSHIP'); if (f.state==='known') f1Fail(f.value != null && e.terminal === 'interpreted','KNOWN_INVALID'); if (f.state==='unavailable') f1Fail(f.value === null && e.terminal === 'blank' && e.valueText === '','UNAVAILABLE_INVALID'); if (f.state==='unknown') f1Fail(f.value === null && e.terminal === 'unrecognized' && e.valueText !== '','UNKNOWN_INVALID'); if (f.state==='not-applicable') f1Fail(f.value === null && e.terminal === 'not-applicable','NOT_APPLICABLE_INVALID'); }
+  f1Fail(Array.isArray(m.relationships) && Array.isArray(m.uninterpreted) && m.fullCheck?.status === 'not-complete-from-observed-facts', 'RELATIONSHIP'); const { contentDigest, ...body }=m; f1Fail(await f1Digest(body) === contentDigest, 'CONTENT_DIGEST'); return m;
 }
 
 export async function calculatePartial(input, output, defender, core, target = PRIMARY) {
