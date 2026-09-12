@@ -64,7 +64,7 @@ test('F3 full persistability rejects forbidden and unbounded records without rew
 });
 test('F3 extension candidate is minimal and contains no source-request or navigation API', async () => {
   const { readFile } = await import('node:fs/promises');
-  const manifest=JSON.parse(await readFile(new URL('../../prototypes/phase11-f3-prep-extension/manifest.f3-fixture.json',import.meta.url),'utf8'));
+  const manifest=JSON.parse(await readFile(new URL('../../prototypes/phase11-f3-prep-extension/manifest.f3-preflight.json',import.meta.url),'utf8'));
   assert.deepEqual(manifest.permissions,['storage']); assert.equal(manifest.content_scripts[0].matches.length,1);
   const source=await readFile(new URL('../../prototypes/phase11-f3-prep-extension/f3-content.mjs',import.meta.url),'utf8');
   for(const forbidden of ['fetch(', 'XMLHttpRequest', 'location.assign', 'location.replace', '.reload(', 'window.open(', '<script']) assert.equal(source.includes(forbidden),false,forbidden);

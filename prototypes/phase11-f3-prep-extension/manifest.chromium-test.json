@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Phase 11 F3 fixture browser test",
+  "version": "0.0.2",
+  "permissions": ["storage"],
+  "host_permissions": ["http://127.0.0.1/*"],
+  "content_scripts": [{"matches":["http://127.0.0.1/*"],"js":["content.js"]}],
+  "background": {"service_worker":"background.js"},
+  "web_accessible_resources": []
+}

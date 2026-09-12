@@ -9,6 +9,7 @@ export * from './phase11-f3-scan.mjs';
 export * from './phase11-f3-persistability.mjs';
 export * from './phase11-f3-fixture-bridge.mjs';
 export * from './phase11-f3-retention.mjs';
+export * from './phase11-f3-extension-record.mjs';
 export * from './phase11-dokkaninfo-f1.mjs';
 export { inspectFictionalPartial } from './phase11-partial-adapter.mjs';
 export { validatePackage } from './phase11-intake.mjs';

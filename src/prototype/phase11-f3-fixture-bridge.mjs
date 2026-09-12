@@ -7,7 +7,7 @@ import { validateDokkanInfoF1Partial } from './phase11-partial-material.mjs';
 import { validateF3FullPersistability } from './phase11-f3-persistability.mjs';
 
 const fail = (code, message = code) => { throw Object.assign(new Error(message), { code }); };
-const owner = code => `F3準備 ${code}：このstageでは安全に保存できません。`;
+const owner = code => `このstageの材料を安全に確認できませんでした。（補助code: ${code}）`;
 function unusableInput(scan, code) {
   const capture = scan?.capture;
   return { capture, ownerMessage: owner(code), sourceEvidence: capture ? { eventId: scan.source.eventId, stageId: scan.source.stageId, captureId: capture.id, snapshotDigest: capture.snapshotDigest, stopCode: code } : null,
@@ -15,18 +15,23 @@ function unusableInput(scan, code) {
 }
 function fullOwner(pack) { const stage = pack?.canonical?.events?.[0]?.stages?.[0]; return { eventId: stage?.id?.split(':')[2], stageId: stage?.id?.split(':').at(-1) }; }
 
-export async function classifyF3Fixture({ eventHtml, expectedEventId, expectedStageId, captureInput }) {
-  const captured = await captureF3ImmutableSnapshot({ ...captureInput, expectedEventId, expectedStageId });
+export async function classifyF3CapturedSnapshot({ captured, eventHtml = null, expectedEventId, expectedStageId }) {
   const scan = await scanF3Snapshot({ snapshot: captured.snapshot, capture: captured.capture, expectedEventId, expectedStageId });
   if (!scan.coverage.complete) return { classification: 'unusable', scan, code: scan.failures[0] ?? 'F3_COVERAGE_INCOMPLETE' };
-  const f1 = await classifyDokkanInfoF1({ eventHtml, stageHtml: captured.snapshot, captureId: captured.capture.id, revision: captured.capture.revision, capturedAt: captured.capture.observedAt, expectedEventId, expectedStageId });
+  const f1 = typeof eventHtml === 'string' ? await classifyDokkanInfoF1({ eventHtml, stageHtml: captured.snapshot, captureId: captured.capture.id, revision: captured.capture.revision, capturedAt: captured.capture.observedAt, expectedEventId, expectedStageId }) : null;
   const f3CompleteFacts = scan.observations.every(field => field.state === 'known' || field.state === 'not-applicable');
-  if (f1.classification === 'full' && f3CompleteFacts) {
+  if (f1?.classification === 'full' && f3CompleteFacts) {
     try { const pack = validateF3FullPersistability(await validatePackage(f1.package)); return { classification: 'full', scan, package: pack }; }
     catch (error) { return { classification: 'unusable', scan, code: error.code ?? 'F3_FULL_PERSISTABILITY' }; }
   }
+  if (!f1 && f3CompleteFacts) return { classification: 'unusable', scan, code: 'F3_FULL_EVENT_MATERIAL_REQUIRED' };
   try { const material = await validateDokkanInfoF1Partial(await partialFromF3Scan(scan)); return { classification: 'partial', scan, material }; }
   catch (error) { return { classification: 'unusable', scan, code: error.code ?? 'F3_PARTIAL_REJECTED' }; }
+}
+
+export async function classifyF3Fixture({ eventHtml, expectedEventId, expectedStageId, captureInput }) {
+  const captured = await captureF3ImmutableSnapshot({ ...captureInput, expectedEventId, expectedStageId });
+  return classifyF3CapturedSnapshot({ captured, eventHtml, expectedEventId, expectedStageId });
 }
 
 /** The only fixture flow that can enter the typed session; preclassified inputs are impossible here. */

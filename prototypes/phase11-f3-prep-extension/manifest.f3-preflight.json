@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Phase 11 F3 limited stage preflight",
+  "version": "0.0.2",
+  "description": "Unsigned preflight build for one owner-opened stage. Not approved for live use.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://jpnja.dokkaninfo.com/events/challenge/1705/17050015"],
+  "content_scripts": [{"matches":["https://jpnja.dokkaninfo.com/events/challenge/1705/17050015"],"js":["content.js"],"run_at":"document_idle"}],
+  "background": {"scripts":["background.js"]},
+  "web_accessible_resources": [],
+  "browser_specific_settings": {
+    "gecko": {"id":"phase11-f3-preflight@sumiporon.invalid","strict_min_version":"140.0","data_collection_permissions":{"required":["none"]}},
+    "gecko_android": {"strict_min_version":"142.0"}
+  }
+}
