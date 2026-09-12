@@ -122,8 +122,8 @@ export async function partialFromF1Scan(scan) {
   return sealF1Partial({ kind: 'partial', formatVersion: F1_PARTIAL_FORMAT, source: { ...scan.source }, capture: { ...scan.capture }, rules: { ...scan.rules }, relationships: scan.encounters.map(e => ({ ordinal:e.ordinal, enemies:e.enemies.map(n => ({ordinal:n.ordinal, attacks:n.attacks.map(a => ({ordinal:a.ordinal, conditions:a.conditions.map(c => c.ordinal)}))})) })), fields, evidence: scan.evidence, coverage: scan.coverage, uninterpreted: scan.uninterpreted, fullCheck: { status: 'not-complete-from-observed-facts' }, contentDigest: null });
 }
 export const validateF1Partial = validateDokkanInfoF1Partial;
-async function unchangedFull({ eventHtml, stageHtml, capturedAt }) {
-  const eventSource='https://jpnja.dokkaninfo.com/events/challenge/990001', stageSource='https://jpnja.dokkaninfo.com/events/challenge/990001/99000101';
+async function unchangedFull({ eventHtml, stageHtml, capturedAt, expectedEventId = '990001', expectedStageId = '99000101' }) {
+  const eventSource=`https://jpnja.dokkaninfo.com/events/challenge/${expectedEventId}`, stageSource=`${eventSource}/${expectedStageId}`;
   const event=inspectDokkanInfoDocument({html:eventHtml,currentUrl:'http://127.0.0.1/f1-event.html',sourceUrl:eventSource,fixtureMode:true,capturedAt}); const stage=inspectDokkanInfoDocument({html:stageHtml,currentUrl:'http://127.0.0.1/f1-stage.html',sourceUrl:stageSource,fixtureMode:true,capturedAt});
   if (event.state !== 'ready' || stage.state !== 'ready') return null; return buildDokkanInfoStagePackage(event.material,stage.material);
 }

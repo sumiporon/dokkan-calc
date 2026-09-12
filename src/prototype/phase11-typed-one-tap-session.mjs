@@ -162,7 +162,7 @@ export class TypedOneTapSessionCoordinator {
     const saved = await this.persist(next);
     return { session: saved, duplicate: false, readyForNext: true };
   }
-  async recordUnusable(ticket, { fullInput, partialInput, ownerMessage }) {
+  async recordUnusable(ticket, { fullInput, partialInput, ownerMessage, sourceEvidence = null }) {
     validateTicket(ticket); const before = await this.load();
     if (!before || !sameTicket(before, ticket) || before.status === 'stopped-unusable') fail('STALE_CAPTURE', '古い解析結果は保存しませんでした。');
     const unit = before.plan.find(entry => entry.id === ticket.unitId && entry.url === ticket.unitUrl);
@@ -171,7 +171,7 @@ export class TypedOneTapSessionCoordinator {
     const fullFailureCode = await failureCode(() => makeTypedDraft({ classification: 'full', stageId: unit.stageId, ticket: binding, ...fullInput }));
     const partialFailureCode = await failureCode(() => makeTypedDraft({ classification: 'partial', stageId: unit.stageId, ticket: binding, ...partialInput }));
     if (!fullFailureCode || !partialFailureCode) fail('UNUSABLE_NOT_PROVEN', '完全または部分材料として安全に保存できるため停止しません。');
-    const failure = await makeUnusableFailure({ stageId: unit.stageId, planIndex: before.currentIndex, ticket: binding, fullFailureCode, partialFailureCode, ownerMessage });
+    const failure = await makeUnusableFailure({ stageId: unit.stageId, planIndex: before.currentIndex, ticket: binding, fullFailureCode, partialFailureCode, ownerMessage, sourceEvidence });
     const savedFailure = await this.draftStore.saveFailure(failure);
     const latest = await this.load();
     if (!latest || !sameTicket(latest, ticket)) fail('STALE_CAPTURE', '保存中にsessionが変わったため、停止状態を有効化しませんでした。');
@@ -226,7 +226,8 @@ export class TypedOneTapSessionCoordinator {
       const unit = current.plan[index], draftEntry = current.drafts[unit.id], failureEntry = current.failures[unit.id];
       if (draftEntry) {
         const draft = await this.draftStore.load(draftEntry.draftDigest); assertDraftMatchesEntry(draft, draftEntry);
-        stages.push({ stageId: unit.stageId, label: unit.label, state: draft.classification, ownerMessage: draft.classification === 'partial' ? '材料のみ保存・現在は計算できません' : '完全データ保存済み' });
+        const f1 = draft.payload?.formatVersion === 'phase11-dokkaninfo-f1-partial-1';
+        stages.push({ stageId: unit.stageId, label: unit.label, state: draft.classification, ownerMessage: draft.classification === 'partial' ? (f1 ? '部分材料保存済み・計算可否は未判定です' : '材料のみ保存・現在は計算できません') : '完全データ保存済み' });
       } else if (failureEntry) {
         const failure = await this.draftStore.loadFailure(failureEntry.failureDigest); assertFailureMatchesEntry(failure, failureEntry);
         stages.push({ stageId: unit.stageId, label: unit.label, state: 'unusable', ownerMessage: failure.ownerMessage, stopCode: failure.fullFailureCode });

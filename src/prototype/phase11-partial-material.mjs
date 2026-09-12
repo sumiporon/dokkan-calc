@@ -84,6 +84,12 @@ export async function validateDokkanInfoF1Partial(input) {
   f1Fail(Array.isArray(m.relationships) && Array.isArray(m.uninterpreted) && m.fullCheck?.status === 'not-complete-from-observed-facts', 'RELATIONSHIP'); const { contentDigest, ...body }=m; f1Fail(await f1Digest(body) === contentDigest, 'CONTENT_DIGEST'); return m;
 }
 
+/** Selects a sealed partial format; callers must never guess from classification. */
+export async function validateAnyPartialMaterial(input) {
+  if (input?.formatVersion === F1_PARTIAL_FORMAT) return validateDokkanInfoF1Partial(input);
+  return validatePartialMaterial(input);
+}
+
 export async function calculatePartial(input, output, defender, core, target = PRIMARY) {
   let m;
   try { m = await validatePartialMaterial(input); }

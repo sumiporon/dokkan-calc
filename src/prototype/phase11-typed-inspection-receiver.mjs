@@ -4,7 +4,7 @@
  * a calculator intake batch and can never be applied from this receiver.
  */
 import { validatePackage } from './phase11-intake.mjs';
-import { validatePartialMaterial } from './phase11-partial-material.mjs';
+import { validateAnyPartialMaterial } from './phase11-partial-material.mjs';
 import { validateTypedDraft, validateUnusableFailure } from './phase11-typed-draft-store.mjs';
 import { digest, exactKeys, insist, stable } from './phase11-partial-rules.mjs';
 
@@ -44,7 +44,7 @@ async function validateStoredDraft(draft, unit, batch) {
     const pack = await validatePackage(verified.payload), owner = stageFromFull(pack);
     insist(owner.eventId === batch.eventId && owner.stageId === unit.stageId, 'INSPECTION_FULL_OWNERSHIP');
   } else {
-    const material = await validatePartialMaterial(verified.payload);
+    const material = await validateAnyPartialMaterial(verified.payload);
     insist(material.source.eventId === batch.eventId && material.source.stageId === unit.stageId
       && stable(material.capture) === stable(verified.capture), 'INSPECTION_PARTIAL_OWNERSHIP');
   }
@@ -138,7 +138,10 @@ export class TypedInspectionReceiver {
     const stages = verified.stages.map((stage, index) => {
       const unit = verified.plan[index];
       if (stage.classification === 'full') return { stageId: unit.stageId, label: unit.label, state: 'full', ownerMessage: '完全データ保存済み' };
-      if (stage.classification === 'partial') return { stageId: unit.stageId, label: unit.label, state: 'partial', ownerMessage: '材料のみ保存・現在は計算できません', capabilityCandidates: 0 };
+      if (stage.classification === 'partial') {
+        const f1 = stage.draft.payload?.formatVersion === 'phase11-dokkaninfo-f1-partial-1';
+        return { stageId: unit.stageId, label: unit.label, state: 'partial', ownerMessage: f1 ? '部分材料保存済み・計算可否は未判定です' : '材料のみ保存・現在は計算できません', capabilityCandidates: f1 ? null : 0 };
+      }
       if (stage.classification === 'unusable') return { stageId: unit.stageId, label: unit.label, state: 'unusable', ownerMessage: stage.failure.ownerMessage };
       return { stageId: unit.stageId, label: unit.label, state: 'unvisited', ownerMessage: '未取得' };
     });

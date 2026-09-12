@@ -4,11 +4,15 @@
  * in separate verified steps so a failed later step cannot replace a session.
  */
 import { validatePackage } from './phase11-intake.mjs';
-import { validatePartialMaterial } from './phase11-partial-material.mjs';
+import { validateAnyPartialMaterial } from './phase11-partial-material.mjs';
 import { digest, exactKeys, insist, stable } from './phase11-partial-rules.mjs';
 
 export const TYPED_DRAFT_FORMAT = 'phase11-typed-stage-draft-1';
 export const UNUSABLE_FAILURE_FORMAT = 'phase11-unusable-stage-failure-1';
+// F2 keeps the established failure record unchanged and adds a separate,
+// versioned record only when a fixture scan supplies bounded source evidence.
+// A v2 record is never accepted as v1.
+export const F1_UNUSABLE_FAILURE_FORMAT = 'phase11-unusable-stage-failure-f1-1';
 export const TYPED_DRAFT_DATABASE = 'dokkan-phase11-typed-one-tap-PROTOTYPE-v2';
 const result = request => new Promise((resolve, reject) => { request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
 const done = tx => new Promise((resolve, reject) => { tx.oncomplete = resolve; tx.onabort = tx.onerror = () => reject(tx.error ?? new Error('prototype保存に失敗しました。')); });
@@ -22,8 +26,9 @@ const stores = db => {
 };
 
 function validateCapture(capture) {
-  exactKeys(capture, ['id', 'revision', 'observedAt']);
-  insist(/^fictional-capture-[A-Za-z0-9-]{1,100}$/.test(capture.id) && Number.isSafeInteger(capture.revision) && capture.revision > 0
+  const f1 = Object.hasOwn(capture ?? {}, 'snapshotDigest');
+  exactKeys(capture, f1 ? ['id', 'revision', 'observedAt', 'snapshotDigest'] : ['id', 'revision', 'observedAt']);
+  insist((f1 ? /^f1-[A-Za-z0-9-]{1,100}$/.test(capture.id) && /^sha256:[a-f0-9]{64}$/.test(capture.snapshotDigest) : /^fictional-capture-[A-Za-z0-9-]{1,100}$/.test(capture.id)) && Number.isSafeInteger(capture.revision) && capture.revision > 0
     && typeof capture.observedAt === 'string' && Number.isFinite(Date.parse(capture.observedAt)), 'CAPTURE_VERSION');
 }
 function validateTicketBinding(binding) {
@@ -43,7 +48,7 @@ async function validatePayload(classification, payload, expectedDigest) {
     return payload;
   }
   if (classification === 'partial') {
-    const material = await validatePartialMaterial(payload);
+    const material = await validateAnyPartialMaterial(payload);
     insist(material.contentDigest === expectedDigest, 'PAYLOAD_DIGEST');
     return material;
   }
@@ -84,22 +89,32 @@ export async function validateTypedDraft(input) {
 }
 
 function validateFailureCode(value) { insist(typeof value === 'string' && /^[A-Z][A-Z0-9_]{2,100}$/.test(value), 'UNUSABLE_FAILURE_CODE'); }
-export async function makeUnusableFailure({ stageId, planIndex, ticket, fullFailureCode, partialFailureCode, ownerMessage }) {
+function validateF1FailureEvidence(value, stageId) {
+  exactKeys(value, ['eventId', 'stageId', 'captureId', 'snapshotDigest', 'stopCode']);
+  insist(typeof value.eventId === 'string' && typeof value.stageId === 'string' && value.stageId === stageId
+    && /^f1-[A-Za-z0-9-]{1,100}$/.test(value.captureId) && /^sha256:[a-f0-9]{64}$/.test(value.snapshotDigest)
+    && typeof value.stopCode === 'string' && /^[A-Z][A-Z0-9_]{2,100}$/.test(value.stopCode), 'UNUSABLE_FAILURE_EVIDENCE');
+}
+export async function makeUnusableFailure({ stageId, planIndex, ticket, fullFailureCode, partialFailureCode, ownerMessage, sourceEvidence = null }) {
   insist(typeof stageId === 'string' && stageId.length > 0 && Number.isSafeInteger(planIndex) && planIndex >= 0, 'UNUSABLE_FAILURE_FORMAT');
   validateTicketBinding(ticket); insist(ticket.unitId === `stage:${stageId}`, 'UNUSABLE_FAILURE_STAGE');
   validateFailureCode(fullFailureCode); validateFailureCode(partialFailureCode);
   insist(typeof ownerMessage === 'string' && ownerMessage.length > 0 && ownerMessage.length <= 180, 'UNUSABLE_FAILURE_MESSAGE');
-  const core = { formatVersion: UNUSABLE_FAILURE_FORMAT, classification: 'unusable', stageId, planIndex, ticket: clone(ticket),
-    fullFailureCode, partialFailureCode, ownerMessage };
+  if (sourceEvidence != null) validateF1FailureEvidence(sourceEvidence, stageId);
+  const core = { formatVersion: sourceEvidence == null ? UNUSABLE_FAILURE_FORMAT : F1_UNUSABLE_FAILURE_FORMAT,
+    classification: 'unusable', stageId, planIndex, ticket: clone(ticket), fullFailureCode, partialFailureCode, ownerMessage,
+    ...(sourceEvidence == null ? {} : { sourceEvidence: clone(sourceEvidence) }) };
   return { ...core, failureDigest: await digest(core) };
 }
 export async function validateUnusableFailure(input) {
-  const value = clone(input); exactKeys(value, ['formatVersion', 'classification', 'stageId', 'planIndex', 'ticket', 'fullFailureCode', 'partialFailureCode', 'ownerMessage', 'failureDigest']);
-  insist(value.formatVersion === UNUSABLE_FAILURE_FORMAT && value.classification === 'unusable' && typeof value.stageId === 'string'
+  const value = clone(input); const f1 = value?.formatVersion === F1_UNUSABLE_FAILURE_FORMAT;
+  exactKeys(value, f1 ? ['formatVersion', 'classification', 'stageId', 'planIndex', 'ticket', 'fullFailureCode', 'partialFailureCode', 'ownerMessage', 'sourceEvidence', 'failureDigest'] : ['formatVersion', 'classification', 'stageId', 'planIndex', 'ticket', 'fullFailureCode', 'partialFailureCode', 'ownerMessage', 'failureDigest']);
+  insist((f1 ? value.formatVersion === F1_UNUSABLE_FAILURE_FORMAT : value.formatVersion === UNUSABLE_FAILURE_FORMAT) && value.classification === 'unusable' && typeof value.stageId === 'string'
     && Number.isSafeInteger(value.planIndex) && value.planIndex >= 0 && /^sha256:[a-f0-9]{64}$/.test(value.failureDigest), 'UNUSABLE_FAILURE_FORMAT');
   validateTicketBinding(value.ticket); insist(value.ticket.unitId === `stage:${value.stageId}`, 'UNUSABLE_FAILURE_STAGE');
   validateFailureCode(value.fullFailureCode); validateFailureCode(value.partialFailureCode);
   insist(typeof value.ownerMessage === 'string' && value.ownerMessage.length > 0 && value.ownerMessage.length <= 180, 'UNUSABLE_FAILURE_MESSAGE');
+  if (f1) validateF1FailureEvidence(value.sourceEvidence, value.stageId);
   const { failureDigest, ...core } = value; insist(await digest(core) === failureDigest, 'UNUSABLE_FAILURE_DIGEST');
   return value;
 }
