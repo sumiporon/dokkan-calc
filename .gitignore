@@ -54,6 +54,7 @@
 # template and packager remain tracked; staging, bundles, and ZIP artifacts do not.
 /generated/phase11-f3-extension/
 /generated/phase11-f3-structure/
+/generated/phase11-f3-structure-extension/
 
 # Scraper caches and intermediate data
 # Some of these paths are already tracked in the legacy history. Ignoring them
