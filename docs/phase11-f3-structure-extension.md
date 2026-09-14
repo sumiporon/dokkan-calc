@@ -72,3 +72,11 @@ All tracked runtime/source outside the new directory is unchanged, including the
 ## Owner UI review
 
 On 2026-09-14, the owner reviewed the localhost fictional preview and marked it PASS. The fixture list was visible; before the explicit tap no diagnostic result existed; the tap produced a normal diagnostic with encounter 1, enemy 2, Super 4, condition 4, and observation 63. The owner successfully copied the complete bounded diagnostic into ChatGPT, including `kind: structure-diagnostic`, `coverage.status: unconfirmed`, and excluded scope. This validates the fixture-only owner UI and copy flow, not a live-site capture or source adoption.
+
+## Subsequent package preparation
+
+The separately authorized unsigned-package/reviewer-source preflight is recorded
+in [the signing preflight report](phase11-f3-structure-signing-preflight.md).
+It shares the candidate build function with this fixture builder without
+changing the diagnostic runtime, manifest, owner UI or copy operation. AMO
+submission, signing, installation and live-site execution remain separate.

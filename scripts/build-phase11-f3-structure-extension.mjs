@@ -3,6 +3,7 @@ import { build } from 'esbuild';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { DIAGNOSTIC_CASES, diagnosticFixture } from '../prototypes/phase11-f3-structure-extension/fixtures.mjs';
+import { buildCandidate } from '../amo/phase11-f3-structure-reviewer/build.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const source = new URL('../prototypes/phase11-f3-structure-extension/', import.meta.url);
@@ -14,7 +15,8 @@ const matches = Object.keys(DIAGNOSTIC_CASES).map(kind => `http://127.0.0.1/even
 const fixtureManifest = { ...manifest, name: 'Structure diagnostic LOCAL FIXTURE TEST ONLY', host_permissions: matches,
   content_scripts: [{ ...manifest.content_scripts[0], matches }] };
 delete fixtureManifest.browser_specific_settings;
-for (const [mode, entry, config] of [['candidate', 'content.mjs', manifest], ['fixture-test', 'fixture-entry.mjs', fixtureManifest]]) {
+await buildCandidate(root, fileURLToPath(out), { archive: false });
+for (const [mode, entry, config] of [['fixture-test', 'fixture-entry.mjs', fixtureManifest]]) {
   const dir = new URL(`${mode}/`, out); await mkdir(dir, { recursive: true });
   await writeFile(new URL('manifest.json', dir), JSON.stringify(config, null, 2) + '\n');
   await build({ absWorkingDir: root, entryPoints: [fileURLToPath(new URL(entry, source))], outfile: fileURLToPath(new URL('content.js', dir)), bundle: true, format: 'iife', platform: 'browser', target: 'firefox140', minifyIdentifiers: true, legalComments: 'none', metafile: true }).then(async result => {

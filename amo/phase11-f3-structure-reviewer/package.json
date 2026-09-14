@@ -1,0 +1,9 @@
+{
+  "name": "phase11-f3-structure-diagnostic-reviewer-source",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "node build.mjs", "verify": "node verify.mjs" },
+  "engines": { "node": "22.17.0", "npm": "10.9.2" },
+  "devDependencies": { "cheerio": "1.0.0-rc.12", "esbuild": "0.28.2" }
+}
