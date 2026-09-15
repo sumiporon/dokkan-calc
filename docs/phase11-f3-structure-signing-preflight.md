@@ -1,5 +1,66 @@
 # Dedicated structure diagnostic: signing preflight
 
+## Current package: AMO name correction (2026-09-15 JST)
+
+Baseline `acdb83990af18e5a66984d5c70c7b1ad775cf378`, same Phase 11 branch,
+initially clean. The owner reported AMO's `/name` maximum-length error.
+The old display name has 47 characters, exceeding the 45-character limit.
+Only the manifest name changes to **Phase 11 structure diagnostic** (29 characters).
+The shared candidate/reviewer build now rejects empty/overlong names and locks
+the approved name; package unit tests include the rejected original name and
+a 46-character boundary case. ID, version, exact URL, permissions and every
+other manifest field remain unchanged. Runtime/diagnostic/UI sources are
+unchanged; the generated content.js matches the unchanged build recipe bytewise.
+
+Current output directory: `generated/phase11-f3-structure-extension/`.
+
+```text
+phase11-f3-structure-diagnostic-unsigned.zip
+02EA5077A9A2684F8C0B35D30CACDAA24717DF6710079F5F131DCA0C27D1CCFB
+
+phase11-f3-structure-diagnostic-reviewer-source.zip
+151FC50A7E62F16FF4B4535216FF6A2AD587F079ABE4123FA3F804ED850D1FC8
+
+clean reviewer rebuild unsigned ZIP
+02EA5077A9A2684F8C0B35D30CACDAA24717DF6710079F5F131DCA0C27D1CCFB
+```
+
+Both ZIPs were regenerated using the commands below. The source ZIP was
+expanded into a fresh directory outside the repo, then its English Windows
+README procedure (`npm ci --ignore-scripts --no-audit --no-fund`, `npm run build`,
+`npm run verify`) reproduced the unsigned ZIP exactly with Node 22.17.0 / npm
+10.9.2 and 17 freshly installed packages. Old hashes in the historical record
+below are retired and must not be used for this package.
+
+Local Mozilla lint command (no AMO upload):
+
+```powershell
+cmd /d /c "npx --yes --package=web-ext@10.6.0 web-ext lint --source-dir generated/phase11-f3-structure-extension/candidate --output json"
+```
+
+Result: **0 errors / 0 warnings / 0 notices**, including manifest name validation.
+The package tests verify that the linted candidate files are exactly the two
+files in the unsigned ZIP. npm emitted tool-dependency deprecation notices;
+these were not extension lint warnings. AMO server approval is not claimed.
+
+Re-run results for this correction:
+
+- Structure extension unit 13/13, package unit 5/5, diagnostic unit 12/12.
+- `npm run test:unit`: all 181/181 pass (includes the above and Phase 11 regressions).
+- Structure extension browser 3/3 and the related seven browser suites listed
+  below 13/13: combined 16/16 pass, localhost fixtures only.
+- `git diff --check`: pass. The full `npm test` 396-test result below belongs
+  to the earlier preflight, not a new full-suite run for this name-only change.
+
+An ad-hoc audit command initially assumed the old name was 46 characters and
+failed that expectation; direct measurement gave 47. Corrected manifest-diff
+and bundle equivalence checks passed. This was an audit expectation error,
+not an application regression. No protected production/live-gate/F3-preflight/
+receiver/schema/core/data files changed. No commit, push, upload, signing,
+installation or live-source access was performed. Changes await owner review.
+
+## Historical preflight (before the name correction; hashes obsolete)
+
 2026-09-14–15 JST. Baseline `075d5f8bf2e641f7aedb9e6123b02cf068689bc9` on
 `codex/phase11-android-firefox-one-tap-prototype-20260910`, initially clean and
 equal to its remote-tracking ref. This preparation creates only unsigned local

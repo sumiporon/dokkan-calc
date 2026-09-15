@@ -24,9 +24,14 @@ function entries(bytes) {
   return result;
 }
 
-test('packager rejects permissions, wildcard, identity and extra entry points', async () => {
+test('packager rejects overlong names, permissions, wildcard, identity and extra entry points', async () => {
   const manifest = JSON.parse(await readFile(path.join(out, 'candidate/manifest.json'), 'utf8'));
   validateManifest(manifest);
+  assert.equal(manifest.name, 'Phase 11 structure diagnostic');
+  assert.equal([...manifest.name].length, 29);
+  for (const name of ['Phase 11 limited structure diagnostic candidate', 'x'.repeat(46), '']) {
+    assert.throws(() => validateManifest({ ...manifest, name }), /AMO manifest name must contain 1 to 45 characters/);
+  }
   for (const change of [m => m.permissions.push('storage'), m => m.host_permissions[0] += '*', m => m.content_scripts[0].matches[0] += '/', m => m.background = { scripts: ['background.js'] }, m => m.browser_specific_settings.gecko.id = 'other@invalid', m => m.content_scripts[0].all_frames = true]) {
     const m = structuredClone(manifest); change(m); assert.throws(() => validateManifest(m));
   }

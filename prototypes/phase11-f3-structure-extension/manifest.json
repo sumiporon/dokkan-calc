@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Phase 11 limited structure diagnostic candidate",
+  "name": "Phase 11 structure diagnostic",
   "version": "0.0.1",
   "description": "Unsigned diagnostic candidate. Explicit one-shot capture, bounded observations in memory only.",
   "permissions": [],

@@ -16,6 +16,9 @@ export function validateManifest(manifest) {
   const exact = 'https://jpnja.dokkaninfo.com/events/challenge/1705/17050015';
   assert.deepEqual(Object.keys(manifest).sort(), ['manifest_version', 'name', 'version', 'description', 'permissions', 'host_permissions', 'content_scripts', 'browser_specific_settings'].sort());
   assert.equal(manifest.manifest_version, 3); assert.equal(manifest.version, '0.0.1');
+  assert.equal(typeof manifest.name, 'string');
+  assert.ok([...manifest.name].length >= 1 && [...manifest.name].length <= 45, 'AMO manifest name must contain 1 to 45 characters');
+  assert.equal(manifest.name, 'Phase 11 structure diagnostic');
   assert.deepEqual(manifest.permissions, []); assert.deepEqual(manifest.host_permissions, [exact]);
   assert.deepEqual(manifest.content_scripts, [{ matches: [exact], js: ['content.js'], run_at: 'document_idle', all_frames: false }]);
   assert.deepEqual(manifest.browser_specific_settings, {
